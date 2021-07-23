@@ -1,0 +1,57 @@
+{parsing off}<?php
+
+// Ein Plugin registrieren
+\nn\t3::Registry()->plugin( '[vendor-ucc]\[ext-ucc]', '[ext-lower]', '[ext-ucc] ([ext-lower])', 'EXT:[ext-lower]/Resources/Public/Icons/wizicon.svg' );
+
+// FlexForm für ein Plugin registrieren
+\nn\t3::Registry()->flexform( '[vendor-ucc]\[ext-ucc]', '[ext-lower]', 'FILE:EXT:[ext-lower]/Configuration/FlexForm/flexform.xml' );
+
+// (!!) Wichtig: Abhängigkeiten zu z.B. mask in ext_emconf.php nicht vergessen
+if ($_GET['route'] != '/module/tools/MaskMask') {
+
+    // EXT:mask mit eigenen renderType überschreiben
+    if ($GLOBALS['TCA']['tt_content']['columns']['tx_mask_iconcollection']) {
+	    $GLOBALS['TCA']['tt_content']['columns']['tx_mask_iconcollection']['config']['renderType'] = '[ext-lower]IconCollection';
+	    $GLOBALS['TCA']['tt_content']['columns']['tx_mask_iconcollection']['config']['iconconfig'] = 'tx_[ext-lower].iconcollection';
+    }
+
+    // FlexForm in Feld einschleusen
+    if ($GLOBALS['TCA']['tt_content']['columns']['tx_mask_slideropt']) {
+        $GLOBALS['TCA']['tt_content']['columns']['tx_mask_slideropt']['config'] = \nn\t3::TCA()->insertFlexForm('FILE:EXT:[ext-lower]/Configuration/FlexForm/slickslider_options.xml');
+    }
+    
+}
+
+// Neue Felder registrieren
+$temporaryColumn = [
+	'[ext-lower]_headercolor' => [		
+		'label' => 'Farbe',
+		'config' => [
+			'type' => 'select',
+			'renderType' => 'selectSingle',
+			'insertEmpty' => true,
+			'itemsProcFunc' => 'nn\t3\Flexform->insertOptions',
+			'pageconfigPath' => 'tx_[ext-lower].headercolors',
+            //'typoscriptPath' => 'plugin.tx_[ext-lower].settings.headercolors',
+			'default' => '0',
+		],
+	],
+];
+
+\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addTCAcolumns(
+        'tt_content',
+        $temporaryColumn
+);
+\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addFieldsToPalette(
+        'tt_content',
+        'header',
+        '[ext-lower]_headercolor',
+        'after:header_layout'
+);
+\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addFieldsToPalette(
+        'tt_content',
+        'headers',
+        '[ext-lower]_headercolor',
+        'after:header_layout'
+);
+

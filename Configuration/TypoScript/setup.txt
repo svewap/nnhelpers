@@ -1,0 +1,72 @@
+
+# pageTitleProvider registrieren
+
+config.pageTitleProviders {
+    nnhelpers {
+        provider = Nng\Nnhelpers\Provider\PageTitleProvider
+        before = record
+        after = altPageTitle
+    }
+}
+
+# FAL Mapping 
+# Kann ab Typo3 10 entfernt werden, wird dort in Configuration/Extbase/Persistence/Classes.php gesetzt
+
+config.tx_extbase {
+	persistence {
+		classes {
+			Nng\Nnhelpers\Domain\Model\File {
+				mapping {
+					tableName = sys_file
+					columns {
+						storage.mapOnProperty = storageUid
+					}
+				}
+			}
+			Nng\Nnhelpers\Domain\Model\FileReference {
+				mapping {
+					tableName = sys_file_reference
+					columns {
+						uid_local.mapOnProperty = file
+					}
+				}
+			}
+		}
+		updateReferenceIndex = 1
+	}
+}
+
+# Backend Module
+
+module.tx_nnhelpers {
+    view {
+        templateRootPaths {
+            10 = EXT:nnhelpers/Resources/Private/Backend/Templates/
+        }
+        layoutRootPaths {
+           10 = EXT:nnhelpers/Resources/Private/Backend/Layouts/
+        }
+        partialRootPaths {
+           10 = EXT:nnhelpers/Resources/Private/Backend/Partials/
+        }
+		widget {
+			Nng\Nnhelpers\ViewHelpers\Widget\AccordionViewHelper.templateRootPath = EXT:nnhelpers/Resources/Private/Backend/
+		}
+    }
+}
+
+# Testing 
+
+nnhelpers_test = PAGE
+nnhelpers_test {
+	typeNum = 20190825
+	config {
+		disableAllHeaderCode = 1
+		xhtml_cleaning = 0
+		admPanel = 0
+		additionalHeaders = Content-type: text/plain
+		no_cache = 1
+	}		 
+	10 = USER_INT
+	10.userFunc = Nng\Nnhelpers\Controller\ModuleController->testAction
+}

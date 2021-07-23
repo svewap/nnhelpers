@@ -1,0 +1,37 @@
+{parsing off}<?php
+
+defined('TYPO3_MODE') || die('Access denied.');
+
+call_user_func(
+    function( $extKey )
+    {
+		
+		\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addLLrefForTCAdescr('tx_[ext-lower]_domain_model_[model-lower]', 'EXT:[ext-lower]/Resources/Private/Language/locallang.xlf');
+		\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::allowTableOnStandardPages('tx_[ext-lower]_domain_model_[model-lower]');
+
+		// Icon registrieren
+		\nn\t3::Registry()->icon('[ext-lower]-plugin', 'EXT:[ext-lower]/Resources/Public/Icons/wizicon.svg');
+
+		// PageTsConfig registrieren
+		\nn\t3::Registry()->addPageConfig('@import "EXT:[ext-lower]/Configuration/TypoScript/page.ts"');
+
+		// Backend-Module registrieren
+		\TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerModule(
+			\nn\t3::Registry()->getVendorExtensionName($extKey),
+			'web',
+			'mod1',
+			'',
+			\nn\t3::Registry()->parseControllerActions([
+				\[vendor-ucc]\[ext-ucc]\Controller\ModController::class => 'index,show',
+			]),
+			[
+				'access'	=> 'user,group',
+				'icon'	 	=> 'EXT:[ext-lower]/Resources/Public/Icons/wizicon.svg',
+				'labels'	=> 'LLL:EXT:[ext-lower]/Resources/Private/Language/locallang_mod1.xml',
+				'navigationComponentId' => '',
+				'inheritNavigationComponentFromMainModule' => false,
+			]
+		);
+
+	},
+'[ext-lower]');

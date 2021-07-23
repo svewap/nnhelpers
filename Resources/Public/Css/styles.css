@@ -1,0 +1,152 @@
+
+html {
+    font-size: 1rem;
+}
+
+.autofiller {
+    position: relative;
+    background: #fff;
+}
+.pin-top {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+}
+
+.docbody-fullscreen {
+    top: 0 !important;
+    font-family: "Source Sans Pro", sans-serif;
+}
+
+.collapse.in {
+    display: block;
+}
+.btn-primary {
+    background-color: #7091af;
+    border: none;
+}
+#classes-accordion {
+    margin-bottom: 250px;
+}
+
+h5 {
+    font-weight: 500;
+    color: #aa449a;
+}
+
+.form-control {
+    box-shadow: none;
+}
+[class*="fa-"] {
+    color: #aaa;
+}
+.btn {
+    font-size: 0.75rem;
+}
+.btn-sm {
+    line-height: 1;
+}
+a, button, .btn-link {
+    color: #000;
+}
+.card {
+    box-shadow: none;
+    border: none;
+    border-radius: 0;
+    margin-bottom: 2px;
+}
+.card-header:first-child {
+    border-radius: 0;
+}
+.card-header {
+    border: none;
+    background-color: #eaf0f9;
+}
+.card-header a:focus,
+.card-header a:hover {
+    text-decoration: none;
+    color: inherit;
+}
+.card-header i {
+    color: #7aa4b8;
+}
+.card-header h2 {
+    font-size: 1.1rem;
+    font-weight: 400;
+}
+.card-body .card-header h2 a {
+    color: #777;
+}
+.card-body .card-header h2 {
+    font-size: 1rem;
+    font-weight: 300;
+}
+.card-body .card-header h2 strong {
+    font-size: 1rem;
+    color: #000;
+    font-weight: 400;
+}
+.card-body p {
+    margin: 0;
+}
+.collapsing,
+.collapse.in {
+    border: 1px solid #ddd;
+    border-top: none;
+    margin-bottom: 10px;
+}
+
+.p-text p {
+    margin-bottom: 10px;
+}
+.p-text p + br {
+    display: none;
+}
+.p-text pre + br {
+    display: none;
+}
+
+pre {
+    tab-size: 30px;
+    padding: 10px;
+    font-size: 0.8rem;
+    border: none;
+    margin: 0 0 10px 0;
+}
+code {
+    background-color: #f3f3f3;
+    color: #31678d;
+}
+code br {
+    display: none;
+}
+.actions [class*="fa-"] {
+    color: #fff;
+}
+
+
+.recipies-section h5,
+.recipies-section .card-header i {
+    color: #b178a7;
+}
+.recipies-section .card-header {
+    background-color: #c88ac326;
+}
+.recipies-section .card-body .card-header h2 a {
+    font-weight: 500;
+    color: #000;
+}
+
+.viewhelpers-section h5,
+.viewhelpers-section .card-header i {
+    color: #74a495;
+}
+.viewhelpers-section .card-header {
+    background-color: #78a98c26;
+}
+
+.card-body .card-header {
+    background-color: rgba(0,0,0,.03) !important;
+}

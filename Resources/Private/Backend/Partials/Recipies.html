@@ -1,0 +1,193 @@
+
+
+<div class="mb-4 autofiller" data-pin-parent=".recipies-section">
+	<p><b>Automatisch Namespaces im Spickzettel ersetzen:</b></p>
+	<div class="form-inline">
+		<div class="form-group mr-3 mb-3">
+			Vendor:
+			<input type="text" class="form-control form-control-sm mx-2" data-autofill-prefix="vendor" value="Nng" placeholder="Vendor" />
+		</div>    
+		<div class="form-group mr-3 mb-3">
+			Extension-Key:
+			<input type="text" class="form-control form-control-sm mx-2" data-autofill-prefix="ext" value="nnsite" placeholder="Extension-Key" />
+		</div>
+		<div class="form-group mr-3 mb-3">
+			DB-Field:
+			<input type="text" class="form-control form-control-sm mx-2" data-autofill-prefix="field" value="title" placeholder="Feldname" />
+		</div>    
+		<div class="form-group mr-3 mb-3">
+			Model/Class-Name:
+			<input type="text" class="form-control form-control-sm mx-2" data-autofill-prefix="model" value="Entry" placeholder="Model-Name" />
+		</div>    
+	</div>
+</div>
+
+<article>
+	<h5 class="mb-4">TypoScript / Yaml Configuration</h5>
+
+		<nnt3:widget.accordion title="TypoScript Setup für das Seiten-Template">
+			<p>Beispiel für eine Konfiguration in <code>Configuration/TypoScript/setup.txt</code></p>
+			{f:render(partial:'Recipies/Setup')}
+		</nnt3:widget.accordion>
+
+		<nnt3:widget.accordion title="PageConfigTS">
+			<p>Beispiel für eine Konfiguration in <code>Configuration/TypoScript/page.txt</code></p>
+			{f:render(partial:'Recipies/PageConfigTs')}
+		</nnt3:widget.accordion>
+
+		<nnt3:widget.accordion title="Site-Config YAML">
+			<p>Beispiel für eine Konfiguration in <code>typo3conf/sites/webseite.de/config.yaml</code></p>
+			{f:render(partial:'Recipies/SiteYaml')}
+		</nnt3:widget.accordion>
+
+		<nnt3:widget.accordion title="RouteEnhancers">
+			<p>Beispiel für eine Konfiguration in <code>typo3conf/sites/webseite.de/config.yaml</code></p>
+			{f:render(partial:'Recipies/RouteEnhancers')}
+		</nnt3:widget.accordion>
+</article>
+
+<article>
+	<h5 class="my-4">Extensions – Basics</h5>
+
+		<nnt3:widget.accordion title="ext_localconf.php">
+			<p>Beispiel für eine Konfiguration in der <code>ext_localconf.php</code> einer Extension.</p>
+			<nnt3:format.code lang="php" download="ext_localconf.php">
+				{f:render(partial:'Recipies/ExtLocalconf')}
+			</nnt3:format.code>
+		</nnt3:widget.accordion>
+
+		<nnt3:widget.accordion title="ext_tables.php">
+			<p>Beispiel für eine Konfiguration in der <code>ext_tables.php</code> einer Extension.</p>
+			<nnt3:format.code lang="php" download="ext_tables.php">
+				{f:render(partial:'Recipies/ExtTables')}
+			</nnt3:format.code>
+		</nnt3:widget.accordion>
+
+		<nnt3:widget.accordion title="ext_conf_template.txt">
+			<p>Beispiel für Extension Manager Konfiguratio unter <code>ext_conf_template.txt</code> einer Extension.</p>
+			{f:render(partial:'Recipies/ExtConfTemplate')}
+		</nnt3:widget.accordion>
+
+		<nnt3:widget.accordion title="ext_tables.sql">
+			<p>Beispiel für eine Datenbank-Konfiguration in der <code>ext_tables.sql</code> einer Extension.</p>
+			{f:render(partial:'Recipies/ExtTablesSql')}
+		</nnt3:widget.accordion>
+
+		<nnt3:widget.accordion title="sys_template.php">
+			<p>Beispiel für eine TS-Template-Konfiguration in der <code>Configuration/TCA/Overrides/sys_template.php</code> einer Extension.</p>
+			{f:render(partial:'Recipies/SysTemplate')}
+		</nnt3:widget.accordion>
+
+		<nnt3:widget.accordion title="TypoScript Setup für PlugIn">
+			<p>Beispiel für eine Konfiguration in <code>Configuration/TypoScript/setup.txt</code></p>
+			{f:render(partial:'Recipies/SetupPlugin')}
+		</nnt3:widget.accordion>
+
+		<nnt3:widget.accordion title="TCA">
+			<p>
+				Boilerplate für das TCA einer Datenbank-Tabelle.<br>
+				Liegt in <code>Configuration/TCA/tx_[ext-lower]_domain_model_[model-lower].php</code> einer Extension.
+			</p>
+			{f:render(partial:'Recipies/TCA')}
+		</nnt3:widget.accordion>
+
+		<nnt3:widget.accordion title="TCA/Overrides">
+			<p>Beispiel für eine Konfiguration in der <code>Configuration/TCA/Overrides/tt_content.php</code> einer Extension.</p>
+			<nnt3:format.code lang="php" download="tt_content.php">
+				{f:render(partial:'Recipies/TtContentOverride')}
+			</nnt3:format.code>
+		</nnt3:widget.accordion>
+
+		<nnt3:widget.accordion title="FlexForm.xml">
+			<p>
+				Beispiel für die Konfigurationen im FlexForm unter
+				<code>Configuration/FlexForm/flexform.xml</code>
+			</p>
+			{f:render(partial:'Recipies/FlexForm')}
+		</nnt3:widget.accordion>
+
+		<nnt3:widget.accordion title="Model">
+			<p>Boilerplate für ein Datenbank-Model.<br>
+			Liegt in <code>Classes/Domain/Model/[model-ucc].php</code> einer Extension.</p>
+			<nnt3:format.code lang="php" download="[model-ucc].php">
+				{f:render(partial:'Recipies/Model')}
+			</nnt3:format.code>
+		</nnt3:widget.accordion>
+
+		<nnt3:widget.accordion title="Repository">
+			<p>Boilerplate für ein Repository-Model.<br>
+			Liegt in <code>Classes/Domain/Repository/[model-ucc]Repository.php</code> einer Extension.</p>
+			<nnt3:format.code lang="php" download="[model-ucc]Repository.php">
+				{f:render(partial:'Recipies/Repository')}
+			</nnt3:format.code>
+		</nnt3:widget.accordion>
+
+		<nnt3:widget.accordion title="ViewHelper (static)">
+			<p>Boilerplate für einen ViewHelper unter <code>Classes/ViewHelpers/[model-ucc]ViewHelper.php</code></p>
+			<nnt3:format.code lang="php" download="[model-ucc]ViewHelper.php">
+				{f:render(partial:'Recipies/ViewHelper')}
+			</nnt3:format.code>
+		</nnt3:widget.accordion>
+
+		<nnt3:widget.accordion title="ViewHelper (tag based)">
+			<p>Boilerplate für einen TagBasedViewHelper unter <code>Classes/ViewHelpers/[model-ucc]ViewHelper.php</code></p>
+			<nnt3:format.code lang="php" download="[model-ucc]ViewHelper.php">
+				{f:render(partial:'Recipies/TagBasedViewHelper')}
+			</nnt3:format.code>
+		</nnt3:widget.accordion>
+</article>
+
+<article>
+	<div class="d-flex align-items-center">
+		<h5 class="my-4">Extensions – Erweiterung fremder Extensions</h5>
+		<div class="ml-auto d-flex align-items-center text-nowrap">
+			Fremde EXT, Vendor:
+			<input type="text" class="form-control col-2 form-control-sm ml-2 mr-4" data-autofill-prefix="ext-vendor" value="Nng" placeholder="Vendor" />
+			EXT-Key:
+			<input type="text" class="form-control col-2 form-control-sm mx-2" data-autofill-prefix="ext-ext" value="nncalendar" placeholder="Extension-key" />
+		</div>
+	</div>
+
+		<nnt3:widget.accordion title="Extension erweitern (allgemein)">
+			<p>
+				Allgemeine Methode, um das Model einer fremden Extension zu erweitern. 
+			</p>
+			{f:render(partial:'Recipies/ExtendExtensions')}
+		</nnt3:widget.accordion>
+
+		<nnt3:widget.accordion title="News (tx_news) erweitern">
+			<p>
+				News verwendet einen eigenen Proxy, der elegant alle Erweiterungen am News-Model zu einem neuen Model merged.<br>
+				Siehe <a href="https://bit.ly/3xUGrOo">diesen Link</a> für eine ausführliche Beschreibung.
+			</p>
+			{f:render(partial:'Recipies/ExtendNews')}
+		</nnt3:widget.accordion>
+
+</article>
+
+<article>
+	<h5 class="my-4">TypoScript Conditions</h5>
+
+		<nnt3:widget.accordion title="Seitenlayout Conditions (page.backend_layout)">
+			<p>Beispiel für eine Konfiguration in <code>Configuration/TypoScript/setup.txt</code></p>
+			{f:render(partial:'Recipies/TypoScriptConditions/PageBackendLayout')}
+		</nnt3:widget.accordion>
+
+</article>
+
+<article>
+	<h5 class="my-4">Caching</h5>
+
+		<nnt3:widget.accordion title="Caching im Controller">
+			<nnt3:format.code>{f:render(partial:'Recipies/CachingController')}</nnt3:format.code>
+		</nnt3:widget.accordion>
+</article>
+
+<article>
+	<h5 class="my-4">RTE</h5>
+
+		<nnt3:widget.accordion title="RTE konfigurieren (ckeditor)">
+			<p>Eigene CSS-Klassen für Links, Tabellen etc. im Backend verfügbar machen.</p>
+			{f:render(partial:'Recipies/RTE')}
+		</nnt3:widget.accordion>
+</article>

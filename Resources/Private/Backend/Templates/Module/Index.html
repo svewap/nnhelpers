@@ -1,0 +1,98 @@
+<f:layout name="Module"/>
+
+<f:section name="content">
+    
+<!--
+    <div class="actions mb-5 text-right">
+        <f:link.action action="index" class="btn btn-primary mr-3"><i class="fas fa-book-medical mr-2"></i> Dokumentation</f:link.action>
+        <f:link.action action="test" class="btn btn-primary"><i class="fas fa-vial mr-2"></i> Funktionen testen</f:link.action>
+    </div>
+-->
+
+    <div class="d-flex">
+        <h3 class="mb-4">\nn\t3::Hilfe</h3>
+        <div class="search ml-auto">
+            <div class="input-group">
+                <input type="search" placeholder="Suchen..." class="form-control form-control-sm py-2 border-right-0 border finder" />
+                <span class="input-group-append">
+                    <button class="btn btn-outline-secondary border-left-0 border" type="button">
+                        <i class="fa fa-search"></i>
+                    </button>
+                </span>
+            </div>
+        </div>
+    </div>
+
+
+    <section class="recipies-section mb-4">
+
+        <nnt3:widget.accordion title="Rezepte / Spickzettel" icon="fas fa-utensil-spoon">
+           {f:render(partial:'Recipies')}
+        </nnt3:widget.accordion>
+    
+    </section>
+
+
+    <section class="viewhelpers-section mb-4">
+
+        <nnt3:widget.accordion title="Übergeordnete Methoden" icon="fas fa-rocket">
+            {f:render(partial:'Globals')}
+        </nnt3:widget.accordion>            
+
+        <nnt3:widget.accordion title="ViewHelpers" icon="fas fa-eye">
+            {f:render(partial:'ViewHelpers')}
+        </nnt3:widget.accordion>            
+
+        <nnt3:widget.accordion title="FlexForm Helpers" icon="fas fa-code">
+            {f:render(partial:'FlexFormTCA')}
+        </nnt3:widget.accordion>            
+
+        <nnt3:widget.accordion title="TCA Helpers" icon="fas fa-code">
+            {f:render(partial:'TCA')}
+        </nnt3:widget.accordion>            
+
+        <nnt3:widget.accordion title="TypoScript Helpers" icon="fas fa-code">
+            {f:render(partial:'Typoscript')}
+        </nnt3:widget.accordion>            
+
+    </section>
+
+
+
+
+    <div id="classes-accordion">
+
+        <f:for each="{documentation}" as="class" key="className" iteration="i">
+
+            <nnt3:widget.accordion title="{className}" class="class-card" icon="fas fa-cube">
+                
+                <f:if condition="{class.comment}">
+                    <div class="class-comment mb-4">
+                        <p>{class.comment->f:format.raw()->f:format.nl2br()}</p>
+                    </div>
+                </f:if>
+
+                <f:for each="{class.methods}" as="method" key="methodName" iteration="j">
+
+                    <nnt3:widget.accordion title="<strong>{methodName}</strong>({method.paramString})" class="method">
+                        {method.comment->f:format.raw()->f:format.nl2br()}
+
+                        <a href="#" class="btn btn-sm btn-default mt-3" data-toggle="collapse" data-target="#sc-{i.index}-{j.index}">
+                            <i class="fas fa-brackets-curly"></i> Quelltext
+                        </a>
+                        <div id="sc-{i.index}-{j.index}" class="collapse">
+                            <pre class="mt-4">{method.sourceCode}</pre>
+                        </div>
+                    </nnt3:widget.accordion>
+
+                </f:for>
+
+            </nnt3:widget.accordion>            
+
+
+        </f:for>
+
+    </div>
+
+</f:section>
+

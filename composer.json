@@ -1,0 +1,19 @@
+{
+  "name": "nng/nnhelpers",
+  "type": "typo3-cms-extension",
+  "description": "99Grad - Helpers",
+  "authors": [],
+  "require": {
+	"typo3/cms-core": "^9.5 || ^10.0"
+  },
+  "autoload": {
+	"psr-4": {
+	  "Nng\\Nnhelpers\\": "Classes"
+	}
+  },
+  "autoload-dev": {
+	"psr-4": {
+	  "Nng\\Nnhelpers\\Tests\\": "Tests"
+	}
+  }
+}

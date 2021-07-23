@@ -1,0 +1,2 @@
+
+<INCLUDE_TYPOSCRIPT: source="FILE: EXT:nnhelpers/Configuration/TypoScript/setup.txt">
