@@ -1,19 +1,25 @@
 {
   "name": "nng/nnhelpers",
   "type": "typo3-cms-extension",
+  "license": "GPL-2.0-or-later",
   "description": "99Grad - Helpers",
   "authors": [],
   "require": {
-	"typo3/cms-core": "^9.5 || ^10.0"
+	  "typo3/cms-core": "^8.7 || ^9.5 || ^10.4"
   },
   "autoload": {
-	"psr-4": {
-	  "Nng\\Nnhelpers\\": "Classes"
-	}
+	  "psr-4": {
+	      "Nng\\Nnhelpers\\": "Classes"
+	  }
   },
   "autoload-dev": {
-	"psr-4": {
-	  "Nng\\Nnhelpers\\Tests\\": "Tests"
-	}
+	  "psr-4": {
+	    "Nng\\Nnhelpers\\Tests\\": "Tests"
+	  }
+  },
+  "extra": {
+    "typo3/cms": {
+       "extension-key": "nnhelpers"
+    }
   }
 }
