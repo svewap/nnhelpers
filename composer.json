@@ -2,7 +2,7 @@
   "name": "nng/nnhelpers",
   "type": "typo3-cms-extension",
   "license": "GPL-2.0-or-later",
-  "description": "99Grad - Helpers",
+  "description": "A collection of extremely simplified tools and methods to significantly speed up the development and update of Typo3 extensions.",
   "authors": [],
   "require": {
 	  "typo3/cms-core": "^8.7 || ^9.5 || ^10.4"
