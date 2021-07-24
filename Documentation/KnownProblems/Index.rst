@@ -6,4 +6,4 @@
 Known Problems
 ==============
 
-Use this section for informing about any type of of problem.
+Unfortunalety tons of problems related to the big, red warning on :ref:`this page <introduction>`

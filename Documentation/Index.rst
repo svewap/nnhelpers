@@ -9,7 +9,7 @@
 .. _start:
 
 =============================================================
-Extension Name
+99° Helpers (nnhelpers)
 =============================================================
 
 :Version:
@@ -19,35 +19,38 @@ Extension Name
    en
 
 :Authors:
-   Your name
+   99° + Lindner & Steffen
 
 :Email:
-   you@domain.tld
+   info@99grad.de
 
 :License:
    This extension documentation is published under the
    `CC BY-NC-SA 4.0 <https://creativecommons.org/licenses/by-nc-sa/4.0/>`__ (Creative Commons)
    license
 
-{extension.description}
+Save time. Have fun.
+=====================
 
-**TYPO3**
+**We love Typo3.**
 
-The content of this document is related to TYPO3 CMS,
-a GNU/GPL CMS/Framework available from `typo3.org <https://typo3.org/>`_ .
+We love extension development. And we love to solve complicated tasks.
 
-**Community Documentation**
+**What we don't love:** 
 
-This documentation is community documentation for the TYPO3 extension {extension.name}
+Searching again and again for code and snippets. Looking for code that has changed from Typo3 version to version in the core and then has to be adapted in the same way over and over again in all our extensions.
 
-It is maintained as part of this third party extension.
+We don't like it when you have to read a long documentation for actually simple tasks or have to get into very special to sophisticated programming concepts and architectures.
 
-If you find an error or something is missing, please:
-`Report a Problem <https://github.com/TYPO3-Documentation/TYPO3CMS-Example-ExtensionManual/issues/new>`__
+In short: Simple things should stay simple. And complicated problems should be solved only once. Not over and over again with every project and every LTS update.
+
+Over almost 6 years and 4 Typo3 versions, this extension has now grown. It has become an indispensable basic building block in Typo3 extension development at `99° <https://www.99grad.de>`__. Through `nnhelpers <https://bitbucket.org/99grad/nnhelpers/src/master/>`__ we have been able to reduce the development time of new extensions by half on average and the time of updates to new Typo3 versions by almost 80%.
+
+The architecture of this extension and its methods and classes is maximally inspired by the wonderful work of Sascha Ende's `t3helpers <https://extensions.typo3.org/extension/t3helpers>`__ extension.
 
 **Extension Manual**
 
-This documentation is for the TYPO3 extension <extkey>.
+This documentation is for the TYPO3 extension `nnhelpers`.
 
 **For Contributors**
 
@@ -58,10 +61,9 @@ Just click on "Edit me on GitHub" on the top right to submit your change request
    :maxdepth: 3
 
    Introduction/Index
-   Editor/Index
    Installation/Index
-   Configuration/Index
-   Developer/Index
+   Screenshots/Index
+   Use-Cases/Index
    KnownProblems/Index
    Changelog/Index
    Sitemap
