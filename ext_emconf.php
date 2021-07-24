@@ -2,7 +2,7 @@
 
 $EM_CONF[$_EXTKEY] = [
     'title' => 'Nnhelpers',
-    'description' => 'Kleine Helfer und zentralisierte Funktionen für Typo3',
+    'description' => 'A collection of extremely simplified tools and methods to significantly speed up the development and update of Typo3 extensions',
     'category' => 'services',
     'author' => '99grad.de',
     'author_email' => 'david@99grad.de',
