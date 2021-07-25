@@ -22,11 +22,23 @@ class ModuleController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControlle
 	 */
 	protected $sourceCodeCache = [];
 
+
+	/**
+	 * Sprache der Annotations und
+	 * 
+	 * Zielsprache der Doku für das Typo3 TER wird über die Spracheinstellung des Backend-Users bestimmt. 
+	 * Dadurch kann die gesamte Doku leicht in verschiedenen Sprachen übersetzt werden.
+	 * 
+	 */
+	protected $sourceLang = 'de';
+	
 	/**
 	 * 	Initialize View
 	 */
 	public function initializeView ( ViewInterface $view ) {
 		parent::initializeView($view);
+
+		if (!$view->getModuleTemplate()) return;
 
 		$pageRenderer = $view->getModuleTemplate()->getPageRenderer();
 		
@@ -48,15 +60,30 @@ class ModuleController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControlle
 	 * @return void
 	 */
 	public function indexAction () {
+		
+		$args = $this->request->getArguments();
+		$isDevMode = \nn\t3::Environment()->getExtConf('nnhelpers', 'devModeEnabled');
+		$enableCache = !$args['updateTranslation'] && !$isDevMode;
+		$beUserLang = $GLOBALS['BE_USER']->uc['lang'] ?: 'en';
+
+		if ($enableCache && $cache = \nn\t3::Cache()->get([__METHOD__=>$beUserLang])) return $cache;
 
 		// Composer libraries laden (z.B. Markdown)
 		$autoload = \nn\t3::Environment()->extPath('nnhelpers') . 'Resources/Libraries/vendor/autoload.php';
 		require_once( $autoload );
 
 		$doc = $this->generateDocumentation();
+		$this->localizeDocumentation( $doc, $beUserLang );
+
 		$this->view->assignMultiple([
-			'documentation' => $doc,
+			'documentation' 	=> $doc,
+			'docLang' 			=> $beUserLang,
+			'docSrcLang' 		=> $sourceLang,
+			'updateTranslation' => $args['updateTranslation'] ?? false,
 		]);
+
+		$html = $this->view->render();
+		return \nn\t3::Cache()->set([__METHOD__=>$beUserLang], $html);
 	}
 	
 	/**
@@ -183,7 +210,7 @@ class ModuleController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControlle
  
 		//return \nn\t3::Dom( $result )->find();
 
-		$dom = \DOMDocument::loadXML( '<t>' . $result . '</t>', LIBXML_NOENT | LIBXML_XINCLUDE | LIBXML_NOERROR | LIBXML_NOWARNING );
+		$dom = \DOMDocument::loadXML( '<t>' . $result . '</t>', LIBXML_NOENT | LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_XINCLUDE | LIBXML_NOERROR | LIBXML_NOWARNING );
 		if (!$dom) return $result;
 
 		if ($pre = $dom->getElementsByTagName('pre'));
@@ -197,8 +224,8 @@ class ModuleController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControlle
 			}			
 		}
 
-		$html = $dom->saveXML($dom->getElementsByTagName('t')->item(0));
-		return $html;
+		$html = $dom->saveHTML( $dom->getElementsByTagName('t')->nodeValue );
+		return str_replace(['<t>', '</t>'], '', $html);
 	}
 
 
@@ -232,6 +259,71 @@ class ModuleController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControlle
 		$body = str_replace("\n\t", "\n", $body);
 		return $body;   
 	}
+
+
+	/**
+	 * Exportiert die Doku aller Methoden für die ReST Dokumentation im TER
+	 * 
+	 */
+	function exportDocumentationAction() {
+
+		$autoload = \nn\t3::Environment()->extPath('nnhelpers') . 'Resources/Libraries/vendor/autoload.php';
+		require_once( $autoload );
+
+		$beUserLang = $GLOBALS['BE_USER']->uc['lang'] ?: 'en';
+		echo "<pre><b>Doku für {$beUserLang} generieren:</b>\n\n";
+
+		$doc = $this->generateDocumentation();
+		$this->localizeDocumentation( $doc, $beUserLang, true );
+
+		foreach ($doc as $className=>$infos) {
+			$rendering = \nn\t3::Template()->render(
+				'EXT:nnhelpers/Resources/Private/Backend/Templates/Documentation/ClassTemplate.html', [
+					'className' => $className,
+					'infos'		=> $infos
+				]
+			);
+			$rendering = preg_replace("/(\r?\n){2,}/", "\n\n", $rendering);
+
+			$filename = $className . '.rst';
+			$file = \nn\t3::File()->absPath('EXT:nnhelpers/Documentation/Helpers/Classes/' . $filename);
+			file_put_contents( $file, $rendering );
+			
+			//echo $rendering; die();
+			echo "\n" . $filename;
+		}
+		return '';
+	}
+
+
+	/**
+	 * Übersetzt die Dokumentation in Zielsprache.
+	 * Verwendet Deep-L und smartes Caching.
+	 * 
+	 * @return array
+	 */
+	function localizeDocumentation ( &$doc = [], $targetLang = 'de', $autoTranslate = false ) {
+
+		if (strtolower($targetLang) == strtolower($this->sourceLang)) return $doc;
+		$targetDocLang = strtoupper($targetLang);
+
+		$translationHelper = \nn\t3::injectClass( \Nng\Nnhelpers\Helpers\TranslationHelper::class );
+		$translationHelper->setL18nFolderpath( 'EXT:nnhelpers/Resources/Private/Language/' );
+		$translationHelper->setTargetLanguage( $targetDocLang );
+
+		$translationHelper->setEnableApi( $autoTranslate );
+		$translationHelper->setMaxTranslations( 30 );
+
+		foreach ($doc as $className=>$infos) {
+			$doc[$className]['comment'] = $translationHelper->translate([$className, 'comment'], $infos['comment']);
+			foreach ($infos['methods'] as $methodName=>$methodInfos) {
+				$doc[$className]['methods'][$methodName]['comment'] = $translationHelper->translate([$className, $methodName, 'comment'], $methodInfos['comment']);
+			}
+		}
+		return $doc;
+	}
+
+
 
 	/**
 	 * 	Tests vieler Funktionen.

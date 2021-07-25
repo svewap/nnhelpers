@@ -14,12 +14,12 @@ call_user_func(
                 'tx_nnhelpers_m1',
                 'top',
                 [
-                    'Module' => 'index, test'
+                    'Module' => 'index, test, exportDocumentation'
                 ],
                 [
                     'access'    => 'admin',
                     'icon'      => 'EXT:nnhelpers/Resources/Public/Icons/module-icon.svg',
-                    'labels'    => 'LLL:EXT:nnhelpers/Resources/Private/Language/locallang_mod.xlf',
+                    'labels'    => 'LLL:EXT:nnhelpers/Resources/Private/Language/locallang.xlf',
                 ]
             );
         }

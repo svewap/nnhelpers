@@ -8,8 +8,8 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Service\TypoScriptService;
 
 /**
- * 	Diverse Methoden, um Arrays zu mergen, bereinigen oder leere Werte zu entfernen. 
- * 	Methoden, um ein Value eines assoziativen Arrays als Key zu verwenden.
+ * Diverse Methoden, um mit Arrays zu arbeiten wie mergen, bereinigen oder leere Werte zu entfernen. 
+ * Methoden, um ein Value eines assoziativen Arrays als Key zu verwenden.
  */
 class Arrays extends \ArrayObject {
 
@@ -29,18 +29,18 @@ class Arrays extends \ArrayObject {
 	}
 
 	/**
-	 * 	Ein Array mit einem anderen mergen.
+	 * Ein assoziatives Array rekursiv mit einem anderen Array mergen.
 	 * 
-	 * 	`$addKeys` => wenn `false` werden nur Keys überschrieben, die auch in `$arr1` existieren 
-	 * 	`$includeEmptyValues` => wenn `true` werden auch leere Values in `$arr1` übernommen
-	 * 	`$enableUnsetFeature` => wenn `true`, kann `__UNSET` als Wert in `$arr2` verwendet werden, um eine Wert in `$arr1` zu löschen  
+	 * `$addKeys` => wenn `false` werden nur Keys überschrieben, die auch in `$arr1` existieren 
+	 * `$includeEmptyValues` => wenn `true` werden auch leere Values in `$arr1` übernommen
+	 * `$enableUnsetFeature` => wenn `true`, kann `__UNSET` als Wert in `$arr2` verwendet werden, um eine Wert in `$arr1` zu löschen  
 	 * 
-	 * 	```
-	 *	$mergedArray = \nn\t3::Arrays( $arr1 )->merge( $arr2 );
-	 *	$mergedArray = \nn\t3::Arrays()->merge( $arr1, $arr2 );
-	 *	$mergedArray = \nn\t3::Arrays( $arr1 )->merge( $arr2, $addKeys, $includeEmptyValues, $enableUnsetFeature );
-	 * 	```
-	 * 	@return array
+	 * ```
+	 * $mergedArray = \nn\t3::Arrays( $arr1 )->merge( $arr2, $addKeys, $includeEmptyValues, $enableUnsetFeature );
+	 * $mergedArray = \nn\t3::Arrays( $arr1 )->merge( $arr2 );
+	 * $mergedArray = \nn\t3::Arrays()->merge( $arr1, $arr2 );
+	 * ```
+	 * @return array
 	 */
     public function merge() {
 		$defaultArgs = [

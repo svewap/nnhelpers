@@ -47,9 +47,9 @@ class LL implements SingletonInterface {
 
 		$result = \nn\t3::Request()->POST( $deeplConfig['deeplApiUrl'], [
 			'auth_key'		=> $deeplConfig['deeplApiKey'],
-			'text'			=> $srcText,
-			'source_lang'	=> $sourceLanguageKey,
-			'target_lang'	=> $targetLanguageKey,
+			'text'			=> "\n<LL>\n" . $srcText . "\n</LL>",
+			'source_lang'	=> strtoupper($sourceLanguageKey),
+			'target_lang'	=> strtoupper($targetLanguageKey),
 		]);
 
 		if ($result['status'] != 200) {
@@ -62,6 +62,9 @@ class LL implements SingletonInterface {
 			return "Fehler bei Übersetzung.";
 		}
 
-		return $json['translations'][0]['text'] ?? '';
+		$text = $json['translations'][0]['text'] ?? '';
+		$text = trim(str_replace(['<LL>', '</LL>'], '', $text));
+		$text = str_replace( ">.\n", ">\n", $text);
+		return $text;
 	}
 }

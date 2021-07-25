@@ -27,10 +27,11 @@ class FrontendUser implements SingletonInterface {
 	}
 
 	/**
-	 *	```
-	 *	\nn\t3::FrontendUser()->getCurrentUser(); 
-	 * 	```
-	 * 	@return User
+	 * User-Gruppe des aktuellen FE-Users holen.
+	 * ```
+	 * \nn\t3::FrontendUser()->getCurrentUser(); 
+	 * ```
+	 * @return User
 	 */
 	public function getCurrentUser() {
 		if (!$this->isLoggedIn()) return [];
@@ -38,11 +39,11 @@ class FrontendUser implements SingletonInterface {
 	}
 	
 	/**
-	 *	```
-	 *	\nn\t3::FrontendUser()->getCurrentUserGroups();			=> [1 => ['title'=>'Gruppe A', 'uid' => 1]] 
-	 *	\nn\t3::FrontendUser()->getCurrentUserGroups( true );	=> [1 => [... alle Felder der DB] ] 
-	 *	```
-	 * 	@return array
+	 * ```
+	 * \nn\t3::FrontendUser()->getCurrentUserGroups();			=> [1 => ['title'=>'Gruppe A', 'uid' => 1]] 
+	 * \nn\t3::FrontendUser()->getCurrentUserGroups( true );	=> [1 => [... alle Felder der DB] ] 
+	 * ```
+	 * @return array
 	 */
 	public function getCurrentUserGroups( $returnRowData = false ) {
 		if (!$this->isLoggedIn()) return [];
@@ -61,14 +62,14 @@ class FrontendUser implements SingletonInterface {
 	}
 	
 	/**
-	 *	Prüft, ob der aktuelle fe-user innerhalb einer bestimmte Benutzergruppe ist.
-	 *	```
-	 *	\nn\t3::FrontendUser()->isInUserGroup( 1 );
-	 *	\nn\t3::FrontendUser()->isInUserGroup( ObjectStorage<FrontendUserGroup> );
-	 *	\nn\t3::FrontendUser()->isInUserGroup( [FrontendUserGroup, FrontendUserGroup, ...] );
-	 *	\nn\t3::FrontendUser()->isInUserGroup( [['uid'=>1, ...], ['uid'=>2, ...]] );
-	 *	```
-	 *	@return boolean
+	 * Prüft, ob der aktuelle fe-user innerhalb einer bestimmte Benutzergruppe ist.
+	 * ```
+	 * \nn\t3::FrontendUser()->isInUserGroup( 1 );
+	 * \nn\t3::FrontendUser()->isInUserGroup( ObjectStorage<FrontendUserGroup> );
+	 * \nn\t3::FrontendUser()->isInUserGroup( [FrontendUserGroup, FrontendUserGroup, ...] );
+	 * \nn\t3::FrontendUser()->isInUserGroup( [['uid'=>1, ...], ['uid'=>2, ...]] );
+	 * ```
+	 * @return boolean
 	 */
 	public function isInUserGroup( $feGroups = null ) {
 		if (!$this->isLoggedIn()) return false;
@@ -155,15 +156,15 @@ class FrontendUser implements SingletonInterface {
 	}
 
 	/**
-	 *	User manuell einloggen.
-	 *	ab v10: Alias zu `\nn\t3::FrontendUserAuthentication()->loginByUsername( $username );`
-	 *	```
-	 *	\nn\t3::FrontendUser()->login('99grad');
-	 *	\nn\t3::FrontendUser()->login('99grad', 'password');
-	 *	```
-	 *	@param $username
-	 *	@param $password
-	 *	@throws \ReflectionException
+	 * User manuell einloggen.
+	 * ab v10: Alias zu `\nn\t3::FrontendUserAuthentication()->loginByUsername( $username );`
+	 * ```
+	 * \nn\t3::FrontendUser()->login('99grad');
+	 * \nn\t3::FrontendUser()->login('99grad', 'password');
+	 * ```
+	 * @param $username
+	 * @param $password
+	 * @throws \ReflectionException
 	 */
 	public function login( $username, $password = null )
 	{
@@ -218,8 +219,8 @@ class FrontendUser implements SingletonInterface {
 	}
 	
 	/**
-	 * 	Aktuellen FE-USer manuell ausloggen
-	 * 	@return void
+	 * Aktuellen FE-USer manuell ausloggen
+	 * @return void
 	 */
 	public function logout() {
 		if (!$this->isLoggedIn()) return false;

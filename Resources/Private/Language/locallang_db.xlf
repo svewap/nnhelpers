@@ -12,6 +12,9 @@
 			<trans-unit id="tx_nnhelpers_domain_model_entry.media">
 				<source>Media</source>
 			</trans-unit>
+			<trans-unit id="recipies">
+				<source>Media</source>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>

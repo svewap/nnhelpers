@@ -53,12 +53,12 @@ class File implements SingletonInterface {
 	}
 	
 	/**
-	 *	Gibt Dateigröße zu einer Datei in Bytes zurück
-	 *	Falls Datei nicht exisitert, wird 0 zurückgegeben.
-	 *
-	 *	\nn\t3::File()->size('fileadmin/bild.jpg');
-	 *
-	 *	@return integer
+	 * Gibt Dateigröße zu einer Datei in Bytes zurück
+	 * Falls Datei nicht exisitert, wird 0 zurückgegeben.
+	 * ```
+	 * \nn\t3::File()->size('fileadmin/bild.jpg');
+	 * ```
+	 * @return integer
 	 */
 	public function size ( $src = null ) {
 		$src = $this->exists( $src );
@@ -67,11 +67,11 @@ class File implements SingletonInterface {
 	}
 	
 	/**
-	 * 	Bereinigt einen Dateinamen
-	 *	```
-	 * 	$clean = \nn\t3::File()->cleanFilename('fileadmin/nö:so nicht.jpg');	// 'fileadmin/noe_so_nicht.jpg'
-	 *	```
-	 * 	@return string
+	 * Bereinigt einen Dateinamen
+	 * ```
+	 * $clean = \nn\t3::File()->cleanFilename('fileadmin/nö:so nicht.jpg');	// 'fileadmin/noe_so_nicht.jpg'
+	 * ```
+	 * @return string
 	 */
 	public function cleanFilename ( $filename = '' ) {
 		$path = pathinfo( $filename, PATHINFO_DIRNAME ).'/';
@@ -92,13 +92,13 @@ class File implements SingletonInterface {
 	}
 	
 	/**
-	 * 	Erzeugt einen eindeutigen Dateinamen für die Datei, falls
-	 * 	im Zielverzeichnis bereits eine Datei mit identischem Namen
-	 * 	existiert.
-	 *	```
-	 * 	$name = \nn\t3::File()->uniqueFilename('fileadmin/01.jpg');	// 'fileadmin/01-1.jpg'
-	 *	```
-	 * 	@return string
+	 * Erzeugt einen eindeutigen Dateinamen für die Datei, falls
+	 * im Zielverzeichnis bereits eine Datei mit identischem Namen
+	 * existiert.
+	 * ```
+	 * $name = \nn\t3::File()->uniqueFilename('fileadmin/01.jpg');	// 'fileadmin/01-1.jpg'
+	 * ```
+	 * @return string
 	 */
 	public function uniqueFilename ( $filename = '' ) {
 
@@ -120,17 +120,17 @@ class File implements SingletonInterface {
 
 
 	/**
-	 *	Kopiert eine Datei.
-	 *	Gibt `false` zurück, falls die Datei nicht kopiert werden konnte.
-	 *	Gibt (neuen) Dateinamen zurück, falls das Kopieren erfolgreich war.
-	 *	
-	 *	```
-	 *	$filename = \nn\t3::File()->copy('fileadmin/bild.jpg', 'fileadmin/bild-kopie.jpg');
-	 *	```
-	 *	@param string $src	Pfad zur Quelldatei 
-	 *	@param string $dest	Pfad zur Zieldatei 
-	 *	@param boolean $renameIfFileExists	Datei umbenennen, falls am Zielort bereits Datei mit gleichem Namen existiert
-	 *	@return string|boolean
+	 * Kopiert eine Datei.
+	 * Gibt `false` zurück, falls die Datei nicht kopiert werden konnte.
+	 * Gibt (neuen) Dateinamen zurück, falls das Kopieren erfolgreich war.
+	 * 
+	 * ```
+	 * $filename = \nn\t3::File()->copy('fileadmin/bild.jpg', 'fileadmin/bild-kopie.jpg');
+	 * ```
+	 * @param string $src	Pfad zur Quelldatei 
+	 * @param string $dest	Pfad zur Zieldatei 
+	 * @param boolean $renameIfFileExists	Datei umbenennen, falls am Zielort bereits Datei mit gleichem Namen existiert
+	 * @return string|boolean
 	 */
 	public function copy ( $src = null, $dest = null, $renameIfFileExists = true ) {
 
@@ -148,11 +148,11 @@ class File implements SingletonInterface {
 	}
 	
 	/**
-	 *	Verschiebt eine Datei
-	 *	```
-	 *	\nn\t3::File()->move('fileadmin/bild.jpg', 'fileadmin/bild-kopie.jpg');
-	 *	```
-	 *	@return boolean
+	 * Verschiebt eine Datei
+	 * ```
+	 * \nn\t3::File()->move('fileadmin/bild.jpg', 'fileadmin/bild-kopie.jpg');
+	 * ```
+	 * @return boolean
 	 */
 	public function move ( $src = null, $dest = null ) {
 		if (!file_exists( $src )) return false;
@@ -200,11 +200,11 @@ class File implements SingletonInterface {
 	}
 
 	/**
-	 * 	Eine Upload-Datei verschieben
-	 *	```
-	 *	\nn\t3::File()->moveUploadedFile('fileadmin/bild.jpg', 'fileadmin/bild-kopie.jpg');
-	 *	```
-	 *	@return string
+	 * Eine Upload-Datei verschieben
+	 * ```
+	 * \nn\t3::File()->moveUploadedFile('fileadmin/bild.jpg', 'fileadmin/bild-kopie.jpg');
+	 * ```
+	 * @return string
 	 */
 	public function moveUploadedFile ( $src = null, $dest = null ) {
 		$src = $this->absPath( $src );
@@ -283,13 +283,13 @@ class File implements SingletonInterface {
 
 
 	/**
-	 * 	Löst ../../-Angaben in Pfad auf.
-	 * 	Funktioniert sowohl mit existierenden Pfaden (per realpath) als auch
-	 * 	nicht-existierenden Pfaden.
-	 * 	
-	 * 	\nn\t3::File()->normalizePath( 'fileadmin/test/../bild.jpg' );		=>	fileadmin/bild.jpg
-	 * 
-	 * 	@return string	
+	 * Löst ../../-Angaben in Pfad auf.
+	 * Funktioniert sowohl mit existierenden Pfaden (per realpath) als auch
+	 * nicht-existierenden Pfaden.
+	 * ```
+	 * \nn\t3::File()->normalizePath( 'fileadmin/test/../bild.jpg' );		=>	fileadmin/bild.jpg
+	 * ```
+	 * @return string	
 	 */
 	public function normalizePath( $path ) {
 		$hasTrailingSlash = substr($path,-1) == '/';
@@ -309,12 +309,15 @@ class File implements SingletonInterface {
 		return $path;
 	}
 
+
 	/**
-	 *	Einen Ordner im fileadmin/ erzeugen
-	 *	
-	 *	\nn\t3::File()->createFolder('tests');
-	 *
-	 *	@return boolean
+	 * Einen Ordner im `fileadmin/` erzeugen.
+	 * Um einen Ordner außerhalb des `fileadmin` anzulegen, die Methode `\nn\t3::File()->mkdir()` verwenden.
+	 * 
+	 * ```
+	 * \nn\t3::File()->createFolder('tests');
+	 * ```
+	 * @return boolean
 	 */
 	public function createFolder ( $path = null ) {
 		$resourceFactory = \TYPO3\CMS\Core\Resource\ResourceFactory::getInstance();
@@ -325,12 +328,12 @@ class File implements SingletonInterface {
 	}
 	
 	/**
-	 *	Gibt an, ob der Dateityp verboten ist
-	 *	
-	 *	\nn\t3::File()->isForbidden('bild.jpg');	=> gibt 'false' zurück
-	 *	\nn\t3::File()->isForbidden('hack.php');	=> gibt 'true' zurück
-	 *
-	 *	@return boolean
+	 * Gibt an, ob der Dateityp verboten ist
+	 * ```
+	 * \nn\t3::File()->isForbidden('bild.jpg');	=> gibt 'false' zurück
+	 * \nn\t3::File()->isForbidden('hack.php');	=> gibt 'true' zurück
+	 * ```
+	 * @return boolean
 	 */
 	// isForbidden
 	public function isForbidden ( $filename = null ) {
@@ -341,24 +344,24 @@ class File implements SingletonInterface {
 	}
 	
 	/**
-	 *	Gibt an, ob der Dateityp erlaubt ist
-	 *	
-	 *	\nn\t3::File()->isForbidden('bild.jpg');	=> gibt 'true' zurück
-	 *	\nn\t3::File()->isForbidden('hack.php');	=> gibt 'false' zurück
-	 *
-	 *	@return boolean
+	 * Gibt an, ob der Dateityp erlaubt ist
+	 * ```
+	 * \nn\t3::File()->isForbidden('bild.jpg');	=> gibt 'true' zurück
+	 * \nn\t3::File()->isForbidden('hack.php');	=> gibt 'false' zurück
+	 * ```
+	 * @return boolean
 	 */
 	public function isAllowed ( $filename = null ) {
 		return !$this->isForbidden( $filename );
 	}
 
 	/**
-	 *	Gibt die Art der Datei anhand des Datei-Suffixes zurück
-	 *	
-	 *	\nn\t3::File()->type('bild.jpg');	=> gibt 'image' zurück
-	 *	\nn\t3::File()->type('text.doc');	=> gibt 'document' zurück
-	 *
-	 *	@return string
+	 * Gibt die Art der Datei anhand des Datei-Suffixes zurück
+	 * ```
+	 * \nn\t3::File()->type('bild.jpg');	=> gibt 'image' zurück
+	 * \nn\t3::File()->type('text.doc');	=> gibt 'document' zurück
+	 * ```
+	 * @return string
 	 */
 	// filetype
 	public function type ( $filename = null ) {
@@ -371,35 +374,35 @@ class File implements SingletonInterface {
 	}
 
 	/**
-	 *	Gibt an, ob die Datei ein Video ist
-	 *	
-	 *	\nn\t3::File()->isVideo('pfad/zum/video.mp4');		=> gibt true zurück
-	 *
-	 *	@return boolean
+	 * Gibt an, ob die Datei ein Video ist
+	 * ```
+	 * \nn\t3::File()->isVideo('pfad/zum/video.mp4');		=> gibt true zurück
+	 * ```
+	 * @return boolean
 	 */	
 	public function isVideo ( $filename = null ) {
 		return $this->type( $filename ) == 'video';
 	}
 
 	/**
-	 *	Gibt an, ob es ein Video auf YouTube / Vimeo ist.
-	 *	Falls ja, wird ein Array mit Angaben zum Einbetten zurückgegeben.	
-	 *	
-	 *	\nn\t3::File()->isExternalVideo('http://...');
-	 *
-	 *	@return array|boolean
+	 * Gibt an, ob es ein Video auf YouTube / Vimeo ist.
+	 * Falls ja, wird ein Array mit Angaben zum Einbetten zurückgegeben.	
+	 * ```
+	 * \nn\t3::File()->isExternalVideo('http://...');
+	 * ```
+	 * @return array|boolean
 	 */	
 	public function isExternalVideo ( $url = null ) {
 		return \nn\t3::Video()->getExternalType( $url );
 	}
 
 	/**
-	 *	Gibt an, ob die Datei in ein Bild konvertiert werden kann
-	 *	
-	 *	\nn\t3::File()->isConvertableToImage('bild.jpg');	=> gibt true zurück
-	 *	\nn\t3::File()->isConvertableToImage('text.ppt');	=> gibt false zurück
-	 *
-	 *	@return boolean
+	 * Gibt an, ob die Datei in ein Bild konvertiert werden kann
+	 * ```
+	 * \nn\t3::File()->isConvertableToImage('bild.jpg');	=> gibt true zurück
+	 * \nn\t3::File()->isConvertableToImage('text.ppt');	=> gibt false zurück
+	 * ```
+	 * @return boolean
 	 */
 	// isConvertableToImage
 	public function isConvertableToImage ( $filename = null ) {
@@ -410,11 +413,11 @@ class File implements SingletonInterface {
 	}
 
 	/**
-	 *	Gibt den Suffix der Datei zurück
-	 *	
-	 *	\nn\t3::File()->suffix('bild.jpg');	=> gibt 'jpg' zurück
-	 *
-	 *	@return string
+	 * Gibt den Suffix der Datei zurück
+	 * ```
+	 * \nn\t3::File()->suffix('bild.jpg');	=> gibt 'jpg' zurück
+	 * ```
+	 * @return string
 	 */
 	// suffix
 	public function suffix ( $filename = null ) {
@@ -430,7 +433,7 @@ class File implements SingletonInterface {
 	 * ob der basePath des Storages zum Pfad der Datei passt.
 	 * ```
 	 * \nn\t3::File()->getLocalStorage('fileadmin/test/beispiel.txt');	
-	 * 		==>	gibt ResourceStorage mit basePath "fileadmin/" zurück
+	 * // gibt ResourceStorage mit basePath "fileadmin/" zurück
 	 * ```
 	 * @return ResourceStorage
 	 */
@@ -472,13 +475,13 @@ class File implements SingletonInterface {
 	}
 
 	/**
-	 *	Gibt zurück, ob angegebener Pfad ein Ordner ist
-	 *	
-	 *	Beispiel: 
-	 * 	\nn\t3::File()->isFolder('fileadmin');
-	 *			==>	gibt true zurück
-	 *
-	 * 	@return boolean
+	 * Gibt zurück, ob angegebener Pfad ein Ordner ist
+	 * 
+	 * Beispiel:
+	 * ```
+	 * \nn\t3::File()->isFolder('fileadmin'); // => gibt true zurück
+	 * ```
+	 * @return boolean
 	 */
 	public function isFolder( $file ) {
 		if (substr($file,-1) == '/') return true;
@@ -486,16 +489,17 @@ class File implements SingletonInterface {
 	}
 	
 	/**
-	 *	Gibt Pfad zu Datei / Ordner OHNE absoluten Pfad.
-	 * 	Optional kann ein Prefix angegeben werden. 
-	 *	
-	 *	Beispiel: 
-	 * 	\nn\t3::File()->stripPathSite('var/www/website/fileadmin/test.jpg'); 		==>	fileadmin/test.jpg
-	 * 	\nn\t3::File()->stripPathSite('var/www/website/fileadmin/test.jpg', true); 	==>	var/www/website/fileadmin/test.jpg
-	 * 	\nn\t3::File()->stripPathSite('fileadmin/test.jpg', true); 					==>	var/www/website/fileadmin/test.jpg
-	 * 	\nn\t3::File()->stripPathSite('fileadmin/test.jpg', '../../'); 				==>	../../fileadmin/test.jpg
-	 *
-	 * 	@return string
+	 * Gibt Pfad zu Datei / Ordner OHNE absoluten Pfad.
+	 * Optional kann ein Prefix angegeben werden. 
+	 * 
+	 * Beispiel:
+	 * ```
+	 * \nn\t3::File()->stripPathSite('var/www/website/fileadmin/test.jpg'); 		==>	fileadmin/test.jpg
+	 * \nn\t3::File()->stripPathSite('var/www/website/fileadmin/test.jpg', true); 	==>	var/www/website/fileadmin/test.jpg
+	 * \nn\t3::File()->stripPathSite('fileadmin/test.jpg', true); 					==>	var/www/website/fileadmin/test.jpg
+	 * \nn\t3::File()->stripPathSite('fileadmin/test.jpg', '../../'); 				==>	../../fileadmin/test.jpg
+	 * ```
+	 * @return string
 	 */
 	public function stripPathSite( $file, $prefix = false ) {
 		$pathSite = \nn\t3::Environment()->getPathSite();
@@ -509,13 +513,14 @@ class File implements SingletonInterface {
 	}
 	
 	/**
-	 *	Gibt Pfad zu Datei / Ordner MIT absoluten Pfad
-	 *	
-	 *	Beispiel: 
-	 * 	\nn\t3::File()->addPathSite('fileadmin/test.jpg');
-	 *			==>	gibt var/www/website/fileadmin/test.jpg zurück
-	 *
-	 * 	@return string
+	 * Gibt Pfad zu Datei / Ordner MIT absoluten Pfad
+	 * 
+	 * Beispiel: 
+	 * ```
+	 * \nn\t3::File()->addPathSite('fileadmin/test.jpg');
+	 *  // ==> gibt var/www/website/fileadmin/test.jpg zurück
+	 * ```
+	 * @return string
 	 */
 	public function addPathSite( $file ) {
 		return $this->stripPathSite( $file, true );
@@ -523,13 +528,14 @@ class File implements SingletonInterface {
 	
 
 	/**
-	 *	Gibt den Ordner zu einer Datei zurück
-	 *	
-	 *	Beispiel: 
-	 * 	\nn\t3::File()->getFolder('fileadmin/test/beispiel.txt');
-	 *			==>	gibt 'fileadmin/test/' zurück
-	 *
-	 * 	@return string
+	 * Gibt den Ordner zu einer Datei zurück
+	 * 
+	 * Beispiel:
+	 * ```
+	 * \nn\t3::File()->getFolder('fileadmin/test/beispiel.txt');
+	 * // ==> gibt 'fileadmin/test/' zurück
+	 * ```
+	 * @return string
 	 */
 	// getFolderPathForFile
 	public function getFolder( $file ) {
@@ -541,12 +547,14 @@ class File implements SingletonInterface {
 	}
 
 	/**
-	 *	Gibt den relativen Pfad einer Datei zur angegebenen Storage wieder.
-	 *	
-	 *	Beispiel:
-	 *	\nn\t3::File()->getRelativePathInStorage('fileadmin/media/bild.jpg', $storage);			==>	gibt 'media/bild.jpg' zurück	
-	 *	
-	 *	@return string
+	 * Gibt den relativen Pfad einer Datei zur angegebenen Storage wieder.
+	 * 
+	 * Beispiel:
+	 * ```
+	 * \nn\t3::File()->getRelativePathInStorage('fileadmin/media/bild.jpg', $storage); 
+	 * // ==> gibt 'media/bild.jpg' zurück	
+	 * ```
+	 * @return string
 	 */
 	// getRelativePathForFileInStorage
 	public function getRelativePathInStorage( $file, $storage = null ) {
@@ -570,13 +578,15 @@ class File implements SingletonInterface {
 	}
 	
 	/**
-	 *	Gibt den Pfad einer Datei anhand eines Dateinamens und der Storage wieder.
-	 *	
-	 *	Beispiel:
-	 *	\nn\t3::File()->getPath('media/bild.jpg', $storage);		==>	gibt '/var/www/.../fileadmin/media/bild.jpg' zurück	
-	 *	\nn\t3::File()->getPath('fileadmin/media/bild.jpg');		==>	gibt '/var/www/.../fileadmin/media/bild.jpg' zurück	
-	 *	
-	 *	@return string
+	 * Gibt den Pfad einer Datei anhand eines Dateinamens und der Storage wieder.
+	 * Beispiel:
+	 * ```
+	 * \nn\t3::File()->getPath('media/bild.jpg', $storage);		
+	 * // ==> gibt '/var/www/.../fileadmin/media/bild.jpg' zurück	
+	 * \nn\t3::File()->getPath('fileadmin/media/bild.jpg');		
+	 * // ==> gibt '/var/www/.../fileadmin/media/bild.jpg' zurück	
+	 * ```
+	 * @return string
 	 */
 	public function getPath( $file, $storage = null, $absolute = true ) {
 
@@ -615,10 +625,45 @@ class File implements SingletonInterface {
 	}
 
 	/**
-	 *	Imageinfo + EXIF Data für Datei holen. 
-	 *	Sucht auch nach JSON-Datei, die evtl. nach processImage() generiert wurde
+	 * Einen Ordner und/oder Datei erzeugen.
+	 * Legt auch die Ordner an, falls sie nicht existieren.
+	 * ```
+	 * \nn\t3::File()->write('fileadmin/some/deep/folder/');
+	 * \nn\t3::File()->write('fileadmin/some/deep/folder/file.json', 'TEXT');
+	 * ```
+	 * @return boolean
+	 */
+	public function write ( $path = null, $content = null ) {
+		$path = \nn\t3::File()->absPath( $path );
+		$folder = pathinfo( $path, PATHINFO_DIRNAME );
+		
+		$exists = \nn\t3::File()->mkdir( $folder );
+		if ($exists && $content !== null) {
+			return file_put_contents( $path, $content ) !== false;
+		}
+
+		return $exists;
+	}
+
+	/**
+	 * Einen Ordner anlegen
+	 * ```
+	 * \nn\t3::File()->mkdir( 'fileadmin/mein/ordner/' );
+	 * ```
+	 * @return boolean
+	 */
+	public function mkdir( $path = '' ) {
+		if (\nn\t3::File()->exists($path)) return true;
+		$path = \nn\t3::File()->absPath(rtrim($path, '/').'/');
+		\TYPO3\CMS\Core\Utility\GeneralUtility::mkdir_deep( $path );
+		return \nn\t3::File()->exists( $path );
+	}
+
+	/**
+	 * Imageinfo + EXIF Data für Datei holen. 
+	 * Sucht auch nach JSON-Datei, die evtl. nach processImage() generiert wurde
 	 * 
-	 *	@return array	
+	 * @return array	
 	 */
 	public function getData ( $file = '' ) {
 	
@@ -648,11 +693,11 @@ class File implements SingletonInterface {
 
 
 	/**
-	 *	ALLE EXIF Daten für Datei holen.
-	 *	```
-	 *	\nn\t3::File()->getExif( 'yellowstone.jpg' );
-	 *	```
-	 *	@return array
+	 * ALLE EXIF Daten für Datei holen.
+	 * ```
+	 * \nn\t3::File()->getExif( 'yellowstone.jpg' );
+	 * ```
+	 * @return array
 	 */
 	public function getExifData( $filename = '' ) {
 		return array_merge( 
@@ -663,11 +708,11 @@ class File implements SingletonInterface {
 	}
 	
 	/**
-	 *	EXIF Daten für Datei in JSON speichern.
-	 *	```
-	 *	\nn\t3::File()->extractExifData( 'yellowstone.jpg' );
-	 *	```
-	 *	@return array
+	 * EXIF Daten für Datei in JSON speichern.
+	 * ```
+	 * \nn\t3::File()->extractExifData( 'yellowstone.jpg' );
+	 * ```
+	 * @return array
 	 */
 	public function extractExifData( $filename = '' ) {
 		$exif = $this->getData( $filename );
@@ -678,10 +723,11 @@ class File implements SingletonInterface {
 	}
 	
 	/**
-	 *	imagesize für Datei holen.
-	 *	\nn\t3::File()->getImageSize( 'yellowstone.jpg' );
-	 *
-	 *	@return array
+	 * imagesize für Datei holen.
+	 * ```
+	 * \nn\t3::File()->getImageSize( 'yellowstone.jpg' );
+	 * ```
+	 * @return array
 	 */
 	public function getImageSize( $filename = '' ) {
 		if (!file_exists($filename)) return [];
@@ -694,10 +740,11 @@ class File implements SingletonInterface {
 	}
 
 	/**
-	 *	EXIF Bild-Daten für Datei holen.
-	 *	\nn\t3::File()->getImageData( 'yellowstone.jpg' );
-	 *
-	 *	@return array
+	 * EXIF Bild-Daten für Datei holen.
+	 * ```
+	 * \nn\t3::File()->getImageData( 'yellowstone.jpg' );
+	 * ```
+	 * @return array
 	 */
 	public function getImageData( $filename = '' ) {
 
@@ -729,12 +776,12 @@ class File implements SingletonInterface {
 
 		
 	/**
-	 *	EXIF GEO-Daten für Datei holen.
-	 *	Adressdaten werden automatisch ermittelt, falls möglich
-	 *
-	 *	\nn\t3::File()->getLocationData( 'yellowstone.jpg' );
-	 *	
-	 *	@return array
+	 * EXIF GEO-Daten für Datei holen.
+	 * Adressdaten werden automatisch ermittelt, falls möglich
+	 * ```
+	 * \nn\t3::File()->getLocationData( 'yellowstone.jpg' );
+	 * ```
+	 * @return array
 	 */
 	public function getLocationData ( $filename = '' ) {
 
@@ -755,21 +802,21 @@ class File implements SingletonInterface {
 	}
 
 	/**
-	 * 	Berechnet ein Bild über `maxWidth`, `maxHeight` etc.
-	 *	Einfache Version von `\nn\t3::File()->processImage()`
-	 *	Kann verwendet werden, wenn es nur um das Generieren von verkleinerten Bilder geht
-	 *	ohne Berücksichtigung von Korrekturen der Kamera-Ausrichtung etc.
-	 *	
-	 *	Da die Crop-Einstellungen in FileReference und nicht File gespeichert sind,
-	 *	funktioniert `cropVariant` nur bei Übergabe einer `FileReference`.
-	 *	```
-	 *	\nn\t3::File()->process( 'fileadmin/imgs/portrait.jpg', ['maxWidth'=>200] );
-	 *	\nn\t3::File()->process( '1:/bilder/portrait.jpg', ['maxWidth'=>200] );
-	 *	\nn\t3::File()->process( $sysFile, ['maxWidth'=>200] );
-	 *	\nn\t3::File()->process( $sysFile, ['maxWidth'=>200, 'absolute'=>true] );
-	 *	\nn\t3::File()->process( $sysFileReference, ['maxWidth'=>200, 'cropVariant'=>'square'] );
-	 *	```
-	 *	@return string
+	 * Berechnet ein Bild über `maxWidth`, `maxHeight` etc.
+	 * Einfache Version von `\nn\t3::File()->processImage()`
+	 * Kann verwendet werden, wenn es nur um das Generieren von verkleinerten Bilder geht
+	 * ohne Berücksichtigung von Korrekturen der Kamera-Ausrichtung etc.
+	 * 
+	 * Da die Crop-Einstellungen in FileReference und nicht File gespeichert sind,
+	 * funktioniert `cropVariant` nur bei Übergabe einer `FileReference`.
+	 * ```
+	 * \nn\t3::File()->process( 'fileadmin/imgs/portrait.jpg', ['maxWidth'=>200] );
+	 * \nn\t3::File()->process( '1:/bilder/portrait.jpg', ['maxWidth'=>200] );
+	 * \nn\t3::File()->process( $sysFile, ['maxWidth'=>200] );
+	 * \nn\t3::File()->process( $sysFile, ['maxWidth'=>200, 'absolute'=>true] );
+	 * \nn\t3::File()->process( $sysFileReference, ['maxWidth'=>200, 'cropVariant'=>'square'] );
+	 * ```
+	 * @return string
 	 */
 	public function process ( $fileObj = '', $processing = [] ) {
 
@@ -827,15 +874,15 @@ class File implements SingletonInterface {
 	}
 
 	/**
-	 *	Kann direkt nach dem upload_copy_move() aufgerufen werden.
-	 *	Korrigiert die Ausrichtung des Bildes, die evtl. in EXIF-Daten gespeichert wurde.
-	 *	Für einfach `maxWidth`-Anweisungen die Methode `\nn\t3::File()->process()` verwenden.
-	 *	
-	 *	Anweisungen für $processing:
+	 * Kann direkt nach dem upload_copy_move() aufgerufen werden.
+	 * Korrigiert die Ausrichtung des Bildes, die evtl. in EXIF-Daten gespeichert wurde.
+	 * Für einfach `maxWidth`-Anweisungen die Methode `\nn\t3::File()->process()` verwenden.
+	 * 
+	 * Anweisungen für $processing:
 	 *
-	 *	`correctOrientation` =>	Drehung korrigieren (z.B. weil Foto vom Smartphone hochgeladen wurde)
+	 * `correctOrientation` =>	Drehung korrigieren (z.B. weil Foto vom Smartphone hochgeladen wurde)
 	 *
-	 *	@return string
+	 * @return string
 	 */
 	public function processImage ( $filenameOrSysFile = '', $processing = [] ) {
 
@@ -928,27 +975,29 @@ class File implements SingletonInterface {
 	}
 
 	/**
-	 * 	Download einer einzelnen Datei oder eines gezippten Archives.
+	 * Download einer einzelnen Datei oder eines gezippten Archives.
 	 * 
-	 * 	Download als ZIP erfordert die PHP-Extension `gmp`. Falls Extension nicht vorhanden ist,
-	 * 	wird auf `.tar`-Variante ausgewichen. Bei Mac verwendet die Funktion aufgrund von 
-	 * 	Sicherheitswarnungen des Finders grundsätzlich `tar`
+	 * Download als ZIP erfordert die PHP-Extension `gmp`. Falls Extension nicht vorhanden ist,
+	 * wird auf `.tar`-Variante ausgewichen. Bei Mac verwendet die Funktion aufgrund von 
+	 * Sicherheitswarnungen des Finders grundsätzlich `tar`
 	 * 
-	 *	```
-	 *	\nn\t3::File()->download( 'fileadmin/test.pdf' );
-	 *	\nn\t3::File()->download( 'fileadmin/test.pdf', 'download.pdf' );
-	 *	```
-	 *	Wird ein Array übergeben, wird ein tar/zip-Download gestartet.
-	 *	Durch Übergabe eines assoziativen Arrays mit Dateiname als key und Pfad im Archiv als value
-	 *	Kann die Datei- und Ordnerstruktur im zip-Archiv bestimmt werden.
-	 *	```
-	 *	\nn\t3::File()->download( ['fileadmin/test-1.pdf', 'fileadmin/test-2.pdf'], 'archive.zip' );
-	 *	\nn\t3::File()->download( ['fileadmin/test-1.pdf'=>'eins.pdf', 'fileadmin/test-2.pdf'=>'zwei.pdf'], 'archive.zip' );
-	 *	\nn\t3::File()->download( ['fileadmin/test-1.pdf'=>'zip-folder-1/eins.pdf', 'fileadmin/test-2.pdf'=>'zip-folder-2/zwei.pdf'], 'archive.zip' );
-	 *	```
-	 *	@param mixed $files			String oder Array der Dateien, die geladen werden sollen
-	 *	@param mixed $filename		Optional: Dateinamen überschreiben beim Download
-	 * 	@return void
+	 * ```
+	 * \nn\t3::File()->download( 'fileadmin/test.pdf' );
+	 * \nn\t3::File()->download( 'fileadmin/test.pdf', 'download.pdf' );
+	 * ```
+	 * 
+	 * Wird ein Array übergeben, wird ein tar/zip-Download gestartet.
+	 * Durch Übergabe eines assoziativen Arrays mit Dateiname als key und Pfad im Archiv als value
+	 * Kann die Datei- und Ordnerstruktur im zip-Archiv bestimmt werden.
+	 * 
+	 * ```
+	 * \nn\t3::File()->download( ['fileadmin/test-1.pdf', 'fileadmin/test-2.pdf'], 'archive.zip' );
+	 * \nn\t3::File()->download( ['fileadmin/test-1.pdf'=>'eins.pdf', 'fileadmin/test-2.pdf'=>'zwei.pdf'], 'archive.zip' );
+	 * \nn\t3::File()->download( ['fileadmin/test-1.pdf'=>'zip-folder-1/eins.pdf', 'fileadmin/test-2.pdf'=>'zip-folder-2/zwei.pdf'], 'archive.zip' );
+	 * ```
+	 * @param mixed $files			String oder Array der Dateien, die geladen werden sollen
+	 * @param mixed $filename		Optional: Dateinamen überschreiben beim Download
+	 * @return void
 	 */
 	public function download ( $files = null, $filename = null ) {
 

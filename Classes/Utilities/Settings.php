@@ -21,14 +21,15 @@ class Settings implements SingletonInterface {
 	protected $typoscriptSetupCache;
 
 	/**
-	 * 	Holt das TypoScript-Setup und dort den Abschnitt "settings".
-	 * 	Werte aus dem FlexForm werden dabei nicht gemerged.
-	 * 	Alias zu `\nn\t3::Settings()->getSettings()`
-	 *	```
-	 *	\nn\t3::Settings()->get( 'nnsite' );
-	 *	\nn\t3::Settings()->get( 'nnsite', 'path.in.settings' );
-	 *	```
-	 * 	@return array
+	 * Holt das TypoScript-Setup und dort den Abschnitt "settings".
+	 * Werte aus dem FlexForm werden dabei nicht gemerged.
+	 * Alias zu `\nn\t3::Settings()->getSettings()`.
+	 * 
+	 * ```
+	 * \nn\t3::Settings()->get( 'nnsite' );
+	 * \nn\t3::Settings()->get( 'nnsite', 'path.in.settings' );
+	 * ```
+	 * @return array
 	 */
 	public function get( $extensionName = '', $path = '' ) {
 		return $this->getSettings( $extensionName, $path );
@@ -36,15 +37,15 @@ class Settings implements SingletonInterface {
 
 
 	/**
-	 * 	Das Setup für ein bestimmtes Plugin holen.
-	 *	```
-	 *	\nn\t3::Settings()->getPlugin('extname') ergibt TypoScript ab plugin.tx_extname...
-	 *	```
-	 * 	Wichtig: $extensionName nur angeben, wenn das Setup einer FREMDEN Extension
-	 * 	geholt werden soll oder es keinen Controller-Context gibt, weil der Aufruf z.B. 
-	 * 	aus dem Backend gemacht wird
+	 * Das Setup für ein bestimmtes Plugin holen.
+	 * ```
+	 * \nn\t3::Settings()->getPlugin('extname') ergibt TypoScript ab plugin.tx_extname...
+	 * ```
+	 * Wichtig: $extensionName nur angeben, wenn das Setup einer FREMDEN Extension
+	 * geholt werden soll oder es keinen Controller-Context gibt, weil der Aufruf z.B. 
+	 * aus dem Backend gemacht wird
 	 * 
-	 * 	@return array
+	 * @return array
 	 */
 	public function getPlugin($extName = null) {
 
@@ -67,13 +68,13 @@ class Settings implements SingletonInterface {
 	}
 
 	/**
-	 * 	Holt das TypoScript-Setup und dort den Abschnitt "settings".
-	 * 	Werte aus dem FlexForm werden dabei nicht gemerged.
-	 *	```
-	 *	\nn\t3::Settings()->getSettings( 'nnsite' );
-	 *	\nn\t3::Settings()->getSettings( 'nnsite', 'example.path' );
-	 *	```
-	 * 	@return array
+	 * Holt das TypoScript-Setup und dort den Abschnitt "settings".
+	 * Werte aus dem FlexForm werden dabei nicht gemerged.
+	 * ```
+	 * \nn\t3::Settings()->getSettings( 'nnsite' );
+	 * \nn\t3::Settings()->getSettings( 'nnsite', 'example.path' );
+	 * ```
+	 * @return array
 	 */
 	public function getSettings( $extensionName = '', $path = '' ) {
 		$pluginSettings = $this->getPlugin( $extensionName );
@@ -83,24 +84,24 @@ class Settings implements SingletonInterface {
 	}
 
 	/**
-	 * 	Merge aus TypoScript-Setup für ein Plugin und seinem Flexform holen.
-	 * 	Gibt das TypoScript-Array ab `plugin.tx_extname.settings`... zurück.
+	 * Merge aus TypoScript-Setup für ein Plugin und seinem Flexform holen.
+	 * Gibt das TypoScript-Array ab `plugin.tx_extname.settings`... zurück.
 	 *
-	 * 	Wichtig: $extensionName nur angeben, wenn das Setup einer FREMDEN Extension
-	 * 	geholt werden soll oder es keinen Controller-Context gibt, weil der
-	 * 	Aufruf aus dem Backend gemacht wird... sonst werden die FlexForm-Werte nicht berücksichtigt!
+	 * Wichtig: $extensionName nur angeben, wenn das Setup einer FREMDEN Extension
+	 * geholt werden soll oder es keinen Controller-Context gibt, weil der
+	 * Aufruf aus dem Backend gemacht wird... sonst werden die FlexForm-Werte nicht berücksichtigt!
 	 *
-	 * 	Im FlexForm `<settings.flexform.varName>` verwenden!
-	 *	`<settings.flexform.varName>` überschreibt dann `settings.varName` im TypoScript-Setup
+	 * Im FlexForm `<settings.flexform.varName>` verwenden!
+	 * `<settings.flexform.varName>` überschreibt dann `settings.varName` im TypoScript-Setup
 	 * 
-	 *	`$ttContentUidOrSetupArray` kann uid eines `tt_content`-Inhaltselementes sein 
-	 *	oder ein einfaches Array zum Überschreiben der Werte aus dem TypoScript / FlexForm
-	 *	```
-	 *	\nn\t3::Settings()->getMergedSettings();
-	 *	\nn\t3::Settings()->getMergedSettings( 'nnsite' );
-	 *	\nn\t3::Settings()->getMergedSettings( $extensionName, $ttContentUidOrSetupArray );
-	 *	```
-	 * 	@return array
+	 * `$ttContentUidOrSetupArray` kann uid eines `tt_content`-Inhaltselementes sein 
+	 * oder ein einfaches Array zum Überschreiben der Werte aus dem TypoScript / FlexForm
+	 * ```
+	 * \nn\t3::Settings()->getMergedSettings();
+	 * \nn\t3::Settings()->getMergedSettings( 'nnsite' );
+	 * \nn\t3::Settings()->getMergedSettings( $extensionName, $ttContentUidOrSetupArray );
+	 * ```
+	 * @return array
 	 */
 	public function getMergedSettings( $extensionName = null, $ttContentUidOrSetupArray = [] ) {
 
@@ -136,13 +137,13 @@ class Settings implements SingletonInterface {
 
 
 	/**
-	 * 	Das komplette TypoScript Setup holen, als einfaches Array - ohne "."-Syntax
-	 * 	Funktioniert sowohl im Frontend als auch Backend, mit und ohne übergebener pid
-	 *	```
-	 *	\nn\t3::Settings()->getFullTyposcript();
-	 *	\nn\t3::Settings()->getFullTyposcript( $pid );
-	 *	```
-	 * 	@return array
+	 * Das komplette TypoScript Setup holen, als einfaches Array - ohne "."-Syntax
+	 * Funktioniert sowohl im Frontend als auch Backend, mit und ohne übergebener pid
+	 * ```
+	 * \nn\t3::Settings()->getFullTyposcript();
+	 * \nn\t3::Settings()->getFullTyposcript( $pid );
+	 * ```
+	 * @return array
 	 */
 	public function getFullTyposcript( $pid = null ) {
 		if ($this->typoscriptSetupCache) return $this->typoscriptSetupCache;
@@ -159,11 +160,11 @@ class Settings implements SingletonInterface {
 	}
 
 	/**
-	 * 	TemplateService instanziieren, TypoScript-Config und Setup parsen.
-	 * 	Interne Funktion – nicht zur Verwendung gedacht. 
-	 * 	`getFullTyposcript` nutzen.
-	 * 	
-	 * 	@return object
+	 * TemplateService instanziieren, TypoScript-Config und Setup parsen.
+	 * Interne Funktion – nicht zur Verwendung gedacht. 
+	 * `getFullTyposcript` nutzen.
+	 * 
+	 * @return object
 	 */
 	public function getTyposcriptObject ( $pid = null ) {
 
@@ -183,7 +184,7 @@ class Settings implements SingletonInterface {
 
 	/**
 	 * Setup von einem gegebenen Pfad holen, z.B. 'plugin.tx_example.settings'
-	 *	```
+	 * ```
 	 * \nn\t3::Settings()->getFromPath('plugin.pfad');
 	 * \nn\t3::Settings()->getFromPath('L', \nn\t3::Request()->GP());
 	 * \nn\t3::Settings()->getFromPath('a.b', ['a'=>['b'=>1]]);
@@ -219,18 +220,18 @@ class Settings implements SingletonInterface {
 	}
 	
 	/**
-	 *	Aktuelle (ERSTE) StoragePid für das aktuelle Plugin holen.
-	 *	Gespeichert im TypoScript-Setup der Extension unter
-	 *	`plugin.tx_extname.persistence.storagePid` bzw. im
-	 *	FlexForm des Plugins auf der jeweiligen Seite.
+	 * Aktuelle (ERSTE) StoragePid für das aktuelle Plugin holen.
+	 * Gespeichert im TypoScript-Setup der Extension unter
+	 * `plugin.tx_extname.persistence.storagePid` bzw. im
+	 * FlexForm des Plugins auf der jeweiligen Seite.
 	 *
-	 *	WICHTIG: Merge mit gewählter StoragePID aus dem FlexForm
-	 *	passiert nur, wenn `$extName`leer gelassen wird.
-	 *	```
-	 *	\nn\t3::Settings()->getStoragePid();			// 123
-	 *	\nn\t3::Settings()->getStoragePid('nnsite');	// 466
-	 *	```
-	 *	@return string
+	 * WICHTIG: Merge mit gewählter StoragePID aus dem FlexForm
+	 * passiert nur, wenn `$extName`leer gelassen wird.
+	 * ```
+	 * \nn\t3::Settings()->getStoragePid();			// 123
+	 * \nn\t3::Settings()->getStoragePid('nnsite');	// 466
+	 * ```
+	 * @return string
 	 */
 	public function getStoragePid ( $extName = null ) {
 		$pids = $this->getStoragePids( $extName );
@@ -310,17 +311,17 @@ class Settings implements SingletonInterface {
 	}
 
 	/**
-	 * 	Page-Configuration holen
-	 *	```
-	 *	\nn\t3::Settings()->getPageConfig();
-	 *	\nn\t3::Settings()->getPageConfig('RTE.default.preset');
-	 *	\nn\t3::Settings()->getPageConfig( $tsPath, $pid );
-	 *	```
+	 * Page-Configuration holen
+	 * ```
+	 * \nn\t3::Settings()->getPageConfig();
+	 * \nn\t3::Settings()->getPageConfig('RTE.default.preset');
+	 * \nn\t3::Settings()->getPageConfig( $tsPath, $pid );
+	 * ```
 	 * Existiert auch als ViewHelper:
 	 * ```
 	 * {nnt3:ts.page(path:'pfad.zur.pageconfig')}
 	 * ```
-	 * 	@return array
+	 * @return array
 	 */
 	public function getPageConfig( $tsPath = '', $pid = null ) {
 		if (TYPO3_MODE == 'FE') {
@@ -347,15 +348,15 @@ class Settings implements SingletonInterface {
 	}
 
 	/**
-	 * 	Extension-Konfiguration holen.
-	 * 	Kommen aus der `LocalConfiguration.php`, werden über die Extension-Einstellungen
-	 * 	im Backend bzw. ext_conf_template.txt definiert
+	 * Extension-Konfiguration holen.
+	 * Kommen aus der `LocalConfiguration.php`, werden über die Extension-Einstellungen
+	 * im Backend bzw. ext_conf_template.txt definiert
 	 * 
-	 * 	Früher: `$GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['your_extension_key']`
-	 *	```
-	 * 	\nn\t3::Settings()->getExtConf( 'extname' );
-	 *	```
-	 * 	@return mixed
+	 * Früher: `$GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['your_extension_key']`
+	 * ```
+	 * \nn\t3::Settings()->getExtConf( 'extname' );
+	 * ```
+	 * @return mixed
 	 */
 	public function getExtConf( $extName = '' ) {
 		if (\nn\t3::t3Version() < 9) return unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf'][$extName]);
