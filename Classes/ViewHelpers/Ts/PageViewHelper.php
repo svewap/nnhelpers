@@ -7,9 +7,15 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\Traits\CompileWithRenderStatic;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 /**
- * 	Wert aus der PageConfig holen.
- * 	{nnt3:ts.page(path:'pfad.zum.page.config')}
- * 	{nnt3:ts.page(path:'pfad.zum.page', key:'config')}
+ * Wert aus der PageTSconfig holen.
+ * 
+ * Einfacher und direkter Zugriff aus dem Fluid-Template heraus - unabhängig von der Extension, die das Template rendert.
+ * ```
+ * {nnt3:ts.page(path:'pfad.zum.page.config')}
+ * {nnt3:ts.page(path:'pfad.zum.page', key:'config')}
+ * {nnt3:ts.page(path:'pfad.zum.page.{dynamicKey}.whatever')}
+ * ```
+ * @return mixed
  */
 class PageViewHelper extends AbstractViewHelper {
 

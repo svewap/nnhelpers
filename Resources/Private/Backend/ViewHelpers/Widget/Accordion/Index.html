@@ -1,5 +1,6 @@
 
 
+
 <article class="{class}">
     <div class="card">
         <div class="card-header p-0">
@@ -14,7 +15,7 @@
         </div>
         <div id="{uniqid}" class="collapse">
             <div class="card-body p-text">
-                <f:renderChildren />
+                {renderedChildren->f:format.raw()}
             </div>
         </div>        
     </div>

@@ -9,7 +9,7 @@
 .. _start:
 
 =============================================================
-99° Helpers (nnhelpers)
+99° Helpers for Typo3 (nnhelpers)
 =============================================================
 
 :Version:
@@ -65,6 +65,8 @@ Just click on "Edit me on GitHub" on the top right to submit your change request
    Screenshots/Index
    Use-Cases/Index
    Helpers/Index
+   ViewHelpers/Index
+   AdditionalClasses/Index
    KnownProblems/Index
    Changelog/Index
    Sitemap

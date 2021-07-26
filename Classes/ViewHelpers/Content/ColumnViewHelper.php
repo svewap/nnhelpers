@@ -12,6 +12,7 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
  * {nnt3:content.column(colPos:110)}
  * {nnt3:content.column(colPos:110, pid:99)}
  * ```
+ * @return string
  */
 class ColumnViewHelper extends AbstractViewHelper {
 

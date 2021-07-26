@@ -46,7 +46,7 @@ class Environment implements SingletonInterface {
 	}
 
 	/**
-	 * 	`config.baseURL` holen z.B. https://www.webseite.de/
+	 *  Gibt die baseUrl (`config.baseURL`) zurück, inkl. http(s) Protokoll z.B. https://www.webseite.de/
 	 *	```
 	 *	\nn\t3::Environment()->getBaseURL();
 	 *	```

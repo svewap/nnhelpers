@@ -5,6 +5,18 @@ use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3Fluid\Fluid\Core\ViewHelper\Traits\CompileWithRenderStatic;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
+/**
+ * Aktuelle Page-Title setzen.
+ * 
+ * Andert das `<title>`-Tag der aktuellen Seite.
+ * 
+ * Funktioniert nicht, wenn `EXT:advancedtitle` aktiviert ist!
+ * 
+ * ```
+ * {nnt3:page.title(title:'Seitentitel')}
+ * {entry.title->nnt3:page.title()}
+ * ```
+ */
 class TitleViewHelper extends AbstractViewHelper {
 
 	use CompileWithRenderStatic;

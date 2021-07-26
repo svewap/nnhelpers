@@ -2,9 +2,49 @@
 namespace Nng\Nnhelpers\Helpers;
 
 /**
- * 	Klon von:
- * 	https://raw.githubusercontent.com/yiisoft/yii/1.1.14/framework/web/helpers/CJSON.php
+ * Das Script hilft beim Konvertieren und Parsen von JavaScript-Objekt-Strings in ein Array.
+ * ```
+ * $data = \Nng\Nnhelpers\Helpers\JsonHelper::decode( "{title:'Test', cat:[2,3,4]}" );
+ * print_r($data);
+ * ```
+ * Der Helper ermöglicht es, im TypoScript die JavaScript-Object-Schreibweise zu nutzen und über den `{nnt3:parse.json()}` ViewHelper in ein Array zu konvertieren. 
+ * Das ist praktisch, wenn z.B. Slider-Konfigurationen oder andere JavaScript-Objekte im TypoScript definiert werden sollen, um sie später in JavaScript zu nutzen.
  * 
+ * Anderes Anwendungsbeispiel: Man möchte die "normalen" JS-Syntax in einer `.json`-Datei nutzen, statt dem JSON-Syntax. 
+ * Schauen wir uns ein Beispiel an. Dieser Text wurde in eine Textdatei geschrieben und soll per PHP geparsed werden:
+ * ```
+ * // Inhalte einer Textdatei.
+ * {
+ * 	beispiel: ['eins', 'zwei', 'drei']
+ * }
+ * ```
+ * PHP würde bei diesem Beispiel mit `json_decode()` einen Fehler melden: Der String enthält Kommentare, Umbrüche und die Keys und Values sind nicht in doppelte Anführungszeichen eingeschlossen. Der JsonHelper bzw. der ViewHelper `$jsonHelper->decode()` kann es aber problemlos umwandeln.
+ * 
+ * So könnte man im TypoScript Setup ein JS-Object definieren:
+ * ```
+ * // Inhalt im TS-Setup
+ * my_conf.data (
+ *   {
+ *      dots: true,
+ *      sizes: [1, 2, 3]
+ *   }
+ * )
+ * ```
+ * Die Mischung irritiert ein wenig: `my_conf.data (...)` öffnet im TypoScript einen Abschnitt für mehrzeiligen Code.
+ * Zwischen den `(...)` steht dann ein "normales" JavaScript-Object. 
+ * Das lässt sich im Fluid-Template dann einfach als Array nutzen:
+ * ```
+ * {nnt3:ts.setup(path:'my_conf.data')->f:variable(name:'myConfig')}
+ * {myConfig->nnt3:parse.json()->f:debug()}
+ * ```
+ * Oder als data-Attribut an ein Element hängen, um es später per JavaScript zu parsen:
+ * ```
+ * {nnt3:ts.setup(path:'my_conf.data')->f:variable(name:'myConfig')}
+ * <div data-config="{myConfig->nnt3:parse.json()->nnt3:format.attrEncode()}">...</div>
+ * ```
+ * 
+ * Dieses Script basiert überwiegend auf der Arbeit von https://bit.ly/3eZuNu2 und
+ * wurde von uns für PHP 7+ optimiert.Alles an Ruhm und Ehre bitte in diese Richtung.
  */
 class JsonHelper {
 	
@@ -34,188 +74,15 @@ class JsonHelper {
 	const JSON_IN_CMT = 16;
 
 	/**
-	 * Encodes an arbitrary variable into JSON format
-	 *
-	 * @param mixed $var any number, boolean, string, array, or object to be encoded.
-	 * If var is a string, it will be converted to UTF-8 format first before being encoded.
-	 * @return string JSON string representation of input var
+	 * Konvertiert eine Variable ins JSON Format.
+	 * Relikt der ursprünglichen Klasse, vermutlich aus einer Zeit als es `json_encode()` noch nicht gab.
+	 * ```
+	 * \Nng\Nnhelpers\Helpers\JsonHelper::encode(['a'=>1, 'b'=>2]);
+	 * ```
+	 * @return string;
 	 */
-	public static function encode($var)
-	{
-		switch (gettype($var)) {
-			case 'boolean':
-				return $var ? 'true' : 'false';
-
-			case 'NULL':
-				return 'null';
-
-			case 'integer':
-				return (int) $var;
-
-			case 'double':
-			case 'float':
-				return str_replace(',','.',(float)$var); // locale-independent representation
-
-			case 'string':
-				if (($enc=strtoupper(Yii::app()->charset))!=='UTF-8')
-					$var=iconv($enc, 'UTF-8', $var);
-
-				if(function_exists('json_encode'))
-					return json_encode($var);
-
-				// STRINGS ARE EXPECTED TO BE IN ASCII OR UTF-8 FORMAT
-				$ascii = '';
-				$strlen_var = strlen($var);
-
-			   /*
-				* Iterate over every character in the string,
-				* escaping with a slash or encoding to UTF-8 where necessary
-				*/
-				for ($c = 0; $c < $strlen_var; ++$c) {
-
-					$ord_var_c = ord($var[$c]);
-
-					switch (true) {
-						case $ord_var_c == 0x08:
-							$ascii .= '\b';
-							break;
-						case $ord_var_c == 0x09:
-							$ascii .= '\t';
-							break;
-						case $ord_var_c == 0x0A:
-							$ascii .= '\n';
-							break;
-						case $ord_var_c == 0x0C:
-							$ascii .= '\f';
-							break;
-						case $ord_var_c == 0x0D:
-							$ascii .= '\r';
-							break;
-
-						case $ord_var_c == 0x22:
-						case $ord_var_c == 0x2F:
-						case $ord_var_c == 0x5C:
-							// double quote, slash, slosh
-							$ascii .= '\\'.$var[$c];
-							break;
-
-						case (($ord_var_c >= 0x20) && ($ord_var_c <= 0x7F)):
-							// characters U-00000000 - U-0000007F (same as ASCII)
-							$ascii .= $var[$c];
-							break;
-
-						case (($ord_var_c & 0xE0) == 0xC0):
-							// characters U-00000080 - U-000007FF, mask 110XXXXX
-							// see http://www.cl.cam.ac.uk/~mgk25/unicode.html#utf-8
-							$char = pack('C*', $ord_var_c, ord($var[$c+1]));
-							$c+=1;
-							$utf16 =  self::utf8ToUTF16BE($char);
-							$ascii .= sprintf('\u%04s', bin2hex($utf16));
-							break;
-
-						case (($ord_var_c & 0xF0) == 0xE0):
-							// characters U-00000800 - U-0000FFFF, mask 1110XXXX
-							// see http://www.cl.cam.ac.uk/~mgk25/unicode.html#utf-8
-							$char = pack('C*', $ord_var_c,
-										 ord($var[$c+1]),
-										 ord($var[$c+2]));
-							$c+=2;
-							$utf16 = self::utf8ToUTF16BE($char);
-							$ascii .= sprintf('\u%04s', bin2hex($utf16));
-							break;
-
-						case (($ord_var_c & 0xF8) == 0xF0):
-							// characters U-00010000 - U-001FFFFF, mask 11110XXX
-							// see http://www.cl.cam.ac.uk/~mgk25/unicode.html#utf-8
-							$char = pack('C*', $ord_var_c,
-										 ord($var[$c+1]),
-										 ord($var[$c+2]),
-										 ord($var[$c+3]));
-							$c+=3;
-							$utf16 = self::utf8ToUTF16BE($char);
-							$ascii .= sprintf('\u%04s', bin2hex($utf16));
-							break;
-
-						case (($ord_var_c & 0xFC) == 0xF8):
-							// characters U-00200000 - U-03FFFFFF, mask 111110XX
-							// see http://www.cl.cam.ac.uk/~mgk25/unicode.html#utf-8
-							$char = pack('C*', $ord_var_c,
-										 ord($var[$c+1]),
-										 ord($var[$c+2]),
-										 ord($var[$c+3]),
-										 ord($var[$c+4]));
-							$c+=4;
-							$utf16 = self::utf8ToUTF16BE($char);
-							$ascii .= sprintf('\u%04s', bin2hex($utf16));
-							break;
-
-						case (($ord_var_c & 0xFE) == 0xFC):
-							// characters U-04000000 - U-7FFFFFFF, mask 1111110X
-							// see http://www.cl.cam.ac.uk/~mgk25/unicode.html#utf-8
-							$char = pack('C*', $ord_var_c,
-										 ord($var[$c+1]),
-										 ord($var[$c+2]),
-										 ord($var[$c+3]),
-										 ord($var[$c+4]),
-										 ord($var[$c+5]));
-							$c+=5;
-							$utf16 = self::utf8ToUTF16BE($char);
-							$ascii .= sprintf('\u%04s', bin2hex($utf16));
-							break;
-					}
-				}
-
-				return '"'.$ascii.'"';
-
-			case 'array':
-			   /*
-				* As per JSON spec if any array key is not an integer
-				* we must treat the the whole array as an object. We
-				* also try to catch a sparsely populated associative
-				* array with numeric keys here because some JS engines
-				* will create an array with empty indexes up to
-				* max_index which can cause memory issues and because
-				* the keys, which may be relevant, will be remapped
-				* otherwise.
-				*
-				* As per the ECMA and JSON specification an object may
-				* have any string as a property. Unfortunately due to
-				* a hole in the ECMA specification if the key is a
-				* ECMA reserved word or starts with a digit the
-				* parameter is only accessible using ECMAScript's
-				* bracket notation.
-				*/
-
-				// treat as a JSON object
-				if (is_array($var) && count($var) && (array_keys($var) !== range(0, sizeof($var) - 1))) {
-					return '{' .
-						   join(',', array_map(array('CJSON', 'nameValue'),
-											   array_keys($var),
-											   array_values($var)))
-						   . '}';
-				}
-
-				// treat it like a regular array
-				return '[' . join(',', array_map(array('CJSON', 'encode'), $var)) . ']';
-
-			case 'object':
-				if ($var instanceof Traversable)
-				{
-					$vars = array();
-					foreach ($var as $k=>$v)
-						$vars[$k] = $v;
-				}
-				else
-					$vars = get_object_vars($var);
-				return '{' .
-					   join(',', array_map(array('CJSON', 'nameValue'),
-										   array_keys($vars),
-										   array_values($vars)))
-					   . '}';
-
-			default:
-				return '';
-		}
+	public static function encode($var) {
+		return json_encode( $var );
 	}
 
 	/**
@@ -262,6 +129,13 @@ class JsonHelper {
 		return trim($str);
 	}
 
+	/**
+	 * Entfernt Kommentare aus dem Code und parsed den String.
+	 * ```
+	 * \Nng\Nnhelpers\Helpers\JsonHelper::removeCommentsAndDecode( "// Kommentar\n{title:'Test', cat:[2,3,4]}" )
+	 * ```
+	 * @return array|string
+	 */
 	public static function removeCommentsAndDecode($str, $useArray=true) {
 		$str = preg_replace('/\'([^\']*)(\/\/)([^\']*)\'/', '\'\1\\/\\/\3\'', $str);
 		$str = preg_replace('/"([^"]*)(\/\/)([^"]*)"/', '"\1\\/\\/\3"', $str);
@@ -271,23 +145,22 @@ class JsonHelper {
 	}
 
 	/**
-	 * decodes a JSON string into appropriate variable
-	 *
-	 * @param string $str  JSON-formatted string
-	 * @param boolean $useArray  whether to use associative array to represent object data
-	 * @return mixed   number, boolean, string, array, or object corresponding to given JSON input string.
-	 *    Note that decode() always returns strings in ASCII or UTF-8 format!
-	 * @access   public
+	 * Wandelt einen JS-Object-String in ein Array um.
+	 * ```
+	 * $data = \Nng\Nnhelpers\Helpers\JsonHelper::decode( "{title:'Test', cat:[2,3,4]}" );
+	 * print_r($data);
+	 * ```
+	 * Die PHP-Funktion `json_decode()` funktioniert nur bei der JSON-Syntax: `{"key":"value"}`. Im JSON sind weder Zeilenumbrüche, noch Kommentare erlaubt.
+	 * Mit dieser Funktion können auch Strings in der JavaScript-Schreibweise geparsed werden.
+	 * 
+	 * @return array|string
 	 */
 	public static function decode($str, $useArray=true)
 	{
+		$str = trim($str);
 		if(function_exists('json_decode'))
 		{
 			$json = json_decode($str,$useArray);
-
-			// based on investigation, native fails sometimes returning null.
-			// see: http://gggeek.altervista.org/sw/article_20070425.html
-			// As of PHP 5.3.6 it still fails on some valid JSON strings
 			if($json !== null)
 				return $json;
 		}

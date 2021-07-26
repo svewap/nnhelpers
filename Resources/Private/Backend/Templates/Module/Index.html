@@ -45,10 +45,8 @@
 		</nnt3:widget.accordion>            
 
 		<nnt3:widget.accordion title="ViewHelpers" icon="fas fa-eye">
-			<nnt3:translate id="overalls-20" extensionName="nnhelpers" enableApi="{updateTranslation}" translate="1" targetLang="{docLang}">
-				{f:render(partial:'ViewHelpers', arguments:_all)}
-			</nnt3:translate>
-		</nnt3:widget.accordion>            
+			{f:render(partial:'ViewHelpers', arguments:_all)}
+		</nnt3:widget.accordion>
 
 		<nnt3:widget.accordion title="FlexForm Helpers" icon="fas fa-code">
 			<nnt3:translate id="overalls-30" extensionName="nnhelpers" enableApi="{updateTranslation}" translate="1" targetLang="{docLang}">
@@ -70,41 +68,16 @@
 
 	</section>
 
+	<div class="classes-utilities mb-4">
+		<f:alias map="{doc:documentation, icon:'fas fa-cube'}">
+			{f:render(partial:'DocSection', arguments:_all)}
+		</f:alias>
+	</div>
 
-
-
-	<div id="classes-accordion">
-
-		<f:for each="{documentation}" as="class" key="className" iteration="i">
-
-			<nnt3:widget.accordion title="{className}" class="class-card" icon="fas fa-cube">
-				
-				<f:if condition="{class.comment}">
-					<div class="class-comment mb-4">
-						<p>{class.comment->f:format.raw()->f:format.nl2br()}</p>
-					</div>
-				</f:if>
-
-				<f:for each="{class.methods}" as="method" key="methodName" iteration="j">
-
-					<nnt3:widget.accordion title="<strong>{methodName}</strong>({method.paramString})" class="method">
-						{method.comment->f:format.raw()->f:format.nl2br()}
-
-						<a href="#" class="btn btn-sm btn-default mt-3" data-toggle="collapse" data-target="#sc-{i.index}-{j.index}">
-							<i class="fas fa-brackets-curly"></i> Quelltext
-						</a>
-						<div id="sc-{i.index}-{j.index}" class="collapse">
-							<pre class="mt-4">{method.sourceCode}</pre>
-						</div>
-					</nnt3:widget.accordion>
-
-				</f:for>
-
-			</nnt3:widget.accordion>            
-
-
-		</f:for>
-
+	<div class="classes-additional mb-4">
+		<f:alias map="{doc:additional, icon:'fas fa-life-ring'}">
+			{f:render(partial:'DocSection', arguments:_all)}
+		</f:alias>
 	</div>
 
 </f:section>

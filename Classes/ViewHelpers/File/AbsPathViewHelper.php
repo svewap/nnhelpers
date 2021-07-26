@@ -7,8 +7,11 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\Traits\CompileWithRenderStatic;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 /**
- * 	Absolute URL zu einer Datei holen.
- * 	{nnt3:file.absPath(file:'pfad/zum/bild.jpg')}
+ * Absolute URL zu einer Datei holen.
+ * ```
+ * {nnt3:file.absPath(file:'pfad/zum/bild.jpg')}
+ * ```
+ * @return string
  */
 class AbsPathViewHelper extends AbstractViewHelper {
 

@@ -7,10 +7,12 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\Traits\CompileWithRenderStatic;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 /**
- * Konvertiert eine youTube-URL in die watch-Variante, z.B.
- * für die Einbindung in ein iFrame.
+ * Konvertiert eine youTube-URL in die watch-Variante, z.B. für die Einbindung in ein iFrame.
  * ```
  * {my.videourl->nnt3:video.embedUrl()}
+ * ```
+ * ```
+ * <iframe src="{my.videourl->nnt3:video.embedUrl()}"></iframe>
  * ```
  */
 class EmbedUrlViewHelper extends AbstractViewHelper {

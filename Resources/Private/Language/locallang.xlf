@@ -36,6 +36,9 @@
 			<trans-unit id="ts-acc-01" xml:space="preserve">
 				<source>TypoScript Setup for the Page-Template</source>
 			</trans-unit>
+			<trans-unit id="sourcecode" xml:space="preserve">
+				<source>view source</source>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>

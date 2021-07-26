@@ -3,7 +3,7 @@
 .. _Helpers:
 
 ============
-List of all available Helpers
+Helpers Index
 ============
 
 

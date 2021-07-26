@@ -7,8 +7,16 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\Traits\CompileWithRenderStatic;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 /**
- * 	Prüft, ob eine Datei existiert.
- * 	{nnt3:file.exists(file:'pfad/zum/bild.jpg')}
+ * Prüft, ob eine Datei existiert.
+ * ```
+ * {nnt3:file.exists(file:'pfad/zum/bild.jpg')}
+ * ```
+ * ```
+ * <f:if condition="!{nnt3:file.exists(file:'pfad/zum/bild.jpg')}">
+ *   Wo ist das Bild hin?
+ * </f:if>
+ * ```
+ * @return boolean
  */
 class ExistsViewHelper extends AbstractViewHelper {
 

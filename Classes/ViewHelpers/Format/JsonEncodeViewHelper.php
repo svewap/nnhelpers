@@ -8,7 +8,13 @@ use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3Fluid\Fluid\Core\ViewHelper\Traits\CompileWithRenderStatic;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
-
+/**
+ * Wandelt ein Array oder Object ins JSON-Format um.
+ * ```
+ * {some.object->nnt3:format.jsonEncode()}
+ * ```
+ * @return string
+ */
 class JsonEncodeViewHelper extends AbstractViewHelper {
 
 	use CompileWithRenderStatic;

@@ -7,9 +7,15 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\Traits\CompileWithRenderStatic;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 /**
- * 	Wert aus dem TypoScript-Setup holen.
- * 	{nnt3:ts.setup(path:'pfad.zum.typoscript.setup')}
- * 	{nnt3:ts.setup(path:'pfad.zum.typoscript', key:'setup')}
+ * Wert aus dem TypoScript-Setup holen.
+ * 
+ * Einfacher und direkter Zugriff aus dem Fluid-Template heraus - unabhängig von der Extension, die das Template rendert.
+ * ```
+ * {nnt3:ts.setup(path:'pfad.zum.typoscript.setup')}
+ * {nnt3:ts.setup(path:'pfad.zum.typoscript', key:'setup')}
+ * {nnt3:ts.setup(path:'pfad.zum.typoscript.{dynamicKey}.whatever')}
+ * ```
+ * @return mixed
  */
 class SetupViewHelper extends AbstractViewHelper {
 

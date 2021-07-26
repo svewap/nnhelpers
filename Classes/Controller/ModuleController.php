@@ -3,6 +3,7 @@
 namespace Nng\Nnhelpers\Controller;
 
 use Nng\Nnhelpers\Domain\Repository\EntryRepository;
+use Nng\Nnhelpers\Helpers\DocumentationHelper;
 
 use TYPO3\CMS\Extbase\Mvc\View\ViewInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -21,6 +22,7 @@ class ModuleController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControlle
 	 * 	@var array
 	 */
 	protected $sourceCodeCache = [];
+	protected $maxTranslationsPerLoad = 10;
 
 
 	/**
@@ -73,10 +75,17 @@ class ModuleController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControlle
 		require_once( $autoload );
 
 		$doc = $this->generateDocumentation();
+		$docViewhelper = $this->generateViewhelperDocumentation();
+		$docAdditional = $this->generateAdditionalClassesDocumentation();
+
 		$this->localizeDocumentation( $doc, $beUserLang );
+		$this->localizeDocumentation( $docViewhelper, $beUserLang );
+		$this->localizeDocumentation( $docAdditional, $beUserLang );
 
 		$this->view->assignMultiple([
 			'documentation' 	=> $doc,
+			'viewhelpers'		=> $docViewhelper,
+			'additional'		=> $docAdditional,
 			'docLang' 			=> $beUserLang,
 			'docSrcLang' 		=> $sourceLang,
 			'updateTranslation' => $args['updateTranslation'] ?? false,
@@ -93,171 +102,89 @@ class ModuleController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControlle
 	 */
 	public function generateDocumentation () {
 
-		$pathUtilities = \nn\t3::Environment()->extPath('nnhelpers') . 'Classes/Utilities/';
-		$classList = [];
+		$path = \nn\t3::Environment()->extPath('nnhelpers') . 'Classes/Utilities/';
+		$classes = DocumentationHelper::parseFolder( $path );
 
-		$utilities = glob($pathUtilities . '*.php');
+		$strip = ['Nng\Nnhelpers\Utilities\\'];
 
-		// Durch alle php-Dateien im Verzeichnis Classes/Utilities/ gehen
-		foreach ($utilities as $path) {
-
-			// Name der Klasse herausfinden
-			$className = pathinfo($path, PATHINFO_FILENAME);
-			$classNamespace = '\Nng\Nnhelpers\Utilities\\'.$className;
-
-			$reflector = new \ReflectionClass( $classNamespace );
-
-			$classComment = $this->parseCommentString($reflector->getDocComment());
-
-			// Durch alle Methoden der Klasse gehen
-			foreach ($reflector->getMethods(\ReflectionMethod::IS_PUBLIC) as $method) {
-
-				if ($method->class == $reflector->getName()) {
-
-					if (strpos($method->name, '__') === false) {
-						$comment = $this->parseCommentString($method->getDocComment());
-
-						$params = $method->getParameters();
-						$paramInfo = [];
-						$paramString = [];
-						foreach ($params as $param) {
-							
-							$defaultValue = $param->isOptional() ? $param->getDefaultValue() : ''; 
-							if (is_string($defaultValue)) $defaultValue = "'{$defaultValue}'";
-							if ($defaultValue === false) $defaultValue = 'false';
-							if ($defaultValue === true) $defaultValue = 'true';
-							if (is_null($defaultValue)) $defaultValue = 'NULL';
-							if ($defaultValue == 'Array' || is_array($defaultValue)) $defaultValue = '[]';
-
-							$paramInfo[$param->getName()] = $defaultValue;
-							$paramString[] = "\${$param->getName()}" . ($param->isOptional() ? " = {$defaultValue}" : '');
-						}
-			
-						if (!$classList[$className]) {
-							$classList[$className] = [
-								'comment'	=> $classComment,
-								'methods'	=> [],
-							];
-						}
-						$classList[$className]['methods'][$method->name] = [
-							'comment' 		=> $comment,
-							'paramInfo'		=> $paramInfo,
-							'paramString'	=> join(', ', $paramString),
-							'sourceCode'	=> $this->getSourceCode($method->class, $method->name),
-						];
-					}
-				}
-			}						
-		}
-
-		ksort($classList);
-		foreach ($classList as $k=>$v) {
-			ksort($v);
-			$classList[$k] = $v;
-		}
-
-		return $classList;
-	}
-
-
-	/**
-	 * 	Kommentar-String zu lesbarem HTML-String konvertieren
-	 * 	Kommentare können Markdown verwenden.
-	 * 	Entfernt '*' und '/*' etc.
-	 * 
-	 * 	@return string
-	 */
-	public function parseCommentString ( $comment = '', $encode = true ) {
-
-		// Öffnenden und schließenden Kommentar löschen
-		$comment = trim(str_replace(['/**', '/*', '*/'], '', $comment));
-
-		// in Zeilen-Array konvertieren
-		$lines = \nn\t3::Arrays($comment)->trimExplode("\n");
-		$isCode = false;
-
-		foreach ($lines as $k=>$line) {
-
-			// \nn\t3...; immer als Code formatieren
-			//$line = preg_replace("/((.*)(t3:)(.*)(;))/", '`\1`', $line);
-			$line = preg_replace("/((.*)(@param)([^\$]*)([\$a-zA-Z]*))(.*)/", '`\1`\6', $line);
-			$line = preg_replace("/((.*)(@return)(.*))/", '`\1`', $line);
-
-			// Leerzeichen nach '* ' entfernen
-			$line = preg_replace("/(\*)(\s)(.*)/", '\3', $line);
-			$line = preg_replace("/`([\s]*)/", '`', $line, 1);
-			$line = str_replace('*', '', $line);
-
-			if (!$isCode) {
-				$line = trim($line);
+		foreach ($classes as $className=>&$info) {
+			$info = array_merge($info, $this->createNamespacesForClassname($className, $strip));
+			foreach ($info['methods'] as $methodName=>&$methodInfo) {
+				$methodInfo = array_merge($methodInfo, $this->createNamespacesForClassname($methodName, $strip));
 			}
-
-			if (strpos($line, '```') !== false) $isCode = !$isCode;
-
-			$lines[$k] = $line;
-		}
-
-		$comment = trim(join("\n", $lines));
-		if (!$encode) return $comment;
-
-		$comment = htmlspecialchars( $comment );
-
-		$parsedown = new \Parsedown();
-		$result = $parsedown->text( $comment );
-		$result = str_replace(['&amp;amp;', '&amp;gt;', '&amp;quot;', '&amp;apos;', '&amp;lt;'], ['&amp;', '&gt;', '&quot;', "&apos;", '&lt;'], $result);
-
-		if (!trim($result)) return '';
- 
-		//return \nn\t3::Dom( $result )->find();
-
-		$dom = \DOMDocument::loadXML( '<t>' . $result . '</t>', LIBXML_NOENT | LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_XINCLUDE | LIBXML_NOERROR | LIBXML_NOWARNING );
-		if (!$dom) return $result;
-
-		if ($pre = $dom->getElementsByTagName('pre'));
-		if (!$pre) return $result;
-
-		foreach ($pre as $el) {
-			if ($code = $el->getElementsByTagName('code')) {
-				foreach ($code as $codeEl) {
-					$codeEl->setAttribute('class', 'language-php');
-				}
-			}			
-		}
-
-		$html = $dom->saveHTML( $dom->getElementsByTagName('t')->nodeValue );
-		return str_replace(['<t>', '</t>'], '', $html);
-	}
-
-
-	/**
-	 * 	Quelltext einer Methode lesen
-	 * 
-	 *	@return string 	
-	 */
-	function getSourceCode($class, $method){
-
-		$func = new \ReflectionMethod($class, $method);
-	
-		$f = $func->getFileName();
-		$start_line = $func->getStartLine() - 1;
-		$end_line = $func->getEndLine();
-		$length = $end_line - $start_line;
-	
-		if (!$this->sourceCodeCache[$f]) {
-			$source = file($f);
-			$source = implode('', array_slice($source, 0, count($source)));
-			$source = preg_split("/".PHP_EOL."/", $source);
-			$this->sourceCodeCache[$f] = $source;
 		}
 		
-		$source = $this->sourceCodeCache[$f];
-		$body = "\n";
-		for ($i=$start_line; $i<$end_line; $i++) {
-			$body.="{$source[$i]}\n";
+		return $classes;
+	}
+
+	/**
+	 * Dokumentation der ViewHelper generieren
+	 * Mit `@hideFromDocumentation' kann Klasse aus Doku ausgeschlossen werden.
+	 * Berücksichtigt nur den Class-Comment überhalb der Klassen-Definition.
+	 * 
+	 * @return array
+	 */
+	public function generateViewhelperDocumentation() {
+
+		$path = \nn\t3::Environment()->extPath('nnhelpers') . 'Classes/ViewHelpers/';
+		$classes = DocumentationHelper::parseFolder( $path, ['parseMethods'=>false] );
+
+		$strip = ['Nng\Nnhelpers\ViewHelpers\\', 'ViewHelper'];
+
+		foreach ($classes as $className=>&$info) {
+			$info = array_merge($info, $this->createNamespacesForClassname($className, $strip));
 		}
-		$body = str_replace('    ', "\t", $body);
-		$body = str_replace("\n\t", "\n", $body);
-		return $body;   
+
+		return $classes;
+	}
+	
+	/**
+	 * Dokumentation der zusätzliche Klassen generieren
+	 * 
+	 * @return array
+	 */
+	public function generateAdditionalClassesDocumentation() {
+
+		$path = \nn\t3::Environment()->extPath('nnhelpers') . 'Classes/Helpers/';
+		$classes = DocumentationHelper::parseFolder( $path );
+
+		$strip = ['Nng\Nnhelpers\Helpers\\'];
+
+		foreach ($classes as $className=>&$info) {
+			$info = array_merge($info, $this->createNamespacesForClassname($className, $strip));
+			foreach ($info['methods'] as $methodName=>&$methodInfo) {
+				$methodInfo = array_merge($methodInfo, $this->createNamespacesForClassname($methodName, $strip));
+			}
+		}
+		
+		return $classes;
+	}
+
+	/**
+	 * Varianten der Schreibweise für einen Klassennamen generieren.
+	 * Für die bessere Darstellung in der Doku
+	 * 
+	 * @return array
+	 */
+	public function createNamespacesForClassname( $className = '', $strip = [] ) {
+
+		// Format\WhatEver
+		$classNameShort = $className;
+		foreach ($strip as $str) {
+			$classNameShort = str_ireplace($str, '', $classNameShort);
+		}
+
+		// Format/WhatEver
+		$classNameSlash = str_replace('\\', '/', $classNameShort);
+
+		// format.whatEver
+		$vhName = join('.', array_map( function ($str) { return lcfirst($str); }, explode('\\', $classNameShort) ));
+
+		return [
+			'classNameShort'		=> $classNameShort,
+			'classNameSlash'		=> $classNameSlash,
+			'vhName'				=> $vhName,
+		];
 	}
 
 
@@ -271,7 +198,12 @@ class ModuleController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControlle
 		require_once( $autoload );
 
 		$beUserLang = $GLOBALS['BE_USER']->uc['lang'] ?: 'en';
-		echo "<pre><b>Doku für {$beUserLang} generieren:</b>\n\n";
+		echo "<pre>
+			<h2>Doku für {$beUserLang} generieren:</h2>
+			<p>Für andere Sprache: BE-User Sprache wechseln!</p>
+		\n\n";
+
+		echo "\n\n<h3>Export der Klassen:</h3>\n";
 
 		$doc = $this->generateDocumentation();
 		$this->localizeDocumentation( $doc, $beUserLang, true );
@@ -285,13 +217,67 @@ class ModuleController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControlle
 			);
 			$rendering = preg_replace("/(\r?\n){2,}/", "\n\n", $rendering);
 
-			$filename = $className . '.rst';
+			$filename = $infos['vhName'] . '.rst';
 			$file = \nn\t3::File()->absPath('EXT:nnhelpers/Documentation/Helpers/Classes/' . $filename);
-			file_put_contents( $file, $rendering );
 			
-			//echo $rendering; die();
-			echo "\n" . $filename;
+			$result = file_put_contents( $file, $rendering );
+			if (!$result) {
+				echo "\n( !! ) Classes: {$filename} konnte nicht geschrieben werden. Ordner-Rechte?";
+			} else {
+				echo "\n" . $filename;
+			}
 		}
+		
+		echo "\n\n<h3>Export der zusätzlichen Helper:</h3>\n";
+
+		$doc = $this->generateAdditionalClassesDocumentation();
+		$this->localizeDocumentation( $doc, $beUserLang, true );
+
+		foreach ($doc as $className=>$infos) {
+			$rendering = \nn\t3::Template()->render(
+				'EXT:nnhelpers/Resources/Private/Backend/Templates/Documentation/AdditionalClassTemplate.html', [
+					'className' => $className,
+					'infos'		=> $infos
+				]
+			);
+			$rendering = preg_replace("/(\r?\n){2,}/", "\n\n", $rendering);
+
+			$filename = $infos['vhName'] . '.rst';
+			$file = \nn\t3::File()->absPath('EXT:nnhelpers/Documentation/AdditionalClasses/Classes/' . $filename);
+			
+			$result = file_put_contents( $file, $rendering );
+			if (!$result) {
+				echo "\n( !! ) AdditionalClasses: {$filename} konnte nicht geschrieben werden. Ordner-Rechte?";
+			} else {
+				echo "\n" . $filename;
+			}
+		}
+
+		echo "\n\n<h3>Export der ViewHelper:</h3>\n";
+		$docViewhelper = $this->generateViewhelperDocumentation();
+		$this->localizeDocumentation( $docViewhelper, $beUserLang, true );
+
+		foreach ($docViewhelper as $className=>$infos) {
+			$rendering = \nn\t3::Template()->render(
+				'EXT:nnhelpers/Resources/Private/Backend/Templates/Documentation/ViewHelperTemplate.html', [
+					'className' => $className,
+					'infos'		=> $infos
+				]
+			);
+			$rendering = preg_replace("/(\r?\n){2,}/", "\n\n", $rendering);
+
+			$filename = $infos['vhName'] . '.rst';
+			$file = \nn\t3::File()->absPath('EXT:nnhelpers/Documentation/ViewHelpers/Classes/' . $filename);
+			$result = file_put_contents( $file, $rendering );
+			
+			if (!$result) {
+				echo "\n( !! ) ViewHelper: {$filename} konnte nicht geschrieben werden. Ordner-Rechte?";
+			} else {
+				echo "\n" . $filename;
+			}
+			
+		}
+		
 		return '';
 	}
 
@@ -312,7 +298,7 @@ class ModuleController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControlle
 		$translationHelper->setTargetLanguage( $targetDocLang );
 
 		$translationHelper->setEnableApi( $autoTranslate );
-		$translationHelper->setMaxTranslations( 30 );
+		$translationHelper->setMaxTranslations( $this->maxTranslationsPerLoad );
 
 		foreach ($doc as $className=>$infos) {
 			$doc[$className]['comment'] = $translationHelper->translate([$className, 'comment'], $infos['comment']);

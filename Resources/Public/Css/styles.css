@@ -3,6 +3,10 @@ html {
     font-size: 1rem;
 }
 
+#typo3-inner-docbody {
+    padding-bottom: 250px;
+}
+
 .autofiller {
     position: relative;
     background: #fff;
@@ -26,9 +30,6 @@ html {
 .btn-primary {
     background-color: #7091af;
     border: none;
-}
-#classes-accordion {
-    margin-bottom: 250px;
 }
 
 h5 {
@@ -145,6 +146,14 @@ code br {
 }
 .viewhelpers-section .card-header {
     background-color: #78a98c26;
+}
+
+.classes-additional h5,
+.classes-additional .card-header i {
+    color: #b194bc;
+}
+.classes-additional .card-header {
+    background-color: #efe7f2;
 }
 
 .card-body .card-header {

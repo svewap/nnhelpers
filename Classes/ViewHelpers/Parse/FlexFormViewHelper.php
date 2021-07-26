@@ -8,7 +8,15 @@ use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3Fluid\Fluid\Core\ViewHelper\Traits\CompileWithRenderStatic;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
-
+/**
+ * Parsed ein FlexForm (XML) und macht daraus ein Array.
+ * 
+ * Praktisch, falls man einen rohen Datensatz der Tabelle `tt_content` vor sich hat und an einen Wert aus dem FlexForm in `pi_flexform` braucht.
+ * ```
+ * {row.pi_flexform->nnt3:parse.flexForm()->f:debug()}
+ * ```
+ * @return array
+ */
 class FlexFormViewHelper extends AbstractViewHelper {
 
 	use CompileWithRenderStatic;

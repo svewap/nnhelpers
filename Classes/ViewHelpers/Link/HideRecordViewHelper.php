@@ -8,21 +8,20 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Fluid\ViewHelpers\Link\TypolinkViewHelper;
 
 /**
- *  Link zum Verstecken / Sichtbar machen eines Datensatzes in einem Backend-Modul generieren.
+ * Link zum Verstecken / Sichtbar machen eines Datensatzes in einem Backend-Modul generieren.
  * 
- * 	Beispiele: 
- * 	Link zum Verstecken eines Datensatzes:
- *	```
- *	<nnt3:link.hideRecord uid="{item.uid}" data="{ajax:1}" table="tx_myext_domain_model_entry" hidden="1">
- *		<i class="fas fa-eye"></i>
- *	</nnt3:link.hideRecord>
- *	```
- *	Link zum show/hide-Toggle eines Datensatzes:
- *	```
- *	<nnt3:link.hideRecord uid="{item.uid}" data="{ajax:1}" table="tx_myext_domain_model_entry" visible="{item.hidden}">
- *		<i class="fas fa-toggle"></i>
- *	</nnt3:link.hideRecord>
- *	```
+ * Link zum Verstecken eines Datensatzes:
+ * ```
+ * <nnt3:link.hideRecord uid="{item.uid}" data="{ajax:1}" table="tx_myext_domain_model_entry" hidden="1">
+ * 	<i class="fas fa-eye"></i>
+ * </nnt3:link.hideRecord>
+ * ```
+ * Link zum show/hide-Toggle eines Datensatzes:
+ * ```
+ * <nnt3:link.hideRecord uid="{item.uid}" data="{ajax:1}" table="tx_myext_domain_model_entry" visible="{item.hidden}">
+ * 	<i class="fas fa-toggle"></i>
+ * </nnt3:link.hideRecord>
+ * ```
  */
 class HideRecordViewHelper extends TypolinkViewHelper {
 	

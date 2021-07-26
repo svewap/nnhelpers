@@ -2,7 +2,10 @@
 namespace Nng\Nnhelpers\Helpers;
 
 /**
- * Übersetzungsmanagement per Deep-L
+ * __Übersetzungsmanagement per Deep-L.__
+ * 
+ * Damit diese Funktion nutzbar ist, muss im Extension-Manager von `nnhelpers` ein Deep-L Api-Key hinterlegt werden.
+ * Der Key ist ist kostenfrei und erlaubt die Übersetzung von 500.000 Zeichen pro Monat.
  * 
  * ```
  * // Übersetzer aktivieren
@@ -64,6 +67,10 @@ class TranslationHelper {
 
 
 	/**
+	 * Gibt zurück, ob die API aktiviert ist.
+	 * ```
+	 * $translationHelper->getEnableApi(); // default: false
+	 * ```
 	 * @return  boolean
 	 */
 	public function getEnableApi() {
@@ -71,6 +78,10 @@ class TranslationHelper {
 	}
 
 	/**
+	 * Aktiviert / Deaktiviert die Übersetzung per Deep-L.
+	 * ```
+	 * $translationHelper->setEnableApi( true ); // default: false
+	 * ```
 	 * @param   boolean  $enableApi
 	 * @return  self
 	 */
@@ -80,6 +91,11 @@ class TranslationHelper {
 	}
 
 	/**
+	 * Gibt den aktuellen Ordner zurück, in dem die Übersetzungs-Dateien gecached werden.
+	 * Default ist `typo3conf/l10n/nnhelpers/`
+	 * ```
+	 * $translationHelper->getL18nFolderpath();
+	 * ```
 	 * @return  string
 	 */
 	public function getL18nFolderpath() {
@@ -87,6 +103,14 @@ class TranslationHelper {
 	}
 
 	/**
+	 * Setzt den aktuellen Ordner, in dem die Übersetzungs-Dateien gecached werden.
+	 * Idee ist es, die übersetzten Texte für Backend-Module nur 1x zu übersetzen und dann in dem Extension-Ordner zu speichern.
+	 * Von dort werden sie dann ins GIT deployed.
+	 * 
+	 * Default ist `typo3conf/l10n/nnhelpers/`
+	 * ```
+	 * $translationHelper->setL18nFolderpath('EXT:myext/Resources/Private/Language/');
+	 * ```
 	 * @param   string  $l18nFolderpath  Pfad zum Ordner mit den Übersetzungsdateien (JSON)
 	 * @return  self
 	 */
@@ -96,6 +120,10 @@ class TranslationHelper {
 	}
 
 	/**
+	 * Holt die Zielsprache für die Übersetzung
+	 * ```
+	 * $translationHelper->getTargetLanguage(); // Default: EN
+	 * ```
 	 * @return  string
 	 */
 	public function getTargetLanguage() {
@@ -103,6 +131,10 @@ class TranslationHelper {
 	}
 
 	/**
+	 * Setzt die Zielsprache für die Übersetzung
+	 * ```
+	 * $translationHelper->setTargetLanguage( 'FR' );
+	 * ```
 	 * @param   string  $targetLanguage  Zielsprache der Übersetzung
 	 * @return  self
 	 */
@@ -112,13 +144,22 @@ class TranslationHelper {
 	}
 
 	/**
-	 * @return 
+	 * Holt die maximale Anzahl an Übersetzungen, die pro Instanz gemacht werden sollen.
+	 * ```
+	 * $translationHelper->getMaxTranslations(); // default: 0 = unendlich
+	 * ```	 
+	 * @return integer
 	 */
 	public function getMaxTranslations() {
 		return $this->maxTranslations;
 	}
 
 	/**
+	 * Setzt die maximale Anzahl an Übersetzungen, die pro Instanz gemacht werden sollen.
+	 * Hilft beim Debuggen (damit das Deep-L Kontingent nicht durch Testings ausgeschöpft wird) und bei TimeOuts, wenn viele Texte übersetzt werden müssen.
+	 * ```
+	 * $translationHelper->setMaxTranslations( 5 ); // Nach 5 Übersetzungen abbrechen
+	 * ```	 
 	 * @param   $maxTranslations
 	 * @return  self
 	 */
@@ -128,7 +169,11 @@ class TranslationHelper {
 	}
 
 	/**
-	 * Absoluten Pfad zur l18n-Cache-Datei zurückgeben
+	 * Absoluten Pfad zur l18n-Cache-Datei zurückgeben.
+	 * Default ist `typo3conf/l10n/nnhelpers/[LANG].autotranslated.json`
+	 * ```
+	 * $translationHelper->getL18nPath();
+	 * ```
 	 * @return string
 	 */
 	public function getL18nPath() {
@@ -138,7 +183,10 @@ class TranslationHelper {
 	}
 
 	/**
-	 * Sprach-Datei laden und cachen
+	 * Komplette Sprach-Datei laden.
+	 * ```
+	 * $translationHelper->loadL18nData();
+	 * ```
 	 * @return array
 	 */
 	public function loadL18nData() {
@@ -149,7 +197,10 @@ class TranslationHelper {
 	}
 
 	/**
-	 * Sprach-Datei speichern
+	 * Komplette Sprach-Datei speichern
+	 * ```
+	 * $translationHelper->saveL18nData( $data );
+	 * ```
 	 * @return boolean
 	 */
 	public function saveL18nData( $data = [] ) {
@@ -164,6 +215,12 @@ class TranslationHelper {
 
 	/**
 	 * Übersetzen eines Textes.
+	 * ```
+	 * $translationHelper = \nn\t3::injectClass( \Nng\Nnhelpers\Helpers\TranslationHelper::class );
+	 * $translationHelper->setEnableApi( true );
+	 * $translationHelper->setTargetLanguage( 'EN' );
+	 * $text = $translationHelper->translate('my.example.key', 'Das ist der Text, der übersetzt werden soll'); 
+	 * ```
 	 * @return string
 	 */
 	public function translate( $key, $text = '' ) {
@@ -171,7 +228,7 @@ class TranslationHelper {
 		$keyHash = $this->createKeyHash( $key );
 		$textHash = $this->createTextHash( $text );
 		$l18nData = $this->loadL18nData();
-
+		
 		$translation = $l18nData[$keyHash] ?? ['_cs'=>false];
 		$textChanged = $translation['_cs'] != $textHash;
 		
@@ -179,9 +236,11 @@ class TranslationHelper {
 
 		// Text wurde übersetzt und hat sich nicht geändert
 		if (!$textChanged) {
-			return $translation['text'];
+			$str = $translation['text'];
+			$str = str_replace('.</p>.', '.</p>', $str);
+			return $str;
 		}
-		
+
 		// Text wurde nicht übersetzt und Deep-L Übersetzung ist deaktiviert
 		if (!$autoTranslateEnabled) {
 			if ($translation['_cs'] !== false) {
@@ -205,7 +264,12 @@ class TranslationHelper {
 	}
 
 	/**
-	 * Key-Hash erzeugen
+	 * Erzeugt einen eindeutigen Hash aus dem Key, der zur Identifizierung eines Textes benötigt wird.
+	 * Jeder Text hat in allen Sprachen den gleichen Key.
+	 * ```
+	 * $translationHelper->createKeyHash( '12345' );
+	 * $translationHelper->createKeyHash( ['mein', 'key', 'array'] );
+	 * ```
 	 * @return string
 	 */
 	public function createKeyHash( $param = '' ) {
@@ -213,8 +277,13 @@ class TranslationHelper {
 	}
 	
 	/**
-	 * Text-Hash erzeugen.
-	 * Ignoriert Whitespaces und Tags.
+	 * Erzeugt einen eindeutigen Hash / Checksum aus dem Text.
+	 * Der übergebene Text ist immer die Basis-Sprache. Ändert sich der Text in der Basissprache, gibt die Methode eine andere Checksum zurück.
+	 * Dadurch wird erkannt, wann ein Text neu übersetzt werden muss. Reine Änderungen an Whitespaces und Tags werden ignoriert.
+	 * ```
+	 * $translationHelper->createKeyHash( '12345' );
+	 * $translationHelper->createKeyHash( ['mein', 'key', 'array'] );
+	 * ```
 	 * @return string
 	 */
 	public function createTextHash( $text = '' ) {

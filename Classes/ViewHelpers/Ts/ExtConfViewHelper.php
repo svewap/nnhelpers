@@ -7,9 +7,13 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\Traits\CompileWithRenderStatic;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 /**
- * 	Wert aus dem TypoScript-Setup holen.
- * 	{nnt3:ts.extConf(path:'nnfiletransfer.pathLogo')}
- * 	{nnt3:ts.extConf(path:'nnfiletransfer', key:'pathLogo')}
+ * Konfiguration für eine Extension aus dem Extension-Manager holen.
+ *
+ * ```
+ * {nnt3:ts.extConf(path:'nnfiletransfer.pathLogo')}
+ * {nnt3:ts.extConf(path:'nnfiletransfer', key:'pathLogo')}
+ * ```
+ * @return mixed
  */
 class ExtConfViewHelper extends AbstractViewHelper {
 

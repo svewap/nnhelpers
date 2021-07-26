@@ -5,17 +5,26 @@ use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3Fluid\Fluid\Core\ViewHelper\Traits\CompileWithRenderStatic;
 
 /**
- * Einen Text übersetzen, inkl. optionaler Übersetzung über Deep-L
+ * Einen Text übersetzen, inkl. optionaler Übersetzung über Deep-L.
+ * 
+ * Siehe auch Doku zu `TranslationHelper` für die Einbindung über PHP oder einen Controller. 
  * ```
  * // Übersetzung über locallang.xlf
  * {mytext->nnt3:translate(id:'LLL:EXT:nnaddress/Resources/Private/Language/locallang_db.xlf:my-ll-id')}
  * {mytext->nnt3:translate(id:'my-ll-id', extensionName:'nnaddress')}
- * 
+ * ```
+ * ```
  * // Übersetzung per Deep-L
  * {nnt3:translate(id:'my-ll-id', text:'Der Text', extensionName:'nnaddress', enableApi:1, translate:1, targetLang:'EN', maxTranslations:2)}
  * {mytext->nnt3:translate(id:'my-ll-id', extensionName:'nnaddress', enableApi:1, translate:1, targetLang:'EN', maxTranslations:2)}
  * {mytext->nnt3:translate(id:'my-ll-id', enableApi:1, translate:1, targetLang:'EN', cacheFolder:'EXT:nnsite/path/to/somewhere/')}
  * {mytext->nnt3:translate(id:'my-ll-id', enableApi:1, translate:1, targetLang:'EN', cacheFolder:'typo3conf/l10n/demo/')}
+ * ```
+ * ```
+ * // Einen Block im Fluid-Template übersetzen
+ * <nnt3:translate id="text-id-or-cObj-uid" enableApi="1" translate="1" targetLang="EN">
+ *   <p>Ich werde automatisch übersetzt, inkl. aller <b>HTML</b>-Tags!</p>
+ * </nnt3:translate>
  * ```
  */
 class TranslateViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\FlashMessagesViewHelper {
@@ -42,7 +51,7 @@ class TranslateViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\FlashMessagesView
 		foreach ($args as $arg) {
 			${$arg} = $arguments[$arg];
 		}
-
+		//\nn\t3::debug($id);
 		if (!$translate) {
 			return \nn\t3::LL()->get( $id, $extensionName );
 		}

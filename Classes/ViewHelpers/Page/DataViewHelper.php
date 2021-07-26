@@ -6,13 +6,15 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\Traits\CompileWithRenderStatic;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 /**
- * 	Vereinfacht den Zugriff auf Daten aus der Tabelle `pages`.
- *	{nnt3:page.data(key:'nnp_contact', slide:1)}
- *	{nnt3:page.data(key:'backend_layout_next_level', slide:1, override:'backend_layout')}
- *
- * 	Wichtig: Eigene Felder müssen vorher in der `ext_localconf.php` registriert werden:
- *	\nn\t3::Registry()->rootLineFields(['logo']);
- * 
+ * Vereinfacht den Zugriff auf Daten aus der Tabelle `pages`.
+ * ```
+ * {nnt3:page.data(key:'nnp_contact', slide:1)}
+ * {nnt3:page.data(key:'backend_layout_next_level', slide:1, override:'backend_layout')}
+ * ```
+ * Wichtig, damit `slide` funktioniert: Falls die Tabelle `pages` um ein eigenes Feld erweitert wurde, muss das Feld vorher in der `ext_localconf.php` registriert werden.
+ * ```
+ * \nn\t3::Registry()->rootLineFields(['logo']);
+ * ``` 
  */
 class DataViewHelper extends AbstractViewHelper {
 

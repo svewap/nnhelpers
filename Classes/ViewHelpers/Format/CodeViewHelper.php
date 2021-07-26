@@ -7,26 +7,23 @@ use Nng\Nnhelpers\ViewHelpers\AbstractViewHelper;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 
 /**
- * Highlighted code-Abschnitte
- * siehe: https://prismjs.com/
+ * Highlighted code-Abschnitte per PrismJS.
  * 
- * Build:
- * https://prismjs.com/download.html#themes=prism-tomorrow&languages=markup+css+clike+javascript+git+markup-templating+php+php-extras+powershell+scss+sql+typoscript+yaml&plugins=toolbar+copy-to-clipboard+download-button
+ * Der Code kann über `download` zum direkten Download verfügbar gemacht werden.
+ * 
+ * Die Datei wird dabei dynamisch per JS generiert und gestreamt – es enstehen keine zusätzlichen Dateien auf dem Server.
+ * nnhelpers nutzt diese Funktion, um die Boilerplates als Download anzubieten.
+ * 
+ * Mehr Infos unter: https://prismjs.com/
+ *
+ * Build: https://bit.ly/3BLqmx0
  * 
  * ```
  * <nnt3:format.code lang="css" download="rte.css">
  *   ... Markup ...
  * </nnt3:format.code>
  * ```
- * 
- * Sprachen für Syntax-Highlighting:
- * 
- * | ---------- | ------------- |
- * | lang 		| Interpreter	|
- * | css 		| CSS 			|
- * | typoscript | TypoScript 	|
- * | tsconfig 	| PageTsConfig 	|
- * 
+ * @return string  
  */
 class CodeViewHelper extends AbstractViewHelper {
 

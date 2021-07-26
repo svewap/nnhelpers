@@ -6,6 +6,14 @@ use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3Fluid\Fluid\Core\ViewHelper\Traits\CompileWithRenderStatic;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
+/**
+ * Maskiert "kritische" Zeichen, damit sie als Attribut an einen HTML-Tag verwendet werden können.
+ * ```
+ * <div data-example="{something->nnt3:format.attrEncode()}"> ... </div>
+ * <a title="{title->nnt3:format.attrEncode()}"> ... </a>
+ * ```
+ * @return string
+ */
 class AttrEncodeViewHelper extends AbstractViewHelper {
 
 	use CompileWithRenderStatic;

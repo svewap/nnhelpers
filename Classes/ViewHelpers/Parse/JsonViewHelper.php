@@ -8,7 +8,21 @@ use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3Fluid\Fluid\Core\ViewHelper\Traits\CompileWithRenderStatic;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
-
+/**
+ * Wandelt ein normales JavaScript-Object, dass als String übergeben wird in ein Array um.
+ * Erlaubt es, Konfigurationen für Slider und andere JS-Bibliotheken im TypoScript anzulegen und später per JS zu parsen.
+ * 
+ * Siehe `JsonHelper` für Beispiele.
+ * ```
+ * {myConfig->nnt3:parse.json()->f:debug()}
+ * ```
+ * ```
+ * <div data-config="{myConfig->nnt3:parse.json()->nnt3:format.attrEncode()}">
+ *   ...
+ * </div>
+ * ```
+ * @return mixed
+ */
 class JsonViewHelper extends AbstractViewHelper {
 
 	use CompileWithRenderStatic;
@@ -47,8 +61,7 @@ class JsonViewHelper extends AbstractViewHelper {
 		if (is_array($str) || is_object($str)) return $str;
 
 		// JavaScript Object (z.B. aus TypoScript-Setup) in JSON konvertieren
-		$json = new JsonHelper();
-		$data = $json->decode( trim($str) );
+		$data = \Nng\Nnhelpers\Helpers\JsonHelper::decode( $str );
 
 		return $data;
 	}

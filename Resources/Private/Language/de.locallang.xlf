@@ -30,6 +30,9 @@
 			<trans-unit id="ts-acc-01" xml:space="preserve">
 				<target>TypoScript Setup für das Seiten-Template</target>
 			</trans-unit>
+			<trans-unit id="sourcecode" xml:space="preserve">
+				<target>Quelltext</target>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>

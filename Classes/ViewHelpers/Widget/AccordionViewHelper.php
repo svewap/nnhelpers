@@ -2,31 +2,27 @@
 
 namespace Nng\Nnhelpers\ViewHelpers\Widget;
 
-use TYPO3\CMS\Extbase\Persistence\QueryResultInterface;
+use Nng\Nnhelpers\ViewHelpers\AbstractViewHelper;
+use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
+use TYPO3Fluid\Fluid\Core\ViewHelper\Traits\CompileWithRenderStatic;
 
 /**
- * <nnt3:widget.accordion title="Titel">
+ * Widget zur Darstellung eines Akkordeons.
+ * 
+ * Wird in `nnhelpers` massenhaft in den Templates des Backend-Moduls genutzt.
+ * 
+ * ```
+ * <nnt3:widget.accordion title="Titel" icon="fas fa-plus" class="nice-thing">
  *   ...
  * </nnt3:widget.accordion>
- *
+ * ```
+ * ```
+ * {nnt3:widget.accordion(title:'Titel', content:'...' icon:'fas fa-plus', class:'nice-thing')}
+ * ```
+ * @return string
  */
-class AccordionViewHelper extends \TYPO3\CMS\Fluid\Core\Widget\AbstractWidgetViewHelper
+class AccordionViewHelper extends AbstractViewHelper
 {
-
-    /**
-     * @var \Nng\Nnhelpers\ViewHelpers\Widget\Controller\AccordionController
-     */
-    protected $controller;
-
-    /**
-     * Inject controller
-     *
-     * @param \Nng\Nnhelpers\ViewHelpers\Widget\Controller\AccordionController $controller
-     */
-    public function injectController(\Nng\Nnhelpers\ViewHelpers\Widget\Controller\AccordionController $controller)
-    {
-        $this->controller = $controller;
-    }
 
     /**
      * Initialize arguments
@@ -37,6 +33,7 @@ class AccordionViewHelper extends \TYPO3\CMS\Fluid\Core\Widget\AbstractWidgetVie
         $this->registerArgument('title', 'string', 'Titel des Akkordeons');
         $this->registerArgument('icon', 'string', 'Icon-Klasse');
         $this->registerArgument('class', 'string', 'Accordeon-Klasse');
+        $this->registerArgument('content', 'string', 'Inhalt');
     }
 
     /**
@@ -45,8 +42,15 @@ class AccordionViewHelper extends \TYPO3\CMS\Fluid\Core\Widget\AbstractWidgetVie
      * @param string $title
      * @return string
      */
-    public function render()
-    {
-        return $this->initiateSubRequest();
+    public static function renderStatic( array $arguments, \Closure $renderChildrenClosure, RenderingContextInterface $renderingContext ) {
+
+        $vars = array_merge(
+            $renderingContext->getVariableProvider()->getAll(), 
+            $arguments, [
+            'renderedChildren'  => $arguments['content'] ?: $renderChildrenClosure(),
+            'uniqid'            => uniqid('acc-'),
+        ]);
+
+        return \nn\t3::Template()->render('EXT:nnhelpers/Resources/Private/Backend/ViewHelpers/Widget/Accordion/Index.html', $vars );
     }
 }
