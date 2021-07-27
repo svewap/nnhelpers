@@ -10,7 +10,8 @@ Http
 \\nn\\t3::Http()
 ----------------------------------------------
 
-Einfache Weiterleitungen machen, URLs bauen
+Make simple redirects, build URLs
+.
 
 Overview of Methods
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -18,8 +19,8 @@ Overview of Methods
 \\nn\\t3::Http()->buildUri(``$pageUid, $vars = [], $absolute = false``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-URI bauen, funktioniert im Frontend und Backend-Context.
-Berücksichtigt realURL
+BuildURI, works in frontend and backend context.
+Takes into account realURL
 
 .. code-block:: php
 
@@ -31,13 +32,13 @@ Berücksichtigt realURL
 \\nn\\t3::Http()->redirect(``$pidOrUrl = NULL, $vars = [], $varsPrefix = ''``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Zu einer Seite weiterleiten
+Redirect to a page
 
 .. code-block:: php
 
 	\nn\t3::Http()->redirect( 'https://www.99grad.de' );
-	\nn\t3::Http()->redirect( 10 );                                      // => path/to/pageId10
-	\nn\t3::Http()->redirect( 10, ['test'=>'123'] );                      // => path/to/pageId10&test=123
+	\nn\t3::Http()->redirect( 10 ); // => path/to/pageId10
+	\nn\t3::Http()->redirect( 10, ['test'=>'123'] ); // => path/to/pageId10&test=123
 	\nn\t3::Http()->redirect( 10, ['test'=>'123'], 'tx_myext_plugin' );
 | ``@return void``
 

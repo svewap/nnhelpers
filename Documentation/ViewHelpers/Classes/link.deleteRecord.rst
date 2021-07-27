@@ -13,7 +13,7 @@ Description
 <nnt3:link.deleteRecord />
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Link zum Löschen eines Datensatzes für ein Backend-Modul generieren.
+Generate a link to delete a record for a backend module.
 
 .. code-block:: php
 

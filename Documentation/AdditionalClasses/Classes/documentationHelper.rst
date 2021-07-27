@@ -10,13 +10,13 @@ DocumentationHelper
 \\nn\\t3::DocumentationHelper()
 ----------------------------------------------
 
-Diverse Methoden zum Parsen von PHP-Quelltexten und Kommentaren im
-Quelltext (Annotations). Zielsetzung: Automatisierte Dokumentation aus den Kommentaren
-im PHP-Code erstellen.
+Various methods for parsing PHP source code and comments in the
+Source Code (Annotations). Objective: to create automated documentation from the comments
+in the PHP code.
 
-Beispiele für die Verwendung inkl. Rendering des Templates
+Examples of usage including rendering of the template
 
-Im Controller mit Rendering per Fluid:
+In the controller with rendering by fluid:
 
 .. code-block:: php
 
@@ -24,7 +24,7 @@ Im Controller mit Rendering per Fluid:
 	$doc = \Nng\Nnhelpers\Helpers\DocumentationHelper::parseFolder( $path );
 	$this->view->assign('doc', $doc);
 
-Generieren der Typo3 / Sphinx ReST-Doku über ein eigenen Fluid-Template:
+Generating the Typo3 / Sphinx ReST doc üvia a custom fluid template:
 
 .. code-block:: php
 
@@ -32,7 +32,7 @@ Generieren der Typo3 / Sphinx ReST-Doku über ein eigenen Fluid-Template:
 	$doc = \Nng\Nnhelpers\Helpers\DocumentationHelper::parseFolder( $path );
 	
 	foreach ($doc as $className=>$infos) {
-	  $rendering = \nn\t3::Template()->render(
+	  $rendering = $nn\t3::Template()->render(
 	    'EXT:myext/Resources/Private/Backend/Templates/Documentation/ClassTemplate.html', [
 	      'infos' => $infos
 	    ]
@@ -49,8 +49,8 @@ Overview of Methods
 \\nn\\t3::DocumentationHelper()->getClassNameFromFile(``$file``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Klassen-Name als String inkl. vollem Namespace aus einer PHP-Datei holen.
-Gibt z.B. ``Nng\Classes\MyClass`` zurück.
+Get class name as string including full namespace from a PHP file.
+Returns e.g. ``Nng\Classes\MyClass``.
 
 .. code-block:: php
 
@@ -61,9 +61,9 @@ Gibt z.B. ``Nng\Classes\MyClass`` zurück.
 \\nn\\t3::DocumentationHelper()->getSourceCode(``$class, $method``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Quelltext einer Methode holen.
+Get the source code of a method.
 
-Gibt den "rohen" PHP-Code der Methode einer Klasse zurück.
+Returns the "raw" PHP code of the method of a class.
 
 .. code-block:: php
 
@@ -74,10 +74,10 @@ Gibt den "rohen" PHP-Code der Methode einer Klasse zurück.
 \\nn\\t3::DocumentationHelper()->parseClass(``$className = '', $returnMethods = true``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Infos zu einer bestimmten Klasse holen.
+Get info about a specific class.
 
-Ähnelt ``parseFile()`` - allerdings muss hier der eigentliche Klassen-Name übergeben werden.
-Wenn man nur den Pfad zur PHP-Datei kennt, nutzt man ``parseFile()``.
+Ähnelt ``parseFile()`` - but here you have to pass the actual class name übergeben.
+If you only know the path to the PHP file, use ``parseFile()``.
 
 .. code-block:: php
 
@@ -88,9 +88,9 @@ Wenn man nur den Pfad zur PHP-Datei kennt, nutzt man ``parseFile()``.
 \\nn\\t3::DocumentationHelper()->parseCommentString(``$comment = '', $encode = true``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Kommentar-String zu lesbarem HTML-String konvertieren
-Kommentare können Markdown verwenden.
-Entfernt '' und '' etc.
+Convert comment string to readable HTML string.
+Comments canöt use Markdown.
+Removes '' and '' etc.
 
 .. code-block:: php
 
@@ -101,12 +101,12 @@ Entfernt '' und '' etc.
 \\nn\\t3::DocumentationHelper()->parseFile(``$path = '', $returnMethods = true``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Alle Infos zu einer einzelnen PHP-Datei holen.
+Get all info about a single PHP file.
 
-Parsed den Kommentar (Annotation) über der Klassen-Definition und optional auch alle Methoden der Klasse.
-Gibt ein Array zurück, bei der auch die Argumente / Parameter jeder Methode aufgeführt werden.
+Parses the comment (annotation) üover the class definition and optionally all methods of the class.
+Returns an array where the arguments/parameters of each method are also listed.
 
-Markdown kann in den Annotations verwendet werden, das Markdown wird automatisch in HTML-Code umgewandelt.
+Markdown can be used in the annotations, the markdown is automatically converted to HTML code.
 
 .. code-block:: php
 
@@ -117,16 +117,16 @@ Markdown kann in den Annotations verwendet werden, das Markdown wird automatisch
 \\nn\\t3::DocumentationHelper()->parseFolder(``$path = '', $options = []``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Einen Ordner (rekursiv) nach Klassen mit Annotations parsen.
-Gibt ein Array mit Informationen zu jeder Klasse und seinen Methoden zurück.
+Parse a folder (recursively) for classes with annotations.
+Returns an array with information about each class and its methods.
 
-Die Annotations (Kommentare) über den Klassen-Methoden können in Markdown formatiert werden, sie werden automatisch in HTML mit passenden ``<pre>`` und ``<code>`` Tags umgewandelt.
+The annotations (comments) üover the class methods can be formatted in Markdown, they are automatically converted to HTML with appropriate ``<pre>`` and ``<code>`` tags.
 
 .. code-block:: php
 
 	\Nng\Nnhelpers\Helpers\DocumentationHelper::parseFolder( 'Path/To/Classes/' );
-	\Nng\Nnhelpers\Helpers\DocumentationHelper::parseFolder( 'EXT:myext/Classes/ViewHelpers/' );
-	\Nng\Nnhelpers\Helpers\DocumentationHelper::parseFolder( 'Path/Somewhere/', ['recursive'=>false, 'suffix'=>'php', 'parseMethods'=>false] );
+	\Nng\Nnhelpers\DocumentationHelper::parseFolder( 'EXT:myext/Classes/ViewHelpers/' );
+	\Nng\Nnhelpers\DocumentationHelper::parseFolder( 'Path/Somewhere/', ['recursive'=>false, 'suffix'=>'php', 'parseMethods'=>false] );
 
 | ``@return array``
 

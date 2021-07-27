@@ -10,7 +10,7 @@ Video
 \\nn\\t3::Video()
 ----------------------------------------------
 
-Alles, was zum Thema Videos wichtig und hilfreich ist.
+Everything that is important and helpful on the subject of videos.
 
 Overview of Methods
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -18,16 +18,16 @@ Overview of Methods
 \\nn\\t3::Video()->getEmbedUrl(``$type, $videoId = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Einbettungs-URL anhand der Streaming-Plattform zur체ckgeben.
-Klassischerweise die URL, die im src-Attribut des <iframe>
-verwendet wird.
+Return embed URL based on the streaming platform.
+Classically, the URL used in the src attribute of the <iframe>
+is used.
 
 .. code-block:: php
 
 	\nn\t3::Video()->getEmbedUrl( 'youtube', 'nShlloNgM2E' );
 	\nn\t3::Video()->getEmbedUrl( 'https://www.youtube.com/watch?v=wu55ZG97zeI&feature=youtu.be' );
 
-Existiert auch als ViewHelper:
+Also acts as a ViewHelper:
 
 .. code-block:: php
 
@@ -38,7 +38,7 @@ Existiert auch als ViewHelper:
 \\nn\\t3::Video()->getExternalType(``$url = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Gibt Infos 체ber die Streaming-Platform und Code zum Einbetten eines Videos zur체ck
+Returns info 체about the streaming platform and code to embed a video
 
 .. code-block:: php
 
@@ -49,8 +49,8 @@ Gibt Infos 체ber die Streaming-Platform und Code zum Einbetten eines Videos zur�
 \\nn\\t3::Video()->getWatchUrl(``$type, $videoId = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Link-URL zum Video auf der externen Plattform
-z.B. um einen externen Link zum Video darzustellen
+Link URL to the video on the external platform.
+E.g. to display an external link to the video
 
 .. code-block:: php
 
@@ -65,8 +65,8 @@ z.B. um einen externen Link zum Video darzustellen
 \\nn\\t3::Video()->isExternal(``$url = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Pr체ft, ob es sich bei der URL um ein Video auf YouTube oder Vimeo handelt.
-Gibt ein Array mit Daten zum Einbetten zur체ck.
+Pr체ft whether the URL is a video on YouTube or Vimeo.
+Returns an array of data to embed.
 
 .. code-block:: php
 

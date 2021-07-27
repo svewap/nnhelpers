@@ -10,7 +10,8 @@ Db
 \\nn\\t3::Db()
 ----------------------------------------------
 
-Zugriff auf die meist genutzten Datenbank-Operationen für Schreiben, Lesen, Löschen vereinfachen.
+Simplify access to the most commonly used database operations for write, read, delete
+.
 
 Overview of Methods
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -30,7 +31,7 @@ Debug MySQL Query
 \\nn\\t3::Db()->delete(``$table = '', $constraint = [], $reallyDelete = false``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Datenbank-Eintrag löschen. Klein und Fein.
+Database entry löschen. Small and fine.
 
 .. code-block:: php
 
@@ -42,15 +43,15 @@ Datenbank-Eintrag löschen. Klein und Fein.
 \\nn\\t3::Db()->filterDataForTable(``$data = [], $table = ''``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-In key/val-Array nur Elemente behalten, deren keys auch
-in TCA für bestimmte Tabelle existieren
+Keep in key/val array only elements whose keys also
+exist in TCA for particular table.
 | ``@return array``
 
 \\nn\\t3::Db()->findAll(``$table = '', $ignoreEnableFields = false``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
 action findAll
-Findet ALLE Eintrag
+Finds ALL entry
 
 .. code-block:: php
 
@@ -62,9 +63,9 @@ Findet ALLE Eintrag
 \\nn\\t3::Db()->findByUid(``$table = '', $uid = NULL, $ignoreEnableFields = false``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Findet einen Eintrag anhand der UID.
-Funktioniert auch, wenn Frontend noch nicht initialisiert wurden,
-z.B. während AuthentificationService läuft oder im Scheduler.
+Finds an entry based on the UID.
+Works even if frontends have not been initialized yet,
+e.g. while AuthentificationService is running or in the scheduler.
 
 .. code-block:: php
 
@@ -77,9 +78,9 @@ z.B. während AuthentificationService läuft oder im Scheduler.
 \\nn\\t3::Db()->findByValues(``$table = NULL, $whereArr = [], $useLogicalOr = false, $ignoreEnableFields = false``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-action findByCustomField
-Findet ALLE Einträge anhand eines gewünschten Feld-Wertes.
-Funktioniert auch, wenn Frontend noch nicht initialisiert wurden,
+action findByCustomField.
+Finds ALL entries based on a desired field value.
+Works even if frontends have not been initialized yet,
 
 .. code-block:: php
 
@@ -94,7 +95,7 @@ Funktioniert auch, wenn Frontend noch nicht initialisiert wurden,
 \\nn\\t3::Db()->findOneByValues(``$table = NULL, $whereArr = [], $useLogicalOr = false, $ignoreEnableFields = false``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Findet EINEN Eintrag anhand von gewünschten Feld-Werten.
+Finds ONE entry based on desired field values.
 
 .. code-block:: php
 
@@ -109,7 +110,7 @@ Findet EINEN Eintrag anhand von gewünschten Feld-Werten.
 \\nn\\t3::Db()->getColumn(``$table = '', $colName = '', $useSchemaManager = false``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Eine Tabellen-Spalte (TCA) für bestimmte Tabelle holen
+Get a table column (TCA) for specific table
 
 .. code-block:: php
 
@@ -120,13 +121,13 @@ Eine Tabellen-Spalte (TCA) für bestimmte Tabelle holen
 \\nn\\t3::Db()->getColumnLabel(``$column = '', $table = ''``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Lokalisiertes Label eines bestimmten TCA Feldes holen
+Get localized label of a specific TCA field.
 | ``@return string``
 
 \\nn\\t3::Db()->getColumns(``$table = '', $useSchemaManager = false``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Alle Tabellen-Spalten (TCA) für bestimmte Tabelle holen
+Get all table columns (TCA) for specific table
 
 .. code-block:: php
 
@@ -137,7 +138,7 @@ Alle Tabellen-Spalten (TCA) für bestimmte Tabelle holen
 \\nn\\t3::Db()->getColumnsByType(``$table = '', $colType = '', $useSchemaManager = false``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Felder einer Tabelle nach einem bestimmten Typ holen
+Get fields of a table by a specific type
 
 .. code-block:: php
 
@@ -148,35 +149,35 @@ Felder einer Tabelle nach einem bestimmten Typ holen
 \\nn\\t3::Db()->getConnection();
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Eine "rohe" Verbindung zur Datenbank holen.
-Nur in wirklichen Notfällen sinnvoll.
+Get a "raw" connection to the database.
+Only useful in real emergencies.
 
 .. code-block:: php
 
 	$connection = \nn\t3::Db()->getConnection();
-	$connection->fetchAll( 'SELECT  FROM tt_news WHERE 1;' );
+	$connection->fetchAll( 'SELECT FROM tt_news WHERE 1;' );
 
 | ``@return \TYPO3\CMS\Core\Database\Connection``
 
 \\nn\\t3::Db()->getDeleteColumn(``$table = ''``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Delete-Column für bestimmte Tabelle holen.
-Diese Spalte wird als Flag für gelöschte Datensätze verwendet.
-Normalerweise: deleted = 1
+Get delete column for specific table.
+This column is used as a flag for deleted records.
+Normally: deleted = 1
 
 | ``@return string``
 
 \\nn\\t3::Db()->getQueryBuilder(``$table = ''``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-QueryBuilder für eine Tabelle holen
+GetQueryBuilder for a table
 
 .. code-block:: php
 
 	$queryBuilder = \nn\t3::Db()->getQueryBuilder( 'fe_users' );
 
-Beispiel:
+Example:
 
 .. code-block:: php
 
@@ -191,7 +192,7 @@ Beispiel:
 \\nn\\t3::Db()->getRepositoryForModel(``$className = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Repository für ein Model holen.
+Get repository for a model.
 
 .. code-block:: php
 
@@ -202,8 +203,8 @@ Repository für ein Model holen.
 \\nn\\t3::Db()->getTableNameForModel(``$className = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Tabellen-Name für ein Model holen.
-Alias zu ``\nn\t3::Obj()->getTableName()``
+Get table name for a model.
+Alias to ``\nn\t3::Obj()->getTableName()``
 
 .. code-block:: php
 
@@ -214,15 +215,15 @@ Alias zu ``\nn\t3::Obj()->getTableName()``
 \\nn\\t3::Db()->ignoreEnableFields(``$queryOrRepository, $ignoreStoragePid = true, $ignoreHidden = false, $ignoreDeleted = false, $ignoreStartEnd = false``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Entfernt Default-Constraints zur StoragePID, hidden und/oder deleted
-zu einer Query oder Repository.
+Removes default constraints on the StoragePID, hidden and/or deleted
+to a query or repository.
 
 .. code-block:: php
 
 	\nn\t3::Db()->ignoreEnableFields( $entryRepository );
 	\nn\t3::Db()->ignoreEnableFields( $query );
 
-Beispiel für eine Custom Query:
+Example für a Custom Query:
 
 .. code-block:: php
 
@@ -232,7 +233,7 @@ Beispiel für eine Custom Query:
 	\nn\t3::Db()->ignoreEnableFields( $queryBuilder, true, true );
 	$rows = $queryBuilder->execute()->fetchAll();
 
-Sollte das nicht reichen oder zu kompliziert werden, siehe:
+If that doesn't do the trick or gets too complicated, see:
 
 .. code-block:: php
 
@@ -243,8 +244,8 @@ Sollte das nicht reichen oder zu kompliziert werden, siehe:
 \\nn\\t3::Db()->insert(``$table = '', $data = []``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Datenbank-Eintrag einfügen. Simpel und idiotensicher.
-Gibt Array der eingefügten Daten zurück inkl. insertUid des Eintrags
+Insert database entry. Simple and foolproof.
+Returns array of inserted data including insertUid of entry
 
 .. code-block:: php
 
@@ -255,7 +256,7 @@ Gibt Array der eingefügten Daten zurück inkl. insertUid des Eintrags
 \\nn\\t3::Db()->orderBy(``$queryOrRepository, $ordering = []``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Sortierung für ein Repository oder einen Query setzen.
+Set sorting for a repository or query.
 
 .. code-block:: php
 
@@ -267,7 +268,7 @@ Sortierung für ein Repository oder einen Query setzen.
 \\nn\\t3::Db()->persistAll();
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Alles persistieren...
+PersistAll...
 
 .. code-block:: php
 
@@ -278,11 +279,11 @@ Alles persistieren...
 \\nn\\t3::Db()->quote(``$str = ''``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Ein Ersatz für die ``mysqli_real_escape_string()`` Methode.
-Sollte nur im Notfall bei Low-Level Queries verwendet werden. Besser ist es,
-preparedStatements zu verwenden.
+A replacement for the ``mysqli_real_escape_string()`` method.
+Should only be used in an emergency for low-level queries. Better to use,
+preparedStatements.
 
-Funktioniert nur bei SQL, nicht bei DQL.
+Will only work with SQL, not DQL.
 
 .. code-block:: php
 
@@ -294,23 +295,23 @@ Funktioniert nur bei SQL, nicht bei DQL.
 \\nn\\t3::Db()->setFalConstraint(``$queryBuilder = NULL, $tableName = '', $falFieldName = '', $numFal = true, $operator = false``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Constraint für sys_file_reference zu einem QueryBuilder hinzufügen.
-Beschränkt die Ergebnisse darauf, ob es eine FAL-Relation gibt.
+Add constraint for sys_file_reference to a QueryBuilder.
+Constrains the results to see if there is a FAL relation.
 
 .. code-block:: php
 
 	$queryBuilder = \nn\t3::Db()->getQueryBuilder( $table );
 	
-	// Nur Datensätze holen, die für falfield mindestes eine SysFileReference haben
+	// Only get records that have at least one SysFileReference for falfield
 	\nn\t3::Db()->setFalConstraint( $queryBuilder, 'tx_myext_tablename', 'falfield' );
 	
-	// ... die KEINE SysFileReference für falfield haben
+	// ... that do NOT have a SysFileReference für falfield
 	\nn\t3::Db()->setFalConstraint( $queryBuilder, 'tx_myext_tablename', 'falfield', false );
 	
-	// ... die GENAU 2 SysFileReferences haben
+	// ... which have EXACTLY 2 SysFileReferences
 	\nn\t3::Db()->setFalConstraint( $queryBuilder, 'tx_myext_tablename', 'falfield', 2 );
 	
-	// ... die 2 oder weniger (less than or equal) SysFileReferences haben
+	// ... which have 2 or less (less than or equal) SysFileReferences
 	\nn\t3::Db()->setFalConstraint( $queryBuilder, 'tx_myext_tablename', 'falfield', 2, 'lte' );
 
 | ``@return $queryBuilder``
@@ -318,8 +319,8 @@ Beschränkt die Ergebnisse darauf, ob es eine FAL-Relation gibt.
 \\nn\\t3::Db()->setNotInSysCategoryConstraint(``$queryBuilder = NULL, $sysCategoryUids = [], $tableName = '', $categoryFieldName = 'categories'``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Contraint auf Datensätze beschränken, die NICHT in eine der angegebenen Kategorien sind.
-Gegenteil und Alias zu ``\nn\t3::Db()->setSysCategoryConstraint()``
+Constrain contraint to records that are NOT in one of the specified categories.
+Opposite and alias to ``\nn\t3::Db()->setSysCategoryConstraint()``
 
 .. code-block:: php
 
@@ -331,8 +332,8 @@ Gegenteil und Alias zu ``\nn\t3::Db()->setSysCategoryConstraint()``
 \\nn\\t3::Db()->setSysCategoryConstraint(``$queryBuilder = NULL, $sysCategoryUids = [], $tableName = '', $categoryFieldName = 'categories', $useNotIn = false``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Constraint für sys_category / sys_category_record_mm zu einem QueryBuilder hinzufügen.
-Beschränkt die Ergebnisse auf die angegebenen Sys-Categories-UIDs.
+Add constraint for sys_category / sys_category_record_mm to a QueryBuilder.
+Constrains the results to the specified sys-categories UIDs.
 
 .. code-block:: php
 
@@ -344,11 +345,11 @@ Beschränkt die Ergebnisse auf die angegebenen Sys-Categories-UIDs.
 \\nn\\t3::Db()->sortBy(``$objectArray, $fieldName = 'uid', $uidList = []``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Sortiert Ergebnisse eines Queries nach einem Array und bestimmten Feld.
-Löst das Problem, dass eine ``->in()``-Query die Ergebnisse nicht
-in der Reihenfolge der übergebenen IDs liefert. Beispiel:
-| ``$query->matching($query->in('uid', [3,1,2]));`` kommt nicht zwingend
-in der Reihenfolge ``[3,1,2]`` zurück.
+Sorts results of a query by an array and specific field.
+Solves the problem that a ``->in()`` query does not return the results
+in the order of the IDs passed. Example:
+| ``$query->matching($query->in('uid', [3,1,2]));`` does not necessarily come up
+in the order ``[3,1,2]`` comes back.
 
 .. code-block:: php
 
@@ -359,28 +360,28 @@ in der Reihenfolge ``[3,1,2]`` zurück.
 \\nn\\t3::Db()->statement(``$statement = '', $params = []``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Eine "rohe" Query an die Datenbank absetzen.
-Näher an der Datenbank geht nicht. Du bist für alles selbst verantwortlich.
-Injections steht nur Deine (hoffentlich ausreichende :) Intelligenz entgegen.
+Submit a "raw" query to the database.
+You can't get any closer to the database. You are responsible for everything yourself.
+Injections are only opposed by your (hopefully sufficient :) intelligence.
 
-Hilft z.B. bei Abfragen von Tabellen, die nicht Teil der Typo3 Installation sind und
-daher über den normal QueryBuilder nicht erreicht werden könnten.
+Helps e.g. with queries of tables, which are not part of the Typo3 installation and are therefore
+therefore could not be reached via the normal QueryBuilder.
 
 .. code-block:: php
 
-	// Variablen IMMER über escapen!
-	$keyword = \nn\t3::Db()->quote('suchbegriff');
-	$rows = \nn\t3::Db()->statement( "SELECT  FROM tt_news WHERE bodytext LIKE '%${keyword}%'");
+	// ALWAYS escape variables über!
+	$keyword = \nn\t3::Db()->quote('search term');
+	$rows = \nn\t3::Db()->statement( "SELECT FROM tt_news WHERE bodytext LIKE '%${keyword}%'");
 	
-	// oder besser gleich prepared statements verwenden:
-	$rows = \nn\t3::Db()->statement( 'SELECT  FROM tt_news WHERE bodytext LIKE :str', ['str'=>"%${keyword}%"] );
+	// or better use prepared statements:
+	$rows = \nn\t3::Db()->statement( 'SELECT FROM tt_news WHERE bodytext LIKE :str', ['str'=>"%${keyword}%"] );
 
 | ``@return mixed``
 
 \\nn\\t3::Db()->tableExists(``$table = ''``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Existiert eine bestimmte DB-Tabelle?
+Exists a specific DB table?
 
 .. code-block:: php
 
@@ -391,7 +392,7 @@ Existiert eine bestimmte DB-Tabelle?
 \\nn\\t3::Db()->truncate(``$table = ''``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Datenbank leeren.
+Empty database;
 
 .. code-block:: php
 
@@ -402,7 +403,7 @@ Datenbank leeren.
 \\nn\\t3::Db()->undelete(``$table = '', $constraint = []``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Datenbank-Eintrag wiederherstellen.
+Restore database entry
 
 \nn\t3::Db()->undelete('table', $uid);
 \nn\t3::Db()->undelete('table', ['uid_local'=>$uid]);
@@ -412,14 +413,14 @@ Datenbank-Eintrag wiederherstellen.
 \\nn\\t3::Db()->update(``$table, $data, $uid``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Datenbank-Eintrag aktualisieren. Schnell und einfach.
+Update database entry. Quick and easy.
 
 .. code-block:: php
 
 	\nn\t3::Db()->update('table', [], 1);
 	\nn\t3::Db()->update('table', [], ['email'=>'david@99grad.de', 'pid'=>12, ...]);
 
-Mit ``true`` statt einer ``$uid`` werden ALLE Datensätze der Tabelle geupdated.
+Using ``true`` instead of a ``$uid`` will update ALL records in the table.
 
 .. code-block:: php
 

@@ -13,15 +13,15 @@ Description
 <nnt3:ts.setup />
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Wert aus dem TypoScript-Setup holen.
+Get value from the TypoScript setup.
 
-Einfacher und direkter Zugriff aus dem Fluid-Template heraus - unabhängig von der Extension, die das Template rendert.
+Easy and direct access from within the fluid template - regardless of the extension rendering the template.
 
 .. code-block:: php
 
-	{nnt3:ts.setup(path:'pfad.zum.typoscript.setup')}
-	{nnt3:ts.setup(path:'pfad.zum.typoscript', key:'setup')}
-	{nnt3:ts.setup(path:'pfad.zum.typoscript.{dynamicKey}.whatever')}
+	{nnt3:ts.setup(path:'path.to.typoscript.setup')}
+	{nnt3:ts.setup(path:'path.zum.typoscript', key:'setup')}
+	{nnt3:ts.setup(path:'path.zum.typoscript.{dynamicKey}.whatever')}
 
 | ``@return mixed``
 

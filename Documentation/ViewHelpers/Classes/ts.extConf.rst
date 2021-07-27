@@ -13,7 +13,7 @@ Description
 <nnt3:ts.extConf />
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Konfiguration für eine Extension aus dem Extension-Manager holen.
+Get configuration for an extension from the extension manager.
 
 .. code-block:: php
 

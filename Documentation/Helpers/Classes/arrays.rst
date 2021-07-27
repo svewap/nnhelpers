@@ -10,8 +10,8 @@ Arrays
 \\nn\\t3::Arrays()
 ----------------------------------------------
 
-Diverse Methoden, um mit Arrays zu arbeiten wie mergen, bereinigen oder leere Werte zu entfernen.
-Methoden, um ein Value eines assoziativen Arrays als Key zu verwenden.
+Various methods to work with arrays like merge, purge or remove empty values.
+Methods to use a value of an associative array as a key.
 
 Overview of Methods
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -19,7 +19,7 @@ Overview of Methods
 \\nn\\t3::Arrays()->first();
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Gibt das erste Element des Arrays zurück, ohne array_shift()
+Returns the first element of the array, without array_shift()
 
 .. code-block:: php
 
@@ -30,12 +30,12 @@ Gibt das erste Element des Arrays zurück, ohne array_shift()
 \\nn\\t3::Arrays()->intExplode(``$delimiter = ','``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Einen String – oder Array – am Trennzeichen splitten, nicht numerische
-und leere Elemente entfernen
+Split a string – or array – at the separator, remove non-numeric
+and remove empty elements
 
 .. code-block:: php
 
-	\nn\t3::Arrays('1,a,b,2,3')->intExplode();       // [1,2,3]
+	\nn\t3::Arrays('1,a,b,2,3')->intExplode(); // [1,2,3]
 	\nn\t3::Arrays(['1','a','2','3'])->intExplode(); // [1,2,3]
 
 | ``@return array``
@@ -43,27 +43,27 @@ und leere Elemente entfernen
 \\nn\\t3::Arrays()->key(``$key = 'uid', $value = false``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Als Key des Arrays ein Feld im Array verwenden, z.B. um eine Liste zu bekommen,
-deren Key immer die UID des assoziativen Arrays ist:
+Use a field in the array as the key of the array, e.g. to get a list,
+whose key is always the UID of the associative array:
 
-Beispiel:
+Example:
 
 .. code-block:: php
 
-	$arr = [['uid'=>'1', 'title'=>'Titel A'], ['uid'=>'2', 'title'=>'Titel B']];
-	\nn\t3::Arrays($arr)->key('uid');            // ['1'=>['uid'=>'1', 'title'=>'Titel A'], '2'=>['uid'=>'2', 'title'=>'Titel B']]
-	\nn\t3::Arrays($arr)->key('uid', 'title');   // ['1'=>'Titel A', '2'=>'Titel B']
+	$arr = [['uid'=>'1', 'title'=>'title A'], ['uid'=>'2', 'title'=>'title B']];
+	\nn\t3::Arrays($arr)->key('uid'); // ['1'=>['uid'=>'1', 'title'=>'Title A'], '2'=>['uid'=>'2', 'title'=>'Title B']]
+	\nn\t3::Arrays($arr)->key('uid', 'title'); // ['1'=>'Title A', '2'=>'Title B']
 
 | ``@return array``
 
 \\nn\\t3::Arrays()->merge();
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Ein assoziatives Array rekursiv mit einem anderen Array mergen.
+Merge an associative array recursively with another array.
 
-| ``$addKeys`` => wenn ``false`` werden nur Keys überschrieben, die auch in ``$arr1`` existieren
-| ``$includeEmptyValues`` => wenn ``true`` werden auch leere Values in ``$arr1`` übernommen
-| ``$enableUnsetFeature`` => wenn ``true``, kann ``__UNSET`` als Wert in ``$arr2`` verwendet werden, um eine Wert in ``$arr1`` zu löschen
+| ``$addKeys`` => if ``false``, only keys üare overwritten that also exist in ``$arr1``
+| ``$includeEmptyValues`` => if ``true``, empty values in ``$arr1`` will be included as well
+| ``$enableUnsetFeature`` => if ``true``, ``__UNSET`` can be used as a value in ``$arr2`` to delete a value in ``$arr1``
 
 .. code-block:: php
 
@@ -76,20 +76,20 @@ Ein assoziatives Array rekursiv mit einem anderen Array mergen.
 \\nn\\t3::Arrays()->pluck(``$keys = NULL, $isSingleObject = false``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Assoziatives Array auf bestimmte Elemente reduzieren / destillieren:
+Reduce/distill associative array to specific elements:
 
 .. code-block:: php
 
-	\nn\t3::Arrays( $objArr )->key('uid')->pluck('title');                    // ['1'=>'Titel A', '2'=>'Titel B']
-	\nn\t3::Arrays( $objArr )->key('uid')->pluck(['title', 'bodytext']);  // ['1'=>['title'=>'Titel A', 'bodytext'=>'Inhalt'], '2'=>...]
-	\nn\t3::Arrays( ['uid'=>1, 'pid'=>2] )->pluck(['uid'], true);          // ['uid'=>1]
+	\nn\t3::Arrays( $objArr )->key('uid')->pluck('title'); // ['1'=>'Title A', '2'=>'Title B']
+	\nn\t3::Arrays( $objArr )->key('uid')->pluck(['title', 'bodytext']); // ['1'=>['title'=>'title A', 'bodytext'=>'content'], '2'=>...]
+	\nn\t3::Arrays( ['uid'=>1, 'pid'=>2] )->pluck(['uid'], true); // ['uid'=>1]
 
 | ``@return array``
 
 \\nn\\t3::Arrays()->removeEmpty();
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Leere Werte aus einem Array entfernen.
+Remove empty values from an array.
 
 .. code-block:: php
 
@@ -100,7 +100,7 @@ Leere Werte aus einem Array entfernen.
 \\nn\\t3::Arrays()->toArray();
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Gibt dieses Array-Object als "normales" Array zurück.
+Returns this array object as a "normal" array.
 
 .. code-block:: php
 
@@ -111,16 +111,16 @@ Gibt dieses Array-Object als "normales" Array zurück.
 \\nn\\t3::Arrays()->trimExplode(``$delimiter = ',', $removeEmpty = true``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Einen String – oder Array – am Trennzeichen splitten, leere Elemente entfernen
-Funktioniert mit Strings und Arrays.
+Split a string – or array – at the separator, remove empty elements.
+Works with strings and arrays.
 
 .. code-block:: php
 
-	\nn\t3::Arrays('1,,2,3')->trimExplode();         // [1,2,3]
-	\nn\t3::Arrays('1,,2,3')->trimExplode( false );      // [1,'',2,3]
-	\nn\t3::Arrays('1|2|3')->trimExplode('|');           // [1,2,3]
-	\nn\t3::Arrays('1|2||3')->trimExplode('|', false);   // [1,2,'',3]
-	\nn\t3::Arrays('1|2,3')->trimExplode(['|', ',']);    // [1,2,3]
+	\nn\t3::Arrays('1,,2,3')->trimExplode(); // [1,2,3]
+	\nn\t3::Arrays('1,,2,3')->trimExplode( false ); // [1,'',2,3]
+	\nn\t3::Arrays('1|2|3')->trimExplode('|'); // [1,2,3]
+	\nn\t3::Arrays('1|2||3')->trimExplode('|', false); // [1,2,'',3]
+	\nn\t3::Arrays('1|2,3')->trimExplode(['|', ',']); // [1,2,3]
 	\nn\t3::Arrays(['1','','2','3'])->trimExplode(); // [1,2,3]
 
 | ``@return array``

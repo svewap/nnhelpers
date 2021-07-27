@@ -10,8 +10,8 @@ Dom
 \\nn\\t3::Dom()
 ----------------------------------------------
 
-Manipulieren von DOM und XML.
-Noch in Arbeit :)
+Manipulating DOM and XML.
+Still work in progress :)
 
 Overview of Methods
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -19,8 +19,8 @@ Overview of Methods
 \\nn\\t3::Dom()->absPrefix(``$html, $attributes = [], $baseUrl = ''``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Ersetzt Links und Pfade zu Bildern etc. im Quelltext mit absoluter URL
-z.B. für den Versand von Mails
+Replaces links and paths to images etc. in source code with absolute URL.
+e.g. for sending mails
 | ``@return string``
 
 \\nn\\t3::Dom()->find();

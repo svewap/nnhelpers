@@ -10,7 +10,7 @@ Mail
 \\nn\\t3::Mail()
 ----------------------------------------------
 
-Helferlein für den Mailversand
+Helper for the mail dispatch
 
 Overview of Methods
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -18,25 +18,25 @@ Overview of Methods
 \\nn\\t3::Mail()->send(``$paramOverrides = []``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Eine E-Mail senden.
+Send an email.
 
 .. code-block:: php
 
 	$html = \nn\t3::Template()->render('MailTemplate', ['varKey'=>'varValue'], 'tx_extname_plugin');
 	
 	\nn\t3::Mail()->send([
-	    'html'          => $html,
-	    'plaintext'     => Optional: Text-Version
-	    'fromEmail'     => Absender-Email
-	    'fromName'      => Absender-Name
-	    'toEmail'       => Empfänger-Email
-	    'subject'       => Betreff
-	    'attachments'   => [...],
-	    'emogrify'      => CSS-Stile in Inline-Styles umwandeln (default: `true`)
-	    'absPrefix'     => Relative Pfade in absolute umwandeln (default: `true`)
+	    'html' => $html,
+	    'plaintext' => Optional: text version
+	    'fromEmail' => Sender email
+	    'fromName' => Sender name
+	    'toEmail' => Recipient email
+	    'subject' => Subject
+	    'attachments' => [..,]
+	    'emogrify' => convert CSS styles to inline styles (default: `true`)
+	    'absPrefix' => Convert relative paths to absolute (default: `true`)
 	]);
 
-Bilder einbetten mit    ``<img data-embed="1" src="..." />``
-Dateianhänge mit        ``<a data-embed="1" href="..." />``
+Embed images with ``<img data-embed="1" src="..." />``
+File attachments with ``<a data-embed="1" href="..." />``
 | ``@return void``
 

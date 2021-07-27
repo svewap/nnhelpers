@@ -13,16 +13,16 @@ Description
 <nnt3:file.exists />
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Prüft, ob eine Datei existiert.
+Checks if a file exists
 
 .. code-block:: php
 
-	{nnt3:file.exists(file:'pfad/zum/bild.jpg')}
+	{nnt3:file.exists(file:'path/to/image.jpg')}
 
 .. code-block:: php
 
-	<f:if condition="!{nnt3:file.exists(file:'pfad/zum/bild.jpg')}">
-	  Wo ist das Bild hin?
+	<f:if condition="!{nnt3:file.exists(file:'path/to/image.jpg')}">
+	  Where did the image go?
 	</f:if>
 
 | ``@return boolean``

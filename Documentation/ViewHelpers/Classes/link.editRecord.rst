@@ -13,7 +13,7 @@ Description
 <nnt3:link.editRecord />
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Link zum Editieren eines Datensatzes in einem Backend-Modul generieren.
+Generate a link to edit a record in a backend module.
 
 .. code-block:: php
 
@@ -21,7 +21,7 @@ Link zum Editieren eines Datensatzes in einem Backend-Modul generieren.
 	    <i class="fas fa-eye"></i>
 	</nnt3:link.editRecord>
 
-Alternativ kann auch der Core-ViewHelper genutzt werden:
+Alternatively, the Core-ViewHelper can be used:
 
 .. code-block:: php
 

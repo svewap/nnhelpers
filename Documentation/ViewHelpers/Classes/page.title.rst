@@ -13,14 +13,14 @@ Description
 <nnt3:page.title />
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Aktuelle Page-Title setzen.
+Set current page title.
 
-Andert das ``<title>``-Tag der aktuellen Seite.
+Changes the ``<title>`` tag of the current page.
 
-Funktioniert nicht, wenn ``EXT:advancedtitle`` aktiviert ist!
+Does not work if ``EXT:advancedtitle`` is enabled!
 
 .. code-block:: php
 
-	{nnt3:page.title(title:'Seitentitel')}
+	{nnt3:page.title(title:'page-title')}
 	{entry.title->nnt3:page.title()}
 

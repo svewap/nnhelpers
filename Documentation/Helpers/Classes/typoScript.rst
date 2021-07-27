@@ -10,7 +10,8 @@ TypoScript
 \\nn\\t3::TypoScript()
 ----------------------------------------------
 
-Methoden zum Parsen und Konvertieren von TypoScript
+Methods for parsing and converting TypoScript
+.
 
 Overview of Methods
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -18,8 +19,8 @@ Overview of Methods
 \\nn\\t3::TypoScript()->addPageConfig(``$str = ''``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Page-Config hinzufügen
-Alias zu ``\nn\t3::Registry()->addPageConfig( $str );``
+addPageConfig.
+Alias to ``\nn\t3::Registry()->addPageConfig( $str );``
 
 .. code-block:: php
 
@@ -32,8 +33,8 @@ Alias zu ``\nn\t3::Registry()->addPageConfig( $str );``
 \\nn\\t3::TypoScript()->convertToPlainArray(``$ts``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-TypoScript 'name.'-Syntax in normales Array umwandeln.
-Erleichtert den Zugriff
+Convert TypoScript 'name.' syntax to normal array.
+Makes it easier to access
 
 .. code-block:: php
 
@@ -44,12 +45,12 @@ Erleichtert den Zugriff
 \\nn\\t3::TypoScript()->fromString(``$str = '', $overrideSetup = []``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Wandelt einen Text in ein TypoScript-Array um.
+Converts a text into a TypoScript array
 
 .. code-block:: php
 
-	\nn\t3::TypoScript()->fromString( 'lib.test { beispiel = 10 }' );    => ['lib'=>['test'=>['beispiel'=>10]]]
-	\nn\t3::TypoScript()->fromString( 'lib.test { beispiel = 10 }', $mergeSetup );
+	\nn\t3::TypoScript()->fromString( 'lib.test { example = 10 }' ); => ['lib'=>['test'=>['example'=>10]]
+	\nn\t3::TypoScript()->fromString( 'lib.test { example = 10 }', $mergeSetup );
 
 | ``@return array``
 

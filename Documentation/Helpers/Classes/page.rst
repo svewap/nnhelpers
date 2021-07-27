@@ -10,7 +10,7 @@ Page
 \\nn\\t3::Page()
 ----------------------------------------------
 
-Alles rund um die ``pages`` Tabelle.
+All about the ``pages`` table.
 
 Overview of Methods
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -18,8 +18,8 @@ Overview of Methods
 \\nn\\t3::Page()->addCssFile(``$path, $compress = false, $atTop = false, $wrap = false, $concat = false``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-CSS-Datei in <head> einschleusen
-Siehe ``\nn\t3::Page()->addHeader()`` für einfachere Version.
+Insert CSS file into <head>.
+See ``\nn\t3::Page()->addHeader()`` for simpler version.
 
 .. code-block:: php
 
@@ -30,7 +30,7 @@ Siehe ``\nn\t3::Page()->addHeader()`` für einfachere Version.
 \\nn\\t3::Page()->addCssLibrary(``$path, $compress = false, $atTop = false, $wrap = false, $concat = false``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-CSS-Library in <head> einschleusen
+insert CSS library into <head>
 
 .. code-block:: php
 
@@ -41,8 +41,8 @@ CSS-Library in <head> einschleusen
 \\nn\\t3::Page()->addFooter(``$str = ''``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-CSS oder JS oder HTML-Code an Footer anhängen.
-Entscheidet selbst, welche Methode des PageRenderes zu verwenden ist.
+Append CSS or JS or HTML code to footer.
+Decide for yourself which method of PageRender to use.
 
 .. code-block:: php
 
@@ -56,8 +56,8 @@ Entscheidet selbst, welche Methode des PageRenderes zu verwenden ist.
 \\nn\\t3::Page()->addFooterData(``$html = ''``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-HTML-Code vor Ende der <body> einschleusen
-Siehe ``\nn\t3::Page()->addFooter()`` für einfachere Version.
+Insert HTML code before end of <body>.
+See ``\nn\t3::Page()->addFooter()`` for simpler version.
 
 .. code-block:: php
 
@@ -68,8 +68,8 @@ Siehe ``\nn\t3::Page()->addFooter()`` für einfachere Version.
 \\nn\\t3::Page()->addHeader(``$str = ''``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-CSS oder JS oder HTML-Code an Footer anhängen.
-Entscheidet selbst, welche Methode des PageRenderes zu verwenden ist.
+Append CSS or JS or HTML code to footer.
+Decide for yourself which method of PageRender to use.
 
 .. code-block:: php
 
@@ -83,8 +83,8 @@ Entscheidet selbst, welche Methode des PageRenderes zu verwenden ist.
 \\nn\\t3::Page()->addHeaderData(``$html = ''``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-HTML-Code in <head> einschleusen
-Siehe ``\nn\t3::Page()->addHeader()`` für einfachere Version.
+Sneak HTML code into <head>.
+See ``\nn\t3::Page()->addHeader()`` for simpler version.
 
 .. code-block:: php
 
@@ -95,8 +95,8 @@ Siehe ``\nn\t3::Page()->addHeader()`` für einfachere Version.
 \\nn\\t3::Page()->addJsFile(``$path, $compress = false, $atTop = false, $wrap = false, $concat = false``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-JS-Datei in <head> einschleusen
-Siehe ``\nn\t3::Page()->addHeader()`` für einfachere Version.
+Sneak JS file into <head>.
+See ``\nn\t3::Page()->addHeader()`` for simpler version.
 
 .. code-block:: php
 
@@ -107,8 +107,8 @@ Siehe ``\nn\t3::Page()->addHeader()`` für einfachere Version.
 \\nn\\t3::Page()->addJsFooterFile(``$path, $compress = false, $atTop = false, $wrap = false, $concat = false``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-JS-Datei am Ende der <body> einschleusen
-Siehe ``\nn\t3::Page()->addJsFooterFile()`` für einfachere Version.
+Insert JS file at the end of the <body>.
+See ``\nn\t3::Page()->addJsFooterFile()`` for simpler version.
 
 .. code-block:: php
 
@@ -119,7 +119,7 @@ Siehe ``\nn\t3::Page()->addJsFooterFile()`` für einfachere Version.
 \\nn\\t3::Page()->addJsFooterLibrary(``$path, $compress = false, $atTop = false, $wrap = false, $concat = false``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-JS-Library am Ende der <body> einschleusen
+Insert JS library at the end of <body>
 
 .. code-block:: php
 
@@ -130,7 +130,7 @@ JS-Library am Ende der <body> einschleusen
 \\nn\\t3::Page()->addJsLibrary(``$path, $compress = false, $atTop = false, $wrap = false, $concat = false``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-JS-Library in <head> einschleusen.
+Insert JS library into <head> 
 
 .. code-block:: php
 
@@ -141,7 +141,7 @@ JS-Library in <head> einschleusen.
 \\nn\\t3::Page()->clearCache(``$pid = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Seiten-Cache einer (oder mehrerer) Seiten löschen
+Clear page cache of one (or more) pages
 
 .. code-block:: php
 
@@ -154,7 +154,7 @@ Seiten-Cache einer (oder mehrerer) Seiten löschen
 \\nn\\t3::Page()->get(``$uid = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Daten einer Seiten holen (aus Tabelle "pages")
+Get data of a page (from table "pages")
 
 .. code-block:: php
 
@@ -165,7 +165,7 @@ Daten einer Seiten holen (aus Tabelle "pages")
 \\nn\\t3::Page()->getAbsLink(``$pidOrParams = NULL, $params = []``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Einen absoluten Link zu einer Seite generieren
+Generate an absolute link to a page
 
 .. code-block:: php
 
@@ -176,7 +176,7 @@ Einen absoluten Link zu einer Seite generieren
 \\nn\\t3::Page()->getChildPids(``$parentPid = [], $recursive = 999``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Liste der Child-Uids einer oder mehrerer Seiten holen.
+Get list of child uids of one or more pages.
 
 .. code-block:: php
 
@@ -188,17 +188,17 @@ Liste der Child-Uids einer oder mehrerer Seiten holen.
 \\nn\\t3::Page()->getData(``$pids = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Daten einer Seiten holen (Tabelle ``pages``).
+Get data of a page (table ``pages``).
 
 .. code-block:: php
 
-	// data der aktuellen Seite
+	// data of the current page.
 	\nn\t3::Page()->getData();
 	
-	// data der Seite mit pid = 123 holen
+	// get data of the page with pid = 123
 	\nn\t3::Page()->getData( 123 );
 	
-	// data der Seiten mit pids = 123 und 456 holen. Key des Arrays = pid
+	// get data of the pages with pids = 123 and 456. Key of the array = pid
 	\nn\t3::Page()->getData( [123, 456] );
 
 | ``@return array``
@@ -206,19 +206,19 @@ Daten einer Seiten holen (Tabelle ``pages``).
 \\nn\\t3::Page()->getField(``$key, $slide = false, $override = ''``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Einzelnes Feld aus page-Data holen.
-Der Wert kann per ``slide = true`` von übergeordneten Seiten geerbt werden.
+Get single field from page-data.
+The value can be inherited from üparent pages via ``slide = true``.
 
-(!) Wichtig:
-Eigene Felder müssen in der ``ext_localconf.php`` als rootLine definiert werden!
-Siehe auch ``\nn\t3::Registry()->rootLineFields(['key', '...']);``
+(!) Important:
+Custom fields must be defined as rootLine in ``ext_localconf.php``!
+See also ``\nn\t3::Registry()->rootLineFields(['key', '...']);``
 
 .. code-block:: php
 
 	\nn\t3::Page()->getField('layout');
 	\nn\t3::Page()->getField('backend_layout_next_level', true, 'backend_layout');
 
-Exisitiert auch als ViewHelper:
+Exisits also as ViewHelper:
 
 .. code-block:: php
 
@@ -231,7 +231,7 @@ Exisitiert auch als ViewHelper:
 \\nn\\t3::Page()->getLink(``$pidOrParams = NULL, $params = [], $absolute = false``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Einen einfachen Link zu einer Seite generieren
+Generate a simple link to a page
 
 .. code-block:: php
 
@@ -245,7 +245,7 @@ Einen einfachen Link zu einer Seite generieren
 \\nn\\t3::Page()->getPageRenderer();
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Page-Renderer holen
+GetPageRenderer
 
 .. code-block:: php
 
@@ -256,10 +256,10 @@ Page-Renderer holen
 \\nn\\t3::Page()->getPid(``$fallback = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-PID der aktuellen Seite holen.
-Im Frontend: Die aktuelle ``TSFE->id``
-Im Backend: Die Seite, die im Seitenbaum ausgewählt wurde
-Ohne Context: Die pid der site-Root
+Get the current page's PID.
+In the frontend: the current ``TSFE->id``
+In the backend: the page that was selected in the page tree.
+Without context: the pid of the site root
 
 .. code-block:: php
 
@@ -271,8 +271,8 @@ Ohne Context: Die pid der site-Root
 \\nn\\t3::Page()->getPidFromRequest();
 """""""""""""""""""""""""""""""""""""""""""""""
 
-PID aus Request-String holen, z.B. in Backend Modulen.
-Hacky. ToDo: Prüfen, ob es eine bessere Methode gibt.
+Get PID from request string, e.g. in backend modules.
+Hacky. ToDo: check if there is a better method.
 
 .. code-block:: php
 
@@ -283,7 +283,7 @@ Hacky. ToDo: Prüfen, ob es eine bessere Methode gibt.
 \\nn\\t3::Page()->getRootline(``$pid = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Rootline für gegebene PID holen
+GetRootline for given PID
 
 .. code-block:: php
 
@@ -294,9 +294,9 @@ Rootline für gegebene PID holen
 \\nn\\t3::Page()->getSiteRoot(``$returnAll = false``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-PID der Site-Root(s) holen.
-Entspricht der Seite im Backend, die die "Weltkugel" als Symbol hat
-(in den Seiteneigenschaften "als Anfang der Webseite nutzen")
+Get the PID of the site root(s).
+Corresponds to the page in the backend that has the "globe" as an icon.
+(in the page properties "use as start of web page")
 
 .. code-block:: php
 
@@ -307,20 +307,20 @@ Entspricht der Seite im Backend, die die "Weltkugel" als Symbol hat
 \\nn\\t3::Page()->getSubpages(``$pid = NULL, $includeHidden = false``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Menü für gegebene PID holen
+Get menü for given PID
 
 .. code-block:: php
 
 	\nn\t3::Page()->getSubpages();
 	\nn\t3::Page()->getSubpages( $pid );
-	\nn\t3::Page()->getSubpages( $pid, true );   // Auch versteckte Seiten holen
+	\nn\t3::Page()->getSubpages( $pid, true ); // Also fetch hidden pages
 
 | ``@return array``
 
 \\nn\\t3::Page()->getTitle();
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Aktuellen Page-Title (ohne Suffix) holen
+Get current page title (without suffix)
 
 .. code-block:: php
 
@@ -331,7 +331,7 @@ Aktuellen Page-Title (ohne Suffix) holen
 \\nn\\t3::Page()->hasSubpages(``$pid = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Prüft, ob eine Seite Untermenüs hat
+Checks whether a page has submenus
 
 .. code-block:: php
 
@@ -342,14 +342,14 @@ Prüft, ob eine Seite Untermenüs hat
 \\nn\\t3::Page()->setTitle(``$title = ''``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-PageTitle (<title>-Tag) ändern
-Funktioniert nicht, wenn EXT:advancedtitle aktiviert ist!
+Change PageTitle (<title>tag).
+Does not work if EXT:advancedtitle is enabled!
 
 .. code-block:: php
 
 	\nn\t3::Page()->setTitle('YEAH!');
 
-Auch als ViewHelper vorhanden:
+Also available as a ViewHelper:
 
 .. code-block:: php
 

@@ -10,7 +10,7 @@ Errors
 \\nn\\t3::Errors()
 ----------------------------------------------
 
-Fehler und Exceptions ausgeben
+Display errors and exceptions
 
 Overview of Methods
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -18,6 +18,6 @@ Overview of Methods
 \\nn\\t3::Errors()->Exception(``$message, $code = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Eine Typo3-Exception werfen mit Backtrace
+Throwing a Typo3 exception with backtrace.
 | ``@return int``
 

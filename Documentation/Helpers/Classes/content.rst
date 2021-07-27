@@ -10,7 +10,8 @@ Content
 \\nn\\t3::Content()
 ----------------------------------------------
 
-Inhaltselemente und Inhalte einer Backend-Spalten (``colPos``) lesen und rendern
+Read and render content elements and content of a backend column (``colPos``)
+.
 
 Overview of Methods
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -18,28 +19,28 @@ Overview of Methods
 \\nn\\t3::Content()->addRelations(``$data = []``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Lädt Relationen (``media``, ``assets``, ...) zu einem ``tt_content``-Data-Array.
-Nutzt dafür eine ``EXT:mask``-Methode.
+L&l;dt relations (``media``, ``assets``, ...) to a ``tt_content`` data array.
+Uses an ``EXT:mask`` method for this.
 
 .. code-block:: php
 
 	\nn\t3::Content()->addRelations( $data );
 
-@todo: Von mask entkoppeln
+@todo: Decouple from mask.
 | ``@return array``
 
 \\nn\\t3::Content()->column(``$colPos, $pageUid = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Lädt den Content für eine bestimmte Spalte (``colPos``) und Seite.
-Wird keine pageUid angegeben, verwendet er die aktuelle Seite.
+Lädt the content for a given column (``colPos``) and page.
+If no pageUid is specified, it uses the current page.
 
 .. code-block:: php
 
 	\nn\t3::Content()->column( 110 );
 	\nn\t3::Content()->column( $colPos, $pageUid );
 
-Auch als ViewHelper vorhanden:
+Also available as a ViewHelper:
 
 .. code-block:: php
 
@@ -51,7 +52,7 @@ Auch als ViewHelper vorhanden:
 \\nn\\t3::Content()->columnData(``$colPos, $addRelations = false, $pageUid = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Lädt die "rohen" ``tt_content`` Daten einer bestimmten Spalte (``colPos``).
+Lädt the "raw" ``tt_content`` data of a given column (``colPos``).
 
 .. code-block:: php
 
@@ -59,8 +60,9 @@ Lädt die "rohen" ``tt_content`` Daten einer bestimmten Spalte (``colPos``).
 	\nn\t3::Content()->columnData( 110, true );
 	\nn\t3::Content()->columnData( 110, true, 99 );
 
-Auch als ViewHelper vorhanden.
-| ``relations`` steht im ViewHelper als default auf ``TRUE``
+Also present as ViewHelper.
+| ``relations`` defaults to ``TRUE``
+ in ViewHelper.
 
 .. code-block:: php
 
@@ -72,13 +74,13 @@ Auch als ViewHelper vorhanden.
 \\nn\\t3::Content()->get(``$ttContentUid = NULL, $getRelations = false``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Lädt ein tt_content-Element als Array
+Lädt a tt_content element as an array
 
 .. code-block:: php
 
 	\nn\t3::Content()->get( 1201 );
 
-Laden von Relationen (``media``, ``assets``, ...)
+Loading relations (``media``, ``assets``, ...)
 
 .. code-block:: php
 
@@ -89,14 +91,14 @@ Laden von Relationen (``media``, ``assets``, ...)
 \\nn\\t3::Content()->render(``$ttContentUid = NULL, $data = []``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Rendert ein ``tt_content``-Element als HTML
+Renders an ``tt_content`` element as HTML
 
 .. code-block:: php
 
 	\nn\t3::Content()->render( 1201 );
 	\nn\t3::Content()->render( 1201, ['key'=>'value'] );
 
-Auch als ViewHelper vorhanden:
+Also available as a ViewHelper:
 
 .. code-block:: php
 

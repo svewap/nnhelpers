@@ -207,14 +207,13 @@ class ModuleController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControlle
 		require_once( $autoload );
 
 		echo "<pre>
-			<h2>Doku für {$language} generieren:</h2>
-			<p>Für andere Sprache: BE-User Sprache wechseln!</p>
+			<h1>Doku für `{$language}` generieren:</h1>
 		\n\n";
 
 		echo "\n\n<h3>Export der Klassen:</h3>\n";
 
 		$doc = $this->generateDocumentation();
-		if (!$language == 'de') {
+		if ($language != 'de') {
 			$this->localizeDocumentation( $doc, $language, true );
 		}
 
@@ -241,8 +240,8 @@ class ModuleController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControlle
 		echo "\n\n<h3>Export der zusätzlichen Helper:</h3>\n";
 
 		$doc = $this->generateAdditionalClassesDocumentation();
-		if (!$language == 'de') {
-			$this->localizeDocumentation( $doc, $beUserLang, true );
+		if ($language != 'de') {
+			$this->localizeDocumentation( $doc, $language, true );
 		}
 
 		foreach ($doc as $className=>$infos) {
@@ -267,10 +266,10 @@ class ModuleController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControlle
 
 		echo "\n\n<h3>Export der ViewHelper:</h3>\n";
 		$docViewhelper = $this->generateViewhelperDocumentation();
-		if (!$language == 'de') {
-			$this->localizeDocumentation( $docViewhelper, $beUserLang, true );
+		if ($language != 'de') {
+			$this->localizeDocumentation( $docViewhelper, $language, true );
 		}
-		
+
 		foreach ($docViewhelper as $className=>$infos) {
 			$rendering = \nn\t3::Template()->render(
 				'EXT:nnhelpers/Resources/Private/Backend/Templates/Documentation/ViewHelperTemplate.html', [

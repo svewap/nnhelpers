@@ -13,10 +13,10 @@ Description
 <nnt3:content.columnData />
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Lädt die rohen Daten einer Spalte (colPos) des Backend Layouts.
+Lädt the raw data of a column (colPos) from the backend layout.
 
-Es handelt sich hier um das rohe ``tt_content``-data-Array einer Spalte (colPos) aus dem Backend-Layout.
-Per default werden auch die Relationen (FAL, assets, media...) geladen. Kann per ``relations:0`` verhindert werden.
+This is the raw ``tt_content`` data array of a column (colPos) from the backend layout.
+By default, the relations (FAL, assets, media...) are also loaded. Can be prevented via ``relations:0``.
 
 .. code-block:: php
 

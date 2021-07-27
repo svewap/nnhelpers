@@ -13,15 +13,15 @@ Description
 <nnt3:ts.page />
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Wert aus der PageTSconfig holen.
+Get value from PageTSconfig.
 
-Einfacher und direkter Zugriff aus dem Fluid-Template heraus - unabhängig von der Extension, die das Template rendert.
+Easily and directly access from within the fluid template - regardless of the extension rendering the template.
 
 .. code-block:: php
 
-	{nnt3:ts.page(path:'pfad.zum.page.config')}
-	{nnt3:ts.page(path:'pfad.zum.page', key:'config')}
-	{nnt3:ts.page(path:'pfad.zum.page.{dynamicKey}.whatever')}
+	{nnt3:ts.page(path:'path.zum.page.config')}
+	{nnt3:ts.page(path:'path.zum.page', key:'config')}
+	{nnt3:ts.page(path:'path.zum.page.{dynamicKey}.whatever')}
 
 | ``@return mixed``
 

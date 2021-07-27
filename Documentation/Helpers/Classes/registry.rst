@@ -10,8 +10,8 @@ Registry
 \\nn\\t3::Registry()
 ----------------------------------------------
 
-Hilfreiche Methoden zum Registrieren von Extension-Komponenten wie Plugins,
-Backend-Module, FlexForms etc.
+Helpful methods to register extension components like plugins,
+Backend Modules, FlexForms etc.
 
 Overview of Methods
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -19,7 +19,7 @@ Overview of Methods
 \\nn\\t3::Registry()->addPageConfig(``$str = ''``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Page-Config hinzufügen
+addPageConfig
 
 .. code-block:: php
 
@@ -32,8 +32,8 @@ Page-Config hinzufügen
 \\nn\\t3::Registry()->configurePlugin(``$vendorName = '', $pluginName = '', $cacheableActions = [], $uncacheableActions = []``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Ein Plugin konfigurieren.
-In ``ext_localconf.php`` nutzen.
+Configuring a plugin.
+Use in ``ext_localconf.php``.
 
 .. code-block:: php
 
@@ -47,7 +47,7 @@ In ``ext_localconf.php`` nutzen.
 \\nn\\t3::Registry()->flexform(``$vendorName = '', $pluginName = '', $path = ''``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Ein Flexform für ein Plugin registrieren.
+Register a flexform for a plugin.
 
 .. code-block:: php
 
@@ -59,8 +59,8 @@ Ein Flexform für ein Plugin registrieren.
 \\nn\\t3::Registry()->fluidNamespace(``$referenceNames = [], $namespaces = []``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Globalen Namespace für Fluid registrieren.
-Meistens in ``ext_localconf.php`` genutzt.
+Register global namespace for fluid.
+Mostly used in ``ext_localconf.php``.
 
 .. code-block:: php
 
@@ -73,7 +73,7 @@ Meistens in ``ext_localconf.php`` genutzt.
 \\nn\\t3::Registry()->get(``$extName = '', $path = ''``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Eine Wert aus der Tabelle sys_registry holen.
+Get a value from the sys_registry table.
 
 .. code-block:: php
 
@@ -84,20 +84,20 @@ Eine Wert aus der Tabelle sys_registry holen.
 \\nn\\t3::Registry()->getVendorExtensionName(``$combinedVendorPluginName = ''``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Plugin-Name generieren.
-Abhängig von Typo3-Version wird der Plugin-Name mit oder ohne Vendor zurückgegeben.
+Generate plugin name.
+Depending on Typo3 version, the plugin name will be returned with or without vendor.
 
 .. code-block:: php
 
-	    \nn\t3::Registry()->getVendorExtensionName( 'nncalendar' );      // => Nng.Nncalendar
-	    \nn\t3::Registry()->getVendorExtensionName( 'Nng\Nncalendar' );      // => Nng.Nncalendar
+	 \nn\t3::Registry()->getVendorExtensionName( 'nncalendar' ); // => Nng.Nncalendar
+	    \nn\t3::Registry()->getVendorExtensionName( 'Nng\Nncalendar' ); // => Nng.Nncalendar
 
 | ``@return string``
 
 \\nn\\t3::Registry()->icon(``$identifier = '', $path = ''``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Ein Icon registrieren. Klassischerweise in ext_tables.php genutzt.
+Register an icon. Classically used in ext_tables.php.
 
 .. code-block:: php
 
@@ -108,10 +108,10 @@ Ein Icon registrieren. Klassischerweise in ext_tables.php genutzt.
 \\nn\\t3::Registry()->parseControllerActions(``$controllerActionList = []``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Liste mit ``'ControllerName' => 'action,list,show'`` parsen.
-Immer den vollen Klassen-Pfad in der ``::class`` Schreibweise angeben.
-Berücksichtigt, dass vor Typo3 10 nur der einfache Klassen-Name (z.B. ``Main``)
-als Key verwendet wird.
+Parse list with ``'ControllerName' => 'action,list,show'``
+Always specify the full class path in ``::class`` notation.
+Take into account that before Typo3 10, only the simple class name (e.g. ``Main``)
+is used as the key.
 
 .. code-block:: php
 
@@ -124,28 +124,28 @@ als Key verwendet wird.
 \\nn\\t3::Registry()->plugin(``$vendorName = '', $pluginName = '', $title = '', $icon = ''``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Ein Plugin registrieren zur Auswahl über das Dropdown ``CType`` im Backend.
-In ``Configuration/TCA/Overrides/tt_content.php`` nutzen – oder ``ext_tables.php`` (veraltet).
+Register a plugin to select – using the ``CType`` dropdown in the backend.
+In ``Configuration/TCA/Overrides/tt_content.php`` use – or ``ext_tables.php`` (deprecated).
 
 .. code-block:: php
 
-	\nn\t3::Registry()->plugin( 'nncalendar', 'nncalendar', 'Kalender', 'EXT:pfad/zum/icon.svg' );
-	\nn\t3::Registry()->plugin( 'Nng\Nncalendar', 'nncalendar', 'Kalender', 'EXT:pfad/zum/icon.svg' );
+	\nn\t3::Registry()->plugin( 'nncalendar', 'nncalendar', 'Calendar', 'EXT:path/to/icon.svg' );
+	\nn\t3::Registry()->plugin( 'Nng\Nncalendar', 'nncalendar', 'Calendar', 'EXT:path/to/icon.svg' );
 
 | ``@return void``
 
 \\nn\\t3::Registry()->rootLineFields(``$fields = [], $translate = true``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Ein Feld in der Tabelle pages registrieren, das auf Unterseiten vererbbar / geslided werden soll.
-In der ``ext_localconf.php`` registrieren:
+Register a field in the pages table to be inherited/slided to subpages.
+In the ``ext_localconf.php`` register:
 
 .. code-block:: php
 
 	\nn\t3::Registry()->rootLineFields(['slidefield']);
 	\nn\t3::Registry()->rootLineFields('slidefield');
 
-Typoscript-Setup:
+Typoscript setup:
 
 .. code-block:: php
 
@@ -162,10 +162,10 @@ Typoscript-Setup:
 \\nn\\t3::Registry()->set(``$extName = '', $path = '', $settings = []``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Einen Wert in der Tabelle sys_registry speichern.
-Daten in dieser Tabelle bleiben über die Session hinaus erhalten.
-Ein Scheduler-Job kann z.B. speichern, wann er das letzte Mal
-ausgeführt wurde.
+Save a value in the sys_registry table.
+Data in this table is retained übeyond the session.
+For example, a scheduler job can store the last time it was executed.
+it was executed.
 
 .. code-block:: php
 

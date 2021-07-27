@@ -10,7 +10,7 @@ Flexform
 \\nn\\t3::Flexform()
 ----------------------------------------------
 
-FlexForms laden und parsen
+Load and parse FlexForms
 
 Overview of Methods
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -18,7 +18,7 @@ Overview of Methods
 \\nn\\t3::Flexform()->getFalMedia(``$ttContentUid = NULL, $field = ''``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Lädt FAL-Media, die in direkt im FlexForm angegeben wurden
+Lädt FAL media specified in directly in the FlexForm
 
 .. code-block:: php
 
@@ -36,7 +36,7 @@ Lädt FAL-Media, die in direkt im FlexForm angegeben wurden
 \\nn\\t3::Flexform()->getFlexform(``$ttContentUid = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Holt das Flexform eines bestimmten Inhaltselementes als Array
+Gets the flexform of a given content element as an array
 
 .. code-block:: php
 
@@ -47,14 +47,14 @@ Holt das Flexform eines bestimmten Inhaltselementes als Array
 \\nn\\t3::Flexform()->insertCountries(``$config, $a = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Fügt Optionen aus TypoScript zur Auswahl in ein FlexForm oder TCA ein.
+Inserts options from TypoScript into a FlexForm or TCA for selection.
 
 .. code-block:: php
 
 	<config>
 	    <type>select</type>
 	    <items type="array"></items>
-	    <itemsProcFunc>nn\t3\Flexform->insertCountries</itemsProcFunc>
+	    <itemsProcFunc>nn\t3\Flexform>insertCountries</itemsProcFunc>
 	    <insertEmpty>1</insertEmpty>
 	</config>
 
@@ -63,7 +63,7 @@ Fügt Optionen aus TypoScript zur Auswahl in ein FlexForm oder TCA ein.
 \\nn\\t3::Flexform()->insertOptions(``$config, $a = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Fügt Optionen aus TypoScript zur Auswahl in ein FlexForm oder TCA ein.
+Inserts options from TypoScript into a FlexForm or TCA for selection.
 
 .. code-block:: php
 
@@ -72,43 +72,43 @@ Fügt Optionen aus TypoScript zur Auswahl in ein FlexForm oder TCA ein.
 	    <items type="array"></items>
 	    <itemsProcFunc>nn\t3\Flexform->insertOptions</itemsProcFunc>
 	    <typoscriptPath>plugin.tx_extname.settings.templates</typoscriptPath>
-	    <!-- Alternativ: Settings aus PageTSConfig laden: -->
+	    <!-- Alternatively: Load settings from PageTSConfig: -->
 	    <pageconfigPath>tx_extname.colors</pageconfigPath>
 	    <insertEmpty>1</insertEmpty>
 	    <hideKey>1</hideKey>
 	</config>
 
-Beim Typoscript sind verschiedene Arten des Aufbaus erlaubt:
+With typoscript, several types of construction are allowed:
 
 .. code-block:: php
 
 	plugin.tx_extname.settings.templates {
-	    # Direkte key => label Paare
-	    small = Small Design
-	    # ... oder: Label im Subarray gesetzt
+	    # direct key => label pairs.
+	    small = small design
+	    # ... or: label set in subarray.
 	    mid {
 	        label = Mid Design
 	    }
-	    # ... oder: Key im Subarray gesetzt, praktisch z.B. für CSS-Klassen
+	    # ... or: Key set in subarray, practical e.g. for CSS classes
 	    10 {
 	        label = Big Design
 	        classes = big big-thing
 	    }
-	    # ... oder eine userFunc. Gibt eine der Varianten oben als Array zurück
+	    # ... or a userFunc. Returns one of the variants above as an array
 	    20 {
 	        userFunc = nn\t3\Flexform->getOptions
 	    }
 	}
 
-Die Auswahl kann im TypoScript auf bestimmte Controller-Actions beschränkt werden.
-In diesem Beispiel wird die Option "Gelb" nur angezeigt, wenn in der ``switchableControllerAction``
-| ``Category->list`` gewählt wurde.
+The selection can be limited to specific controller actions in the TypoScript.
+In this example, the "Yellow" option is only displayed if in the ``switchableControllerAction``
+| ``Category->list`` has been selected.
 
 .. code-block:: php
 
 	plugin.tx_extname.settings.templates {
 	    yellow {
-	        label = Gelb
+	        label = yellow
 	        controllerAction = Category->list,...
 	    }
 	}
@@ -118,13 +118,13 @@ In diesem Beispiel wird die Option "Gelb" nur angezeigt, wenn in der ``switchabl
 \\nn\\t3::Flexform()->parse(``$xml = ''``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Wandelt ein Flexform-XML in ein Array um
+Converts a flexform XML to an array
 
 .. code-block:: php
 
 	\nn\t3::Flexform()->parse('<?xml...>');
 
-Existiert auch als ViewHelper:
+Also acts as a ViewHelper:
 
 .. code-block:: php
 

@@ -10,7 +10,7 @@ Obj
 \\nn\\t3::Obj()
 ----------------------------------------------
 
-Alles, was man für Objects und Models braucht.
+Everything you need for objects and models.
 
 Overview of Methods
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -18,53 +18,53 @@ Overview of Methods
 \\nn\\t3::Obj()->accessSingleProperty(``$obj, $key``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Zugriff auf einen Key in einem Object oder Array
-key muss einzelner String sein, kein Pfad
+Access a key in an object or array.
+key must be single string, not path
 
 \nn\t3::Obj()->accessSingleProperty( $obj, 'uid' );
 \nn\t3::Obj()->accessSingleProperty( $obj, 'fal_media' );
 \nn\t3::Obj()->accessSingleProperty( $obj, 'falMedia' );
 
-| ``@param mixed $obj`` Model oder Array
-| ``@param string $key`` der Key, der geholt werden soll
+| ``@param mixed $obj`` Model or array.
+| ``@param string $key`` the key to fetch
 
 | ``@return mixed``
 
 \\nn\\t3::Obj()->diff(``$objA, $objB, $fieldsToIgnore = [], $fieldsToCompare = [], $options = []``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Vergleicht zwei Objekte, gibt Array mit Unterschieden zurück.
-Existiert eine Property von objA nicht in objB, wird diese ignoriert.
+Compares two objects, returns array with differences.
+If a property of objA does not exist in objB, it is ignored.
 
 .. code-block:: php
 
-	// gibt Array mit Unterschieden zurück
+	// returns array with differences.
 	\nn\t3::Obj()->diff( $objA, $objB );
 	
-	// ignoriert die Felder uid und title
+	// ignores the uid and title fields
 	\nn\t3::Obj()->diff( $objA, $objB, ['uid', 'title'] );
 	
-	// Vergleicht NUR die Felder title und bodytext
+	// Compares ONLY the title and bodytext fields
 	\nn\t3::Obj()->diff( $objA, $objB, [], ['title', 'bodytext'] );
 	
-	// Optionen
+	// options
 	\nn\t3::Obj()->diff( $objA, $objB, [], [], ['ignoreWhitespaces'=>true, 'ignoreTags'=>true, 'ignoreEncoding'=>true] );
 
-| ``@param mixed $objA``                Ein Object, Array oder Model
-| ``@param mixed $objB``                Das zu vergleichende Object oder Model
-| ``@param array $fieldsToIgnore``      Liste der Properties, die ignoriert werden können. Leer = keine
-| ``@param array $fieldsToCompare`` Liste der Properties, die verglichen werden sollen. Leer = alle
-| ``@param boolean $options``       Optionen / Toleranzen beim Vergleichen
-| ``ignoreWhitespaces`` => Leerzeichen ignorieren
-| ``ignoreEncoding``    => UTF8 / ISO-Encoding ignorieren
-| ``ignoreTags``        => HTML-Tags ignorieren
+| ``@param mixed $objA`` An object, array, or model.
+| ``@param mixed $objB`` The object or model to compare.
+| ``@param array $fieldsToIgnore`` List of properties that can be ignored. Empty = none
+| ``@param array $fieldsToCompare`` List of properties to compare. Empty = all
+| ``@param boolean $options`` Options / tolerances when comparing.
+| ``ignoreWhitespaces`` => ignore spaces.
+| ``ignoreEncoding`` => ignore UTF8 / ISO encoding.
+| ``ignoreTags`` => ignore HTML tags
 
 | ``@return array``
 
 \\nn\\t3::Obj()->forceArray(``$obj``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Konvertiert zu Array
+converts to array
 
 | ``@param mixed $obj``
 
@@ -73,8 +73,8 @@ Konvertiert zu Array
 \\nn\\t3::Obj()->get(``$obj, $key = ''``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Zugriff auf einen Wert in dem Object anhand des Keys
-Alias zu ``\nn\t3::Obj()->accessSingleProperty()``
+Access a value in the object using the key.
+Alias to ``\nn\t3::Obj()->accessSingleProperty()``
 
 .. code-block:: php
 
@@ -82,79 +82,80 @@ Alias zu ``\nn\t3::Obj()->accessSingleProperty()``
 	\nn\t3::Obj()->get( $obj, 'falMedia' );
 	\nn\t3::Obj()->get( $obj, 'fal_media' );
 
-| ``@param mixed $obj``             Model oder Array
-| ``@param string $key``            der Key / Property
+| ``@param mixed $obj`` Model or array.
+| ``@param string $key`` the key/property
 
 | ``@return mixed``
 
 \\nn\\t3::Obj()->getClassSchema(``$modelClassName = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Infos zum classSchema eines Models holen
+Get info about the classSchema of a model
 
 .. code-block:: php
 
-	    \nn\t3::Obj()->getClassSchema( \My\Model\Name );
+	 \nn\t3::Obj()->getClassSchema( \My\Model\Name );
 
 return DataMap
+.
 
 \\nn\\t3::Obj()->getKeys(``$obj``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Zugriff auf ALLE Keys, die in einem Object zu holen sind
+Access ALL keys to be fetched in an object
 
 .. code-block:: php
 
-	\nn\t3::Obj()->getKeys( $model );                                    // ['uid', 'title', 'text', ...]
-	\nn\t3::Obj()->getKeys( $model );                                    // ['uid', 'title', 'text', ...]
-	\nn\t3::Obj()->getKeys( \Nng\MyExt\Domain\Model\Demo::class );       // ['uid', 'title', 'text', ...]
+	\nn\t3::Obj()->getKeys( $model ); // ['uid', 'title', 'text', ...]
+	\nn\t3::Obj()->getKeys( $model ); // ['uid', 'title', 'text', ...]
+	\nn\t3::Obj()->getKeys( \Nng\MyExt\Domain\Model\Demo::class ); // ['uid', 'title', 'text', ...]
 
-| ``@param mixed $obj`` Model, Array oder Klassen-Name
+| ``@param mixed $obj`` Model, array, or class name.
 | ``@return array``
 
 \\nn\\t3::Obj()->getProps(``$obj, $key = 'type', $onlySettable = true``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Liste der Properties eines Objects oder Models mit Typ zurückgeben.
+return the list of properties of an object or model with type.
 
 .. code-block:: php
 
-	\nn\t3::Obj()->getProps( $obj );         // ['uid'=>'integer', 'title'=>'string' ...]
-	\nn\t3::Obj()->getProps( $obj, true );       // ['uid'=>[type=>'integer', 'private'=>TRUE]]
-	\nn\t3::Obj()->getProps( $obj, 'default' );  // ['uid'=>TRUE]
+	\nn\t3::Obj()->getProps( $obj ); // ['uid'=>'integer', 'title'=>'string' ...]
+	\nn\t3::Obj()->getProps( $obj, true ); // ['uid'=>[type=>'integer', 'private'=>TRUE]]
+	\nn\t3::Obj()->getProps( $obj, 'default' ); // ['uid'=>TRUE]
 	\nn\t3::Obj()->getProps( \Nng\MyExt\Domain\Model\Demo::class );
 
-| ``@param mixed $obj``                 Model oder Klassen-Name
-| ``@param mixed $key``                 Wenn TRUE wird Array mit allen Infos geholt, z.B. auch default-Wert etc.
-| ``@param boolean $onlySettable``  Nur properties holen, die auch per setName() gesetzt werden können
+| ``@param mixed $obj`` model or class name.
+| ``@param mixed $key`` If TRUE array with all info is fetched, e.g. also default value etc.
+| ``@param boolean $onlySettable`` Get only properties that can also be set by setName().
 | ``@return array``
 
 \\nn\\t3::Obj()->getSetableKeys(``$obj``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Alle keys eines Objektes holen, die einen SETTER haben.
-Im Gegensatz zu ``\nn\t3::Obj()->getKeys()`` werden nur die Property-Keys
-zurückgegeben, die sich auch setzen lassen, z.B. über ``setNameDerProp()``
+Get all keys of an object that have a SETTER.
+In contrast to ``\nn\t3::Obj()->getKeys()``, only the property keys
+that can be set, e.g. via ``setNameDerProp()``
 
 | ``@return array``
 
 \\nn\\t3::Obj()->getTableName(``$modelClassName = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Gibt den DB-Tabellen-Namen für ein Model zurück
+returns the DB table name for a model
 
 .. code-block:: php
 
 	$model = new \Nng\MyExt\Domain\Model\Test;
-	\nn\t3::Obj()->getTableName( $model );   // 'tx_myext_domain_model_test'
-	\nn\t3::Obj()->getTableName( Test::class );  // 'tx_myext_domain_model_test'
+	\nn\t3::Obj()->getTableName( $model ); // 'tx_myext_domain_model_test'
+	\nn\t3::Obj()->getTableName( Test::class ); // 'tx_myext_domain_model_test'
 
 | ``@return string``
 
 \\nn\\t3::Obj()->isFalFile(``$obj``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Prüft, ob es sich bei dem Object um eine \TYPO3\CMS\Core\Resource\FileReference handelt.
+Prüft whether the object is a \TYPO3\CMS\Core\Resource\FileReference.
 
 .. code-block:: php
 
@@ -165,7 +166,7 @@ Prüft, ob es sich bei dem Object um eine \TYPO3\CMS\Core\Resource\FileReference
 \\nn\\t3::Obj()->isFileReference(``$obj``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Prüft, ob es sich bei dem Object um eine \TYPO3\CMS\Extbase\Domain\Model\FileReference handelt.
+Prüft whether the object is a \TYPO3\CMS\Extbase\Domain\Model\FileReference.
 
 .. code-block:: php
 
@@ -176,7 +177,7 @@ Prüft, ob es sich bei dem Object um eine \TYPO3\CMS\Extbase\Domain\Model\FileRe
 \\nn\\t3::Obj()->isStorage(``$obj``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Prüft, ob es sich bei dem Object um eine Storage handelt.
+Prüft whether the object is a storage.
 
 .. code-block:: php
 
@@ -187,8 +188,8 @@ Prüft, ob es sich bei dem Object um eine Storage handelt.
 \\nn\\t3::Obj()->isSysCategory(``$obj``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Prüft, ob es sich bei dem Object um eine SysCategory handelt.
-Berücksichtigt alle Modelle, die in ``sys_category`` gespeichert werden.
+Checks whether the object is a SysCategory.
+Takes into account all models that are stored in ``sys_category``
 
 .. code-block:: php
 
@@ -202,55 +203,55 @@ Berücksichtigt alle Modelle, die in ``sys_category`` gespeichert werden.
 \\nn\\t3::Obj()->merge(``$obj = NULL, $overlay = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Merge eines Arrays in ein Object
+Merge an array into an object
 
 .. code-block:: php
 
-	\nn\t3::Obj( \My\Doman\Model )->merge(['title'=>'Neuer Titel']);
+	\nn\t3::Obj( \My\Doman\Model )->merge(['title'=>'New Title']);
 
-Damit können sogar FileReferences geschrieben / überschrieben werden.
-In diesem Beispiel wird ``$data`` mit einem existierende Model gemerged.
-| ``falMedia`` ist im Beispiel eine ObjectStorage. Das erste Element in ``falMedia`` exisitert
-bereits in der Datenbank (``uid = 12``). Hier wird nur der Titel aktualisiert.
-Das zweite Element im Array (ohne ``uid``) ist neu. Dafür wird automatisch eine neue
-| ``sys_file_reference`` in der Datenbank erzeugt.
+This can even be used to write / üoverwrite FileReferences.
+In this example, ``$data`` is merged with an existing model.
+| ``falMedia`` is an ObjectStorage in the example. The first element in ``falMedia`` exists
+already exists in the database (``uid = 12``). Only the title is updated here.
+The second element in the array (without ``uid``) is new. For this, a new
+| ``sys_file_reference`` is created in the database.
 
 .. code-block:: php
 
 	$data = [
 	    'uid' => 10,
-	    'title' => 'Der Titel',
+	    'title' => 'the title',
 	    'falMedia' => [
-	        ['uid'=>12, 'title'=>'1. Bildtitel'],
-	        ['title'=>'NEU Bildtitel', 'publicUrl'=>'fileadmin/_tests/5e505e6b6143a.jpg'],
+	        ['uid'=>12, 'title'=>'1st image title'],
+	        ['title'=>'NEW image title', 'publicUrl'=>'fileadmin/_tests/5e505e6b6143a.jpg'],
 	    ]
 	];
 	$oldModel = $repository->findByUid( $data['uid'] );
 	$mergedModel = \nn\t3::Obj($oldModel)->merge($data);
 
-Hinweis
-Um ein neues Model mit Daten aus einem Array zu erzeugen gibt
-es die Methode ``$newModel = \nn\t3::Convert($data)->toModel( \My\Model\Name::class );``
+Note
+In order to create a new model with data from an array there is
+there is a method ``$newModel = \nn\t3::Convert($data)->toModel( \My\Model\Name::class );``
 
 | ``@return Object``
 
 \\nn\\t3::Obj()->prop(``$obj, $key``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Zugriff auf einen Key in einem Object oder Array.
-Der Key kann auch ein Pfad sein, z.B. "img.0.uid"
+Access to a key in an object or array.
+The key can also be a path, e.g. "img.0.uid"
 
-\nn\t3::Obj()->prop( $obj, 'img.0.uid' );
+nn\t3::Obj()->prop( $obj, 'img.0.uid' );
 
-| ``@param mixed $obj`` Model oder Array
-| ``@param string $key`` der Key, der geholt werden soll
+| ``@param mixed $obj`` Model or array.
+| ``@param string $key`` the key to fetch
 
 | ``@return mixed``
 
 \\nn\\t3::Obj()->props(``$obj, $keys = []``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Einzelne Properties eines Objects oder Arrays holen
+Get individual properties of an object or array
 
 .. code-block:: php
 
@@ -262,34 +263,34 @@ Einzelne Properties eines Objects oder Arrays holen
 \\nn\\t3::Obj()->set(``$obj, $key = '', $val = '', $useSetter = true``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Setzt einen Wert in einem Object oder Array.
+Sets a value in an object or array.
 
 .. code-block:: php
 
 	\nn\t3::Obj()->set( $obj, 'title', $val );
 
-| ``@param mixed $obj``             Model oder Array
-| ``@param string $key``            der Key / Property
-| ``@param mixed $val``             der Wert, der gesetzt werden soll
-| ``@param boolean $useSetter``     setKey()-Methode zum Setzen verwenden
+| ``@param mixed $obj`` Model or array.
+| ``@param string $key`` the key / property
+| ``@param mixed $val`` the value to be set
+| ``@param boolean $useSetter`` use setKey() method to set
 
 | ``@return mixed``
 
 \\nn\\t3::Obj()->toArray(``$obj, $depth = 3, $fields = [], $addClass = false``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Konvertiert ein Object in ein Array
-Bei Memory-Problemen wegen Rekursionen: Max-Tiefe angebenen!
+Converts an object to an array.
+For memory problems due to recursion: Specify max depth!
 
 .. code-block:: php
 
 	\nn\t3::Obj()->toArray($obj, 2, ['uid', 'title']);
 	\nn\t3::Obj()->toArray($obj, 1, ['uid', 'title', 'parent.uid']);
 
-| ``@param mixed $obj``             ObjectStorage, Model oder Array das Konvertiert werden soll
-| ``@param integer $depth``         Tiefe, die konvertiert werden soll. Bei rekursivem Konvertieren unbedingt nutzen
-| ``@param array $fields``      nur diese Felder aus dem Object / Array zurückgeben
-| ``@param boolean $addClass``  '__class' mit Infos zur Klasse ergänzen?
+| ``@param mixed $obj`` ObjectStorage, model or array to be converted.
+| ``@param integer $depth`` Depth to be converted. For recursive conversion, be sure to use.
+| ``@param array $fields`` return only those fields from the object / array.
+| ``@param boolean $addClass`` '__class' with info about the class?
 
 | ``@return array``
 

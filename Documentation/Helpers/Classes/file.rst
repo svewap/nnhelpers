@@ -10,8 +10,8 @@ File
 \\nn\\t3::File()
 ----------------------------------------------
 
-Methoden rund um das Dateisystem:
-Lesen, Schreiben, Kopieren, Verschieben und Bereinigen von Dateien.
+Methods related to the file system:
+Reading, writing, copying, moving, and cleaning up files.
 
 Overview of Methods
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -19,67 +19,67 @@ Overview of Methods
 \\nn\\t3::File()->absPath(``$file = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Absoluter Pfad zu einer Datei
+Absolute path to a file
 
 .. code-block:: php
 
-	\nn\t3::File()->absPath('fileadmin/bild.jpg');                   => /var/www/website/fileadmin/bild.jpg
-	\nn\t3::File()->absPath('/var/www/website/fileadmin/bild.jpg');  => /var/www/website/fileadmin/bild.jpg
+	\nn\t3::File()->absPath('fileadmin/image.jpg'); => /var/www/website/fileadmin/image.jpg
+	\nn\t3::File()->absPath('/var/www/website/fileadmin/image.jpg'); => /var/www/website/fileadmin/image.jpg
 
-Existiert auch als ViewHelper:
+Also acts as a ViewHelper:
 
 .. code-block:: php
 
-	{nnt3:file.absPath(file:'pfad/zum/bild.jpg')}
+	{nnt3:file.absPath(file:'path/to/image.jpg')}
 
 | ``@return boolean``
 
 \\nn\\t3::File()->addPathSite(``$file``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Gibt Pfad zu Datei / Ordner MIT absoluten Pfad
+Gives path to file / folder WITH absolute path
 
-Beispiel:
+Example:
 
 .. code-block:: php
 
 	\nn\t3::File()->addPathSite('fileadmin/test.jpg');
-	 // ==> gibt var/www/website/fileadmin/test.jpg zurück
+	 // ==> returns var/www/website/fileadmin/test.jpg
 
 | ``@return string``
 
 \\nn\\t3::File()->cleanFilename(``$filename = ''``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Bereinigt einen Dateinamen
+cleans a filename
 
 .. code-block:: php
 
-	$clean = \nn\t3::File()->cleanFilename('fileadmin/nö:so nicht.jpg'); // 'fileadmin/noe_so_nicht.jpg'
+	$clean = \nn\t3::File()->cleanFilename('fileadmin/nö:so not.jpg'); // 'fileadmin/noe_so_not.jpg'
 
 | ``@return string``
 
 \\nn\\t3::File()->copy(``$src = NULL, $dest = NULL, $renameIfFileExists = true``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Kopiert eine Datei.
-Gibt ``false`` zurück, falls die Datei nicht kopiert werden konnte.
-Gibt (neuen) Dateinamen zurück, falls das Kopieren erfolgreich war.
+Copies a file.
+Returns ``false`` if the file could not be copied.
+Returns (new) filename if the copy was successful.
 
 .. code-block:: php
 
-	$filename = \nn\t3::File()->copy('fileadmin/bild.jpg', 'fileadmin/bild-kopie.jpg');
+	$filename = \nn\t3::File()->copy('fileadmin/image.jpg', 'fileadmin/image-copy.jpg');
 
-| ``@param string $src``    Pfad zur Quelldatei
-| ``@param string $dest``   Pfad zur Zieldatei
-| ``@param boolean $renameIfFileExists``    Datei umbenennen, falls am Zielort bereits Datei mit gleichem Namen existiert
+| ``@param string $src`` Path to the source file.
+| ``@param string $dest`` Path to the destination file.
+| ``@param boolean $renameIfFileExists`` Rename file if file with same name already exists at destination.
 | ``@return string|boolean``
 
 \\nn\\t3::File()->createFolder(``$path = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Einen Ordner im ``fileadmin/`` erzeugen.
-Um einen Ordner außerhalb des ``fileadmin`` anzulegen, die Methode ``\nn\t3::File()->mkdir()`` verwenden.
+Create a folder in the ``fileadmin/``
+To create a folder outside of ``fileadmin``, use the ``\nn\t3::File()->mkdir()`` method.
 
 .. code-block:: php
 
@@ -90,53 +90,53 @@ Um einen Ordner außerhalb des ``fileadmin`` anzulegen, die Methode ``\nn\t3::Fi
 \\nn\\t3::File()->download(``$files = NULL, $filename = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Download einer einzelnen Datei oder eines gezippten Archives.
+Download a single file or a zipped archive.
 
-Download als ZIP erfordert die PHP-Extension ``gmp``. Falls Extension nicht vorhanden ist,
-wird auf ``.tar``-Variante ausgewichen. Bei Mac verwendet die Funktion aufgrund von
-Sicherheitswarnungen des Finders grundsätzlich ``tar``
+Download as a ZIP requires the PHP extension ``gmp``. If extension is not present,
+it will use the ``.tar`` variant. On Mac, the function uses the
+security warnings of the Finder, the function uses ``tar``
 
 .. code-block:: php
 
 	\nn\t3::File()->download( 'fileadmin/test.pdf' );
 	\nn\t3::File()->download( 'fileadmin/test.pdf', 'download.pdf' );
 
-Wird ein Array übergeben, wird ein tar/zip-Download gestartet.
-Durch Übergabe eines assoziativen Arrays mit Dateiname als key und Pfad im Archiv als value
-Kann die Datei- und Ordnerstruktur im zip-Archiv bestimmt werden.
+When an array is üpassed, a tar/zip download is started.
+By üpassing an associative array with filename as key and path in archive as value.
+The file and folder structure in the zip archive can be determined.
 
 .. code-block:: php
 
 	\nn\t3::File()->download( ['fileadmin/test-1.pdf', 'fileadmin/test-2.pdf'], 'archive.zip' );
-	\nn\t3::File()->download( ['fileadmin/test-1.pdf'=>'eins.pdf', 'fileadmin/test-2.pdf'=>'zwei.pdf'], 'archive.zip' );
-	\nn\t3::File()->download( ['fileadmin/test-1.pdf'=>'zip-folder-1/eins.pdf', 'fileadmin/test-2.pdf'=>'zip-folder-2/zwei.pdf'], 'archive.zip' );
+	\nn\t3::File()->download( ['fileadmin/test-1.pdf'=>'one.pdf', 'fileadmin/test-2.pdf'=>'two.pdf'], 'archive.zip' );
+	\nn\t3::File()->download( ['fileadmin/test-1.pdf'=>'zip-folder-1/one.pdf', 'fileadmin/test-2.pdf'=>'zip-folder-2/two.pdf'], 'archive.zip' );
 
-| ``@param mixed $files``           String oder Array der Dateien, die geladen werden sollen
-| ``@param mixed $filename``        Optional: Dateinamen überschreiben beim Download
+| ``@param mixed $files`` String or array of files to load.
+| ``@param mixed $filename`` Optional: overwrite filename when downloading.
 | ``@return void``
 
 \\nn\\t3::File()->exists(``$src = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Prüft, ob eine Datei existiert.
-Gibt absoluten Pfad zur Datei zurück.
+Probes whether a file exists.
+Returns absolute path to the file
 
 .. code-block:: php
 
-	\nn\t3::File()->exists('fileadmin/bild.jpg');
+	\nn\t3::File()->exists('fileadmin/image.jpg');
 
-Existiert auch als ViewHelper:
+Also acts as a ViewHelper:
 
 .. code-block:: php
 
-	{nnt3:file.exists(file:'pfad/zum/bild.jpg')}
+	{nnt3:file.exists(file:'path/to/image.jpg')}
 
 | ``@return string|boolean``
 
 \\nn\\t3::File()->extractExifData(``$filename = ''``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-EXIF Daten für Datei in JSON speichern.
+Save EXIF data for file in JSON
 
 .. code-block:: php
 
@@ -147,15 +147,15 @@ EXIF Daten für Datei in JSON speichern.
 \\nn\\t3::File()->getData(``$file = ''``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Imageinfo + EXIF Data für Datei holen.
-Sucht auch nach JSON-Datei, die evtl. nach processImage() generiert wurde
+Get imageinfo + EXIF Data für file.
+Also looks for JSON file that may have been generated after processImage()
 
 | ``@return array``
 
 \\nn\\t3::File()->getExifData(``$filename = ''``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-ALLE EXIF Daten für Datei holen.
+Get ALL EXIF data for file
 
 .. code-block:: php
 
@@ -166,21 +166,21 @@ ALLE EXIF Daten für Datei holen.
 \\nn\\t3::File()->getFolder(``$file``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Gibt den Ordner zu einer Datei zurück
+Returns the folder to a file
 
-Beispiel:
+Example:
 
 .. code-block:: php
 
-	\nn\t3::File()->getFolder('fileadmin/test/beispiel.txt');
-	// ==> gibt 'fileadmin/test/' zurück
+	\nn\t3::File()->getFolder('fileadmin/test/example.txt');
+	// ==> return 'fileadmin/test/'
 
 | ``@return string``
 
 \\nn\\t3::File()->getImageData(``$filename = ''``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-EXIF Bild-Daten für Datei holen.
+Get EXIF image data for file
 
 .. code-block:: php
 
@@ -191,7 +191,7 @@ EXIF Bild-Daten für Datei holen.
 \\nn\\t3::File()->getImageSize(``$filename = ''``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-imagesize für Datei holen.
+getimagesize für file.
 
 .. code-block:: php
 
@@ -202,8 +202,8 @@ imagesize für Datei holen.
 \\nn\\t3::File()->getLocationData(``$filename = ''``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-EXIF GEO-Daten für Datei holen.
-Adressdaten werden automatisch ermittelt, falls möglich
+Get EXIF GEO data for file.
+Address data will be retrieved automatically if possible
 
 .. code-block:: php
 
@@ -214,75 +214,74 @@ Adressdaten werden automatisch ermittelt, falls möglich
 \\nn\\t3::File()->getPath(``$file, $storage = NULL, $absolute = true``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Gibt den Pfad einer Datei anhand eines Dateinamens und der Storage wieder.
-Beispiel:
+Returns the path of a file based on a filename and storage.
+Example:
 
 .. code-block:: php
 
-	\nn\t3::File()->getPath('media/bild.jpg', $storage);
-	// ==> gibt '/var/www/.../fileadmin/media/bild.jpg' zurück
-	\nn\t3::File()->getPath('fileadmin/media/bild.jpg');
-	// ==> gibt '/var/www/.../fileadmin/media/bild.jpg' zurück
+	\nn\t3::File()->getPath('media/image.jpg', $storage);
+	// ==> returns '/var/www/.../fileadmin/media/image.jpg'.
+	\nn\t3::File()->getPath('fileadmin/media/image.jpg');
+	// ==> returns '/var/www/.../fileadmin/media/image.jpg' toück
 
 | ``@return string``
 
 \\nn\\t3::File()->getRelativePathInStorage(``$file, $storage = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Gibt den relativen Pfad einer Datei zur angegebenen Storage wieder.
+Returns the relative path of a file to the specified storage.
 
-Beispiel:
+Example:
 
 .. code-block:: php
 
-	\nn\t3::File()->getRelativePathInStorage('fileadmin/media/bild.jpg', $storage);
-	// ==> gibt 'media/bild.jpg' zurück
+	\nn\t3::File()->getRelativePathInStorage('fileadmin/media/image.jpg', $storage);
+	// ==> returns 'media/image.jpg'
 
 | ``@return string``
 
 \\nn\\t3::File()->getStorage(``$file, $createIfNotExists = false``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Findet ein passendes sys_file_storage zu einem Datei- oder Ordnerpfad.
-Durchsucht dazu alle sys_file_storage-Einträge und vergleicht,
-ob der basePath des Storages zum Pfad der Datei passt.
+Finds a matching sys_file_storage to a file or folder path.
+To do this, searches all sys_file_storage entries and compares,
+if the basePath of the storage matches the path of the file.
 
 .. code-block:: php
 
-	\nn\t3::File()->getLocalStorage('fileadmin/test/beispiel.txt');
-	// gibt ResourceStorage mit basePath "fileadmin/" zurück
+	\nn\t3::File()->getLocalStorage('fileadmin/test/example.txt');
+	//returns ResourceStorage with basePath "fileadmin/"
 
 | ``@return ResourceStorage``
+.
 
 \\nn\\t3::File()->isAllowed(``$filename = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Gibt an, ob der Dateityp erlaubt ist
+Indicates whether the file type is allowed
 
 .. code-block:: php
 
-	\nn\t3::File()->isForbidden('bild.jpg'); => gibt 'true' zurück
-	\nn\t3::File()->isForbidden('hack.php'); => gibt 'false' zurück
+	\nn\t3::File()->isForbidden('image.jpg'); => returns 'true'
 
 | ``@return boolean``
 
 \\nn\\t3::File()->isConvertableToImage(``$filename = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Gibt an, ob die Datei in ein Bild konvertiert werden kann
+Indicates whether the file can be converted to an image
 
 .. code-block:: php
 
-	\nn\t3::File()->isConvertableToImage('bild.jpg');    => gibt true zurück
-	\nn\t3::File()->isConvertableToImage('text.ppt');    => gibt false zurück
+	\nn\t3::File()->isConvertableToImage('image.jpg'); => returns true
 
 | ``@return boolean``
 
 \\nn\\t3::File()->isExternalVideo(``$url = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Gibt an, ob es ein Video auf YouTube / Vimeo ist.
-Falls ja, wird ein Array mit Angaben zum Einbetten zurückgegeben.
+Indicates if it is a video on YouTube / Vimeo.
+If it is, an array of details will be returned for embedding.
 
 .. code-block:: php
 
@@ -293,100 +292,100 @@ Falls ja, wird ein Array mit Angaben zum Einbetten zurückgegeben.
 \\nn\\t3::File()->isFolder(``$file``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Gibt zurück, ob angegebener Pfad ein Ordner ist
+Returns whether specified path is a folder
 
-Beispiel:
+Example:
 
 .. code-block:: php
 
-	\nn\t3::File()->isFolder('fileadmin'); // => gibt true zurück
+	\nn\t3::File()->isFolder('fileadmin'); // => returns true
 
 | ``@return boolean``
 
 \\nn\\t3::File()->isForbidden(``$filename = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Gibt an, ob der Dateityp verboten ist
+Indicates whether the file type is forbidden
 
 .. code-block:: php
 
-	\nn\t3::File()->isForbidden('bild.jpg'); => gibt 'false' zurück
-	\nn\t3::File()->isForbidden('hack.php'); => gibt 'true' zurück
+	\nn\t3::File()->isForbidden('image.jpg'); => returns 'false'
+	\nn\t3::File()->isForbidden('hack.php'); => returns 'true'
 
 | ``@return boolean``
 
 \\nn\\t3::File()->isVideo(``$filename = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Gibt an, ob die Datei ein Video ist
+Indicates whether the file is a video
 
 .. code-block:: php
 
-	\nn\t3::File()->isVideo('pfad/zum/video.mp4');       => gibt true zurück
+	\nn\t3::File()->isVideo('path/to/video.mp4'); => returns true
 
 | ``@return boolean``
 
 \\nn\\t3::File()->mkdir(``$path = ''``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Einen Ordner anlegen
+Create a folder
 
 .. code-block:: php
 
-	\nn\t3::File()->mkdir( 'fileadmin/mein/ordner/' );
+	\nn\t3::File()->mkdir( 'fileadmin/my/folder/' );
 
 | ``@return boolean``
 
 \\nn\\t3::File()->move(``$src = NULL, $dest = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Verschiebt eine Datei
+Moves a file
 
 .. code-block:: php
 
-	\nn\t3::File()->move('fileadmin/bild.jpg', 'fileadmin/bild-kopie.jpg');
+	\nn\t3::File()->move('fileadmin/image.jpg', 'fileadmin/image-copy.jpg');
 
 | ``@return boolean``
 
 \\nn\\t3::File()->moveUploadedFile(``$src = NULL, $dest = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Eine Upload-Datei verschieben
+Move an upload file
 
 .. code-block:: php
 
-	\nn\t3::File()->moveUploadedFile('fileadmin/bild.jpg', 'fileadmin/bild-kopie.jpg');
+	\nn\t3::File()->moveUploadedFile('fileadmin/image.jpg', 'fileadmin/image-copy.jpg');
 
 | ``@return string``
 
 \\nn\\t3::File()->normalizePath(``$path``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Löst ../../-Angaben in Pfad auf.
-Funktioniert sowohl mit existierenden Pfaden (per realpath) als auch
-nicht-existierenden Pfaden.
+Löst ../../ specifications in path.
+Works with both existing paths (per realpath) and
+non-existing paths.
 
 .. code-block:: php
 
-	\nn\t3::File()->normalizePath( 'fileadmin/test/../bild.jpg' );       =>   fileadmin/bild.jpg
+	\nn\t3::File()->normalizePath( 'fileadmin/test/../image.jpg' ); => fileadmin/image.jpg
 
 | ``@return string``
 
 \\nn\\t3::File()->process(``$fileObj = '', $processing = []``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Berechnet ein Bild über ``maxWidth``, ``maxHeight`` etc.
-Einfache Version von ``\nn\t3::File()->processImage()``
-Kann verwendet werden, wenn es nur um das Generieren von verkleinerten Bilder geht
-ohne Berücksichtigung von Korrekturen der Kamera-Ausrichtung etc.
+Calculates an image üover ``maxWidth``, ``maxHeight`` etc.
+Simple version of ``\nn\t3::File()->processImage()``
+Can be used when it is just a matter of generating resized images
+without taking into account corrections to camera orientation etc.
 
-Da die Crop-Einstellungen in FileReference und nicht File gespeichert sind,
-funktioniert ``cropVariant`` nur bei Übergabe einer ``FileReference``.
+Since crop settings are stored in FileReference and not File,
+| ``cropVariant`` only works when &um;passed a ``FileReference``.
 
 .. code-block:: php
 
 	\nn\t3::File()->process( 'fileadmin/imgs/portrait.jpg', ['maxWidth'=>200] );
-	\nn\t3::File()->process( '1:/bilder/portrait.jpg', ['maxWidth'=>200] );
+	\nn\t3::File()->process( '1:/images/portrait.jpg', ['maxWidth'=>200] );
 	\nn\t3::File()->process( $sysFile, ['maxWidth'=>200] );
 	\nn\t3::File()->process( $sysFile, ['maxWidth'=>200, 'absolute'=>true] );
 	\nn\t3::File()->process( $sysFileReference, ['maxWidth'=>200, 'cropVariant'=>'square'] );
@@ -396,20 +395,20 @@ funktioniert ``cropVariant`` nur bei Übergabe einer ``FileReference``.
 \\nn\\t3::File()->processImage(``$filenameOrSysFile = '', $processing = []``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Kann direkt nach dem upload_copy_move() aufgerufen werden.
-Korrigiert die Ausrichtung des Bildes, die evtl. in EXIF-Daten gespeichert wurde.
-Für einfach ``maxWidth``-Anweisungen die Methode ``\nn\t3::File()->process()`` verwenden.
+Can be called directly after upload_copy_move().
+Corrects the orientation of the image, which may have been stored in EXIF data.
+For simple ``maxWidth`` statements, use the ``\nn\t3::File()->process()`` method.
 
-Anweisungen für $processing:
+Statements für $processing:
 
-| ``correctOrientation`` =>  Drehung korrigieren (z.B. weil Foto vom Smartphone hochgeladen wurde)
+| ``correctOrientation`` => Correct rotation (e.g. because photo was uploaded from smartphone)
 
 | ``@return string``
 
 \\nn\\t3::File()->read(``$src = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Holt den Inhalt einer Datei
+Gets the contents of a file
 
 .. code-block:: php
 
@@ -420,38 +419,38 @@ Holt den Inhalt einer Datei
 \\nn\\t3::File()->relPath(``$path = ''``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-relativen Pfad (vom aktuellen Script aus) zum einer Datei / Verzeichnis zurück.
-Wird kein Pfad angegeben, wird das Typo3-Root-Verzeichnis zurückgegeben.
+relative path (from the current script) to a file / directory back.
+If no path is given, the Typo3 root directory is returned
 
 .. code-block:: php
 
-	\nn\t3::File()->relPath( $file );        => ../fileadmin/bild.jpg
-	\nn\t3::File()->relPath();               => ../
+	\nn\t3::File()->relPath( $file ); => ../fileadmin/image.jpg
+	\nn\t3::File()->relPath(); => ../
 
 | ``@return string``
 
 \\nn\\t3::File()->resolvePathPrefixes(``$file = NULL, $absolute = false``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-EXT: Prefix auflösen zu relativer Pfadangabe
+EXT: resolve prefix to relative path
 
 .. code-block:: php
 
-	\nn\t3::File()->resolvePathPrefixes('EXT:extname/bild.jpg');         => /typo3conf/ext/extname/bild.jpg
-	\nn\t3::File()->resolvePathPrefixes('EXT:extname/bild.jpg', true);   => /var/www/website/typo3conf/ext/extname/bild.jpg
+	\nn\t3::File()->resolvePathPrefixes('EXT:extname/image.jpg'); => /typo3conf/ext/extname/image.jpg
+	\nn\t3::File()->resolvePathPrefixes('EXT:extname/image.jpg', true); => /var/www/website/typo3conf/ext/extname/image.jpg
 
 | ``@return string``
 
 \\nn\\t3::File()->sendDownloadHeader(``$filename = '', $filesize = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-PHP Header für Download senden.
-Wenn die Datei physisch existiert, wird die ``filesize`` automatisch ermittelt.
+Send PHP header for download.
+If the file physically exists, the ``filesize`` is determined automatically.
 
 .. code-block:: php
 
 	\nn\t3::File()->sendDownloadHeader( 'download.jpg' );
-	\nn\t3::File()->sendDownloadHeader( 'pfad/zur/datei/download.jpg' );
+	\nn\t3::File()->sendDownloadHeader( 'path/to/file/download.jpg' );
 	\nn\t3::File()->sendDownloadHeader( 'fakedatei.jpg', 1200 );
 
 | ``@return void``
@@ -459,89 +458,87 @@ Wenn die Datei physisch existiert, wird die ``filesize`` automatisch ermittelt.
 \\nn\\t3::File()->size(``$src = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Gibt Dateigröße zu einer Datei in Bytes zurück
-Falls Datei nicht exisitert, wird 0 zurückgegeben.
+Returns the file size of a file in bytes.
+If file does not exist, 0 is returned
 
 .. code-block:: php
 
-	\nn\t3::File()->size('fileadmin/bild.jpg');
+	\nn\t3::File()->size('fileadmin/image.jpg');
 
 | ``@return integer``
 
 \\nn\\t3::File()->stripPathSite(``$file, $prefix = false``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Gibt Pfad zu Datei / Ordner OHNE absoluten Pfad.
-Optional kann ein Prefix angegeben werden.
+Gives path to file / folder WITHOUT absolute path.
+Optionally, a prefix can be specified.
 
-Beispiel:
+Example:
 
 .. code-block:: php
 
-	\nn\t3::File()->stripPathSite('var/www/website/fileadmin/test.jpg');         ==>  fileadmin/test.jpg
-	\nn\t3::File()->stripPathSite('var/www/website/fileadmin/test.jpg', true);   ==>  var/www/website/fileadmin/test.jpg
-	\nn\t3::File()->stripPathSite('fileadmin/test.jpg', true);                   ==>  var/www/website/fileadmin/test.jpg
-	\nn\t3::File()->stripPathSite('fileadmin/test.jpg', '../../');               ==>  ../../fileadmin/test.jpg
+	\nn\t3::File()->stripPathSite('var/www/website/fileadmin/test.jpg'); ==> fileadmin/test.jpg
+	\nn\t3::File()->stripPathSite('var/www/website/fileadmin/test.jpg', true); ==> var/www/website/fileadmin/test.jpg
+	\nn\t3::File()->stripPathSite('fileadmin/test.jpg', true); ==> var/www/website/fileadmin/test.jpg
+	\nn\t3::File()->stripPathSite('fileadmin/test.jpg', '../../'); ==> ../../fileadmin/test.jpg
 
 | ``@return string``
 
 \\nn\\t3::File()->suffix(``$filename = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Gibt den Suffix der Datei zurück
+Returns the suffix of the file
 
 .. code-block:: php
 
-	\nn\t3::File()->suffix('bild.jpg');  => gibt 'jpg' zurück
+	\nn\t3::File()->suffix('image.jpg'); => returns 'jpg'
 
 | ``@return string``
 
 \\nn\\t3::File()->type(``$filename = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Gibt die Art der Datei anhand des Datei-Suffixes zurück
+Returns the type of file based on the file suffix
 
 .. code-block:: php
 
-	\nn\t3::File()->type('bild.jpg');    => gibt 'image' zurück
-	\nn\t3::File()->type('text.doc');    => gibt 'document' zurück
+	\nn\t3::File()->type('image.jpg'); => returns 'image'
 
 | ``@return string``
 
 \\nn\\t3::File()->uniqueFilename(``$filename = ''``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Erzeugt einen eindeutigen Dateinamen für die Datei, falls
-im Zielverzeichnis bereits eine Datei mit identischem Namen
-existiert.
+Creates a unique filename for the file if there is
+a file with the same name already exists in the destination
 
 .. code-block:: php
 
-	$name = \nn\t3::File()->uniqueFilename('fileadmin/01.jpg');  // 'fileadmin/01-1.jpg'
+	$name = \nn\t3::File()->uniqueFilename('fileadmin/01.jpg'); // 'fileadmin/01-1.jpg'
 
 | ``@return string``
 
 \\nn\\t3::File()->unlink(``$file = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Löscht eine Datei komplett vom Sever.
-Löscht auch alle ``sys_file`` und ``sys_file_references``, die auf die Datei verweisen.
-Zur Sicherheit können keine PHP oder HTML Dateien gelöscht werden.
+Deletes a file completely from the server.
+Also delete all ``sys_file`` and ``sys_file_references`` that refer to the file.
+For security, no PHP or HTML files can be deleted.
 
 .. code-block:: php
 
-	\nn\t3::File()->unlink('fileadmin/bild.jpg');                    // Pfad zum Bild
-	\nn\t3::File()->unlink('/abs/path/to/file/fileadmin/bild.jpg');  // absoluter Pfad zum Bild
-	\nn\t3::File()->unlink( $model->getImage() );                 // \TYPO3\CMS\Extbase\Domain\Model\FileReference
-	\nn\t3::File()->unlink( $falFile );                              // \TYPO3\CMS\Core\Resource\FileReference
+	\nn\t3::File()->unlink('fileadmin/image.jpg'); // Path to the image.
+	\nn\t3::File()->unlink('/abs/path/to/file/fileadmin/image.jpg'); // absolute path to the image
+	\nn\t3::File()->unlink( $model->getImage() ); // \TYPO3\CMS\Extbase\Domain\Model\FileReference
+	\nn\t3::File()->unlink( $falFile ); // \TYPO3\CMS\Core\Resource\FileReference
 
 | ``@return boolean``
 
 \\nn\\t3::File()->write(``$path = NULL, $content = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Einen Ordner und/oder Datei erzeugen.
-Legt auch die Ordner an, falls sie nicht existieren.
+Create a folder and/or file.
+Also creates the folders if they do not exist.
 
 .. code-block:: php
 

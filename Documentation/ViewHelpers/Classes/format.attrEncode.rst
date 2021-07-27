@@ -13,7 +13,7 @@ Description
 <nnt3:format.attrEncode />
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Maskiert "kritische" Zeichen, damit sie als Attribut an einen HTML-Tag verwendet werden können.
+Masks "critical" characters so they can be used as an attribute to an HTML tag.
 
 .. code-block:: php
 

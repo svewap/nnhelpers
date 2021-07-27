@@ -13,18 +13,18 @@ Description
 <nnt3:encrypt.hash />
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Generiert einen Hash aus einem String oder einer Zahl.
+Generates a hash from a string or number.
 
 .. code-block:: php
 
 	{secret->nnt3:encrypt.hash()}
 	{nnt3:encrypt(value:secret)}
 
-Hilfreich, falls z.B. eine Mail versendet werden soll mit Bestätigungs-Link.
+Helpful if, for example, a mail is to be sent with confirmation link.
 
-Die UID des Datensatzes wird zusätzlich als Hash übergeben. Im Controller wird dann überprüft,
-ob aus der übergeben ``uid`` der übergeben ``hash`` generiert werden kann.
-Falls nicht, wurde die ``uid`` manipuliert.
+The UID of the record is also passed as a hash. The controller then checks üft,
+whether the ``hash`` can be generated from the ``uid``
+If not, the ``uid`` has been tampered with.
 
 .. code-block:: php
 

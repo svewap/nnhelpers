@@ -13,28 +13,22 @@ Description
 <nnt3:translate />
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Einen Text übersetzen, inkl. optionaler Übersetzung über Deep-L.
+Translate a text, including optional translation via Deep-L.
 
-Siehe auch Doku zu ``TranslationHelper`` für die Einbindung über PHP oder einen Controller.
-
-.. code-block:: php
-
-	// Übersetzung über locallang.xlf
-	{mytext->nnt3:translate(id:'LLL:EXT:nnaddress/Resources/Private/Language/locallang_db.xlf:my-ll-id')}
-	{mytext->nnt3:translate(id:'my-ll-id', extensionName:'nnaddress')}
+See also docs for ``TranslationHelper`` for integration üvia PHP or a controller.
 
 .. code-block:: php
 
 	// Übersetzung per Deep-L
-	{nnt3:translate(id:'my-ll-id', text:'Der Text', extensionName:'nnaddress', enableApi:1, translate:1, targetLang:'EN', maxTranslations:2)}
+	{nnt3:translate(id:'my-ll-id', text:'The Text', extensionName:'nnaddress', enableApi:1, translate:1, targetLang:'EN', maxTranslations:2)}
 	{mytext->nnt3:translate(id:'my-ll-id', extensionName:'nnaddress', enableApi:1, translate:1, targetLang:'EN', maxTranslations:2)}
 	{mytext->nnt3:translate(id:'my-ll-id', enableApi:1, translate:1, targetLang:'EN', cacheFolder:'EXT:nnsite/path/to/somewhere/')}
 	{mytext->nnt3:translate(id:'my-ll-id', enableApi:1, translate:1, targetLang:'EN', cacheFolder:'typo3conf/l10n/demo/')}
 
 .. code-block:: php
 
-	// Einen Block im Fluid-Template übersetzen
+	// Translate a block in the fluid template übersetzen.
 	<nnt3:translate id="text-id-or-cObj-uid" enableApi="1" translate="1" targetLang="EN">
-	  <p>Ich werde automatisch übersetzt, inkl. aller <b>HTML</b>-Tags!</p>
+	  <p>I will automatically <translate, including all <b>HTML</b>tags!</p>
 	</nnt3:translate>
 

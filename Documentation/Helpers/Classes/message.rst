@@ -10,32 +10,32 @@ Message
 \\nn\\t3::Message()
 ----------------------------------------------
 
-Vereinfacht die Verwendung der FlashMessages.
+Simplifies the use of FlashMessages.
 
-Im Backend: FlashMessages werden automatisch ganz oben ausgegeben
-
-.. code-block:: php
-
-	\nn\t3::Message()->OK('Titel', 'Infotext');
-	\nn\t3::Message()->ERROR('Titel', 'Infotext');
-
-Im Frontend: FlashMessages können über ViewHelper ausgegeben werden
+On the backend: FlashMessages are automatically output at the top
 
 .. code-block:: php
 
-	\nn\t3::Message()->OK('Titel', 'Infotext');
+	\nn\t3::Message()->OK('Title', 'Infotext');
+	\nn\t3::Message()->ERROR('Title', 'Infotext');
+
+In the frontend: FlashMessages can be issued via ViewHelper
+
+.. code-block:: php
+
+	\nn\t3::Message()->OK('Title', 'Infotext');
 	<nnt3:flashMessages />
 	<f:flashMessages queueIdentifier='core.template.flashMessages' />
 	
-	\nn\t3::Message()->setId('oben')->OK('Titel', 'Infotext');
-	<nnt3:flashMessages id='oben' />
-	<f:flashMessages queueIdentifier='oben' />
+	\nn\t3::Message()->setId('top')->OK('title', 'info text');
+	<nnt3:flashMessages id='top' />
+	<f:flashMessages queueIdentifier='top' />
 
-... oder als HTML gerendert und zurückgegeben werden:
+... or rendered as HTML and returned:
 
 .. code-block:: php
 
-	echo \nn\t3::Message()->render('oben');
+	echo \nn\t3::Message()->render('top');
 	echo \nn\t3::Message()->render();
 
 Overview of Methods
@@ -44,51 +44,51 @@ Overview of Methods
 \\nn\\t3::Message()->ERROR(``$title = '', $text = ''``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Gibt eine "ERROR" Flash-Message aus
+Emits an "ERROR" flash message
 
 .. code-block:: php
 
-	\nn\t3::Message()->ERROR('Titel', 'Infotext');
+	\nn\t3::Message()->ERROR('Title', 'Infotext');
 
 | ``@return void``
 
 \\nn\\t3::Message()->OK(``$title = '', $text = ''``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Gibt eine "OK" Flash-Message aus
+Emits an "OK" flash message
 
 .. code-block:: php
 
-	\nn\t3::Message()->OK('Titel', 'Infotext');
+	\nn\t3::Message()->OK('Title', 'Infotext');
 
 | ``@return void``
 
 \\nn\\t3::Message()->WARNING(``$title = '', $text = ''``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Gibt eine "WARNING" Flash-Message aus
+Emits a "WARNING" flash message
 
 .. code-block:: php
 
-	\nn\t3::Message()->WARNING('Titel', 'Infotext');
+	\nn\t3::Message()->WARNING('Title', 'Infotext');
 
 | ``@return void``
 
 \\nn\\t3::Message()->flash(``$title = '', $text = '', $type = 'OK', $queueId = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Speichert eine Flash-Message in den Message-Queue für Frontend oder Backend.
+Saves a flash message to the message queue for frontend or backend.
 | ``@return void``
 
 \\nn\\t3::Message()->flush(``$queueID = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Löscht alle Flash-Messages
-Optional kann eine Queue-ID angegeben werden.
+Löll all flash messages.
+Optionally, a queue ID can be specified.
 
 .. code-block:: php
 
-	\nn\t3::Message()->flush('oben');
+	\nn\t3::Message()->flush('above');
 	\nn\t3::Message()->flush();
 
 | ``@return array``
@@ -96,26 +96,26 @@ Optional kann eine Queue-ID angegeben werden.
 \\nn\\t3::Message()->render(``$queueID = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Rendert die Flash-Messages in der Queue
-Simples Beispiel:
+Renders the flash messages in the queue.
+Simple example:
 
 .. code-block:: php
 
-	\nn\t3::Message()->OK('Ja', 'Nein');
+	\nn\t3::Message()->OK('Yes', 'No');
 	echo \nn\t3::Message()->render();
 
-Beispiel mit einer Queue-ID:
+Example with a queue ID:
 
 .. code-block:: php
 
-	\nn\t3::Message()->setId('oben')->OK('Ja', 'Nein');
-	echo \nn\t3::Message()->render('oben');
+	\nn\t3::Message()->setId('above')->OK('Yes', 'No');
+	echo \nn\t3::Message()->render('top');
 
-Ausgabe im Fluid über den ViewHelper:
+Output in the fluid üvia the ViewHelper:
 
 .. code-block:: php
 
-	<nnt3:flashMessages id="oben" />
+	<nnt3:flashMessages id="top" />
 	{nnt3:flashMessages()}
 
 | ``@return string``
@@ -123,18 +123,18 @@ Ausgabe im Fluid über den ViewHelper:
 \\nn\\t3::Message()->setId(``$name = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Legt fest, welcher MessageQueue verwendet werden soll
+Determines which MessageQueue to use
 
 .. code-block:: php
 
-	\nn\t3::Message()->setId('oben')->OK('Titel', 'Infotext');
+	\nn\t3::Message()->setId('top')->OK('title', 'infotext');
 
-Ausgabe in Fluid per ViewHelper:
+Output to Fluid via ViewHelper:
 
 .. code-block:: php
 
-	<nnt3:flashMessages id="oben" />
-	{nnt3:flashMessages(id:'oben')}
+	<nnt3:flashMessages id="top" />
+	{nnt3:flashMessages(id:'top')}
 
 | ``@return void``
 

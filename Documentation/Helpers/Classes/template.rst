@@ -10,7 +10,7 @@ Template
 \\nn\\t3::Template()
 ----------------------------------------------
 
-Fluid Templates rendern und Pfade zu Templates im View manipulieren.
+Render fluid templates and manipulate paths to templates in the view.
 
 Overview of Methods
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -18,7 +18,7 @@ Overview of Methods
 \\nn\\t3::Template()->findTemplate(``$view = NULL, $templateName = ''``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Findet ein Template in einem Array von möglichen templatePaths des Views
+Finds a template in an array of möpossible templatePaths of the view
 
 .. code-block:: php
 
@@ -29,16 +29,16 @@ Findet ein Template in einem Array von möglichen templatePaths des Views
 \\nn\\t3::Template()->getVariables(``$view``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Holt die Variables des aktuellen Views, sprich:
-Alles, was per assign() und assignMultiple() gesetzt wurde.
+Gets the variables of the current view, ie:
+Everything set via assign() and assignMultiple().
 
-Im ViewHelper:
+In the ViewHelper:
 
 .. code-block:: php
 
 	\nn\t3::Template()->getVariables( $renderingContext );
 
-Im Controller:
+In the controller:
 
 .. code-block:: php
 
@@ -49,7 +49,7 @@ Im Controller:
 \\nn\\t3::Template()->mergeTemplatePaths(``$defaultTemplatePaths = [], $additionalTemplatePaths = []``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Pfade zu Templates, Partials, Layout mergen
+Merge paths to templates, partials, layout
 
 .. code-block:: php
 
@@ -60,8 +60,8 @@ Pfade zu Templates, Partials, Layout mergen
 \\nn\\t3::Template()->removeControllerPath(``$view``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Entfernt den Pfad des Controller-Names z.B. /Main/...
-aus der Suche nach Templates.
+Removes the controller name path e.g. /Main/....
+from the template search.
 
 .. code-block:: php
 
@@ -72,13 +72,13 @@ aus der Suche nach Templates.
 \\nn\\t3::Template()->render(``$templateName = NULL, $vars = [], $templatePaths = []``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Ein Fluid-Templates rendern per StandAlone-Renderer
+Rendering a Fluid Template via StandAlone Renderer
 
 .. code-block:: php
 
-	\nn\t3::Template()->render( 'Templatename', $vars, $templatePaths );
-	\nn\t3::Template()->render( 'Templatename', $vars, 'myext' );
-	\nn\t3::Template()->render( 'Templatename', $vars, 'tx_myext_myplugin' );
+	\nn\t3::Template()->render( 'template name', $vars, $templatePaths );
+	\nn\t3::Template()->render( 'templateName', $vars, 'myext' );
+	\nn\t3::Template()->render( 'templateName', $vars, 'tx_myext_myplugin' );
 	\nn\t3::Template()->render( 'fileadmin/Fluid/Demo.html', $vars );
 
 | ``@return string``
@@ -86,11 +86,11 @@ Ein Fluid-Templates rendern per StandAlone-Renderer
 \\nn\\t3::Template()->renderHtml(``$html = NULL, $vars = [], $templatePaths = []``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-einfachen Fluid-Code rendern per StandAlone-Renderer
+simply render fluid code via StandAlone renderer
 
 .. code-block:: php
 
-	    \nn\t3::Template()->renderHtml( '{_all->f:debug()} Test: {test}', $vars );
+	 \nn\t3::Template()->renderHtml( '{_all->f:debug()} Test: {test}', $vars );
 	    \nn\t3::Template()->renderHtml( ['Name: {name}', 'Test: {test}'], $vars );
 	    \nn\t3::Template()->renderHtml( ['name'=>'{firstname} {lastname}', 'test'=>'{test}'], $vars );
 
@@ -99,8 +99,8 @@ einfachen Fluid-Code rendern per StandAlone-Renderer
 \\nn\\t3::Template()->setTemplatePaths(``$view = NULL, $defaultTemplatePaths = [], $additionalTemplatePaths = []``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Setzt Templates, Partials und Layouts für einen View.
-$additionalTemplatePaths kann übergeben werden, um Pfade zu priorisieren
+Sets templates, partials, and layouts for a view.
+$additionalTemplatePaths can be üpassed to prioritize paths
 
 .. code-block:: php
 

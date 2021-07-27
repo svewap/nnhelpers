@@ -13,42 +13,42 @@ Description
 <nnt3:abstract />
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Dieser ViewHelper ist keine eigener ViewHelper, der in Fluid nutzbar ist.
+This ViewHelper is not a custom ViewHelper usable in Fluid.
 
-Er dient als Basis-Klasse für Deine eigenen ViewHelper.
+It serves as a base class for your own ViewHelper.
 
-| ``$escapeOutput = false`` wird als Default gesetzt.
-Falls XSS-Angriffe bei Deinem ViewHelper ein Problem sein könnten, solltest dies überschreiben.
+| ``$escapeOutput = false`` is set as default.
+If XSS attacks could be a problem with your ViewHelper, this should be üoverridden.
 
-Nutze ``extend`` in Deinem eigenen ViewHelper, um ihn zu verwenden.
-Hier ein Beispiel-Boilerplate, mit allem, was Du zum Loslegen brauchst:
+Use ``extend`` in your own ViewHelper to use it.
+Here's a sample boilerplate, with everything you need to get started:
 
 .. code-block:: php
 
 	<?php
-	namespace My\Ext\ViewHelpers;
+	namespace My\ExtViewHelpers;
 	
 	use Nng\Nnhelpers\ViewHelpers\AbstractViewHelper;
-	use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
+	use TYPO3Fluid\Core\Rendering\RenderingContextInterface;
 	
 	class ExampleViewHelper extends AbstractTagBasedViewHelper {
 	
 	 public function initializeArguments() {
 	     parent::initializeArguments();
-	     $this->registerArgument('title', 'string', 'Infos', false);
+	     $this->registerArgument('title', 'string', 'info', false);
 	 }
 	
 	 public static function renderStatic( array $arguments, \Closure $renderChildrenClosure, RenderingContextInterface $renderingContext ) {
 	
-	     // Einfach `$title` statt `$arguments['title']` nutzen
+	     // Just use `$title` instead of `$arguments['title']`.
 	     foreach ($arguments as $k=>$v) {
 	        ${$k} = $v;
 	     }
 	
-	     // Rendert Inhalt zwischen dem ViewHelper-Tag
+	     // Render content between the ViewHelper tag
 	     if (!$title) $title = $renderChildrenClosure();
 	
-	     // Beispiel, um an alle aktuellen Variable im Fluid-Template zu kommen
+	     // Example to get all actual variables in the fluid template
 	     // $templateVars = \nn\t3::Template()->getVariables( $renderingContext );
 	
 	     return $title;

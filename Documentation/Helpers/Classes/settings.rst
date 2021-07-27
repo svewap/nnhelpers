@@ -10,8 +10,8 @@ Settings
 \\nn\\t3::Settings()
 ----------------------------------------------
 
-Methoden, um den Zugriff auf TypoScript Setup, Constanten und PageTsConfig
-zu vereinfachen.
+Methods to simplify access to TypoScript setup, constants, and PageTsConfig.
+simplify.
 
 Overview of Methods
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -19,8 +19,8 @@ Overview of Methods
 \\nn\\t3::Settings()->addPageConfig(``$str = ''``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Page-Config hinzufügen
-Alias zu ``\nn\t3::Registry()->addPageConfig( $str );``
+addPageConfig.
+Alias to ``\nn\t3::Registry()->addPageConfig( $str );``
 
 .. code-block:: php
 
@@ -33,9 +33,9 @@ Alias zu ``\nn\t3::Registry()->addPageConfig( $str );``
 \\nn\\t3::Settings()->get(``$extensionName = '', $path = ''``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Holt das TypoScript-Setup und dort den Abschnitt "settings".
-Werte aus dem FlexForm werden dabei nicht gemerged.
-Alias zu ``\nn\t3::Settings()->getSettings()``.
+Gets the TypoScript setup and there the "settings" section.
+Values from the FlexForm will not be remembered in the process.
+Alias to ``\nn\t3::Settings()->getSettings()``.
 
 .. code-block:: php
 
@@ -47,27 +47,27 @@ Alias zu ``\nn\t3::Settings()->getSettings()``.
 \\nn\\t3::Settings()->getConstants(``$tsPath = ''``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Array der TypoScript-Konstanten holen.
+Get array of TypoScript constants.
 
 .. code-block:: php
 
 	\nn\t3::Settings()->getConstants();
-	\nn\t3::Settings()->getConstants('pfad.zur.konstante');
+	\nn\t3::Settings()->getConstants('path.to.constant');
 
-Existiert auch als ViewHelper:
+Also acts as a ViewHelper:
 
 .. code-block:: php
 
-	{nnt3:ts.constants(path:'pfad.zur.konstante')}
+	{nnt3:ts.constants(path:'path.to.constant')}
 
 | ``@return array``
 
 \\nn\\t3::Settings()->getExtConf(``$extName = ''``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Extension-Konfiguration holen.
-Kommen aus der ``LocalConfiguration.php``, werden über die Extension-Einstellungen
-im Backend bzw. ext_conf_template.txt definiert
+Get Extension Configuration.
+Coming from the ``LocalConfiguration.php``, are üdefined via the extension settings
+defined in the backend or ext_conf_template.txt
 
 Früher: ``$GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['your_extension_key']``
 
@@ -80,27 +80,27 @@ Früher: ``$GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['your_extension_key']``
 \\nn\\t3::Settings()->getFromPath(``$tsPath = '', $setup = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Setup von einem gegebenen Pfad holen, z.B. 'plugin.tx_example.settings'
+Get setup from a given path, e.g. 'plugin.tx_example.settings'
 
 .. code-block:: php
 
-	\nn\t3::Settings()->getFromPath('plugin.pfad');
+	\nn\t3::Settings()->getFromPath('plugin.path');
 	\nn\t3::Settings()->getFromPath('L', \nn\t3::Request()->GP());
 	\nn\t3::Settings()->getFromPath('a.b', ['a'=>['b'=>1]]);
 
-Existiert auch als ViewHelper:
+Also acts as a ViewHelper:
 
 .. code-block:: php
 
-	{nnt3:ts.setup(path:'pfad.zur.setup')}
+	{nnt3:ts.setup(path:'path.zur.setup')}
 
 | ``@return array``
 
 \\nn\\t3::Settings()->getFullTyposcript(``$pid = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Das komplette TypoScript Setup holen, als einfaches Array - ohne "."-Syntax
-Funktioniert sowohl im Frontend als auch Backend, mit und ohne übergebener pid
+Get the complete TypoScript setup, as a simple array - without "." syntax.
+Works in both frontend and backend, with and without übergebener pid
 
 .. code-block:: php
 
@@ -112,18 +112,18 @@ Funktioniert sowohl im Frontend als auch Backend, mit und ohne übergebener pid
 \\nn\\t3::Settings()->getMergedSettings(``$extensionName = NULL, $ttContentUidOrSetupArray = []``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Merge aus TypoScript-Setup für ein Plugin und seinem Flexform holen.
-Gibt das TypoScript-Array ab ``plugin.tx_extname.settings``... zurück.
+Get merge from TypoScript setup für a plugin and its flexform.
+Returns the TypoScript array ``plugin.tx_extname.settings``... 
 
-Wichtig: $extensionName nur angeben, wenn das Setup einer FREMDEN Extension
-geholt werden soll oder es keinen Controller-Context gibt, weil der
-Aufruf aus dem Backend gemacht wird... sonst werden die FlexForm-Werte nicht berücksichtigt!
+Important: specify $extensionName only if the setup of a FREMEND extension is to be
+should be fetched or there is no controller context, because the
+Call is made from the backend... otherwise the FlexForm values will not be taken into account!
 
-Im FlexForm ``<settings.flexform.varName>`` verwenden!
-| ``<settings.flexform.varName>`` überschreibt dann ``settings.varName`` im TypoScript-Setup
+In the FlexForm use ``<settings.flexform.varName>``!
+| ``<settings.flexform.varName>`` üthen overwrite ``settings.varName`` in the TypoScript setup
 
-| ``$ttContentUidOrSetupArray`` kann uid eines ``tt_content``-Inhaltselementes sein
-oder ein einfaches Array zum Überschreiben der Werte aus dem TypoScript / FlexForm
+| ``$ttContentUidOrSetupArray`` can be uid of a ``tt_content`` content element.
+or a simple array to üoverwrite the values from the TypoScript / FlexForm
 
 .. code-block:: php
 
@@ -136,7 +136,7 @@ oder ein einfaches Array zum Überschreiben der Werte aus dem TypoScript / FlexF
 \\nn\\t3::Settings()->getPageConfig(``$tsPath = '', $pid = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Page-Configuration holen
+GetPageConfig
 
 .. code-block:: php
 
@@ -144,34 +144,34 @@ Page-Configuration holen
 	\nn\t3::Settings()->getPageConfig('RTE.default.preset');
 	\nn\t3::Settings()->getPageConfig( $tsPath, $pid );
 
-Existiert auch als ViewHelper:
+Also acts as a ViewHelper:
 
 .. code-block:: php
 
-	{nnt3:ts.page(path:'pfad.zur.pageconfig')}
+	{nnt3:ts.page(path:'path.zur.pageconfig')}
 
 | ``@return array``
 
 \\nn\\t3::Settings()->getPlugin(``$extName = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Das Setup für ein bestimmtes Plugin holen.
+Get the setup for a specific plugin.
 
 .. code-block:: php
 
-	\nn\t3::Settings()->getPlugin('extname') ergibt TypoScript ab plugin.tx_extname...
+	\nn\t3::Settings()->getPlugin('extname') returns TypoScript from plugin.tx_extname...
 
-Wichtig: $extensionName nur angeben, wenn das Setup einer FREMDEN Extension
-geholt werden soll oder es keinen Controller-Context gibt, weil der Aufruf z.B.
-aus dem Backend gemacht wird
+Important: specify $extensionName only if the setup of a FREME extension
+should be fetched or there is no controller context because the call is made e.g.
+is made from the backend
 
 | ``@return array``
 
 \\nn\\t3::Settings()->getSettings(``$extensionName = '', $path = ''``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Holt das TypoScript-Setup und dort den Abschnitt "settings".
-Werte aus dem FlexForm werden dabei nicht gemerged.
+Get the TypoScript setup and there the "settings" section.
+Values from the FlexForm will not be remembered.
 
 .. code-block:: php
 
@@ -183,17 +183,17 @@ Werte aus dem FlexForm werden dabei nicht gemerged.
 \\nn\\t3::Settings()->getStoragePid(``$extName = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Aktuelle (ERSTE) StoragePid für das aktuelle Plugin holen.
-Gespeichert im TypoScript-Setup der Extension unter
-| ``plugin.tx_extname.persistence.storagePid`` bzw. im
-FlexForm des Plugins auf der jeweiligen Seite.
+Get current (FIRST) StoragePid for the current plugin.
+Stored in the extension's TypoScript setup under.
+| ``plugin.tx_extname.persistence.storagePid`` or in the
+FlexForm of the plugin on the respective page.
 
-WICHTIG: Merge mit gewählter StoragePID aus dem FlexForm
-passiert nur, wenn ``$extName``leer gelassen wird.
+IMPORTANT: Merge with selected StoragePID from the FlexForm.
+only happens if ``$extName`` is left blank.
 
 .. code-block:: php
 
-	\nn\t3::Settings()->getStoragePid();         // 123
+	\nn\t3::Settings()->getStoragePid(); // 123
 	\nn\t3::Settings()->getStoragePid('nnsite'); // 466
 
 | ``@return string``
@@ -201,44 +201,44 @@ passiert nur, wenn ``$extName``leer gelassen wird.
 \\nn\\t3::Settings()->getStoragePids(``$extName = NULL, $recursive = []``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-ALLE storagePids für das aktuelle Plugin holen.
-Gespeichert als komma-separierte Liste im TypoScript-Setup der Extension unter
-| ``plugin.tx_extname.persistence.storagePid`` bzw. im
-FlexForm des Plugins auf der jeweiligen Seite.
+Get ALL storagePids for the current plugin.
+Stored as a comma-separated list in the extension's TypoScript setup at.
+| ``plugin.tx_extname.persistence.storagePid`` or in the
+FlexForm of the plugin on the respective page.
 
-WICHTIG: Merge mit gewählter StoragePID aus dem FlexForm
-passiert nur, wenn ``$extName``leer gelassen wird.
-
-.. code-block:: php
-
-	\nn\t3::Settings()->getStoragePids();                    // [123, 466]
-	\nn\t3::Settings()->getStoragePids('nnsite');            // [123, 466]
-
-Auch die child-PageUids holen?
-| ``true`` nimmt den Wert für "Rekursiv" aus dem FlexForm bzw. aus dem
-TypoScript der Extension von ``plugin.tx_extname.persistence.recursive``
+IMPORTANT: Merge with selected StoragePID from the FlexForm.
+only happens if ``$extName`` is left blank.
 
 .. code-block:: php
 
-	\nn\t3::Settings()->getStoragePids(true);                // [123, 466, 124, 467, 468]
-	\nn\t3::Settings()->getStoragePids('nnsite', true);      // [123, 466, 124, 467, 468]
+	\nn\t3::Settings()->getStoragePids(); // [123, 466]
+	\nn\t3::Settings()->getStoragePids('nnsite'); // [123, 466]
 
-Alternativ kann für die Tiefe / Rekursion auch ein numerischer Wert
-übergeben werden.
+Get the child pageUids too?
+| ``true`` takes the value für "Recursive" from the FlexForm or from the
+TypoScript of the extension from ``plugin.tx_extname.persistence.recursive``
 
 .. code-block:: php
 
-	\nn\t3::Settings()->getStoragePids(2);               // [123, 466, 124, 467, 468]
-	\nn\t3::Settings()->getStoragePids('nnsite', 2);     // [123, 466, 124, 467, 468]
+	 \nn\t3::Settings()->getStoragePids(true); // [123, 466, 124, 467, 468]
+	\nnnnt3::Settings()->getStoragePids('nnsite', true); // [123, 466, 124, 467, 468]
+
+Alternatively, a numeric value can be passed for the depth / recursion.
+
+.. code-block:: php
+
+	\nn\t3::Settings()->getStoragePids(2); // [123, 466, 124, 467, 468]
+	\nnnnt3::Settings()->getStoragePids('nnsite', 2); // [123, 466, 124, 467, 468]
 
 | ``@return array``
 
 \\nn\\t3::Settings()->getTyposcriptObject(``$pid = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-TemplateService instanziieren, TypoScript-Config und Setup parsen.
-Interne Funktion – nicht zur Verwendung gedacht.
-| ``getFullTyposcript`` nutzen.
+Instantiate TemplateService, parse TypoScript config and setup.
+Internal function – not intended to be used.
+Use ``getFullTyposcript``.
 
 | ``@return object``
+.
 

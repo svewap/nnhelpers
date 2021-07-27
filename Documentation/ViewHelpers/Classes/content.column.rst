@@ -13,7 +13,7 @@ Description
 <nnt3:content.column />
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Rendert die Inhalte einer Spalte (colPos) des Backend Layouts
+Renders the contents of a column (colPos) of the backend layout
 
 .. code-block:: php
 

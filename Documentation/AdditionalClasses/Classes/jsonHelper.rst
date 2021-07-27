@@ -10,33 +10,33 @@ JsonHelper
 \\nn\\t3::JsonHelper()
 ----------------------------------------------
 
-Das Script hilft beim Konvertieren und Parsen von JavaScript-Objekt-Strings in ein Array.
+The script helps convert and parse JavaScript object strings into an array.
 
 .. code-block:: php
 
-	$data = \Nng\Nnhelpers\Helpers\JsonHelper::decode( "{title:'Test', cat:[2,3,4]}" );
+	$data = \Nng\Nnhelpers\JsonHelper::decode( "{title:'Test', cat:[2,3,4]}" );
 	print_r($data);
 
-Der Helper ermöglicht es, im TypoScript die JavaScript-Object-Schreibweise zu nutzen und über den ``{nnt3:parse.json()}`` ViewHelper in ein Array zu konvertieren.
-Das ist praktisch, wenn z.B. Slider-Konfigurationen oder andere JavaScript-Objekte im TypoScript definiert werden sollen, um sie später in JavaScript zu nutzen.
+The helper makes it possible to use the JavaScript object notation in TypoScript and convert it to an array via the ``{nnt3:parse.json()}`` ViewHelper.
+This is handy if, for example, slider configurations or other JavaScript objects should be defined in TypoScript to be used later in JavaScript.
 
-Anderes Anwendungsbeispiel: Man möchte die "normalen" JS-Syntax in einer ``.json``-Datei nutzen, statt dem JSON-Syntax.
-Schauen wir uns ein Beispiel an. Dieser Text wurde in eine Textdatei geschrieben und soll per PHP geparsed werden:
+Another usage example: you want to use the "normal" JS syntax in a ``.json`` file, instead of the JSON syntax.
+Let's look at an example. This text was written to a text file and is to be parsed via PHP:
 
 .. code-block:: php
 
-	// Inhalte einer Textdatei.
+	// Contents of a text file.
 	{
-	    beispiel: ['eins', 'zwei', 'drei']
+	    Example: ['one', 'two', 'three']
 	}
 
-PHP würde bei diesem Beispiel mit ``json_decode()`` einen Fehler melden: Der String enthält Kommentare, Umbrüche und die Keys und Values sind nicht in doppelte Anführungszeichen eingeschlossen. Der JsonHelper bzw. der ViewHelper ``$jsonHelper->decode()`` kann es aber problemlos umwandeln.
+PHP would report an error with ``json_decode()`` for this example: The string contains comments, wraps, and the keys and values are not enclosed in double quotes. However, the JsonHelper or the ViewHelper ``$jsonHelper->decode()`` can convert it easily.
 
-So könnte man im TypoScript Setup ein JS-Object definieren:
+This is how you could define a JS object in the TypoScript setup:
 
 .. code-block:: php
 
-	// Inhalt im TS-Setup
+	// Contents in TS setup.
 	my_conf.data (
 	  {
 	     dots: true,
@@ -44,24 +44,24 @@ So könnte man im TypoScript Setup ein JS-Object definieren:
 	  }
 	)
 
-Die Mischung irritiert ein wenig: ``my_conf.data (...)`` öffnet im TypoScript einen Abschnitt für mehrzeiligen Code.
-Zwischen den ``(...)`` steht dann ein "normales" JavaScript-Object.
-Das lässt sich im Fluid-Template dann einfach als Array nutzen:
+The mix is a little irritating: ``my_conf.data (...)`` öffnets a section in the TypoScript for multi-line code.
+Between the ``(...)`` is then a "normal" JavaScript object.
+This can then be easily used as an array in the Fluid template:
 
 .. code-block:: php
 
 	{nnt3:ts.setup(path:'my_conf.data')->f:variable(name:'myConfig')}
 	{myConfig->nnt3:parse.json()->f:debug()}
 
-Oder als data-Attribut an ein Element hängen, um es später per JavaScript zu parsen:
+Or append as a data attribute to an element to parse it later via JavaScript:
 
 .. code-block:: php
 
 	{nnt3:ts.setup(path:'my_conf.data')->f:variable(name:'myConfig')}
 	<div data-config="{myConfig->nnt3:parse.json()->nnt3:format.attrEncode()}">...</div>
 
-Dieses Script basiert überwiegend auf der Arbeit von https://bit.ly/3eZuNu2 und
-wurde von uns für PHP 7+ optimiert.Alles an Ruhm und Ehre bitte in diese Richtung.
+This script is based üpredominantly on the work of https://bit.ly/3eZuNu2 and
+has been optimized by us for PHP 7+.All credit to that direction, please.
 
 Overview of Methods
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -69,38 +69,38 @@ Overview of Methods
 \\nn\\t3::JsonHelper()->decode(``$str, $useArray = true``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Wandelt einen JS-Object-String in ein Array um.
+Converts a JS object string into an array.
 
 .. code-block:: php
 
-	$data = \Nng\Nnhelpers\Helpers\JsonHelper::decode( "{title:'Test', cat:[2,3,4]}" );
+	$data = \Nng\Nnhelpers\JsonHelper::decode( "{title:'Test', cat:[2,3,4]}" );
 	print_r($data);
 
-Die PHP-Funktion ``json_decode()`` funktioniert nur bei der JSON-Syntax: ``{"key":"value"}``. Im JSON sind weder Zeilenumbrüche, noch Kommentare erlaubt.
-Mit dieser Funktion können auch Strings in der JavaScript-Schreibweise geparsed werden.
+The PHP function ``json_decode()`` only works for JSON syntax: ``{"key": "value"}``. In JSON, neither line breaks nor comments are allowed.
+This function can also be used to parse strings in JavaScript notation.
 
 | ``@return array|string``
 
 \\nn\\t3::JsonHelper()->encode(``$var``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Konvertiert eine Variable ins JSON Format.
-Relikt der ursprünglichen Klasse, vermutlich aus einer Zeit als es ``json_encode()`` noch nicht gab.
+Converts a variable to JSON format.
+Relic of the original class, presumably from a time when ``json_encode()`` did not exist.
 
 .. code-block:: php
 
-	\Nng\Nnhelpers\Helpers\JsonHelper::encode(['a'=>1, 'b'=>2]);
+	\Nng\Nnhelpers\JsonHelper::encode(['a'=>1, 'b'=>2]);
 
 | ``@return string;``
 
 \\nn\\t3::JsonHelper()->removeCommentsAndDecode(``$str, $useArray = true``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Entfernt Kommentare aus dem Code und parsed den String.
+Removes comments from the code and parses the string.
 
 .. code-block:: php
 
-	\Nng\Nnhelpers\Helpers\JsonHelper::removeCommentsAndDecode( "// Kommentar\n{title:'Test', cat:[2,3,4]}" )
+	\Nng\Nnhelpers\JsonHelper::removeCommentsAndDecode( "//comments\n{title:'Test', cat:[2,3,4]}" )
 
 | ``@return array|string``
 

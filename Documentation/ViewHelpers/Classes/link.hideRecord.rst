@@ -13,9 +13,9 @@ Description
 <nnt3:link.hideRecord />
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Link zum Verstecken / Sichtbar machen eines Datensatzes in einem Backend-Modul generieren.
+Generate a link to hide / make visible a record in a backend module.
 
-Link zum Verstecken eines Datensatzes:
+Link to hide a record:
 
 .. code-block:: php
 
@@ -23,7 +23,7 @@ Link zum Verstecken eines Datensatzes:
 	    <i class="fas fa-eye"></i>
 	</nnt3:link.hideRecord>
 
-Link zum show/hide-Toggle eines Datensatzes:
+Link to show/hide toggle a record:
 
 .. code-block:: php
 

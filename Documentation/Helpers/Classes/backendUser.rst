@@ -10,8 +10,8 @@ BackendUser
 \\nn\\t3::BackendUser()
 ----------------------------------------------
 
-Methoden, um im Frontend zu prüfen, ob ein User im Typo3-Backend eingeloggt ist und z.B. Admin-Rechte besitzt.
-Methoden, um einen Backend-User zu starten, falls er nicht existiert (z.B. während eines Scheduler-Jobs).
+Methods to check in the frontend if a user is logged in to the Typo3 backend and has e.g. admin rights.
+Methods to start a backend user if it does not exist (e.g. during a scheduler job).
 
 Overview of Methods
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -19,8 +19,8 @@ Overview of Methods
 \\nn\\t3::BackendUser()->isAdmin();
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Prüft, ob der BE-User ein Admin ist.
-Früher: ``$GLOBALS['TSFE']->beUserLogin``
+Prüft whether the BE user is an admin.
+Earlier: ``$GLOBALS['TSFE']->beUserLogin``
 
 .. code-block:: php
 
@@ -31,8 +31,8 @@ Früher: ``$GLOBALS['TSFE']->beUserLogin``
 \\nn\\t3::BackendUser()->isLoggedIn();
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Prüft, ob ein BE-User eingeloggt ist.
-Beispiel: Im Frontend bestimmte Inhalte nur zeigen, wenn der User im Backend eingeloggt ist.
+Prüft whether a BE user is logged in.
+Example: Show certain content in the frontend only if the user is logged in in the backend.
 Früher: ``$GLOBALS['TSFE']->beUserLogin``
 
 .. code-block:: php
@@ -44,9 +44,9 @@ Früher: ``$GLOBALS['TSFE']->beUserLogin``
 \\nn\\t3::BackendUser()->start();
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Starte (faken) Backend-User.
-Löst das Problem, das z.B. aus dem Scheduler bestimmte Funktionen
-wie ``log()`` nicht möglich sind, wenn kein aktiver BE-User existiert.
+Start (fake) backend user.
+Solves the problem that, for example, from the scheduler certain functions
+like ``log()`` are not possible if there is no active BE user.
 
 .. code-block:: php
 
