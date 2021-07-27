@@ -13,14 +13,14 @@ Description
 <nnt3:die />
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Does nothing except terminate the script.
+Macht nichts, außer das Script zu beenden.
 
-This can be used to abort the script during Fluid's rendering process.
-Handy for debugging mail templates, for example.
+Damit kann während des Rendering-Prozesses von Fluid das Script abgebrochen werden.
+Praktisch, um z.B. Mail-Templates zu debuggen.
 
 .. code-block:: php
 
 	{nnt3:die()}
 
 | ``@return death``
-.
+

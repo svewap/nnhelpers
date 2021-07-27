@@ -16,14 +16,14 @@ Overview of Methods
 \\nn\\t3::FrontendUser()->get();
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Get the current FE user.
-Alias to ``\nn\t3::FrontendUser()->getCurrentUser();``
+Den aktuellen FE-User holen.
+Alias zu ``\nn\t3::FrontendUser()->getCurrentUser();``
 
 .. code-block:: php
 
 	\nn\t3::FrontendUser()->get();
 
-Also acts as a ViewHelper:
+Existiert auch als ViewHelper:
 
 .. code-block:: php
 
@@ -35,14 +35,14 @@ Also acts as a ViewHelper:
 \\nn\\t3::FrontendUser()->getAvailableUserGroups();
 """""""""""""""""""""""""""""""""""""""""""""""
 
-return all existing user groups
+Alle existierende User-Gruppen zurückgeben
 
 | ``@return array``
 
 \\nn\\t3::FrontendUser()->getCurrentUser();
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Get user group of current FE user;
+User-Gruppe des aktuellen FE-Users holen.
 
 .. code-block:: php
 
@@ -55,15 +55,15 @@ Get user group of current FE user;
 
 .. code-block:: php
 
-	\nn\t3::FrontendUser()->getCurrentUserGroups(); => [1 => ['title'=>'Group A', 'uid' => 1]]
-	\nn\t3::FrontendUser()->getCurrentUserGroups( true ); => [1 => [... all fields of the DB] ]
+	\nn\t3::FrontendUser()->getCurrentUserGroups();          => [1 => ['title'=>'Gruppe A', 'uid' => 1]]
+	\nn\t3::FrontendUser()->getCurrentUserGroups( true );    => [1 => [... alle Felder der DB] ]
 
 | ``@return array``
 
 \\nn\\t3::FrontendUser()->getCurrentUserUid();
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Get the UID of the current frontend user.
+UID des aktuellen Frontend-Users holen
 | ``@return int``
 
 \\nn\\t3::FrontendUser()->getLanguage();
@@ -75,7 +75,7 @@ Get language uid of current user
 \\nn\\t3::FrontendUser()->getSessionData(``$key = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Get session data for FE users
+Session-Data für FE-User holen
 
 .. code-block:: php
 
@@ -86,7 +86,7 @@ Get session data for FE users
 \\nn\\t3::FrontendUser()->getSessionId();
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Get the session ID of the current frontend user.
+Session-ID des aktuellen Frontend-Users holen
 | ``@return string``
 
 \\nn\\t3::FrontendUser()->hasRole(``$roleUid``);
@@ -99,7 +99,7 @@ Check if the logged in user has a specific role
 \\nn\\t3::FrontendUser()->isInUserGroup(``$feGroups = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Prüft whether the current fe-user is within a specified user group.
+Prüft, ob der aktuelle fe-user innerhalb einer bestimmte Benutzergruppe ist.
 
 .. code-block:: php
 
@@ -113,20 +113,20 @@ Prüft whether the current fe-user is within a specified user group.
 \\nn\\t3::FrontendUser()->isLoggedIn();
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Check if the user is logged in.
-before: isset($GLOBALS['TSFE']) && $GLOBALS['TSFE']->loginUser
+Check if the user is logged
+vorher: isset($GLOBALS['TSFE']) && $GLOBALS['TSFE']->loginUser
 | ``@return bool``
 
 \\nn\\t3::FrontendUser()->login(``$username, $password = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Logging in user manually.
-As of v10: alias to ``\nn\t3::FrontendUserAuthentication()->loginByUsername( $username );``
+User manuell einloggen.
+ab v10: Alias zu ``\nn\t3::FrontendUserAuthentication()->loginByUsername( $username );``
 
 .. code-block:: php
 
 	\nn\t3::FrontendUser()->login('99grad');
-	\nn\t3::FrontendUser()->login('99degrees', 'password');
+	\nn\t3::FrontendUser()->login('99grad', 'password');
 
 | ``@param $username``
 | ``@param $password``
@@ -135,13 +135,13 @@ As of v10: alias to ``\nn\t3::FrontendUserAuthentication()->loginByUsername( $us
 \\nn\\t3::FrontendUser()->logout();
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Manually log out current FE-USer.
+Aktuellen FE-USer manuell ausloggen
 | ``@return void``
 
 \\nn\\t3::FrontendUser()->removeCookie();
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Manually delete the current fe_typo_user cookie
+Aktuellen fe_typo_user-Cookie manuell löschen
 
 .. code-block:: php
 
@@ -152,27 +152,27 @@ Manually delete the current fe_typo_user cookie
 \\nn\\t3::FrontendUser()->setPassword(``$feUserUid = NULL, $password = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Change the password of a FE user.
-Alias to ``\nn\t3::FrontendUserAuthentication()->setPassword()``.
+Passwort eines FE-Users ändern.
+Alias zu ``\nn\t3::FrontendUserAuthentication()->setPassword()``.
 
 .. code-block:: php
 
-	\nn\t3::FrontendUser()->setPassword( 12, '123password$#' );
-	\nn\t3::FrontendUser()->setPassword( $frontendUserModel, '123password#$' );
+	\nn\t3::FrontendUser()->setPassword( 12, '123passwort$#' );
+	\nn\t3::FrontendUser()->setPassword( $frontendUserModel, '123Passwort#$' );
 
 | ``@return boolean``
 
 \\nn\\t3::FrontendUser()->setSessionData(``$key = NULL, $val = NULL, $merge = true``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Set session-data for FE-user
+Session-Data für FE-User setzen
 
 .. code-block:: php
 
-	// Merge session-data for `shop` with new data (already existing keys in `shop` will not be deleted).
+	// Session-data für `shop` mit neuen Daten mergen (bereits existierende keys in `shop` werden nicht gelöscht)
 	\nn\t3::FrontendUser()->setSessionData('shop', ['a'=>1]));
 	
-	// overwrite session-data for `shop` (`a` from the example above will be deleted)
+	// Session-data für `shop` überschreiben (`a` aus dem Beispiel oben wird gelöscht)
 	\nn\t3::FrontendUser()->setSessionData('shop', ['b'=>1], false));
 
 | ``@return mixed``

@@ -10,9 +10,9 @@ Convert
 \\nn\\t3::Convert()
 ----------------------------------------------
 
-Converting arrays to models, models to JSONs, arrays to ObjectStorages,
-hex colors to RGB, and a whole lot more that has anything to do
-to do.
+Konvertieren von Arrays zu Models, Models zu JSONs, Arrays zu ObjectStorages,
+Hex-Farben zu RGB und vieles mehr, was irgendwie mit Konvertieren von Dingen
+zu tun hat.
 
 Overview of Methods
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -20,37 +20,35 @@ Overview of Methods
 \\nn\\t3::Convert()->toArray(``$obj = NULL, $depth = 3``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Converts a model to an array.
-Alias to \nn\t3::Obj()->toArray();
+Konvertiert ein Model in ein Array
+Alias zu \nn\t3::Obj()->toArray();
 
-For memory problems due to recursion: Specify max-depth!
+Bei Memory-Problemen wegen Rekursionen: Max-Tiefe angebenen!
 
 .. code-block:: php
 
 	\nn\t3::Convert($model)->toArray(2);
-	\nn\t3::Convert($model)->toArray(); => ['uid'=>1, 'title'=>'example', ...]
+	\nn\t3::Convert($model)->toArray();      => ['uid'=>1, 'title'=>'Beispiel', ...]
 
 | ``@return array``
 
 \\nn\\t3::Convert()->toFileReference();
 """""""""""""""""""""""""""""""""""""""""""""""
 
-.
-Converts a ``\TYPO3\CMS\Core\Resource\FileReference`` (or its ``uid``)
-into a ``\TYPO3\CMS\Extbase\Domain\Model\FileReference``
+Konvertiert ein ``\TYPO3\CMS\Core\Resource\FileReference`` (oder seine ``uid``)
+in eine ``\TYPO3\CMS\Extbase\Domain\Model\FileReference``
 
 .. code-block:: php
 
 	\nn\t3::Convert( $input )->toFileReference() => \TYPO3\CMS\Extbase\Domain\Model\FileReference
 
-| ``@param $input`` Can be ``\TYPO3\CMS\Core\Resource\FileReference`` or ``uid`` of it.
+| ``@param $input`` Kann ``\TYPO3\CMS\Core\Resource\FileReference`` oder ``uid`` davon sein
 | ``@return \TYPO3\CMS\Extbase\Domain\Model\FileReference``
-.
 
 \\nn\\t3::Convert()->toIso();
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Converts (normalizes) a string to ISO-8859-1
+Konvertiert (normalisiert) einen String zu ISO-8859-1
 
 .. code-block:: php
 
@@ -61,69 +59,69 @@ Converts (normalizes) a string to ISO-8859-1
 \\nn\\t3::Convert()->toJson(``$obj = NULL, $depth = 3``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Converts a model to a JSON
+Konvertiert ein Model in ein JSON
 
 .. code-block:: php
 
-	\nn\t3::Convert($model)->toJson() => ['uid'=>1, 'title'=>'example', ...]
+	\nn\t3::Convert($model)->toJson()        => ['uid'=>1, 'title'=>'Beispiel', ...]
 
 | ``@return array``
 
 \\nn\\t3::Convert()->toModel(``$className = NULL, $parentModel = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Converts an array to a model.
+Konvertiert ein Array in ein Model.
 
 .. code-block:: php
 
-	\nn\t3::Convert($array)->toModel( \Nng\Model\Name::class ) => \Nng\Model\Name
+	\nn\t3::Convert($array)->toModel( \Nng\Model\Name::class )       => \Nng\Model\Name
 
-Can also automatically create FileReferences.
-In this example, a new model of type ``\Nng\Model\Name`` is created and then
-then persisted in the database. The ``falMedia`` field is an ObjectStorage.
-with ``FileReferences``. The FileReferences are created automatically!
+Kann auch automatisch FileReferences erzeugen.
+In diesem Bespiel wird ein neues Model des Typs ``\Nng\Model\Name`` erzeugt und
+danach in der Datenbank persistiert. Das Feld ``falMedia`` ist eine ObjectStorage
+mit ``FileReferences``. Die FileReferences werden automatisch erzeugt!
 
 .. code-block:: php
 
 	$data = [
 	    'pid' => 6,
-	    'title' => 'new record',
-	    'description' => 'The text',
+	    'title' => 'Neuer Datensatz',
+	    'description' => 'Der Text',
 	    'falMedia' => [
-	        ['title'=>'Image 1', 'publicUrl'=>'fileadmin/_tests/5e505e6b6143a.jpg']
-	        ['title'=>'image 2', 'publicUrl'=>'fileadmin/_tests/5e505fbf5d3dd.jpg'],
-	        ['title'=>'image 3', 'publicUrl'=>'fileadmin/_tests/5e505f435061e.jpg'],
+	        ['title'=>'Bild 1', 'publicUrl'=>'fileadmin/_tests/5e505e6b6143a.jpg'],
+	        ['title'=>'Bild 2', 'publicUrl'=>'fileadmin/_tests/5e505fbf5d3dd.jpg'],
+	        ['title'=>'Bild 3', 'publicUrl'=>'fileadmin/_tests/5e505f435061e.jpg'],
 	    ]
 	];
 	$newModel = \nn\t3::Convert( $data )->toModel( \Nng\Model\Name::class );
 	$modelRepository->add( $newModel );
 	\nn\t3::Db()->persistAll();
 
-Example: create a news model from an array:
+Beispiel: Aus einem Array einen News-Model erzeugen:
 
 .. code-block:: php
 
 	$entry = [
-	    'pid' => 12,
-	    'title' => 'news-title',
-	    'description' => '<p>My News</p>',
-	    'falMedia' => [['publicUrl' => 'fileadmin/image.jpg', 'title'=>'image'], ...],
-	    'categories' => [1, 2]
+	    'pid'           => 12,
+	    'title'         => 'News-Titel',
+	    'description'   => '<p>Meine News</p>',
+	    'falMedia'      => [['publicUrl' => 'fileadmin/bild.jpg', 'title'=>'Bild'], ...],
+	    'categories'    => [1, 2]
 	];
 	$model = \nn\t3::Convert( $entry )->toModel( \GeorgRinger\News\Domain\Model\News::class );
 	$newsRepository->add( $model );
 	\nn\t3::Db()->persistAll();
 
-Note
-To update an already existing model with data from an array there is
-there is the method ``$updatedModel = \nn\t3::Obj( $prevModel )->merge( $data );``
+Hinweis
+Um ein bereits existierendes Model mit Daten aus einem Array zu aktualisieren gibt
+es die Methode ``$updatedModel = \nn\t3::Obj( $prevModel )->merge( $data );``
 
 | ``@return mixed``
 
 \\nn\\t3::Convert()->toObjectStorage(``$obj = NULL, $childType = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Converts something to an ObjectStorage
+Konvertiert etwas in eine ObjectStorage
 
 .. code-block:: php
 
@@ -134,12 +132,11 @@ Converts something to an ObjectStorage
 	\nn\t3::Convert()->toObjectStorage([1, 2, ...], \My\Child\Type::class )
 
 | ``@return ObjectStorage``
-.
 
 \\nn\\t3::Convert()->toRGB();
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Converts a color value to another number format
+Konvertiert einen Farbwert in ein anderes Zahlenformat
 
 .. code-block:: php
 
@@ -150,18 +147,18 @@ Converts a color value to another number format
 \\nn\\t3::Convert()->toSysCategories();
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Converts a list to an ``ObjectStorage`` with ``SysCategory``
+Konvertiert eine Liste in eine ``ObjectStorage`` mit ``SysCategory``
 
 .. code-block:: php
 
-	Not yet implemented!
+	Noch nicht implementiert!
 
 | ``@return ObjectStorage``
 
 \\nn\\t3::Convert()->toUTF8();
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Converts (normalizes) a string to UTF-8
+Konvertiert (normalisiert) einen String zu UTF-8
 
 .. code-block:: php
 

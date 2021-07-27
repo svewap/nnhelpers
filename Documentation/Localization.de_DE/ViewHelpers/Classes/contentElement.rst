@@ -13,29 +13,29 @@ Description
 <nnt3:contentElement />
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Render a content element
+Ein Content-Element rendern
 
-The ViewHelper we probably use most.
+Der von uns wahrscheinlich meist genutzte ViewHelper.
 
-Render a content element from the ``tt_content`` table with the ``uid: 123``.
+Content-Element aus der Tabelle ``tt_content`` mit der ``uid: 123`` rendern.
 
 .. code-block:: php
 
 	{nnt3:contentElement(uid:123)}
 
-Replace variables in rendered content element.
-Allows you to create a content element in the backend that works with fluid variables – for example, for a mail template where you want the recipient name to appear in the text.
+Variablen im gerenderten Content-Element ersetzen.
+Erlaubt es, im Backend ein Inhaltselement anzulegen, das mit Fluid-Variablen arbeitet – z.B. für ein Mail-Template, bei dem der Empfänger-Name im Text erscheinen soll.
 
 .. code-block:: php
 
-	{nnt3:contentElement(uid:123, data:'{greeting:\'Hello!\'}')}
+	{nnt3:contentElement(uid:123, data:'{greeting:\'Hallo!\'}')}
 	{nnt3:contentElement(uid:123, data:feUser.data)}
 
-To render the variables, it is not mandatory to pass a ``contentUid`` übergeben. HTML code can also be parsed directly:
+Zum Rendern der Variablen muss nicht zwingend eine ``contentUid`` übergeben werden. Es kann auch direkt HTML-Code geparsed werden:
 
 .. code-block:: php
 
-	{data.bodytext->nnt3:contentElement(data:'{greeting:\'Hello!\'}')}
+	{data.bodytext->nnt3:contentElement(data:'{greeting:\'Hallo!\'}')}
 
 | ``@return string``
 

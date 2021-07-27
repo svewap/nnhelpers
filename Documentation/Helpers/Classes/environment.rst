@@ -10,8 +10,8 @@ Environment
 \\nn\\t3::Environment()
 ----------------------------------------------
 
-Everything you need to know üabout the environment of the application.
-From language ID of the user, the baseUrl to what extensions are at the start.
+Alles, was man über die Umgebung der Anwendung wissen muss.
+Von Sprach-ID des Users, der baseUrl bis zu der Frage, welche Extensions am Start sind.
 
 Overview of Methods
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -19,7 +19,7 @@ Overview of Methods
 \\nn\\t3::Environment()->extLoaded(``$extName = ''``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Check if extension is loaded
+Prüfen, ob Extension geladen ist.
 
 .. code-block:: php
 
@@ -28,8 +28,8 @@ Check if extension is loaded
 \\nn\\t3::Environment()->extPath(``$extName = ''``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-get absolute path to an extension.
-e.g. ``/var/www/website/ext/nnsite/``
+absoluten Pfad zu einer Extension holen
+z.B. ``/var/www/website/ext/nnsite/``
 
 .. code-block:: php
 
@@ -40,8 +40,8 @@ e.g. ``/var/www/website/ext/nnsite/``
 \\nn\\t3::Environment()->extRelPath(``$extName = ''``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-get relative path (from current script) to an extension.
-e.g. ``../typo3conf/ext/nnsite/``
+relativen Pfad (vom aktuellen Script aus) zu einer Extension holen
+z.B. ``../typo3conf/ext/nnsite/``
 
 .. code-block:: php
 
@@ -52,7 +52,7 @@ e.g. ``../typo3conf/ext/nnsite/``
 \\nn\\t3::Environment()->getBaseURL();
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Returns the baseUrl (``config.baseURL``), including http(s) protocol e.g. https://www.webseite.de/
+Gibt die baseUrl (``config.baseURL``) zurück, inkl. http(s) Protokoll z.B. https://www.webseite.de/
 
 .. code-block:: php
 
@@ -63,7 +63,7 @@ Returns the baseUrl (``config.baseURL``), including http(s) protocol e.g. https:
 \\nn\\t3::Environment()->getCookieDomain(``$loginType = 'FE'``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Get the cookie domain e.g. www.webseite.de
+Die Cookie-Domain holen z.B. www.webseite.de
 
 .. code-block:: php
 
@@ -74,7 +74,7 @@ Get the cookie domain e.g. www.webseite.de
 \\nn\\t3::Environment()->getCountries(``$lang = 'de', $key = 'cn_iso_2'``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Get all available countries in the system
+Alle im System verfügbaren Ländern holen
 
 .. code-block:: php
 
@@ -85,8 +85,8 @@ Get all available countries in the system
 \\nn\\t3::Environment()->getCountryByIsocode(``$cn_iso_2 = NULL, $field = 'cn_iso_2'``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Get a country from the ``static_countries`` table.
-by its country code (e.g. ``DE``)
+Ein Land aus der Tabelle ``static_countries``
+anhand seines Ländercodes (z.B. ``DE``) holen
 
 .. code-block:: php
 
@@ -98,7 +98,7 @@ by its country code (e.g. ``DE``)
 \\nn\\t3::Environment()->getDomain();
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Get the domain e.g. www.webseite.de
+Die Domain holen z.B. www.webseite.de
 
 .. code-block:: php
 
@@ -109,13 +109,13 @@ Get the domain e.g. www.webseite.de
 \\nn\\t3::Environment()->getExtConf(``$ext = 'nnhelpers', $param = ''``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Get configuration from ``ext_conf_template.txt`` (backend, extension configuration)
+Configuration aus ``ext_conf_template.txt`` holen (Backend, Extension Configuration)
 
 .. code-block:: php
 
 	\nn\t3::Environment()->getExtConf('nnhelpers', 'varname');
 
-Also acts as a ViewHelper:
+Existiert auch als ViewHelper:
 
 .. code-block:: php
 
@@ -128,7 +128,7 @@ Also acts as a ViewHelper:
 \\nn\\t3::Environment()->getLanguage();
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Get the current language (as a number) of the frontend.
+Die aktuelle Sprache (als Zahl) des Frontends holen.
 
 .. code-block:: php
 
@@ -139,7 +139,7 @@ Get the current language (as a number) of the frontend.
 \\nn\\t3::Environment()->getLanguageKey();
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Get the current language (as an abbreviation like "de") in the frontend
+Die aktuelle Sprache (als Kürzel wie "de") im Frontend holen
 
 .. code-block:: php
 
@@ -150,7 +150,7 @@ Get the current language (as an abbreviation like "de") in the frontend
 \\nn\\t3::Environment()->getLocalConf(``$path = ''``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Get configuration from ``LocalConfiguration.php``
+Konfiguration aus der ``LocalConfiguration.php`` holen
 
 .. code-block:: php
 
@@ -161,7 +161,7 @@ Get configuration from ``LocalConfiguration.php``
 \\nn\\t3::Environment()->getPathSite();
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Get absolute path to Typo3 root directory. e.g. ``/var/www/website/``
+Absoluten Pfad zum Typo3-Root-Verzeichnis holen. z.B. ``/var/www/website/``
 
 .. code-block:: php
 
@@ -172,7 +172,7 @@ früher: ``PATH_site``
 \\nn\\t3::Environment()->getRelPathSite();
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Get relative path to Typo3 root directory. e.g. ``../``
+Relativen Pfad zum Typo3-Root-Verzeichnis holen. z.B. ``../``
 
 .. code-block:: php
 
@@ -183,29 +183,29 @@ Get relative path to Typo3 root directory. e.g. ``../``
 \\nn\\t3::Environment()->isBackend();
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Check if we are in the backend context
+Prüfen, ob wir uns im Backend-Context befinden
 
 .. code-block:: php
 
-	 \nn\t3::Environment()->isBackend();
+	    \nn\t3::Environment()->isBackend();
 
 | ``@return bool``
 
 \\nn\\t3::Environment()->isFrontend();
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Check if we are in the frontend context
+Prüfen, ob wir uns im Frontend-Context befinden
 
 .. code-block:: php
 
-	 \nn\t3::Environment()->isFrontend();
+	    \nn\t3::Environment()->isFrontend();
 
 | ``@return bool``
 
 \\nn\\t3::Environment()->isLocalhost();
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Check if installation is running on local server
+Prüft, ob Installation auf lokalem Server läuft
 
 .. code-block:: php
 
@@ -216,15 +216,15 @@ Check if installation is running on local server
 \\nn\\t3::Environment()->t3Version();
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Get the version of Typo3, as an integer, e.g. "8".
-Alias to ``\nn\t3::t3Version()``
+Die Version von Typo3 holen, als Ganzzahl, z.b "8"
+Alias zu ``\nn\t3::t3Version()``
 
 .. code-block:: php
 
 	\nn\t3::Environment()->t3Version();
 	
 	if (\nn\t3::t3Version() >= 8) {
-	    // only for >= Typo3 8 LTS
+	    // nur für >= Typo3 8 LTS
 	}
 
 | ``@return int``

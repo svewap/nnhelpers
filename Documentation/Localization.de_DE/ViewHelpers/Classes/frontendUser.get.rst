@@ -13,9 +13,9 @@ Description
 <nnt3:frontendUser.get />
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Get frontend user
+Frontend-User holen
 
-Returns an array with the frontend user's data, e.g. to personalize pages, mails or content
+Gibt ein Array mit den Daten des Frontend-Users zurück, z.B. um Seiten, Mails oder Inhalte zu personalisieren.
 
 .. code-block:: php
 

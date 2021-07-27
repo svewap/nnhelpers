@@ -193,20 +193,30 @@ class ModuleController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControlle
 	 * 
 	 */
 	function exportDocumentationAction() {
+		$this->exportDocumentationActionForLanguage('en');
+		$this->exportDocumentationActionForLanguage('de', 'Localization.de_DE/');
+	}
+
+	/**
+	 * Exportiert die Doku aller Methoden für die ReST Dokumentation im TER
+	 * 
+	 */
+	function exportDocumentationActionForLanguage( $language = 'en', $path = '' ) {
 
 		$autoload = \nn\t3::Environment()->extPath('nnhelpers') . 'Resources/Libraries/vendor/autoload.php';
 		require_once( $autoload );
 
-		$beUserLang = $GLOBALS['BE_USER']->uc['lang'] ?: 'en';
 		echo "<pre>
-			<h2>Doku für {$beUserLang} generieren:</h2>
+			<h2>Doku für {$language} generieren:</h2>
 			<p>Für andere Sprache: BE-User Sprache wechseln!</p>
 		\n\n";
 
 		echo "\n\n<h3>Export der Klassen:</h3>\n";
 
 		$doc = $this->generateDocumentation();
-		$this->localizeDocumentation( $doc, $beUserLang, true );
+		if (!$language == 'de') {
+			$this->localizeDocumentation( $doc, $language, true );
+		}
 
 		foreach ($doc as $className=>$infos) {
 			$rendering = \nn\t3::Template()->render(
@@ -218,7 +228,7 @@ class ModuleController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControlle
 			$rendering = preg_replace("/(\r?\n){2,}/", "\n\n", $rendering);
 
 			$filename = $infos['vhName'] . '.rst';
-			$file = \nn\t3::File()->absPath('EXT:nnhelpers/Documentation/Helpers/Classes/' . $filename);
+			$file = \nn\t3::File()->absPath('EXT:nnhelpers/Documentation/' . $path . 'Helpers/Classes/' . $filename);
 			
 			$result = file_put_contents( $file, $rendering );
 			if (!$result) {
@@ -231,7 +241,9 @@ class ModuleController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControlle
 		echo "\n\n<h3>Export der zusätzlichen Helper:</h3>\n";
 
 		$doc = $this->generateAdditionalClassesDocumentation();
-		$this->localizeDocumentation( $doc, $beUserLang, true );
+		if (!$language == 'de') {
+			$this->localizeDocumentation( $doc, $beUserLang, true );
+		}
 
 		foreach ($doc as $className=>$infos) {
 			$rendering = \nn\t3::Template()->render(
@@ -243,7 +255,7 @@ class ModuleController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControlle
 			$rendering = preg_replace("/(\r?\n){2,}/", "\n\n", $rendering);
 
 			$filename = $infos['vhName'] . '.rst';
-			$file = \nn\t3::File()->absPath('EXT:nnhelpers/Documentation/AdditionalClasses/Classes/' . $filename);
+			$file = \nn\t3::File()->absPath('EXT:nnhelpers/Documentation/' . $path . 'AdditionalClasses/Classes/' . $filename);
 			
 			$result = file_put_contents( $file, $rendering );
 			if (!$result) {
@@ -255,8 +267,10 @@ class ModuleController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControlle
 
 		echo "\n\n<h3>Export der ViewHelper:</h3>\n";
 		$docViewhelper = $this->generateViewhelperDocumentation();
-		$this->localizeDocumentation( $docViewhelper, $beUserLang, true );
-
+		if (!$language == 'de') {
+			$this->localizeDocumentation( $docViewhelper, $beUserLang, true );
+		}
+		
 		foreach ($docViewhelper as $className=>$infos) {
 			$rendering = \nn\t3::Template()->render(
 				'EXT:nnhelpers/Resources/Private/Backend/Templates/Documentation/ViewHelperTemplate.html', [
@@ -267,7 +281,7 @@ class ModuleController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControlle
 			$rendering = preg_replace("/(\r?\n){2,}/", "\n\n", $rendering);
 
 			$filename = $infos['vhName'] . '.rst';
-			$file = \nn\t3::File()->absPath('EXT:nnhelpers/Documentation/ViewHelpers/Classes/' . $filename);
+			$file = \nn\t3::File()->absPath('EXT:nnhelpers/Documentation/' . $path . 'ViewHelpers/Classes/' . $filename);
 			$result = file_put_contents( $file, $rendering );
 			
 			if (!$result) {

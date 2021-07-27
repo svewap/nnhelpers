@@ -13,9 +13,9 @@ Description
 <nnt3:link.modifyRecord />
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Generate link to &change specific fields of a record in a backend module.
+Link zum Ändern von bestimmten Feldern eines Datensatzes in einem Backend-Modul generieren.
 
-Examples: Set the "locked" field to 1
+Beispiele: Das Feld "locked" auf 1 setzen
 
 .. code-block:: php
 

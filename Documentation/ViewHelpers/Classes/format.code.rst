@@ -13,14 +13,14 @@ Description
 <nnt3:format.code />
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Highlighted code sections via PrismJS.
+Highlighted code-Abschnitte per PrismJS.
 
-The code can be made available for direct download via ``download``.
+Der Code kann über ``download`` zum direkten Download verfügbar gemacht werden.
 
-The file is generated dynamically via JS and streamed – no additional files are created on the server.
-nnhelpers uses this feature to offer the boilerplates as a download.
+Die Datei wird dabei dynamisch per JS generiert und gestreamt – es enstehen keine zusätzlichen Dateien auf dem Server.
+nnhelpers nutzt diese Funktion, um die Boilerplates als Download anzubieten.
 
-More info at: https://prismjs.com/
+Mehr Infos unter: https://prismjs.com/
 
 Build: https://bit.ly/3BLqmx0
 

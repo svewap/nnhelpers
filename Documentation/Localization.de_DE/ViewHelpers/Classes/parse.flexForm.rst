@@ -13,9 +13,9 @@ Description
 <nnt3:parse.flexForm />
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Parses a FlexForm (XML) and makes it into an array.
+Parsed ein FlexForm (XML) und macht daraus ein Array.
 
-Practical if you have a raw record of the ``tt_content`` table in front of you and need to get to a value from the FlexForm in ``pi_flexform``.
+Praktisch, falls man einen rohen Datensatz der Tabelle ``tt_content`` vor sich hat und an einen Wert aus dem FlexForm in ``pi_flexform`` braucht.
 
 .. code-block:: php
 

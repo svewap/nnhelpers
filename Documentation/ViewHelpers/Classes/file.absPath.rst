@@ -13,11 +13,11 @@ Description
 <nnt3:file.absPath />
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Get the absolute URL to a file.
+Absolute URL zu einer Datei holen.
 
 .. code-block:: php
 
-	{nnt3:file.absPath(file:'path/to/image.jpg')}
+	{nnt3:file.absPath(file:'pfad/zum/bild.jpg')}
 
 | ``@return string``
 

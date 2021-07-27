@@ -10,9 +10,8 @@ Cache
 \\nn\\t3::Cache()
 ----------------------------------------------
 
-Methods, for reading and writing to the Typo3 cache.
-Uses Typo3's caching framework, see ``EXT:nnhelpers/ext_localconf.php`` for details
-.
+Methoden, zum Lesen und Schreiben in den Typo3 Cache.
+Nutzt das Caching-Framework von Typo3, siehe ``EXT:nnhelpers/ext_localconf.php`` für Details
 
 Overview of Methods
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -20,7 +19,7 @@ Overview of Methods
 \\nn\\t3::Cache()->clear();
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Löclears the cache set by ``\nn\t3::Cache()->set()``
+Löscht den Cache, der per ``\nn\t3::Cache()->set()`` gesetzt wurde
 
 .. code-block:: php
 
@@ -31,21 +30,21 @@ Löclears the cache set by ``\nn\t3::Cache()->set()``
 \\nn\\t3::Cache()->clearPageCache(``$pid = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-clears the page cache. Alias to ``\nn\t3::Page()->clearCache()``
+Löscht den Seiten-Cache. Alias zu ``\nn\t3::Page()->clearCache()``
 
 .. code-block:: php
 
-	\nn\t3::Cache()->clearPageCache( 17 ); // clear page cache for pid=17.
-	\nn\t3::Cache()->clearPageCache(); // clear cache of ALL pages
+	\nn\t3::Cache()->clearPageCache( 17 );       // Seiten-Cache für pid=17 löschen
+	\nn\t3::Cache()->clearPageCache();           // Cache ALLER Seiten löschen
 
-| ``@param mixed $pid`` pid of the page whose cache should be cleared, or leave empty for all pages
+| ``@param mixed $pid``     pid der Seite, deren Cache gelöscht werden soll oder leer lassen für alle Seite
 | ``@return void``
 
 \\nn\\t3::Cache()->get(``$identifier = '', $useRamCache = false``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Lädt contents of the Typo3 cache using an identifier.
-The identifier is an arbitrary string or array that uniquely identifies the cache.
+Lädt Inhalt des Typo3-Caches anhand eines Identifiers.
+Der Identifier ist ein beliebiger String oder ein Array, der den Cache eindeutif Identifiziert.
 
 .. code-block:: php
 
@@ -54,16 +53,16 @@ The identifier is an arbitrary string or array that uniquely identifies the cach
 	\nn\t3::Cache()->get(['func'=>__METHOD__, 'uid'=>'17']);
 	\nn\t3::Cache()->get([__METHOD__=>$this->request->getArguments()]);
 
-| ``@param mixed $identifier`` String or array to identify the cache.
-| ``@param mixed $useRamCache`` temporärer cache in $GLOBALS instead of caching framework
+| ``@param mixed $identifier``  String oder Array zum Identifizieren des Cache
+| ``@param mixed $useRamCache`` temporärer Cache in $GLOBALS statt Caching-Framework
 
 | ``@return mixed``
 
 \\nn\\t3::Cache()->getIdentifier(``$identifier = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Converts üpassed cache identifier to usable string.
-Can also handle an array as an identifier.
+Wandelt übergebenen Cache-Identifier in brauchbaren String um.
+Kann auch ein Array als Identifier verarbeiten.
 
 | ``@param mixed $indentifier``
 | ``@return string``
@@ -71,12 +70,12 @@ Can also handle an array as an identifier.
 \\nn\\t3::Cache()->set(``$identifier = '', $data = NULL, $useRamCache = false``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Writes an entry into the Typo3 cache.
-The identifier is an arbitrary string or array that uniquely identifies the cache.
+Schreibt einen Eintrag in den Typo3-Cache.
+Der Identifier ist ein beliebiger String oder ein Array, der den Cache eindeutif Identifiziert.
 
 .. code-block:: php
 
-	// Classic application in the controller: get and set cache.
+	// Klassische Anwendung im Controller: Cache holen und setzen
 	if ($cache = \nn\t3::Cache()->get('myid')) return $cache;
 	...
 	$cache = $this->view->render();
@@ -84,21 +83,19 @@ The identifier is an arbitrary string or array that uniquely identifies the cach
 
 .. code-block:: php
 
-	// Use RAM cache? Set TRUE as the third parameter
+	// RAM-Cache verwenden? TRUE als dritter Parameter setzen
 	\nn\t3::Cache()->set('myid', $dataToCache, true);
 	
-	// set duration of cache to 60 minutes
+	// Dauer des Cache auf 60 Minuten festlegen
 	\nn\t3::Cache()->set('myid', $dataToCache, 3600);
 	
-	// You can also specify an array as key
+	// Als key kann auch ein Array angegeben werden
 	\nn\t3::Cache()->set(['pid'=>1, 'uid'=>'7'], $html);
 
-| ``@param mixed $indentifier`` String or array to identify the cache.
-| ``@param mixed $data`` Data to be written to the cache. (string or array)
-| ``@param mixed $useRamCache`` ``true``: temporärer cache in $GLOBALS instead of caching framework.
-| ``integer``: how many seconds cache?
+| ``@param mixed $indentifier`` String oder Array zum Identifizieren des Cache
+| ``@param mixed $data``            Daten, die in den Cache geschrieben werden sollen. (String oder Array)
+| ``@param mixed $useRamCache`` ``true``: temporärer Cache in $GLOBALS statt Caching-Framework.
+| ``integer``: Wie viele Sekunden cachen?
 
 | ``@return mixed``
-
-.
 

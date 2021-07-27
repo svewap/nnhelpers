@@ -10,7 +10,7 @@ Geo
 \\nn\\t3::Geo()
 ----------------------------------------------
 
-Calculations and conversion of geopositions and data
+Berechnungen und Konvertieren von Geopositionen und Daten
 
 Overview of Methods
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -18,7 +18,7 @@ Overview of Methods
 \\nn\\t3::Geo()->getAddress(``$lng = 50.0804734, $lat = 8.2487459, $returnAll = false``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Convert geo-coordinates to address data
+Geo-Koordinaten in Adress-Daten umwandeln
 
 .. code-block:: php
 
@@ -29,8 +29,8 @@ Convert geo-coordinates to address data
 \\nn\\t3::Geo()->getCoordinates(``$address``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Convert address data to geo-coordinates.
-Currently (still) requires the ``nnaddress`` extension.
+Adressdaten in Geo-Koordinaten umwandeln.
+Erfordert zur Zeit (noch) die Extension ``nnaddress``.
 
 .. code-block:: php
 
@@ -41,7 +41,7 @@ Currently (still) requires the ``nnaddress`` extension.
 \\nn\\t3::Geo()->toGps(``$coordinate, $hemisphere``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Convert GPS coordinates to readable latitude/longitude coordinates
+GPS-Koordinaten in lesbare Latitude/Longitude-Koordinaten umrechnen
 
 .. code-block:: php
 

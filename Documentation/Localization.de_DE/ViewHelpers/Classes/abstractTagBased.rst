@@ -13,16 +13,16 @@ Description
 <nnt3:abstractTagBased />
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-This ViewHelper is not a custom ViewHelper that is usable in Fluid.
-It serves as a base class for your own tag-based ViewHelper.
+Dieser ViewHelper ist keine eigener ViewHelper, der in Fluid nutzbar ist.
+Er dient als Basis-Klasse für Deine eigenen, Tag-basierten ViewHelper.
 
-Use ``extend`` in your own ViewHelper to use it.
-Here's a sample boilerplate, with everything you need to get started:
+Nutze ``extend`` in Deinem eigenen ViewHelper, um ihn zu verwenden.
+Hier ein Beispiel-Boilerplate, mit allem, was Du zum Loslegen brauchst:
 
 .. code-block:: php
 
 	<?php
-	namespace My\ExtViewHelpers;
+	namespace My\Ext\ViewHelpers;
 	
 	use \Nng\Nnhelpers\ViewHelpers\AbstractTagBasedViewHelper;
 	
@@ -32,7 +32,7 @@ Here's a sample boilerplate, with everything you need to get started:
 	
 	 public function initializeArguments() {
 	     parent::initializeArguments();
-	     $this->registerArgument('title', 'string', 'info', false);
+	     $this->registerArgument('title', 'string', 'Infos', false);
 	 }
 	 public function render() {
 	     $args = ['item'];

@@ -13,15 +13,15 @@ Description
 <nnt3:ts.constants />
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Get value from TypoScript constants.
+Wert aus den TypoScript-Constants holen.
 
-Easy and direct access from within the fluid template - regardless of the extension rendering the template.
+Einfacher und direkter Zugriff aus dem Fluid-Template heraus - unabhängig von der Extension, die das Template rendert.
 
 .. code-block:: php
 
-	{nnt3:ts.constants(path:'path.zur.constant')}
-	{nnt3:ts.constants(path:'path.zur', key:'constant')}
-	{nnt3:ts.constants(path:'path.{dynamicKey}.whatever')}
+	{nnt3:ts.constants(path:'pfad.zur.constant')}
+	{nnt3:ts.constants(path:'pfad.zur', key:'constant')}
+	{nnt3:ts.constants(path:'pfad.{dynamicKey}.whatever')}
 
 | ``@return mixed``
 

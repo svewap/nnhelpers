@@ -13,7 +13,7 @@ Description
 <nnt3:format.jsonEncode />
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Converts an array or object to JSON format
+Wandelt ein Array oder Object ins JSON-Format um.
 
 .. code-block:: php
 

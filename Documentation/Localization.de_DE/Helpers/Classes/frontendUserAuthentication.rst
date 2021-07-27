@@ -10,7 +10,7 @@ FrontendUserAuthentication
 \\nn\\t3::FrontendUserAuthentication()
 ----------------------------------------------
 
-Front-end user methods: from logging in to password change
+Frontend-User Methoden: Von Einloggen bis Passwort-Änderung
 
 Overview of Methods
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -18,14 +18,14 @@ Overview of Methods
 \\nn\\t3::FrontendUserAuthentication()->login(``$username = '', $password = '', $startFeUserSession = true``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Login of a FE user based on username and password
+Login eines FE-Users anhand der Usernamens und Passwortes
 
 .. code-block:: php
 
-	// Check credentials and start feUser session.
+	// Credentials überprüfen und feUser-Session starten
 	\nn\t3::FrontendUserAuthentication()->login( '99grad', 'password' );
 	
-	// Check only, do not start feUser session
+	// Nur überprüfen, keine feUser-Session aufbauen
 	\nn\t3::FrontendUserAuthentication()->login( '99grad', 'password', false );
 
 | ``@return array``
@@ -33,7 +33,7 @@ Login of a FE user based on username and password
 \\nn\\t3::FrontendUserAuthentication()->loginBySessionId(``$sessionId = ''``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Login of a FE user using a session ID
+Login eines FE-Users anhand einer Session-ID
 
 .. code-block:: php
 
@@ -44,7 +44,7 @@ Login of a FE user using a session ID
 \\nn\\t3::FrontendUserAuthentication()->loginByUsername(``$username = ''``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Login of a FE user based on the username
+Login eines FE-Users anhand der Usernamens
 
 .. code-block:: php
 
@@ -55,8 +55,8 @@ Login of a FE user based on the username
 \\nn\\t3::FrontendUserAuthentication()->loginField(``$value = NULL, $fieldName = 'uid'``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Login a FE user using any field.
-No password required.
+Login eines FE-Users anhand eines beliebigen Feldes.
+Kein Passwort erforderlich.
 
 .. code-block:: php
 
@@ -67,7 +67,7 @@ No password required.
 \\nn\\t3::FrontendUserAuthentication()->loginUid(``$uid = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Login of a FE user using a fe_user.uid
+Login eines FE-Users anhand einer fe_user.uid
 
 .. code-block:: php
 
@@ -78,12 +78,12 @@ Login of a FE user using a fe_user.uid
 \\nn\\t3::FrontendUserAuthentication()->setPassword(``$feUserUid = NULL, $password = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Change the password of a FE user
+Passwort eines FE-Users ändern.
 
 .. code-block:: php
 
-	\nn\t3::FrontendUserAuthentication()->setPassword( 12, '123Password#$' );
-	\nn\t3::FrontendUserAuthentication()->setPassword( $frontendUserModel, '123Password#$' );
+	\nn\t3::FrontendUserAuthentication()->setPassword( 12, '123Passwort#$' );
+	\nn\t3::FrontendUserAuthentication()->setPassword( $frontendUserModel, '123Passwort#$' );
 
 | ``@return boolean``
 

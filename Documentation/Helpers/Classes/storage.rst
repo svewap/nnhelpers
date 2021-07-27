@@ -10,7 +10,7 @@ Storage
 \\nn\\t3::Storage()
 ----------------------------------------------
 
-All about Storages
+Alles rund um Storages
 
 Overview of Methods
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -18,35 +18,35 @@ Overview of Methods
 \\nn\\t3::Storage()->clearStorageRowCache();
 """""""""""""""""""""""""""""""""""""""""""""""
 
-clears the StorageRowCache
+Löscht den StorageRowCache
 
 .. code-block:: php
 
-	 \nn\t3::Storage()->clearStorageRowCache();
+	    \nn\t3::Storage()->clearStorageRowCache();
 
 | ``@return void``
 
 \\nn\\t3::Storage()->getFolder(``$file, $storage = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Returns the \Folder object for a destination folder (or file) within a storage.
-Creates folder if it does not already exist
+Gibt den \Folder-Object für einen Zielordner (oder Datei) innerhalb einer Storage zurück.
+Legt Ordner an, falls er noch nicht existiert
 
-Examples:
+Beispiele:
 
 .. code-block:: php
 
-	\nn\t3::Storage()->getFolder( 'fileadmin/test/example.txt' );
+	\nn\t3::Storage()->getFolder( 'fileadmin/test/beispiel.txt' );
 	\nn\t3::Storage()->getFolder( 'fileadmin/test/' );
-	        ==> returns \Folder object for the folder 'test/'
+	        ==>  gibt \Folder-Object für den Ordner 'test/' zurück
 
 | ``@return Folder``
 
 \\nn\\t3::Storage()->getPid(``$extName = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-In the controller: get current StoragePid for a plugin.
-Alias to ``\nn\t3::Settings()->getStoragePid()``
+Im Controller: Aktuelle StoragePid für ein PlugIn holen.
+Alias zu ``\nn\t3::Settings()->getStoragePid()``
 
 .. code-block:: php
 

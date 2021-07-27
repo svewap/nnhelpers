@@ -10,8 +10,7 @@ Log
 \\nn\\t3::Log()
 ----------------------------------------------
 
-Log to the ``sys_log``
- table.
+Log in die Tabelle ``sys_log``
 
 Overview of Methods
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -19,37 +18,37 @@ Overview of Methods
 \\nn\\t3::Log()->error(``$extName = '', $message = '', $data = []``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Write a warning in the sys_log table.
-Shorthand notation for \nn\t3::Log()->log(..., 'error');
+Eine Warnung in die Tabelle sys_log schreiben.
+Kurzschreibweise für \nn\t3::Log()->log(..., 'error');
 
 .. code-block:: php
 
-	 \nn\t3::Log()->error( 'extname', 'text', ['die'=>'data'] );
+	    \nn\t3::Log()->error( 'extname', 'Text', ['die'=>'daten'] );
 
 return void
 
 \\nn\\t3::Log()->info(``$extName = '', $message = '', $data = []``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Write an info to the sys_log table.
-Shorthand notation for \nn\t3::Log()->log(..., 'info');
+Eine Info in die Tabelle sys_log schreiben.
+Kurzschreibweise für \nn\t3::Log()->log(..., 'info');
 
 .. code-block:: php
 
-	 \nn\t3::Log()->error( 'extname', 'text', ['die'=>'data'] );
+	    \nn\t3::Log()->error( 'extname', 'Text', ['die'=>'daten'] );
 
 return void
 
 \\nn\\t3::Log()->log(``$extName = 'nnhelpers', $message = NULL, $data = [], $severity = 'info'``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Writes an entry in the ``sys_log`` table.
-The severity level can be specified, e.g. ``info``, ``warning`` or ``error``
+Schreibt einen Eintrag in die Tabelle ``sys_log``.
+Der severity-Level kann angegeben werden, z.B. ``info``, ``warning`` oder ``error``
 
 .. code-block:: php
 
-	\nn\t3::Log()->log( 'extname', 'All übel.', ['nix'=>'good'], 'error' );
-	\nn\t3::Log()->log( 'extname', 'All shön.' );
+	\nn\t3::Log()->log( 'extname', 'Alles übel.', ['nix'=>'gut'], 'error' );
+	\nn\t3::Log()->log( 'extname', 'Alles schön.' );
 
 | ``@return mixed``
 

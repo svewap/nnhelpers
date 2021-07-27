@@ -10,7 +10,7 @@ Slug
 \\nn\\t3::Slug()
 ----------------------------------------------
 
-Generate and manipulate URL paths (slug)
+URL-Pfade (Slug) generieren und manipulieren
 
 Overview of Methods
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -18,8 +18,8 @@ Overview of Methods
 \\nn\\t3::Slug()->create(``$model``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Generates a slug (URL path) for a model.
-Automatically determines the TCA field for the slug.
+Generiert einen slug (URL-Pfad) für ein Model.
+Ermittelt automatisch das TCA-Feld für den Slug.
 
 .. code-block:: php
 

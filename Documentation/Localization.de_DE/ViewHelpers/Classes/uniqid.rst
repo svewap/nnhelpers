@@ -13,9 +13,9 @@ Description
 <nnt3:uniqid />
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Returns a unique, one-time ID.
+Gibt eine eindeutige, einmalige ID zurück.
 
-Helpful e.g. for unique IDs or class names in fluid templates.
+Hilfreich z.B. für eindeutige IDs oder Klassen-Namen in Fluid-Templates.
 
 .. code-block:: php
 

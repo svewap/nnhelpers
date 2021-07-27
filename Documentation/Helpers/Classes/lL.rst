@@ -10,7 +10,7 @@ LL
 \\nn\\t3::LL()
 ----------------------------------------------
 
-Wrapper for methods around the localization of Typo3
+Wrapper für Methoden rund um die Localization von Typo3
 
 Overview of Methods
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -18,8 +18,8 @@ Overview of Methods
 \\nn\\t3::LL()->get(``$id = '', $extensionName = '', $args = [], $explode = ''``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Get localization for a key.
-Key can be:
+Localization für einen Key holen.
+Key kann sein:
 
 .. code-block:: php
 
@@ -31,15 +31,15 @@ Key can be:
 \\nn\\t3::LL()->translate(``$srcText = '', $targetLanguageKey = 'EN', $sourceLanguageKey = 'DE'``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Übersetzt a text via DeepL.
-An API key must be entered in the Extension Manager.
-DeepL allows the ¨translation of up to 500,000 characters / month for free.
+Übersetzt einen Text per DeepL.
+Ein API-Key muss im Extension Manager eingetragen werden.
+DeepL erlaubt die Übersetzung von bis zu 500.000 Zeichen / Monat kostenfrei.
 
 .. code-block:: php
 
-	\nn\t3::LL()->translate( 'The horse doesn't eat cucumber salad' );
-	\nn\t3::LL()->translate( 'The horse does not eat cucumber salad', 'EN' );
-	\nn\t3::LL()->translate( 'The horse doesn't eat cucumber salad', 'EN', 'DE' );
+	\nn\t3::LL()->translate( 'Das Pferd isst keinen Gurkensalat' );
+	\nn\t3::LL()->translate( 'Das Pferd isst keinen Gurkensalat', 'EN' );
+	\nn\t3::LL()->translate( 'Das Pferd isst keinen Gurkensalat', 'EN', 'DE' );
 
 | ``@return string``
 

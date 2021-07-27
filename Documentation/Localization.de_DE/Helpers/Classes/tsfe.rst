@@ -10,9 +10,9 @@ Tsfe
 \\nn\\t3::Tsfe()
 ----------------------------------------------
 
-All about the Typo3 frontend.
-Methods to initialize the FE from the backend context, access the
-cObj and cObjData etc.
+Alles rund um das Typo3 Frontend.
+Methoden zum Initialisieren des FE aus dem Backend-Context, Zugriff auf das
+cObj und cObjData etc.
 
 Overview of Methods
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -30,7 +30,7 @@ Bootstrap Typo3
 \\nn\\t3::Tsfe()->cObj();
 """""""""""""""""""""""""""""""""""""""""""""""
 
-get$GLOBALS['TSFE']->cObj.
+$GLOBALS['TSFE']->cObj holen.
 
 .. code-block:: php
 
@@ -41,43 +41,43 @@ get$GLOBALS['TSFE']->cObj.
 \\nn\\t3::Tsfe()->cObjData(``$var = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-$GLOBALS['TSFE']->cObj->get data.
+$GLOBALS['TSFE']->cObj->data holen.
 
 .. code-block:: php
 
-	\nn\t3::Tsfe()->cObjData(); => array with DB-row of the current content element.
-	\nn\t3::Tsfe()->cObjData('uid'); => uid of current content element
+	\nn\t3::Tsfe()->cObjData();          => array mit DB-row des aktuellen Content-Elementes
+	\nn\t3::Tsfe()->cObjData('uid'); => uid des aktuellen Content-Elements
 
 | ``@return mixed``
 
 \\nn\\t3::Tsfe()->cObjGetSingle(``$type = '', $conf = []``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Render a TypoScript object.
+Ein TypoScript-Object rendern.
 Früher: ``$GLOBALS['TSFE']->cObj->cObjGetSingle()``
 
 .. code-block:: php
 
-	\nn\t3::Tsfe()->cObjGetSingle('IMG_RESOURCE', ['file'=>'image.jpg', 'file.'=>['maxWidth'=>200]] )
+	\nn\t3::Tsfe()->cObjGetSingle('IMG_RESOURCE', ['file'=>'bild.jpg', 'file.'=>['maxWidth'=>200]] )
 
 \\nn\\t3::Tsfe()->get();
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Get$GLOBALS['TSFE'].
-Initialize if not present (because in BE).
+$GLOBALS['TSFE'] holen.
+Falls nicht vorhanden (weil im BE) initialisieren.
 
 .. code-block:: php
 
 	\nn\t3::Tsfe()->get()
 
-| ``@return \TYPO3\CMS\FrontendController\TypoScriptFrontendController``
+| ``@return \TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController``
 
 \\nn\\t3::Tsfe()->init(``$pid = [], $typeNum = []``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Initialize the TSFE.
-Also works in the backend context, e.g. within a
-Backend module or scheduler job.
+Das TSFE initialisieren.
+Funktioniert auch im Backend-Context, z.B. innerhalb eines
+Backend-Moduls oder Scheduler-Jobs.
 
 .. code-block:: php
 

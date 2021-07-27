@@ -13,26 +13,26 @@ Description
 <nnt3:format.htmlToSphinx />
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Converts HTML tags to Sphinx syntax for TER documentation.
+Konvertiert HTML-Tags zu Sphinx-Syntax für die TER Dokumentation.
 
 .. code-block:: php
 
 	{annotation->f:format.raw()->nnt3:format.htmlToSphinx()}
 
-From the following code ...
+Aus folgendem Code ...
 
 .. code-block:: php
 
 	<nnt3:format.htmlToSphinx>
-	  <p>This is a description of this method</p>
+	  <p>Das ist eine Beschreibung dieser Methode</p>
 	  <pre><code>$a = 99;</code></pre>
 	</nnt3:format.htmlToSphinx>
 
-this is what is rendered:
+wird das hier gerendert:
 
 .. code-block:: php
 
-	This is a description of that method.
+	Das ist eine Beschreibung dieser Methode
 	
 	.. code-block:: php
 	

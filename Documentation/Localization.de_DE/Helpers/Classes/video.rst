@@ -10,7 +10,7 @@ Video
 \\nn\\t3::Video()
 ----------------------------------------------
 
-Everything that is important and helpful on the subject of videos.
+Alles, was zum Thema Videos wichtig und hilfreich ist.
 
 Overview of Methods
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -18,16 +18,16 @@ Overview of Methods
 \\nn\\t3::Video()->getEmbedUrl(``$type, $videoId = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Return embed URL based on the streaming platform.
-Classically, the URL used in the src attribute of the <iframe>
-is used.
+Einbettungs-URL anhand der Streaming-Plattform zurückgeben.
+Klassischerweise die URL, die im src-Attribut des <iframe>
+verwendet wird.
 
 .. code-block:: php
 
 	\nn\t3::Video()->getEmbedUrl( 'youtube', 'nShlloNgM2E' );
 	\nn\t3::Video()->getEmbedUrl( 'https://www.youtube.com/watch?v=wu55ZG97zeI&feature=youtu.be' );
 
-Also acts as a ViewHelper:
+Existiert auch als ViewHelper:
 
 .. code-block:: php
 
@@ -38,7 +38,7 @@ Also acts as a ViewHelper:
 \\nn\\t3::Video()->getExternalType(``$url = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Returns info üabout the streaming platform and code to embed a video
+Gibt Infos über die Streaming-Platform und Code zum Einbetten eines Videos zurück
 
 .. code-block:: php
 
@@ -49,8 +49,8 @@ Returns info üabout the streaming platform and code to embed a video
 \\nn\\t3::Video()->getWatchUrl(``$type, $videoId = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Link URL to the video on the external platform.
-E.g. to display an external link to the video
+Link-URL zum Video auf der externen Plattform
+z.B. um einen externen Link zum Video darzustellen
 
 .. code-block:: php
 
@@ -65,8 +65,8 @@ E.g. to display an external link to the video
 \\nn\\t3::Video()->isExternal(``$url = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Prüft whether the URL is a video on YouTube or Vimeo.
-Returns an array of data to embed.
+Prüft, ob es sich bei der URL um ein Video auf YouTube oder Vimeo handelt.
+Gibt ein Array mit Daten zum Einbetten zurück.
 
 .. code-block:: php
 

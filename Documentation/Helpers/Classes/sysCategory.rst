@@ -10,8 +10,7 @@ SysCategory
 \\nn\\t3::SysCategory()
 ----------------------------------------------
 
-Simplifies the work and access to the ``sys_category`` of Typo3
-.
+Vereinfacht die Arbeit und den Zugriff auf die ``sys_category`` von Typo3
 
 Overview of Methods
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -19,7 +18,7 @@ Overview of Methods
 \\nn\\t3::SysCategory()->findAll(``$branchUid = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Get list of all sys_categories
+Liste aller sys_categories holen
 
 .. code-block:: php
 
@@ -30,7 +29,7 @@ Get list of all sys_categories
 \\nn\\t3::SysCategory()->findAllByUid(``$branchUid = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Get list of all sys_categories, return ``uid`` as key
+Liste aller sys_categories holen, ``uid`` als Key zurückgeben
 
 .. code-block:: php
 
@@ -41,7 +40,7 @@ Get list of all sys_categories, return ``uid`` as key
 \\nn\\t3::SysCategory()->findByUid(``$uidList = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-get sys_categories based on uid(s).
+sys_categories anhand von uid(s) holen.
 
 .. code-block:: php
 
@@ -50,21 +49,20 @@ get sys_categories based on uid(s).
 	\nn\t3::SysCategory()->findByUid( [12, 11, 5] );
 
 | ``@return array|\TYPO3\CMS\Extbase\Domain\Model\Category``
-.
 
 \\nn\\t3::SysCategory()->getTree(``$branchUid = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Get the entire SysCategory tree (as an array).
-Each node has the attributes 'parent' and 'children', to be able to
-recursively iterate through tree.
+Den gesamten SysCategory-Baum (als Array) holen.
+Jeder Knotenpunkt hat die Attribute 'parent' und 'children', um
+rekursiv durch Baum iterieren zu können.
 
 .. code-block:: php
 
 	\nn\t3::SysCategory()->getTree();
 	\nn\t3::SysCategory()->getTree( $uid );
 
-ToDo: Check if caching makes sense
+ToDo: Prüfen, ob Caching sinnvoll ist
 
 | ``@return array``
 

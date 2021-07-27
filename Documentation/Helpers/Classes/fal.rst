@@ -10,9 +10,9 @@ Fal
 \\nn\\t3::Fal()
 ----------------------------------------------
 
-Methods to create sysFile and sysFileReference entries.
+Methoden zum Erzeugen von sysFile und sysFileReference-Einträgen.
 
-Checklist:
+Spickzettel:
 
 .. code-block:: php
 
@@ -32,10 +32,10 @@ Overview of Methods
 \\nn\\t3::Fal()->attach(``$model, $field, $filePath = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Convert a file to a FileReference object, and attach it
-Attach it to the Property or ObjectStorage of a model.
-See also: ``\nn\t3::Fal()->setInModel( $member, 'falslideshow', $imagesToSet );`` with the
-array of multiple images can be attached to an ObjectStorage.
+Eine Datei zu einem FileReference-Object konvertieren und
+an die Property oder ObjectStorage eines Models hängen.
+Siehe auch: ``\nn\t3::Fal()->setInModel( $member, 'falslideshow', $imagesToSet );`` mit dem
+Array von mehreren Bildern an eine ObjectStorage gehängt werden können.
 
 .. code-block:: php
 
@@ -43,61 +43,60 @@ array of multiple images can be attached to an ObjectStorage.
 	\nn\t3::Fal()->attach( $model, 'image', 'fileadmin/user_uploads/image.jpg' );
 
 | ``@return \TYPO3\CMS\Extbase\Domain\Model\FileReference``
-.
 
 \\nn\\t3::Fal()->clearCache(``$filenameOrSysFile = ''``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Deletes the cache for the image sizes of a FAL including the converted images.
-If e.g. the f:image-ViewHelper is used, all calculated image sizes will be
-are stored in the table sys_file_processedfile. Ächanges the original image,
-an image from the cache may still be accessed.
+Löscht den Cache für die Bildgrößen eines FAL inkl. der umgerechneten Bilder
+Wird z.B. der f:image-ViewHelper verwendet, werden alle berechneten Bildgrößen
+in der Tabelle sys_file_processedfile gespeichert. Ändert sich das Originalbild,
+wird evtl. noch auf ein Bild aus dem Cache zugegriffen.
 
-| ``@param $filenameOrSysFile`` FAL or path (string) to the file.
+| ``@param $filenameOrSysFile``     FAL oder Pfad (String) zu der Datei
 | ``@return void``
 
 \\nn\\t3::Fal()->createFalFile(``$storageConfig, $srcFile, $keepSrcFile = false, $forceCreateNew = false``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Creates a \File (FAL) Object (sys_file)
+Erzeugt ein \File (FAL) Object (sys_file)
 
-nn\t3::createFalFile( $storageConfig, $srcFile, $keepSrcFile, $forceCreateNew );
+\nn\t3::createFalFile( $storageConfig, $srcFile, $keepSrcFile, $forceCreateNew );
 
-| ``@param string $storageConfig`` Path/folder where FAL file should be stored (e.g. 'fileadmin/projectdata/').
-| ``@param string $srcFile`` Source file to be converted to FAL (e.g. 'uploads/tx_nnfesubmit/example.jpg').
-Can also be URL to YouTube/Vimeo video (e.g. https://www.youtube.com/watch?v=7Bb5jXhwnRY)
-| ``@param boolean $keepSrcFile`` Copy source file only, not move it?
-| ``@param boolean $forceCreateNew`` Should new file always be created? If not, it returns existing File object if necessary
+| ``@param string $storageConfig``  Pfad/Ordner, in die FAL-Datei gespeichert werden soll (z.B. 'fileadmin/projektdaten/')
+| ``@param string $srcFile``            Quelldatei, die in FAL umgewandelt werden soll  (z.B. 'uploads/tx_nnfesubmit/beispiel.jpg')
+Kann auch URL zu YouTube/Vimeo-Video sein (z.B. https://www.youtube.com/watch?v=7Bb5jXhwnRY)
+| ``@param boolean $keepSrcFile``       Quelldatei nur kopieren, nicht verschieben?
+| ``@param boolean $forceCreateNew``    Soll immer neue Datei erzeugt werden? Falls nicht, gibt er ggf. bereits existierendes File-Object zurück
 
 | ``@return \Nng\Nnhelpers\Domain\Model\File|\TYPO3\CMS\Core\Resource\File|boolean``
 
 \\nn\\t3::Fal()->createSysFile(``$file, $autoCreateStorage = true``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Creates new entry in ``sys_file``
-Searches all ``sys_file_storage`` entries to see if the path to the $file already exists as a storage.
-If not, a new storage is created.
+Erstellt neuen Eintrag in ``sys_file``
+Sucht in allen ``sys_file_storage``-Einträgen, ob der Pfad zum $file bereits als Storage existiert.
+Falls nicht, wird ein neuer Storage angelegt.
 
 .. code-block:: php
 
-	\nn\t3::Fal()->createSysFile( 'fileadmin/image.jpg' );
+	\nn\t3::Fal()->createSysFile( 'fileadmin/bild.jpg' );
 
 | ``@return File|\TYPO3\CMS\Core\Resource\File``
 
 \\nn\\t3::Fal()->deleteSysFile(``$uidOrObject = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Deletes a SysFile (record from table ``sys_file``) and all associated SysFileReferences.
-A radical way to take an image completely out of Typo3's indexing.
+Löscht ein SysFile (Datensatz aus Tabelle ``sys_file``) und alle dazugehörigen SysFileReferences.
+Eine radikale Art, um ein Bild komplett aus der Indizierung von Typo3 zu nehmen.
 
-The physical file is not deleted from the server!
-See ``\nn\t3::File()->unlink()`` to delete the physical file.
-See ``\nn\t3::Fal()->detach( $model, $field );`` for löling from a model.
+Die physische Datei wird nicht vom Server gelöscht!
+Siehe ``\nn\t3::File()->unlink()`` zum Löschen der physischen Datei.
+Siehe ``\nn\t3::Fal()->detach( $model, $field );`` zum Löschen aus einem Model.
 
 .. code-block:: php
 
 	\nn\t3::Fal()->deleteSysFile( 1201 );
-	\nn\t3::Fal()->deleteSysFile( 'fileadmin/path/to/image.jpg' );
+	\nn\t3::Fal()->deleteSysFile( 'fileadmin/pfad/zum/bild.jpg' );
 	\nn\t3::Fal()->deleteSysFile( \TYPO3\CMS\Core\Resource\File );
 	\nn\t3::Fal()->deleteSysFile( \TYPO3\CMS\Core\Resource\FileReference );
 
@@ -108,8 +107,8 @@ See ``\nn\t3::Fal()->detach( $model, $field );`` for löling from a model.
 \\nn\\t3::Fal()->deleteSysFileReference(``$uidOrFileReference = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Lödeletes a SysFileReference.
-See also ``\nn\t3::Fal()->detach( $model, $field );`` to delete from a model.
+Löscht eine SysFileReference.
+Siehe auch ``\nn\t3::Fal()->detach( $model, $field );`` zum Löschen aus einem Model.
 
 .. code-block:: php
 
@@ -123,9 +122,9 @@ See also ``\nn\t3::Fal()->detach( $model, $field );`` to delete from a model.
 \\nn\\t3::Fal()->detach(``$model, $field, $obj = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Deletes an ObjectStorage in a model or removes an
-single Object from the Model or an ObjectStorage.
-In the example, ``image`` can be an ObjectStorage or a single ``FileReference``:
+Leert eine ObjectStorage in einem Model oder entfernt ein
+einzelnes Object vom Model oder einer ObjectStorage.
+Im Beispiel kann ``image`` eine ObjectStorage oder eine einzelne ``FileReference`` sein:
 
 .. code-block:: php
 
@@ -137,61 +136,59 @@ In the example, ``image`` can be an ObjectStorage or a single ``FileReference``:
 \\nn\\t3::Fal()->fileReferenceExists(``$sysFile = NULL, $params = []``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Checks if a SysFileReference to the same SysFile already exists for a record
+Prüft, ob für einen Datensatz bereits eine SysFileReference zum gleichen SysFile exisitert
 
 .. code-block:: php
 
 	\nn\t3::Fal()->fileReferenceExists( $sysFile, ['uid_foreign'=>123, 'tablenames'=>'tt_content', 'field'=>'media'] );
 
 | ``@param $sysFile``
-| ``@param array $params`` => uid_foreign, tablenames, fieldname.
+| ``@param array $params`` => uid_foreign, tablenames, fieldname
 | ``@return FileReference|false``
-.
 
 \\nn\\t3::Fal()->fromFile(``$params = []``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Creates a FileRefence object (table: ``sys_file_reference``) and associates it with a record.
-Example: Uploaded JPG should be attached as FAL to tt_news record
+Erzeugt ein FileRefence Objekt (Tabelle: ``sys_file_reference``) und verknüpft es mit einem Datensatz.
+Beispiel: Hochgeladenes JPG soll als FAL an tt_news-Datensatz angehängt werden
 
-parameter:
-| ``src`` => path to source file (can also be http link to YouTube video).
-| ``dest`` => path to destination folder (optional if file is to be moved/copied).
-| ``table`` => target table to which FileReference should be assigned (e.g. ``tx_myext_domain_model_entry``).
-| ``title`` => title.
-| ``description`` => description.
-| ``link`` => link
-| ``crop`` => crop.
-| ``table`` => Target table to which the FileReference is to be mapped (e.g. ``tx_myext_domain_model_entry``).
-| ``sorting`` => (int) sorting.
-| ``field`` => Column name of the target table to which the FileReference should be assigned (e.g., ``image``).
-| ``uid`` => (int) uid of the record in the target table (``tx_myext_domain_model_entry.uid``).
-| ``pid`` => (int) pid of the record in the target table.
-| ``cruser_id`` => cruser_id of the record in the target table.
-| ``copy`` => do not move src file but copy it (default: ``true``)
-| ``forceNew`` => Force new file in destination folder (otherwise check if file already exists) default: ``false``
-| ``single`` => Ensure that same FileReference is linked only 1x per record (default: ``true``)
+Parameter:
+| ``src``           => Pfad zur Quelldatei (kann auch http-Link zu YouTube-Video sein)
+| ``dest``          => Pfad zum Zielordner (optional, falls Datei verschoben/kopiert werden soll)
+| ``table``         => Ziel-Tabelle, dem die FileReference zugeordnet werden soll (z.B. ``tx_myext_domain_model_entry``)
+| ``title``         => Titel
+| ``description``   => Beschreibung
+| ``link``          => Link
+| ``crop``          => Beschnitt
+| ``table``         => Ziel-Tabelle, dem die FileReference zugeordnet werden soll (z.B. ``tx_myext_domain_model_entry``)
+| ``sorting``       => (int) Sortierung
+| ``field``         => Column-Name der Ziel-Tabelle, dem die FileReference zugeordnet werden soll (z.B. ``image``)
+| ``uid``           => (int) uid des Datensatzes in der Zieltabelle (``tx_myext_domain_model_entry.uid``)
+| ``pid``           => (int) pid des Datensatzes in der Zieltabelle
+| ``cruser_id``     => cruser_id des Datensatzes in der Zieltabelle
+| ``copy``          => src-Datei nicht verschieben sondern kopieren (default: ``true``)
+| ``forceNew``      => Im Zielordner neue Datei erzwingen (sonst wird geprüft, ob bereits Datei existiert) default: ``false``
+| ``single``        => Sicherstellen, dass gleiche FileReferenz nur 1x pro Datensatz verknüpft wird (default: ``true``)
 
-Example:
+Beispiel:
 
 .. code-block:: php
 
 	$fal = \nn\t3::Fal()->fromFile([
-	    'src' => 'fileadmin/test/image.jpg',
-	    'dest' => 'fileadmin/test/fal/',
-	    'pid' => 132,
-	    'uid' => 5052,
-	    'table' => 'tx_myext_domain_model_entry',
-	    'field' => 'fallistimage'
+	    'src'           => 'fileadmin/test/bild.jpg',
+	    'dest'          => 'fileadmin/test/fal/',
+	    'pid'           => 132,
+	    'uid'           => 5052,
+	    'table'         => 'tx_myext_domain_model_entry',
+	    'field'         => 'fallistimage'
 	]);
 
 | ``@return \TYPO3\CMS\Extbase\Domain\Model\FileReference``
-.
 
 \\nn\\t3::Fal()->getFalFile(``$srcFile``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Gets a \File (FAL) Object (sys_file)
+Holt ein \File (FAL) Object (sys_file)
 
 | ``@param string $srcFile``
 | ``@return FileReference|boolean``
@@ -199,24 +196,24 @@ Gets a \File (FAL) Object (sys_file)
 \\nn\\t3::Fal()->getFileObjectFromCombinedIdentifier(``$file = ''``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Gets a SysFile from the CombinedIdentifier notation ('1:/uploads/example.txt').
-If file does not exist FALSE will be returned.
+Holt ein SysFile aus der CombinedIdentifier-Schreibweise ('1:/uploads/beispiel.txt').
+Falls Datei nicht exisitert wird FALSE zurückgegeben.
 
 .. code-block:: php
 
-	\nn\t3::getFileObjectFromCombinedIdentifier( '1:/uploads/example.txt' );
+	\nn\t3::getFileObjectFromCombinedIdentifier( '1:/uploads/beispiel.txt' );
 
-| ``@param string $file`` Combined Identifier ('1:/uploads/example.txt')
-| ``@return file|boolean``
+| ``@param string $file``       Combined Identifier ('1:/uploads/beispiel.txt')
+| ``@return File|boolean``
 
 \\nn\\t3::Fal()->getFilePath(``$falReference``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Get the URL to a FileReference
+Die URL zu einer FileReference holen
 
 .. code-block:: php
 
-	\nn\t3::Fal()->getFilePath( $fileReference ); // yields e.g. 'fileadmin/pictures/01.jpg'
+	\nn\t3::Fal()->getFilePath( $fileReference );    // ergibt z.B. 'fileadmin/bilder/01.jpg'
 
 | ``@param \TYPO3\CMS\Extbase\Domain\Model\FileReference $falReference``
 | ``@return string``
@@ -224,24 +221,22 @@ Get the URL to a FileReference
 \\nn\\t3::Fal()->getFileReferenceByUid(``$uid = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Gets a SysFileReference based on the uid.
-Alias to ``\nn\t3::Convert( $uid )->toFileReference()``;
+Holt eine SysFileReference anhand der uid
+Alias zu ``\nn\t3::Convert( $uid )->toFileReference()``;
 
 | ``@param $uid``
 | ``@return \TYPO3\CMS\Extbase\Domain\Model\FileReference``
-.
 
 \\nn\\t3::Fal()->getImage(``$src = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-.
-Gets/converts to a \TYPO3\CMS\Core\Resource\FileReference Object (sys_file_reference).
-"Smart" variant to ``\TYPO3\CMS\Extbase\Service\ImageService->getImage()``
+Holt / konvertiert in ein \TYPO3\CMS\Core\Resource\FileReference Object (sys_file_reference)
+"Smarte" Variante zu ``\TYPO3\CMS\Extbase\Service\ImageService->getImage()``
 
 .. code-block:: php
 
 	\nn\t3::Fal()->getImage( 1 );
-	\nn\t3::Fal()->getImage( 'path/to/image.jpg' );
+	\nn\t3::Fal()->getImage( 'pfad/zum/bild.jpg' );
 	\nn\t3::Fal()->getImage( $fileReference );
 
 | ``@param string|\TYPO3\CMS\Extbase\Domain\Model\FileReference $src``
@@ -250,14 +245,14 @@ Gets/converts to a \TYPO3\CMS\Core\Resource\FileReference Object (sys_file_refer
 \\nn\\t3::Fal()->process(``$fileObj = '', $processing = []``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Calculates an image üover ``maxWidth``, ``maxHeight``, ``cropVariant`` etc.
-Returns URI to image as string. Helpful when calculating thumbnails in the backend.
-Alias to ``\nn\t3::File()->process()``
+Berechnet ein Bild über ``maxWidth``, ``maxHeight``, ``cropVariant`` etc.
+Gibt URI zum Bild als String zurück. Hilfreich bei der Berechnung von Thumbnails im Backend.
+Alias zu ``\nn\t3::File()->process()``
 
 .. code-block:: php
 
-	\nn\t3::File()->process( 'fileadmin/images/portrait.jpg', ['maxWidth'=>200] );
-	\nn\t3::File()->process( '1:/images/portrait.jpg', ['maxWidth'=>200] );
+	\nn\t3::File()->process( 'fileadmin/bilder/portrait.jpg', ['maxWidth'=>200] );
+	\nn\t3::File()->process( '1:/bilder/portrait.jpg', ['maxWidth'=>200] );
 	\nn\t3::File()->process( $sysFile, ['maxWidth'=>200] );
 	\nn\t3::File()->process( $sysFileReference, ['maxWidth'=>200, 'cropVariant'=>'square'] );
 
@@ -266,64 +261,64 @@ Alias to ``\nn\t3::File()->process()``
 \\nn\\t3::Fal()->setInModel(``$model, $fieldName = '', $imagesToAdd = []``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Replaces a ``FileReference`` or ``ObjectStorage`` in a model with images.
-Typical use case: A FAL image should be changed via an upload form in the frontend.
-in the frontend.
+Ersetzt eine ``FileReference`` oder ``ObjectStorage`` in einem Model mit Bildern.
+Typischer Anwendungsfall: Ein FAL-Bild soll über ein Upload-Formular im Frontend geändert
+werden können.
 
-For each image, it is checked if a ``FileReference`` already exists in the model.
-Existing FileReferences are not overwritten, otherwise captions or cropping annotations might be used.
-Captions or cropping instructions would be lost!
+Für jedes Bild wird geprüft, ob bereits eine ``FileReference`` im Model existiert.
+Bestehende FileReferences werden nicht überschrieben, sonst würden evtl.
+Bildunterschriften oder Cropping-Anweisungen verloren gehen!
 
-Attention! The model will be persisted automatically!
+Achtung! Das Model wird automatisch persistiert!
 
 .. code-block:: php
 
 	$newModel = new \My\Extension\Domain\Model\Example();
 	\nn\t3::Fal()->setInModel( $newModel, 'falslideshow', 'path/to/file.jpg' );
-	echo $newModel->getUid(); // Model has been persisted!
+	echo $newModel->getUid(); // Model wurde persistiert!
 
-Example with a simple FileReference in the Model:
+Beispiel mit einer einfachen FileReference im Model:
 
 .. code-block:: php
 
-	$imageToSet = 'fileadmin/images/portrait.jpg';
+	$imageToSet = 'fileadmin/bilder/portrait.jpg';
 	\nn\t3::Fal()->setInModel( $member, 'falprofileimage', $imageToSet );
 	
-	\nn\t3::Fal()->setInModel( $member, 'falprofileimage', ['publicUrl'=>'01.jpg', 'title'=>'title', 'description'=>'...'] );
+	\nn\t3::Fal()->setInModel( $member, 'falprofileimage', ['publicUrl'=>'01.jpg', 'title'=>'Titel', 'description'=>'...'] );
 
-Example with an ObjectStorage in the model:
+Beispiel mit einem ObjectStorage im Model:
 
 .. code-block:: php
 
-	$imagesToSet = ['fileadmin/images/01.jpg', 'fileadmin/images/02.jpg', ...];
+	$imagesToSet = ['fileadmin/bilder/01.jpg', 'fileadmin/bilder/02.jpg', ...];
 	\nn\t3::Fal()->setInModel( $member, 'falslideshow', $imagesToSet );
 	
 	\nn\t3::Fal()->setInModel( $member, 'falslideshow', [['publicUrl'=>'01.jpg'], ['publicUrl'=>'02.jpg']] );
 	\nn\t3::Fal()->setInModel( $member, 'falvideos', [['publicUrl'=>'https://youtube.com/?watch=zagd61231'], ...] );
 
-Example with videos:
+Beispiel mit Videos:
 
 .. code-block:: php
 
 	$videosToSet = ['https://www.youtube.com/watch?v=GwlU_wsT20Q', ...];
 	\nn\t3::Fal()->setInModel( $member, 'videos', $videosToSet );
 
-| ``@param mixed $model`` The model to be changed.
-| ``@param string $fieldName`` Property (field name) of the ObjectStorage or FileReference.
-| ``@param mixed $imagesToAdd`` String / array of images
+| ``@param mixed $model``               Das Model, das geändert werden soll
+| ``@param string $fieldName``          Property (Feldname) der ObjectStorage oder FileReference
+| ``@param mixed $imagesToAdd``     String / Array mit Bildern
 
 | ``@return mixed``
 
 \\nn\\t3::Fal()->toArray(``$fileReference = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Convert a FileReference to an array.
-Contains publicUrl, title, alternative, crop etc of the FileReference.
-Alias to ``\nn\t3::Obj()->toArray( $fileReference );``
+Eine FileReference in ein Array konvertieren.
+Enthält publicUrl, title, alternative, crop etc. der FileReference.
+Alias zu ``\nn\t3::Obj()->toArray( $fileReference );``
 
 .. code-block:: php
 
-	\nn\t3::Fal()->toArray( $fileReference ); // yields ['publicUrl'=>'fileadmin/...', 'title'=>'...']
+	\nn\t3::Fal()->toArray( $fileReference );    // ergibt ['publicUrl'=>'fileadmin/...', 'title'=>'...']
 
 | ``@param \TYPO3\CMS\Extbase\Domain\Model\FileReference $falReference``
 | ``@return array``
@@ -331,20 +326,19 @@ Alias to ``\nn\t3::Obj()->toArray( $fileReference );``
 \\nn\\t3::Fal()->unlink(``$uidOrObject = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Deletes a SysFile and all associated SysFileReferences.
-Alias to ``\nn\t3::Fal()->deleteSysFile()``
+Löscht ein SysFile und alle dazugehörigen SysFileReferences.
+Alias zu ``\nn\t3::Fal()->deleteSysFile()``
 
 | ``@return integer``
-.
 
 \\nn\\t3::Fal()->updateMetaData(``$filenameOrSysFile = '', $data = []``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Update the details in sys_file_metadata and sys_file
+Update der Angaben in sys_file_metadata und sys_file
 
-| ``@param $filenameOrSysFile`` FAL or path (string) to the file.
-| ``@param $data`` Array of data to be updated.
-If empty, image data will be read automatically
+| ``@param $filenameOrSysFile``     FAL oder Pfad (String) zu der Datei
+| ``@param $data``              Array mit Daten, die geupdated werden sollen.
+Falls leer, werden Bilddaten automatisch gelesen
 
 | ``@return void``
 

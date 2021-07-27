@@ -2,8 +2,8 @@
 
 .. _known-problems:
 
-==============
-Known Problems
-==============
+==================
+Bekannte Probleme
+==================
 
-Unfortunalety tons of problems related to the big, red warning on :ref:`this page <introduction>`
+Leider massenhafte Problem in Verbindung mit der großen, roten Warnung auf :ref:`dieser Seite <introduction>`

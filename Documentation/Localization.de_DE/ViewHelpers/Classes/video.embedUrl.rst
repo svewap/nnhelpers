@@ -13,7 +13,7 @@ Description
 <nnt3:video.embedUrl />
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Converts a youTube URL to the watch variant, e.g. for embedding in an iFrame.
+Konvertiert eine youTube-URL in die watch-Variante, z.B. für die Einbindung in ein iFrame.
 
 .. code-block:: php
 

@@ -13,28 +13,28 @@ Description
 <nnt3:flashMessages />
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Emits a flash message.
+Gibt eine Flash-Message aus.
 
-In the controller:
+Im Controller:
 
 .. code-block:: php
 
-	\nn\t3::Message()->OK('Title', 'Infotext');
-	\nn\t3::Message()->setId('top')->ERROR('title', 'infotext');
+	\nn\t3::Message()->OK('Titel', 'Infotext');
+	\nn\t3::Message()->setId('oben')->ERROR('Titel', 'Infotext');
 
-In Fluid:
+Im Fluid:
 
 .. code-block:: php
 
 	<nnt3:flashMessages />
-	<nnt3:flashMessages id='top' />
+	<nnt3:flashMessages id='oben' />
 
-The core functions:
+Die Core-Funktionen:
 
 .. code-block:: php
 
 	<f:flashMessages queueIdentifier='core.template.flashMessages' />
-	<f:flashMessages queueIdentifier='top' />
+	<f:flashMessages queueIdentifier='oben' />
 
 | ``@return string``
 

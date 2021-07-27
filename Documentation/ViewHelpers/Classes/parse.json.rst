@@ -13,7 +13,10 @@ Description
 <nnt3:parse.json />
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-See ``JsonHelper`` for examples.
+Wandelt ein normales JavaScript-Object, dass als String übergeben wird in ein Array um.
+Erlaubt es, Konfigurationen für Slider und andere JS-Bibliotheken im TypoScript anzulegen und später per JS zu parsen.
+
+Siehe ``JsonHelper`` für Beispiele.
 
 .. code-block:: php
 

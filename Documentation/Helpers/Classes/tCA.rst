@@ -10,7 +10,7 @@ TCA
 \\nn\\t3::TCA()
 ----------------------------------------------
 
-Methods for configuring and accessing fields in the TCA.
+Methoden für die Konfiguration und den Zugriff auf Felder im TCA.
 
 Overview of Methods
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -18,23 +18,23 @@ Overview of Methods
 \\nn\\t3::TCA()->addModuleOptionToPage(``$label, $identifier, $iconIdentifier = ''``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-In the page properties under "Behavior -> Contains extension" add a selection option.
-Classically used in ``Configuration/TCA/Overrides/pages.php``, earlier in ``ext_tables.php``
+In den Seiteneigenschaften unter "Verhalten -> Enthält Erweiterung" eine Auswahl-Option hinzufügen.
+Klassischerweise in ``Configuration/TCA/Overrides/pages.php`` genutzt, früher in ``ext_tables.php``
 
 .. code-block:: php
 
-	// In ext_localconf.php register the icon (16 x 16 px SVG).
+	// In ext_localconf.php das Icon registrieren (16 x 16 px SVG)
 	\nn\t3::Registry()->icon('icon-identifier', 'EXT:myext/Resources/Public/Icons/module.svg');
 	
 	// In Configuration/TCA/Overrides/pages.php
-	\nn\t3::TCA()->addModuleOptionToPage('description', 'identifier', 'icon-identifier');
+	\nn\t3::TCA()->addModuleOptionToPage('Beschreibung', 'identifier', 'icon-identifier');
 
 | ``@return void``
 
 \\nn\\t3::TCA()->getColorPickerTCAConfig();
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Get color picker configuration for the TCA.
+Color Picker Konfiguration für das TCA holen.
 
 .. code-block:: php
 
@@ -45,8 +45,8 @@ Get color picker configuration for the TCA.
 \\nn\\t3::TCA()->getColumn(``$tableName = '', $fieldName = '', $useSchemaManager = false``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Gets configuration array for a field from the TCA.
-Alias to ``\nn\t3::Db()->getColumn()``
+Holt Konfigurations-Array für ein Feld aus dem TCA.
+Alias zu ``\nn\t3::Db()->getColumn()``
 
 .. code-block:: php
 
@@ -57,8 +57,8 @@ Alias to ``\nn\t3::Db()->getColumn()``
 \\nn\\t3::TCA()->getColumns(``$tableName = '', $useSchemaManager = false``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Gets configuration array für a table from the TCA.
-Alias to ``\nn\t3::Db()->getColumns()``
+Holt Konfigurations-Array für eine Tabelle aus dem TCA.
+Alias zu ``\nn\t3::Db()->getColumns()``
 
 .. code-block:: php
 
@@ -69,11 +69,11 @@ Alias to ``\nn\t3::Db()->getColumns()``
 \\nn\\t3::TCA()->getFileFieldTCAConfig(``$fieldName = 'media', $override = []``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Get FAL configuration for the TCA.
+FAL Konfiguration für das TCA holen.
 
-Default config including image cropper, link and alternative image title.
-This setting changes regularly, which is not always possible given the amount of parameters and their changing position in the array.
-and their changing position in the array.
+Standard-Konfig inkl. Image-Cropper, Link und alternativer Bildtitel
+Diese Einstellung ändert sich regelmäßig, was bei der Menge an Parametern
+und deren wechselnden Position im Array eine ziemliche Zumutung ist.
 
 https://bit.ly/2SUvASe
 
@@ -82,7 +82,7 @@ https://bit.ly/2SUvASe
 	\nn\t3::TCA()->getFileFieldTCAConfig('media');
 	\nn\t3::TCA()->getFileFieldTCAConfig('media', ['maxitems'=>1, 'fileExtensions'=>'jpg']);
 
-Will be used in TCA like this:
+Wird im TCA so eingesetzt:
 
 .. code-block:: php
 
@@ -95,7 +95,7 @@ Will be used in TCA like this:
 \\nn\\t3::TCA()->getRteTCAConfig();
 """""""""""""""""""""""""""""""""""""""""""""""
 
-GetRTE configuration for the TCA.
+RTE Konfiguration für das TCA holen.
 
 .. code-block:: php
 
@@ -106,11 +106,11 @@ GetRTE configuration for the TCA.
 \\nn\\t3::TCA()->insertCountries(``$config, $a = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Inserts list of countries into a TCA.
-Alias to \nn\t3::Flexform->insertCountries( $config, $a = null );
-Description and more examples there.
+Fügt Liste der Länder in ein TCA ein.
+Alias zu \nn\t3::Flexform->insertCountries( $config, $a = null );
+Beschreibung und weitere Beispiele dort.
 
-Example in TCA:
+Beispiel im TCA:
 
 .. code-block:: php
 
@@ -125,9 +125,9 @@ Example in TCA:
 \\nn\\t3::TCA()->insertFlexform(``$path``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Inserts a flexform into a TCA.
+Fügt ein Flexform in ein TCA ein.
 
-Example in TCA:
+Beispiel im TCA:
 
 .. code-block:: php
 
@@ -138,11 +138,11 @@ Example in TCA:
 \\nn\\t3::TCA()->insertOptions(``$config, $a = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Inserts options from TypoScript into a TCA for selection.
-Alias to \nn\t3::Flexform->insertOptions( $config, $a = null );
-Description and more examples there.
+Fügt Optionen aus TypoScript zur Auswahl in ein TCA ein.
+Alias zu \nn\t3::Flexform->insertOptions( $config, $a = null );
+Beschreibung und weitere Beispiele dort.
 
-Example in TCA:
+Beispiel im TCA:
 
 .. code-block:: php
 

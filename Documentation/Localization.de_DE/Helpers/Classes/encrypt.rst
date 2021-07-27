@@ -10,7 +10,7 @@ Encrypt
 \\nn\\t3::Encrypt()
 ----------------------------------------------
 
-Encrypting and hashing passwords
+Verschlüsseln und Hashen von Passworten
 
 Overview of Methods
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -18,8 +18,9 @@ Overview of Methods
 \\nn\\t3::Encrypt()->checkPassword(``$password = '', $passwordHash = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Checks if hash of a password and a password ümatch.
-Application: compare the password hash of a fe_user in the database with a given password.
+Prüft, ob Hash eines Passwortes und ein Passwort übereinstimmen.
+Anwendung: Passwort-Hash eines fe_users in der Datenbank mit übergebenem Passwort
+vergleichen.
 
 .. code-block:: php
 
@@ -30,13 +31,13 @@ Application: compare the password hash of a fe_user in the database with a given
 \\nn\\t3::Encrypt()->hash(``$string = ''``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Simple hashing, such as when checking a uid against a hash.
+Einfaches Hashing, z.B. beim Check einer uid gegen ein Hash.
 
 .. code-block:: php
 
 	\nn\t3::Encrypt()->hash( $uid );
 
-Also acts as a ViewHelper:
+Existiert auch als ViewHelper:
 
 .. code-block:: php
 
@@ -47,12 +48,12 @@ Also acts as a ViewHelper:
 \\nn\\t3::Encrypt()->password(``$clearTextPassword = '', $context = 'FE'``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Hashing of a password according to Typo3 principle.
-Application: Password of a fe_user in the database
+Hashing eines Passwortes nach Typo3-Prinzip.
+Anwendung: Passwort eines fe_users in der Datenbank überschreiben
 
 .. code-block:: php
 
-	\nn\t3::Encrypt()->password('99degree');
+	\nn\t3::Encrypt()->password('99grad');
 
 | ``@return string``
 

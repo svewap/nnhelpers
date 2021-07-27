@@ -10,7 +10,7 @@ Request
 \\nn\\t3::Request()
 ----------------------------------------------
 
-Access to GET / POST variables, filecontainer etc.
+Zugriff auf GET / POST Variablen, Filecontainer etc.
 
 Overview of Methods
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -18,7 +18,7 @@ Overview of Methods
 \\nn\\t3::Request()->GP(``$varName = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Merge from $_GET and $_POST variables
+Merge aus $_GET und $_POST-Variablen
 
 .. code-block:: php
 
@@ -29,7 +29,7 @@ Merge from $_GET and $_POST variables
 \\nn\\t3::Request()->POST(``$url = '', $postData = [], $headers = []``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Sends a POST request (via CURL) to a server.
+Sendet einen POST Request (per CURL) an einen Server.
 
 .. code-block:: php
 
@@ -40,10 +40,10 @@ Sends a POST request (via CURL) to a server.
 \\nn\\t3::Request()->files(``$path = NULL, $forceArray = false``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Get file uploads from ``$_FILES`` and normalize them.
+File-Uploads aus ``$_FILES`` holen und normalisieren.
 
-Normalizes the following file upload variants.
-Removes empty file uploads from the array.
+Normalisiert folgende File-Upload-Varianten.
+Enfernt leere Datei-Uploads aus dem Array.
 
 .. code-block:: php
 
@@ -52,35 +52,36 @@ Removes empty file uploads from the array.
 	<input name="images[]" type="file" multiple="1" />
 	<input name="images[key][]" type="file" multiple="1" />
 
-Examples:
-Get ALL file info from ``$_FILES``.
+Beispiele:
+ALLE Datei-Infos aus ``$_FILES``holen.
 
 .. code-block:: php
 
 	\nn\t3::Request()->files();
-	\nn\t3::Request()->files( true ); // force array
+	\nn\t3::Request()->files( true ); // Array erzwingen
 
-Get file info from ``tx_nnfesubmit_nnfesubmit[...]``.
+Datei-Infos aus ``tx_nnfesubmit_nnfesubmit[...]`` holen.
 
 .. code-block:: php
 
 	\nn\t3::Request()->files('tx_nnfesubmit_nnfesubmit');
-	\nn\t3::Request()->files('tx_nnfesubmit_nnfesubmit', true); // Force array
+	\nn\t3::Request()->files('tx_nnfesubmit_nnfesubmit', true);  // Array erzwingen
 
-Only get files from ``tx_nnfesubmit_nnfesubmit[fal_media]``.
+Nur Dateien aus ``tx_nnfesubmit_nnfesubmit[fal_media]`` holen.
 
 .. code-block:: php
 
 	\nn\t3::Request()->files('tx_nnfesubmit_nnfesubmit.fal_media' );
-	\nn\t3::Request()->files('tx_nnfesubmit_nnfesubmit.fal_media', true ); // Force array
+	\nn\t3::Request()->files('tx_nnfesubmit_nnfesubmit.fal_media', true ); // Array erzwingen
 
 | ``@return array``
 
 \\nn\\t3::Request()->getUri(``$varName = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-return request URI. Basically the URL / GET string
-in the browser URL bar, which is stored in ``$_SERVER['REQUEST_URI']``
+Request-URI zurückgeben. Im Prinzip die URL / der GET-String
+in der Browser URL-Leiste, der in ``$_SERVER['REQUEST_URI']``
+gespeichert wird.
 
 .. code-block:: php
 
