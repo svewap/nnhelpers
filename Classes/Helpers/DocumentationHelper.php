@@ -294,7 +294,9 @@ class DocumentationHelper {
  
 		//return \nn\t3::Dom( $result )->find();
 
-		$dom = \DOMDocument::loadXML( '<t>' . $result . '</t>', LIBXML_NOENT | LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_XINCLUDE | LIBXML_NOERROR | LIBXML_NOWARNING );
+		$dom = new \DOMDocument();
+		$dom->loadXML( '<t>' . $result . '</t>', LIBXML_NOENT | LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_XINCLUDE | LIBXML_NOERROR | LIBXML_NOWARNING );
+		
 		if (!$dom) return $result;
 
 		if ($pre = $dom->getElementsByTagName('pre'));

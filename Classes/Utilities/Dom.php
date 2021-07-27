@@ -29,7 +29,8 @@ class Dom implements SingletonInterface {
 	public function __construct ( $html = null ) {
 		$this->initialArgument = $html;
 		$this->converter = new CssSelectorConverter();
-		$this->dom = \DOMDocument::loadXML('<root>' . $html . '</root>', LIBXML_NOENT | LIBXML_XINCLUDE | LIBXML_NOERROR | LIBXML_NOWARNING);
+		$this->dom = new \DOMDocument();
+		$this->dom->loadXML('<root>' . $html . '</root>', LIBXML_NOENT | LIBXML_XINCLUDE | LIBXML_NOERROR | LIBXML_NOWARNING);
 		return $this;
 	}
 
