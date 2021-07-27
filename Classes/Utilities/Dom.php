@@ -24,25 +24,6 @@ class Dom implements SingletonInterface {
 	protected $converter;
 
 	/**
-	 * DOM constructor
-	 */
-	public function __construct ( $html = null ) {
-		$this->initialArgument = $html;
-		$this->converter = new CssSelectorConverter();
-		$this->dom = new \DOMDocument();
-		$this->dom->loadXML('<root>' . $html . '</root>', LIBXML_NOENT | LIBXML_XINCLUDE | LIBXML_NOERROR | LIBXML_NOWARNING);
-		return $this;
-	}
-
-	public function __toString() {
-		return $this->dom->saveXML($this->dom->getElementsByTagName('root')->item(0));
-	}
-
-	public function find() {
-		echo $this->converter->toXPath('pre code');
-	}
-
-	/**
 	 * 	Ersetzt Links und Pfade zu Bildern etc. im Quelltext mit absoluter URL
 	 * 	z.B. für den Versand von Mails
 	 * 	@return string
