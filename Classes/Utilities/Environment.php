@@ -257,4 +257,18 @@ class Environment implements SingletonInterface {
 		$data = \nn\t3::Db()->findByValues( 'static_countries', [$field=>$cn_iso_2] );
 		return $data ? array_pop($data) : [];
 	}
+
+	/**
+	 * Maximale Upload-Größe für Dateien aus dem Frontend zurückgeben.
+	 * Diese Angabe ist der Wert, der in der php.ini festgelegt wurde und ggf.
+	 * über die .htaccess überschrieben wurde.
+	 * ```
+	 * \nn\t3::Environment()->getPostMaxSize();  // z.B. '1048576' bei 1MB
+	 * ```
+	 * @return integer
+	 */
+	public function getPostMaxSize() {
+		$postMaxSize = ini_get('post_max_size');
+		return \nn\t3::Convert($postMaxSize)->toBytes();
+	}
 }
