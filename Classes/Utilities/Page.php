@@ -183,18 +183,30 @@ class Page implements SingletonInterface {
 	}
 
 	/**
-	 * 	Einen einfachen Link zu einer Seite generieren
-	 *	```
-	 *	\nn\t3::Page()->getLink( $pid );
-	 *	\nn\t3::Page()->getLink( $pid, $params );
-	 *	\nn\t3::Page()->getLink( $params );
-	 *	\nn\t3::Page()->getLink( 'david@99grad.de' )
-	 *	```
-	 *  @return array
+	 * Einen einfachen Link zu einer Seite im Frontend generieren.
+	 * 
+	 * Funktioniert in jedem Kontext - sowohl aus einem Backend-Modul oder Scheduler/CLI-Job heraus, als auch im Frontend-Kontext, z.B. im Controller oder einem ViewHelper.
+	 * Aus dem Backend-Kontext werden absolute URLs ins Frontend generiert. Die URLs werden als lesbare URLs kodiert - der Slug-Pfad bzw. RealURL werden berücksichtigt.
+	 * 
+	 * ```
+	 * \nn\t3::Page()->getLink( $pid );
+	 * \nn\t3::Page()->getLink( $pid, $params );
+	 * \nn\t3::Page()->getLink( $params );
+	 * \nn\t3::Page()->getLink( 'david@99grad.de' )
+	 * ```
+	 * @return array
 	 */
     public function getLink ( $pidOrParams = null, $params = [], $absolute = false ) {
+
+
 		$pid = is_array($pidOrParams) ? $this->getPid() : $pidOrParams;
 		$params = is_array($pidOrParams) ? $pidOrParams : $params;
+
+		/*
+			// ToDo: Check this for v9+ - might make things easier
+		 	$site = GeneralUtility::makeInstance(SiteFinder::class)->getSiteByPageId( $pid );
+			$url = $site->getRouter()->generateUri( 2, $params );
+		 */
 
 		if (!\nn\t3::Environment()->isFrontend()) {
 			\nn\t3::Tsfe()->init();
