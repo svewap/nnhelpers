@@ -70,6 +70,7 @@ Klicken Sie einfach auf "Edit me on GitHub" oben rechts, um Ihre Änderungswüns
    Installation/Index
    Screenshots/Index
    Use-Cases/Index
+   SideBySide/Index
    Helpers/Index
    ViewHelpers/Index
    AdditionalClasses/Index
