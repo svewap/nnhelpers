@@ -99,24 +99,31 @@ class Content implements SingletonInterface {
 	 * ```
 	 * \nn\t3::Content()->column( 110 );
 	 * \nn\t3::Content()->column( $colPos, $pageUid );
+	 * \nn\t3::Content()->column( $colPos, $pageUid, true );
 	 * ```
 	 * Auch als ViewHelper vorhanden:
 	 * ```
 	 * {nnt3:content.column(colPos:110)}
 	 * {nnt3:content.column(colPos:110, pid:99)}
+	 * {nnt3:content.column(colPos:110, pid:99, slide:1)}
 	 * ```
 	 * @return string
 	 */
-	public function column( $colPos, $pageUid = null ) {
-		if (!$pageUid) $pageUid = \nn\t3::Page()->getPid();
+	public function column( $colPos, $pageUid = null, $slide = false ) {
+		if (!$pageUid && !$slide) $pageUid = \nn\t3::Page()->getPid();
 		$conf = [
 			'table' => 'tt_content',
 			'select.' => [
 				'orderBy' => 'sorting',
 				'where' => 'colPos=' . intval($colPos),
-				'pidInList' => intval($pageUid),
 			],
 		];
+		if ($pageUid) {
+			$conf['select.']['pidInList'] = intval($pageUid);
+		}
+		if ($slide) {
+			$conf['slide'] = -1;
+		}
 		$html = \nn\t3::Tsfe()->cObj()->cObjGetSingle('CONTENT', $conf);
 		return $html;
 	}

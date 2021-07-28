@@ -11,6 +11,7 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
  * ```
  * {nnt3:content.column(colPos:110)}
  * {nnt3:content.column(colPos:110, pid:99)}
+ * {nnt3:content.column(colPos:110, pid:99, slide:1)}
  * ```
  * @return string
  */
@@ -23,10 +24,11 @@ class ColumnViewHelper extends AbstractViewHelper {
 	public function initializeArguments() {
 	   $this->registerArgument('pid', 'intval', 'PageUid von der die Spalte gerendert werden soll');
 	   $this->registerArgument('colPos', 'intval', 'Spalten-Nr (colPos) des Backend-Layouts, die gerendert werden soll.');
+	   $this->registerArgument('slide', 'boolean', 'Slide von übergeordneten Seiten.');
    }
 
 	public static function renderStatic( array $arguments, \Closure $renderChildrenClosure, RenderingContextInterface $renderingContext ) {
-		return \nn\t3::Content()->column($arguments['colPos'], $arguments['pid']);
+		return \nn\t3::Content()->column($arguments['colPos'], $arguments['pid'], $arguments['slide']);
 	}
 
 }
