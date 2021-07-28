@@ -169,6 +169,19 @@ Get absolute path to Typo3 root directory. e.g. ``/var/www/website/``
 
 früher: ``PATH_site``
 
+\\nn\\t3::Environment()->getPostMaxSize();
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+Return maximum upload size for files from the frontend.
+This specification is the value set in php.ini and if necessary.
+üvia the .htaccess überschrieben.
+
+.. code-block:: php
+
+	\nn\t3::Environment()->getPostMaxSize(); // e.g. '1048576' at 1MB
+
+| ``@return integer``
+
 \\nn\\t3::Environment()->getRelPathSite();
 """""""""""""""""""""""""""""""""""""""""""""""
 

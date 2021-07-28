@@ -231,7 +231,10 @@ Exisits also as ViewHelper:
 \\nn\\t3::Page()->getLink(``$pidOrParams = NULL, $params = [], $absolute = false``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Generate a simple link to a page
+Generate a simple link to a page in the frontend.
+
+Works in any context - both from a backend module or scheduler/CLI job, and in the frontend context, e.g. in the controller or a ViewHelper.
+Absolute URLs are generated from the backend context into the frontend. The URLs are encoded as readable URLs - the slug path or RealURL are taken into account.
 
 .. code-block:: php
 

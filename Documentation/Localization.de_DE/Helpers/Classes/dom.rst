@@ -23,6 +23,3 @@ Ersetzt Links und Pfade zu Bildern etc. im Quelltext mit absoluter URL
 z.B. für den Versand von Mails
 | ``@return string``
 
-\\nn\\t3::Dom()->find();
-"""""""""""""""""""""""""""""""""""""""""""""""
-

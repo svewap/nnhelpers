@@ -55,7 +55,7 @@ class HtmlToSphinxViewHelper extends AbstractViewHelper {
 					$r .= "\n\n.. code-block:: php\n\n\t" . join("\n\t", $rows) . "\n\n";
 				}
 			}
-			$el->nodeValue = $r;
+			@$el->nodeValue = $r;
 		}
 
 		$code = $dom->getElementsByTagName('code');

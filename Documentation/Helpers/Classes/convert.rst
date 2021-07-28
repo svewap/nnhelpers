@@ -32,6 +32,22 @@ For memory problems due to recursion: Specify max-depth!
 
 | ``@return array``
 
+\\nn\\t3::Convert()->toBytes();
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+Converts a human-readable specification of bytes/megabytes to a byte integer.
+Extremely tolerant of spaces, capitalization, and commas instead of periods
+
+.. code-block:: php
+
+	\nn\t3::Convert('1M')->toBytes(); // -> 1048576
+	\nn\t3::Convert('1 MB')->toBytes(); // -> 1048576
+	\nn\t3::Convert('1kb')->toBytes(); // -> 1024
+	\nn\t3::Convert('1,5kb')->toBytes(); // -> 1024
+	\nn\t3::Convert('1.5Gb')->toBytes(); // -> 1610612736
+
+| ``@return integer``
+
 \\nn\\t3::Convert()->toFileReference();
 """""""""""""""""""""""""""""""""""""""""""""""
 

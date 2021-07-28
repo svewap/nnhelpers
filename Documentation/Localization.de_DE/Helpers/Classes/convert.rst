@@ -32,6 +32,22 @@ Bei Memory-Problemen wegen Rekursionen: Max-Tiefe angebenen!
 
 | ``@return array``
 
+\\nn\\t3::Convert()->toBytes();
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+Konvertiert eine für Menschen lesbare Angabe von Bytes/Megabytes in einen Byte-Integer.
+Extrem tolerant, was Leerzeichen, Groß/Klein-Schreibung und Kommas statt Punkten angeht.
+
+.. code-block:: php
+
+	\nn\t3::Convert('1M')->toBytes();    // -> 1048576
+	\nn\t3::Convert('1 MB')->toBytes();  // -> 1048576
+	\nn\t3::Convert('1kb')->toBytes();   // -> 1024
+	\nn\t3::Convert('1,5kb')->toBytes(); // -> 1024
+	\nn\t3::Convert('1.5Gb')->toBytes(); // -> 1610612736
+
+| ``@return integer``
+
 \\nn\\t3::Convert()->toFileReference();
 """""""""""""""""""""""""""""""""""""""""""""""
 

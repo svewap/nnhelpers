@@ -29,23 +29,45 @@ Uses an ``EXT:mask`` method for this.
 @todo: Decouple from mask.
 | ``@return array``
 
-\\nn\\t3::Content()->column(``$colPos, $pageUid = NULL``);
+\\nn\\t3::Content()->column(``$colPos, $pageUid = NULL, $slide = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
 Lädt the content for a given column (``colPos``) and page.
 If no pageUid is specified, it uses the current page.
+With ``slide``, the content items of the üparent page are fetched if there is no content item in the column on the specified page.
+
+Get content of ``colPos = 110`` from current page:
 
 .. code-block:: php
 
 	\nn\t3::Content()->column( 110 );
-	\nn\t3::Content()->column( $colPos, $pageUid );
 
-Also available as a ViewHelper:
+Get content of ``colPos = 110`` from the current page. If there is no content in the column on the current page, use the content from the üparent page:
+
+.. code-block:: php
+
+	\nn\t3::Content()->column( 110, true );
+
+Get content of ``colPos = 110`` from page with id ``99``:
+
+.. code-block:: php
+
+	\nn\t3::Content()->column( 110, 99 );
+
+Get content of ``colPos = 110`` from page with id ``99``. If there is no content in the column on page ``99``, use the content from the parent page of page ``99``:
+
+.. code-block:: php
+
+	\nn\t3::Content()->column( 110, 99, true );
+
+Also available as ViewHelper:
 
 .. code-block:: php
 
 	{nnt3:content.column(colPos:110)}
+	{nnt3:content.column(colPos:110, slide:1)}
 	{nnt3:content.column(colPos:110, pid:99)}
+	{nnt3:content.column(colPos:110, pid:99, slide:1)}
 
 | ``@return string``
 
