@@ -358,6 +358,11 @@ class Convert implements SingletonInterface {
 	 * \nn\t3::Convert('1,5kb')->toBytes();	// -> 1024
 	 * \nn\t3::Convert('1.5Gb')->toBytes();	// -> 1610612736
 	 * ```
+	 * Für den umgekehrten Weg (Bytes zu menschenlesbarer Schreibweise wie 1024 -> 1kb) gibt
+	 * es einen praktischen Fluid ViewHelper im Core:
+	 * ```
+	 * {fileSize->f:format.bytes()}
+	 * ```
 	 * @return integer
 	 */
 	public function toBytes() {

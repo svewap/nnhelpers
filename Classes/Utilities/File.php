@@ -816,9 +816,14 @@ class File implements SingletonInterface {
 	 * \nn\t3::File()->process( $sysFile, ['maxWidth'=>200, 'absolute'=>true] );
 	 * \nn\t3::File()->process( $sysFileReference, ['maxWidth'=>200, 'cropVariant'=>'square'] );
 	 * ```
+	 * Mit dem Parameter `$returnProcessedImage = true` wird nicht der Dateipfad zum neuen Bild 
+	 * sondern das processedImage-Object zurückgegeben.
+	 * ```
+	 * \nn\t3::File()->process( 'fileadmin/imgs/portrait.jpg', ['maxWidth'=>200], true );
+	 * ```
 	 * @return string
 	 */
-	public function process ( $fileObj = '', $processing = [] ) {
+	public function process ( $fileObj = '', $processing = [], $returnProcessedImage = false ) {
 
 		$filename = '';
 		$cropString = '';
@@ -867,6 +872,7 @@ class File implements SingletonInterface {
 			$processing['crop'] = $cropArea->isEmpty() ? null : $cropArea->makeAbsoluteBasedOnFile($image);
 
 			$processedImage = $imageService->applyProcessingInstructions($image, $processing);
+			if ($returnProcessedImage) return $processedImage;
 			return $imageService->getImageUri($processedImage, $processing['absolute'] ?? false);
 		}
 
