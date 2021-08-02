@@ -92,7 +92,9 @@ class FrontendUser implements SingletonInterface {
 	
 	/**
 	 * Alle existierende User-Gruppen zurückgeben
-	 * 
+	 * ```
+	 * \nn\t3::FrontendUser()->getAvailableUserGroups();
+	 * ```
 	 * @return array
 	 */
 	public function getAvailableUserGroups() {
@@ -101,9 +103,12 @@ class FrontendUser implements SingletonInterface {
 	}
 
 	/**
-	 * Check if the user is logged
-	 * vorher: isset($GLOBALS['TSFE']) && $GLOBALS['TSFE']->loginUser
-	 * @return bool
+	 * Prüft, ob der User aktuell als FE-User eingeloggt ist.
+	 * Früher: isset($GLOBALS['TSFE']) && $GLOBALS['TSFE']->loginUser
+	 * ```
+	 * \nn\t3::FrontendUser()->isLoggedIn();
+	 * ```
+	 * @return boolean
 	 */
 	public function isLoggedIn() {
 
@@ -121,6 +126,9 @@ class FrontendUser implements SingletonInterface {
 
 	/**
 	 * UID des aktuellen Frontend-Users holen
+	 * ```
+	 * $uid = \nn\t3::FrontendUser()->getCurrentUserUid();
+	 * ```
 	 * @return int
 	 */
 	public function getCurrentUserUid(){
@@ -130,6 +138,9 @@ class FrontendUser implements SingletonInterface {
 
 	/**
 	 * Session-ID des aktuellen Frontend-Users holen
+	 * ```
+	 * $sessionId = \nn\t3::FrontendUser()->getSessionId();
+	 * ```
 	 * @return string
 	 */
 	public function getSessionId(){
@@ -137,7 +148,10 @@ class FrontendUser implements SingletonInterface {
 	}
 
 	/**
-	 * Get language uid of current user
+	 * Sprach-UID des aktuellen Users holen
+	 * ```
+	 * $languageUid = \nn\t3::FrontendUser()->getLanguage();
+	 * ```
 	 * @return int
 	 */
 	public function getLanguage(){
@@ -145,7 +159,10 @@ class FrontendUser implements SingletonInterface {
 	}
 
 	/**
-	 * Check if the logged in user has a specific role
+	 * Prüft, ob der User eine bestimmte Rolle hat.
+	 * ```
+	 * \nn\t3::FrontendUser()->hasRole( $roleUid );
+	 * ```
 	 * @param $role
 	 * @return bool
 	 */
@@ -220,12 +237,23 @@ class FrontendUser implements SingletonInterface {
 	
 	/**
 	 * Aktuellen FE-USer manuell ausloggen
+	 * ```
+	 * \nn\t3::FrontendUser()->logout();
+	 * ```
 	 * @return void
 	 */
 	public function logout() {
 		if (!$this->isLoggedIn()) return false;
-		$GLOBALS['TSFE']->fe_user->logoff();
+		
+		// In der MiddleWare ist der FE-User evtl. noch nicht initialisiert...
+		$TSFE = \nn\t3::Tsfe()->get();
+		if ($TSFE->fe_user) {
+			$TSFE->fe_user->logoff();
+		}
+
+		// ... aber Cookie löschen geht immer!
 		$this->removeCookie();
+
 		// ToDo: Replace with Signal/Slot when deprecated
 		if ($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['felogin']['logout_confirmed']) {
 			$_params = array();
