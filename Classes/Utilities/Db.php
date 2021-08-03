@@ -418,11 +418,23 @@ class Db implements SingletonInterface {
 	 * // oder besser gleich prepared statements verwenden:
 	 * $rows = \nn\t3::Db()->statement( 'SELECT * FROM tt_news WHERE bodytext LIKE :str', ['str'=>"%${keyword}%"] );
 	 * ```
+	 * 
+	 * Bei einem `SELECT` Statement werden die Zeilen aus der Datenbank als Array zurückgegeben.
+	 * Bei allen anderen Statements (z.B. `UPDATE` oder `DELETE`) wird die Anzahl der betroffenen Zeilen zurückgegeben.
+	 * 
 	 * @return mixed
 	 */
 	public function statement( $statement = '', $params = [] ) {
 		$connection = $this->getConnection();
-		$result = $connection->fetchAll( $statement, $params );
+
+		// exec / fetchAll --> @siehe https://bit.ly/3ltPF0S
+
+		if (stripos($statement, 'select ') !== false) {
+			$result = $connection->fetchAll( $statement, $params );
+		} else {
+			$result = $connection->exec( $statement, $params );
+		}
+
 		return $result;
 	}
 
