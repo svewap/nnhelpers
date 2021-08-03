@@ -46,6 +46,13 @@ Extremely tolerant of spaces, capitalization, and commas instead of periods
 	\nn\t3::Convert('1,5kb')->toBytes(); // -> 1024
 	\nn\t3::Convert('1.5Gb')->toBytes(); // -> 1610612736
 
+For the reverse (bytes to human readable notation like 1024 -> 1kb) there is
+there is a handy Fluid ViewHelper in the core:
+
+.. code-block:: php
+
+	{fileSize->f:format.bytes()}
+
 | ``@return integer``
 
 \\nn\\t3::Convert()->toFileReference();

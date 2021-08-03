@@ -37,6 +37,10 @@ Existiert auch als ViewHelper:
 
 Alle existierende User-Gruppen zurückgeben
 
+.. code-block:: php
+
+	\nn\t3::FrontendUser()->getAvailableUserGroups();
+
 | ``@return array``
 
 \\nn\\t3::FrontendUser()->getCurrentUser();
@@ -64,12 +68,22 @@ User-Gruppe des aktuellen FE-Users holen.
 """""""""""""""""""""""""""""""""""""""""""""""
 
 UID des aktuellen Frontend-Users holen
+
+.. code-block:: php
+
+	$uid = \nn\t3::FrontendUser()->getCurrentUserUid();
+
 | ``@return int``
 
 \\nn\\t3::FrontendUser()->getLanguage();
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Get language uid of current user
+Sprach-UID des aktuellen Users holen
+
+.. code-block:: php
+
+	$languageUid = \nn\t3::FrontendUser()->getLanguage();
+
 | ``@return int``
 
 \\nn\\t3::FrontendUser()->getSessionData(``$key = NULL``);
@@ -87,12 +101,22 @@ Session-Data für FE-User holen
 """""""""""""""""""""""""""""""""""""""""""""""
 
 Session-ID des aktuellen Frontend-Users holen
+
+.. code-block:: php
+
+	$sessionId = \nn\t3::FrontendUser()->getSessionId();
+
 | ``@return string``
 
 \\nn\\t3::FrontendUser()->hasRole(``$roleUid``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Check if the logged in user has a specific role
+Prüft, ob der User eine bestimmte Rolle hat.
+
+.. code-block:: php
+
+	\nn\t3::FrontendUser()->hasRole( $roleUid );
+
 | ``@param $role``
 | ``@return bool``
 
@@ -113,9 +137,14 @@ Prüft, ob der aktuelle fe-user innerhalb einer bestimmte Benutzergruppe ist.
 \\nn\\t3::FrontendUser()->isLoggedIn();
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Check if the user is logged
-vorher: isset($GLOBALS['TSFE']) && $GLOBALS['TSFE']->loginUser
-| ``@return bool``
+Prüft, ob der User aktuell als FE-User eingeloggt ist.
+Früher: isset($GLOBALS['TSFE']) && $GLOBALS['TSFE']->loginUser
+
+.. code-block:: php
+
+	\nn\t3::FrontendUser()->isLoggedIn();
+
+| ``@return boolean``
 
 \\nn\\t3::FrontendUser()->login(``$username, $password = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
@@ -136,6 +165,11 @@ ab v10: Alias zu ``\nn\t3::FrontendUserAuthentication()->loginByUsername( $usern
 """""""""""""""""""""""""""""""""""""""""""""""
 
 Aktuellen FE-USer manuell ausloggen
+
+.. code-block:: php
+
+	\nn\t3::FrontendUser()->logout();
+
 | ``@return void``
 
 \\nn\\t3::FrontendUser()->removeCookie();

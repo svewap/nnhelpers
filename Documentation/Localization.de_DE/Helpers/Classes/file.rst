@@ -372,7 +372,7 @@ nicht-existierenden Pfaden.
 
 | ``@return string``
 
-\\nn\\t3::File()->process(``$fileObj = '', $processing = []``);
+\\nn\\t3::File()->process(``$fileObj = '', $processing = [], $returnProcessedImage = false``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
 Berechnet ein Bild über ``maxWidth``, ``maxHeight`` etc.
@@ -390,6 +390,13 @@ funktioniert ``cropVariant`` nur bei Übergabe einer ``FileReference``.
 	\nn\t3::File()->process( $sysFile, ['maxWidth'=>200] );
 	\nn\t3::File()->process( $sysFile, ['maxWidth'=>200, 'absolute'=>true] );
 	\nn\t3::File()->process( $sysFileReference, ['maxWidth'=>200, 'cropVariant'=>'square'] );
+
+Mit dem Parameter ``$returnProcessedImage = true`` wird nicht der Dateipfad zum neuen Bild
+sondern das processedImage-Object zurückgegeben.
+
+.. code-block:: php
+
+	\nn\t3::File()->process( 'fileadmin/imgs/portrait.jpg', ['maxWidth'=>200], true );
 
 | ``@return string``
 

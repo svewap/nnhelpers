@@ -46,6 +46,13 @@ Extrem tolerant, was Leerzeichen, Groß/Klein-Schreibung und Kommas statt Punkte
 	\nn\t3::Convert('1,5kb')->toBytes(); // -> 1024
 	\nn\t3::Convert('1.5Gb')->toBytes(); // -> 1610612736
 
+Für den umgekehrten Weg (Bytes zu menschenlesbarer Schreibweise wie 1024 -> 1kb) gibt
+es einen praktischen Fluid ViewHelper im Core:
+
+.. code-block:: php
+
+	{fileSize->f:format.bytes()}
+
 | ``@return integer``
 
 \\nn\\t3::Convert()->toFileReference();

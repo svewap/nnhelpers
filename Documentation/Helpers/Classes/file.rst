@@ -371,7 +371,7 @@ non-existing paths.
 
 | ``@return string``
 
-\\nn\\t3::File()->process(``$fileObj = '', $processing = []``);
+\\nn\\t3::File()->process(``$fileObj = '', $processing = [], $returnProcessedImage = false``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
 Calculates an image üover ``maxWidth``, ``maxHeight`` etc.
@@ -389,6 +389,13 @@ Since crop settings are stored in FileReference and not File,
 	\nn\t3::File()->process( $sysFile, ['maxWidth'=>200] );
 	\nn\t3::File()->process( $sysFile, ['maxWidth'=>200, 'absolute'=>true] );
 	\nn\t3::File()->process( $sysFileReference, ['maxWidth'=>200, 'cropVariant'=>'square'] );
+
+Using the ``$returnProcessedImage = true`` parameter, not the file path to the new image.
+but the processedImage object is returned.
+
+.. code-block:: php
+
+	\nn\t3::File()->process( 'fileadmin/imgs/portrait.jpg', ['maxWidth'=>200], true );
 
 | ``@return string``
 
