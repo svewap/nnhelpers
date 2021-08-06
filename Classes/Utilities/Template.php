@@ -99,7 +99,8 @@ class Template implements SingletonInterface {
 			$this->setTemplatePaths( $view, $templatePaths );
 			$this->removeControllerPath( $view );
 		}
-		$view->assignMultiple( $vars );
+		
+		$view->assignMultiple( $vars ?: [] );
 
 		foreach ($html as $k=>$v) {
 			if (is_string($v) && trim($v)) {
