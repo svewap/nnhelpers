@@ -6,14 +6,20 @@
 // FlexForm für ein Plugin registrieren
 \nn\t3::Registry()->flexform( '[vendor-ucc]\[ext-ucc]', '[ext-lower]', 'FILE:EXT:[ext-lower]/Configuration/FlexForm/flexform.xml' );
 
+// Überschriften (`tt_content.header`) mehrzeilig machen - durch Änderung des `type` zu `text`
+\nn\t3::TCA()->setContentConfig('header', 'text');
+
+// Seitentitel (`pages.title`) mehrzeilig machen 
+\nn\t3::TCA()->setPagesConfig('title', 'text');
+
 // (!!) Wichtig: Abhängigkeiten zu z.B. mask in ext_emconf.php nicht vergessen
 if ($_GET['route'] != '/module/tools/MaskMask') {
 
     // EXT:mask mit eigenen renderType überschreiben
-    if ($GLOBALS['TCA']['tt_content']['columns']['tx_mask_iconcollection']) {
-	    $GLOBALS['TCA']['tt_content']['columns']['tx_mask_iconcollection']['config']['renderType'] = '[ext-lower]IconCollection';
-	    $GLOBALS['TCA']['tt_content']['columns']['tx_mask_iconcollection']['config']['iconconfig'] = 'tx_[ext-lower].iconcollection';
-    }
+    \nn\t3::TCA()->setContentConfig('tx_mask_iconcollection', [
+        'renderType' => '[ext-lower]IconCollection',
+        'iconconfig' => 'tx_[ext-lower].iconcollection',
+    ]);
 
     // FlexForm in Feld einschleusen
     if ($GLOBALS['TCA']['tt_content']['columns']['tx_mask_slideropt']) {
