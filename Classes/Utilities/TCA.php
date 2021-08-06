@@ -271,4 +271,150 @@ class TCA implements SingletonInterface {
 		}
 	}
 
+	/**
+	 * Eine Konfiguration aus dem TCA holen für einen Pfad holen.
+	 * Liefert eine Referenz zu dem `config`-Array des ensprechenden Feldes zurück.
+	 *  
+	 * ```
+	 * \nn\t3::TCA()->getConfig('tt_content.columns.tx_mask_iconcollection');
+	 * ```
+	 * @return array
+	 */
+	public function &getConfig( $path = '' ) {
+		
+		$parts = \nn\t3::Arrays($path)->trimExplode('.');
+		$ref = &$GLOBALS['TCA'];
+
+		while (count($parts) > 0) {
+			$part = array_shift($parts);
+			$ref = &$ref[$part];
+		}
+		$ref = &$ref['config'];
+		return $ref;
+	}
+
+	/**
+	 * Eine Konfiguration des TCA überschreiben, z.B. um ein `mask`-Feld mit einem eigenen renderType zu
+	 * überschreiben oder Core-Einstellungen im TCA an den Tabellen `pages` oder `tt_content` zu ändern.
+	 * 
+	 * Folgendes Beispiel setzt/überschreibt im `TCA` das `config`-Array unter:
+	 * ```
+	 * $GLOBALS['TCA']['tt_content']['columns']['mycol']['config'][...]
+	 * ```
+	 * ```
+	 * \nn\t3::TCA()->setConfig('tt_content.columns.mycol', [
+	 * 	'renderType' => 'nnsiteIconCollection',
+	 * 	'iconconfig' => 'tx_nnsite.iconcollection',
+	 * ]);
+	 * ```
+	 * Siehe auch `\nn\t3::TCA()->setContentConfig()` für eine Kurzfassung dieser Methode, wenn es um 
+	 * die Tabelle `tt_content` geht und `\nn\t3::TCA()->setPagesConfig()` für die Tabelle `pages`
+	 * 
+	 * @return array
+	 */
+	public function setConfig( $path = '', $override = [] ) {
+		if ($config = &$this->getConfig( $path )) {
+			$config = \nn\t3::Arrays()->merge( $config, $override );
+		}
+		return $config;
+	}
+
+	/**
+	 * Eine Konfiguration des TCA für die Tabelle `tt_content` setzen oder überschreiben.
+	 * 
+	 * Diese Beispiel überschreibt im `TCA` das `config`-Array der Tabelle `tt_content` für:
+	 * ```
+	 * $GLOBALS['TCA']['tt_content']['columns']['title']['config'][...]
+	 * ```
+	 * ```
+	 * \nn\t3::TCA()->setContentConfig( 'header', 'text' );		// ['type'=>'text', 'rows'=>2]
+	 * \nn\t3::TCA()->setContentConfig( 'header', 'text', 10 );	// ['type'=>'text', 'rows'=>10]
+	 * \nn\t3::TCA()->setContentConfig( 'header', ['type'=>'text', 'rows'=>10] ); // ['type'=>'text', 'rows'=>10]
+	 * ```
+	 * @return array
+	 */
+	public function setContentConfig( $field = '', $override = [], $shortParams = null ) {
+		$config = &$GLOBALS['TCA']['tt_content']['columns'][$field]['config'] ?? [];
+		return $config = \nn\t3::Arrays()->merge( $config, $this->getConfigForType($override, $shortParams) );
+	}
+	
+	/**
+	 * Eine Konfiguration des TCA für die Tabelle `pages` setzen oder überschreiben.
+	 * 
+	 * Diese Beispiel überschreibt im `TCA` das `config`-Array der Tabelle `pages` für:
+	 * ```
+	 * $GLOBALS['TCA']['pages']['columns']['title']['config'][...]
+	 * ```
+	 * ```
+	 * \nn\t3::TCA()->setPagesConfig( 'title', 'text' );			// ['type'=>'text', 'rows'=>2]
+	 * \nn\t3::TCA()->setPagesConfig( 'title', 'text', 10 );		// ['type'=>'text', 'rows'=>10]
+	 * \nn\t3::TCA()->setPagesConfig( 'title', ['type'=>'text', 'rows'=>2] ); // ['type'=>'text', 'rows'=>2]
+	 * ```
+	 * @return array
+	 */
+	public function setPagesConfig( $field = '', $override = [], $shortParams = null ) {
+		$config = &$GLOBALS['TCA']['pages']['columns'][$field]['config'] ?? [];
+		return $config = \nn\t3::Arrays()->merge( $config, $this->getConfigForType($override, $shortParams) );
+	}
+
+	/**
+	 * Default Konfiguration für verschiedene, typische `types` im `TCA` holen.
+	 * Dient als eine Art Alias, um die häufigst verwendeten `config`-Arrays schneller
+	 * und kürzer schreiben zu können
+	 * 
+	 * ```
+	 * \nn\t3::TCA()->getConfigForType( 'text' );			// => ['type'=>'text', 'rows'=>2, ...]
+	 * \nn\t3::TCA()->getConfigForType( 'rte' );			// => ['type'=>'text', 'enableRichtext'=>'true', ...]
+	 * \nn\t3::TCA()->getConfigForType( 'color' );			// => ['type'=>'input', 'renderType'=>'colorpicker', ...]
+	 * \nn\t3::TCA()->getConfigForType( 'fal', 'image' );	// => ['type'=>'input', 'renderType'=>'colorpicker', ...]
+	 * ```
+	 * Default-Konfigurationen können einfach überschrieben / erweitert werden:
+	 * ```
+	 * \nn\t3::TCA()->getConfigForType( 'text', ['rows'=>5] );	// => ['type'=>'text', 'rows'=>5, ...]
+	 * ```
+	 * Für jeden Typ lässt sich der am häufigsten überschriebene Wert im `config`-Array auch
+	 * per Übergabe eines fixen Wertes statt eines `override`-Arrays setzen:
+	 * ```
+	 * \nn\t3::TCA()->getConfigForType( 'text', 10 );			// => ['rows'=>10, ...]
+	 * \nn\t3::TCA()->getConfigForType( 'rte', 'myRteConfig' );	// => ['richtextConfiguration'=>'myRteConfig', ...]
+	 * \nn\t3::TCA()->getConfigForType( 'color', '#ff6600' );	// => ['default'=>'#ff6600', ...]
+	 * \nn\t3::TCA()->getConfigForType( 'fal', 'image' );		// => [ config für das Feld mit dem Key `image` ]
+	 * ```
+	 * @return array 
+	 */
+	public function getConfigForType( $type = '', $override = [] ) {
+		if (is_array($type)) return $type;
+
+		// Fixer Wert statt Array in `override`? Für welches Key im `config`-Array verwenden?
+		$overrideKey = false;
+
+		switch ($type) {
+			case 'text':
+				$config = ['type'=>'text', 'rows'=>2, 'cols'=>50];
+				$overrideKey = 'rows';
+				break;
+			case 'color':
+				$config = \nn\t3::TCA()->getColorPickerTCAConfig();
+				$overrideKey = 'default';
+				break;
+			case 'rte':
+				$config = \nn\t3::TCA()->getRteTCAConfig(); 
+				$overrideKey = 'richtextConfiguration';
+				break;
+			case 'fal':
+				if (!$override) \nn\t3::Exception('`field` muss definiert sein!');
+				if (is_string($override)) $override = ['field'=>$override];
+				$config = \nn\t3::TCA()->getFileFieldTCAConfig( $override['field'], $override ); 
+				break;
+			default:
+				$config = [];
+		}
+		if ($override) {
+			if (!is_array($override) && $overrideKey) {
+				$override = [$overrideKey=>$override];
+			}
+			$config = \nn\t3::Arrays()->merge( $config, $override );
+		}
+		return $config;
+	}
 }
