@@ -94,13 +94,16 @@ class Arrays extends \ArrayObject {
 	 */
     public function trimExplode( $delimiter = ',', $removeEmpty = true ) {
 		$arr = $this->initialArgument !== null ? $this->initialArgument : (array) $this;
+		
 		if ($delimiter === false || $delimiter === true) {
 			$delimiter = ',';
 			$removeEmpty = $delimiter;
 		}
-		if (is_array($arr)) $arr = join($delimiter, $arr);
+
+		$firstDelimiter = is_array($delimiter) ? $delimiter[0] : $delimiter;
+
+		if (is_array($arr)) $arr = join($firstDelimiter, $arr);
 		if (is_array($delimiter)) {
-			$firstDelimiter = $delimiter[0];
 			foreach ($delimiter as $d) {
 				$arr = str_replace( $d, $firstDelimiter, $arr);
 			}
