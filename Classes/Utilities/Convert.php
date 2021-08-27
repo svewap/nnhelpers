@@ -93,9 +93,6 @@ class Convert implements SingletonInterface {
 						$child = $persistenceManager->getObjectByIdentifier($uid, $childType, false);
 						$objectStorage->attach( $child );
 					} else {
-						if ($childType == \TYPO3\CMS\Extbase\Domain\Model\FileReference::class) {
-							$childType = \Nng\Nnhelpers\Domain\Model\FileReference::class;
-						}
 						$child = \nn\t3::injectClass( $childType );
 						$objectStorage->attach( $child );
 					}
@@ -264,6 +261,8 @@ class Convert implements SingletonInterface {
 									if ($expectedModelTypeInStorage != \TYPO3\CMS\Extbase\Domain\Model\FileReference::class) {
 										$persistenceManager = \nn\t3::injectClass(\TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager::class);
 										$storageItem = $persistenceManager->getObjectByIdentifier($sysFileRefUid, $expectedModelTypeInStorage, false);
+									} else {
+										$storageItem->setOriginalResource( $entry->getOriginalResource() );
 									}
 								} else {
 									$attach = false;

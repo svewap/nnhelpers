@@ -239,9 +239,15 @@ class Obj implements SingletonInterface {
 			$falData = [];
 			if ($originalResource = $obj->getOriginalResource()) {
 				$props = $originalResource->getProperties();
+				$props['publicUrl'] = $originalResource->getPublicUrl();
 				foreach ($map as $k=>$v) {
-					$falData[$v] = $props[$v] ?: $this->prop($originalResource, $v);
+					$falData[$v] = $props[$v];
 				}
+			}
+
+			// Falls FAL nicht über Backend erzeugt wurde, fehlt evtl. das Feld "crop". Also: mit default nachrüsten
+			if (!$falData['crop']) {
+				$falData['crop'] = json_encode(['default'=>['cropArea' => ['x'=>0, 'y'=>0, 'width'=>1, 'height'=>1]]]);
 			}
 
 			if ($addClass) $falData['__class'] = FalFileReference::class;
