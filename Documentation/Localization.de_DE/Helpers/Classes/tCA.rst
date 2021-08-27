@@ -66,6 +66,50 @@ Alias zu ``\nn\t3::Db()->getColumns()``
 
 | ``@return array``
 
+\\nn\\t3::TCA()->getConfig(``$path = ''``);
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+Eine Konfiguration aus dem TCA holen für einen Pfad holen.
+Liefert eine Referenz zu dem ``config``-Array des ensprechenden Feldes zurück.
+
+.. code-block:: php
+
+	\nn\t3::TCA()->getConfig('tt_content.columns.tx_mask_iconcollection');
+
+| ``@return array``
+
+\\nn\\t3::TCA()->getConfigForType(``$type = '', $override = []``);
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+Default Konfiguration für verschiedene, typische ``types`` im ``TCA`` holen.
+Dient als eine Art Alias, um die häufigst verwendeten ``config``-Arrays schneller
+und kürzer schreiben zu können
+
+.. code-block:: php
+
+	\nn\t3::TCA()->getConfigForType( 'text' );           // => ['type'=>'text', 'rows'=>2, ...]
+	\nn\t3::TCA()->getConfigForType( 'rte' );            // => ['type'=>'text', 'enableRichtext'=>'true', ...]
+	\nn\t3::TCA()->getConfigForType( 'color' );          // => ['type'=>'input', 'renderType'=>'colorpicker', ...]
+	\nn\t3::TCA()->getConfigForType( 'fal', 'image' );   // => ['type'=>'input', 'renderType'=>'colorpicker', ...]
+
+Default-Konfigurationen können einfach überschrieben / erweitert werden:
+
+.. code-block:: php
+
+	\nn\t3::TCA()->getConfigForType( 'text', ['rows'=>5] );   // => ['type'=>'text', 'rows'=>5, ...]
+
+Für jeden Typ lässt sich der am häufigsten überschriebene Wert im ``config``-Array auch
+per Übergabe eines fixen Wertes statt eines ``override``-Arrays setzen:
+
+.. code-block:: php
+
+	\nn\t3::TCA()->getConfigForType( 'text', 10 );           // => ['rows'=>10, ...]
+	\nn\t3::TCA()->getConfigForType( 'rte', 'myRteConfig' ); // => ['richtextConfiguration'=>'myRteConfig', ...]
+	\nn\t3::TCA()->getConfigForType( 'color', '#ff6600' );   // => ['default'=>'#ff6600', ...]
+	\nn\t3::TCA()->getConfigForType( 'fal', 'image' );       // => [ config für das Feld mit dem Key `image` ]
+
+| ``@return array``
+
 \\nn\\t3::TCA()->getFileFieldTCAConfig(``$fieldName = 'media', $override = []``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
@@ -152,6 +196,68 @@ Beispiel im TCA:
 	    'typoscriptPath' => 'plugin.tx_nnnewsroom.settings.templates',
 	    //'pageconfigPath' => 'tx_nnnewsroom.colors',
 	]
+
+| ``@return array``
+
+\\nn\\t3::TCA()->setConfig(``$path = '', $override = []``);
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+Eine Konfiguration des TCA überschreiben, z.B. um ein ``mask``-Feld mit einem eigenen renderType zu
+überschreiben oder Core-Einstellungen im TCA an den Tabellen ``pages`` oder ``tt_content`` zu ändern.
+
+Folgendes Beispiel setzt/überschreibt im ``TCA`` das ``config``-Array unter:
+
+.. code-block:: php
+
+	$GLOBALS['TCA']['tt_content']['columns']['mycol']['config'][...]
+
+.. code-block:: php
+
+	\nn\t3::TCA()->setConfig('tt_content.columns.mycol', [
+	    'renderType' => 'nnsiteIconCollection',
+	    'iconconfig' => 'tx_nnsite.iconcollection',
+	]);
+
+Siehe auch ``\nn\t3::TCA()->setContentConfig()`` für eine Kurzfassung dieser Methode, wenn es um
+die Tabelle ``tt_content`` geht und ``\nn\t3::TCA()->setPagesConfig()`` für die Tabelle ``pages``
+
+| ``@return array``
+
+\\nn\\t3::TCA()->setContentConfig(``$field = '', $override = [], $shortParams = NULL``);
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+Eine Konfiguration des TCA für die Tabelle ``tt_content`` setzen oder überschreiben.
+
+Diese Beispiel überschreibt im ``TCA`` das ``config``-Array der Tabelle ``tt_content`` für:
+
+.. code-block:: php
+
+	$GLOBALS['TCA']['tt_content']['columns']['title']['config'][...]
+
+.. code-block:: php
+
+	\nn\t3::TCA()->setContentConfig( 'header', 'text' );     // ['type'=>'text', 'rows'=>2]
+	\nn\t3::TCA()->setContentConfig( 'header', 'text', 10 ); // ['type'=>'text', 'rows'=>10]
+	\nn\t3::TCA()->setContentConfig( 'header', ['type'=>'text', 'rows'=>10] ); // ['type'=>'text', 'rows'=>10]
+
+| ``@return array``
+
+\\nn\\t3::TCA()->setPagesConfig(``$field = '', $override = [], $shortParams = NULL``);
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+Eine Konfiguration des TCA für die Tabelle ``pages`` setzen oder überschreiben.
+
+Diese Beispiel überschreibt im ``TCA`` das ``config``-Array der Tabelle ``pages`` für:
+
+.. code-block:: php
+
+	$GLOBALS['TCA']['pages']['columns']['title']['config'][...]
+
+.. code-block:: php
+
+	\nn\t3::TCA()->setPagesConfig( 'title', 'text' );            // ['type'=>'text', 'rows'=>2]
+	\nn\t3::TCA()->setPagesConfig( 'title', 'text', 10 );        // ['type'=>'text', 'rows'=>10]
+	\nn\t3::TCA()->setPagesConfig( 'title', ['type'=>'text', 'rows'=>2] ); // ['type'=>'text', 'rows'=>2]
 
 | ``@return array``
 

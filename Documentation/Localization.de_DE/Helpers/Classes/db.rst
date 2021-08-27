@@ -375,6 +375,9 @@ daher über den normal QueryBuilder nicht erreicht werden könnten.
 	// oder besser gleich prepared statements verwenden:
 	$rows = \nn\t3::Db()->statement( 'SELECT  FROM tt_news WHERE bodytext LIKE :str', ['str'=>"%${keyword}%"] );
 
+Bei einem ``SELECT`` Statement werden die Zeilen aus der Datenbank als Array zurückgegeben.
+Bei allen anderen Statements (z.B. ``UPDATE`` oder ``DELETE``) wird die Anzahl der betroffenen Zeilen zurückgegeben.
+
 | ``@return mixed``
 
 \\nn\\t3::Db()->tableExists(``$table = ''``);
