@@ -9,7 +9,7 @@ define(['jquery', 'TYPO3/CMS/Nnhelpers/NnhelpersPinModule'
 
 		if (this.initialized) return;
 		this.initialized = true;		
-		
+
 		$(document).on('keyup', '.finder', function () {
 			var $input = $(this);
 			var sword = $input.val();

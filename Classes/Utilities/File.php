@@ -32,6 +32,28 @@ class File implements SingletonInterface {
 	const UNSAFE_FILENAME_CHARACTER_EXPRESSION = '\\x00-\\x2C\\/\\x3A-\\x3F\\x5B-\\x60\\x7B-\\xBF';
 	
 	/**
+	 * Holt Pfad zur Datei, relativ zum Typo3-Installtionsverzeichnis (PATH_site).
+	 * Kann mit allen Arten von Objekten umgehen.
+	 * ```
+	 * \nn\t3::File()->getPublicUrl( $falFile );		// \TYPO3\CMS\Core\Resource\FileReference
+	 * \nn\t3::File()->getPublicUrl( $fileReference );	// \TYPO3\CMS\Extbase\Domain\Model\FileReference
+	 * ```
+	 * @return string
+	 */
+	public function getPublicUrl( $obj = null ) {
+		$url = false;
+		if (is_string($obj)) return $obj;
+		if (\nn\t3::Obj()->isFalFile( $obj ) || \nn\t3::Obj()->isFile( $obj )) {
+			$url = $obj->getPublicUrl();
+		} else if (\nn\t3::Obj()->isFileReference($obj)) {
+			$url = $obj->getOriginalResource()->getPublicUrl();
+		} else if (is_array($obj) && $url = ($obj['publicUrl'] ?? false)) {
+			return $url;
+		}
+		return $url;
+	}
+
+	/**
 	 * Prüft, ob eine Datei existiert.
 	 * Gibt absoluten Pfad zur Datei zurück.
 	 * ```
@@ -142,7 +164,6 @@ class File implements SingletonInterface {
 
 		// Ordner anlegen, falls noch nicht vorhanden
 		\nn\t3::Storage()->getFolder( $path );
-
 		\TYPO3\CMS\Core\Utility\GeneralUtility::upload_copy_move($src, $dest);
 		return $this->exists( $dest ) ? $dest : false;
 	}
@@ -176,14 +197,7 @@ class File implements SingletonInterface {
 	 */
 	public function unlink ( $file = null ) {
 
-		if (!is_string($file)) {
-			if (\nn\t3::Obj()->isFalFile( $file )) {
-				$file = $file->getPublicUrl();
-			} else if (\nn\t3::Obj()->isFileReference($file)) {
-				$file = $file->getOriginalResource()->getPublicUrl();
-			}
-		}
-
+		$file = $this->getPublicUrl( $file );
 		if (!trim($file)) return false;
 
 		$file = $this->absPath($this->absPath( $file ));
@@ -235,14 +249,16 @@ class File implements SingletonInterface {
 		if (strpos($file, sys_get_temp_dir()) !== false) return $file;
 
 		$file = $this->resolvePathPrefixes( $file );
-		if (\nn\t3::t3Version() > 9) {
-			return GeneralUtility::getFileAbsFileName($file);
-		}
+		$file = $this->normalizePath($file);
 
 		$pathSite = \nn\t3::Environment()->getPathSite();
 		$file = str_replace( $pathSite, '', $file );
 
-		return $this->normalizePath($pathSite . $file);
+		if (\nn\t3::t3Version() > 9) {
+			return GeneralUtility::getFileAbsFileName($file);
+		}
+
+		return $pathSite . $file;
 	}
 	
 	/**
@@ -275,8 +291,10 @@ class File implements SingletonInterface {
 	public function relPath ( $path = '' ) {
 		if (!$path) $path = \nn\t3::Environment()->getPathSite();
 		$isFolder = $this->isFolder( $path );
+
 		$path = $this->absPath( $path );
 		$name = rtrim(PathUtility::getRelativePathTo($path), '/');
+
 		if ($isFolder) $name .= '/';
 		return $name;
 	}
@@ -293,19 +311,19 @@ class File implements SingletonInterface {
 	 */
 	public function normalizePath( $path ) {
 		$hasTrailingSlash = substr($path,-1) == '/';
-		if ($n = realpath($path)) {
-			$path = $n;
-		} else {
-			$path = array_reduce(explode('/', $path), function($a, $b) {
-				if ($a === 0) $a = '/';
-				if ($b === '' || $b === '.') return $a;
-				if ($b === '..') return dirname($a);
-				return preg_replace('/\/+/', '/', "{$a}/{$b}");
-			}, 0);
-		}
+		$hasStartingSlash = substr($path,0,1) == '/';
+
+		$path = array_reduce(explode('/', $path), function($a, $b) {
+			if ($a === 0 || $a === null) $a = '/';
+			if ($b === '' || $b === '.') return $a;
+			if ($b === '..') return dirname($a);
+			return preg_replace('/\/+/', '/', "{$a}/{$b}");
+		}, 0);
+		
 		$isFolder = is_dir( $path ) || $hasTrailingSlash;
 		$path = rtrim( $path, '/' );
 		if ($isFolder) $path .= '/';
+		if (!$hasStartingSlash) $path = ltrim( $path, '/');
 		return $path;
 	}
 
@@ -320,7 +338,7 @@ class File implements SingletonInterface {
 	 * @return boolean
 	 */
 	public function createFolder ( $path = null ) {
-		$resourceFactory = \TYPO3\CMS\Core\Resource\ResourceFactory::getInstance();
+		$resourceFactory = GeneralUtility::makeInstance( ResourceFactory::class );
 		$defaultStorage = $resourceFactory->getDefaultStorage();
 		$basePath = \nn\t3::Environment()->getPathSite() . $defaultStorage->getConfiguration()['basePath'];
 		if (file_exists( $basePath . $path)) return true;
@@ -432,16 +450,26 @@ class File implements SingletonInterface {
 	 * Durchsucht dazu alle sys_file_storage-Einträge und vergleicht, 
 	 * ob der basePath des Storages zum Pfad der Datei passt.
 	 * ```
-	 * \nn\t3::File()->getLocalStorage('fileadmin/test/beispiel.txt');	
+	 * \nn\t3::File()->getStorage('fileadmin/test/beispiel.txt');
+	 * \nn\t3::File()->getStorage( $falFile );
+	 * \nn\t3::File()->getStorage( $sysFileReference );
 	 * // gibt ResourceStorage mit basePath "fileadmin/" zurück
 	 * ```
 	 * @return ResourceStorage
 	 */
-	// findLocalStorageForFile
 	public function getStorage( $file, $createIfNotExists = false ) {
-	
+		if (!is_string($file)) {
+			if (\nn\t3::Obj()->isFalFile( $file ) || \nn\t3::Obj()->isFile( $file )) {
+				return $file->getStorage();
+			} else if (\nn\t3::Obj()->isFileReference($file)) {
+				return $file->getOriginalResource()->getStorage();
+			}
+			return false;
+		}
+
 		// ToDo: Prüfen, ob über ResourceFactory lösbar ResourceFactory::getInstance()->retrieveFileOrFolderObject($filenameOrSysFile->getOriginalResource()->getPublicUrl());
 
+		$file = $this->stripPathSite( $file );
 		$storageRepository = \nn\t3::Storage();
 		if (!trim($file)) return false;
 		
@@ -463,12 +491,11 @@ class File implements SingletonInterface {
 				$curPrecision = strlen($arr['basePath']);
 			}
 		}
-		
+
 		if ($createIfNotExists && !$storage) {
 			$uid = $storageRepository->createLocalStorage( $dirname.' (nnhelpers)', $dirname, 'relative' );
 			$storageRepository->clearStorageRowCache();
-			$storage = $storageRepository->findByUid( $uid );
-			
+			$storage = $storageRepository->findByUid( $uid );			
 		}
 		
 		return $storage;
@@ -543,6 +570,7 @@ class File implements SingletonInterface {
 		$file = str_replace($pathSite, '', $file);
 		if (substr($file, -1) == '/') return $file;
 		if (is_dir($pathSite.$file)) return $file;
+		if (!pathinfo($file, PATHINFO_EXTENSION)) return $file . '/';
 		return dirname($file).'/';
 	}
 
@@ -560,7 +588,7 @@ class File implements SingletonInterface {
 	public function getRelativePathInStorage( $file, $storage = null ) {
 
 		$file = $this->stripPathSite( $file );
-		$resource = ResourceFactory::getInstance()->retrieveFileOrFolderObject( $file );
+		$resource = GeneralUtility::makeInstance( ResourceFactory::class )->retrieveFileOrFolderObject( $file );
 		
 		if (!$resource) return false;
 		return ltrim($resource->getIdentifier(), '/');
@@ -601,10 +629,10 @@ class File implements SingletonInterface {
 			$storageFolder = $storageConfiguration['basePath'];
 	
 		} else {
-			$file = $file->getOriginalResource()->getPublicUrl();
+			$file = $this->getPublicUrl($file);
 			$storageFolder = '';
 		}
-		
+	
 		$relPath = $storageFolder . $file;
 		$absPath = \nn\t3::Environment()->getPathSite() . $storageFolder . $file;
 
@@ -851,7 +879,7 @@ class File implements SingletonInterface {
 		} else if (is_string($fileObj) && strpos($fileObj, ':/') !== false) {
 
 			// String mit file_storage-Angabe (1:/uploads/test.jpg)
-			$resourceFactory = \TYPO3\CMS\Core\Resource\ResourceFactory::getInstance();	
+			$resourceFactory = GeneralUtility::makeInstance( ResourceFactory::class );	
 			$file = $resourceFactory->getFileObjectFromCombinedIdentifier( $fileObj );
 			$filename = $file->getPublicUrl();
 		} else if (is_string($fileObj)) {
@@ -901,12 +929,12 @@ class File implements SingletonInterface {
 		// Bereits berechnete Bildgrößen löschen
 		\nn\t3::Fal()->clearCache( $filenameOrSysFile );
 
-		if (is_object($filenameOrSysFile)) {
-			$filename = $filenameOrSysFile->getFilepath();
-		} else {
+		if (is_string($filenameOrSysFile)) {
 			$filename = $filenameOrSysFile;
+		} else if (is_a($filenameOrSysFile, \TYPO3\CMS\Core\Resource\File::class)) {
+			$filename = $filenameOrSysFile->getPublicUrl();
 		}
-
+		
 		if (!trim($filename)) return;
 		$pathSite = \nn\t3::Environment()->getPathSite();
 
@@ -927,10 +955,11 @@ class File implements SingletonInterface {
 		if ($maxHeight = $processing['maxHeight']) {
 			$processingInstructions['file.']['maxH'] = $maxHeight;
 		}
-
+		
 		// EXIF-Daten vorhanden? Dann als JSON speichern, weil sie nach dem Processing verloren gehen würden.
 		if (is_object($filenameOrSysFile)) {
-			$exif = $filenameOrSysFile->getExif();
+			$uid = $filenameOrSysFile->getUid();
+			$exif = \nn\t3::Db()->findByUid('sys_file', $uid)['exif'] ?? [];
 		} else if ($exif = $this->getImageData($filename)) {
 			$exif = $this->extractExifData( $filename );
 		}
@@ -947,7 +976,7 @@ class File implements SingletonInterface {
 		}
 
 		$exif = array_merge($this->getData( $filename ), ['file' => $filename]);
-		
+
 		// Update der Meta-Daten für das Bild
 		if (is_object($filenameOrSysFile)) {
 			\nn\t3::Fal()->updateMetaData( $filenameOrSysFile );

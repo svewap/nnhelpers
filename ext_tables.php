@@ -13,9 +13,10 @@ call_user_func(
                 'tools',
                 'tx_nnhelpers_m1',
                 'top',
-                [
-                    'Module' => 'index, test, exportDocumentation'
-                ],
+                \nn\t3::Registry()->parseControllerActions([
+                    \Nng\Nnhelpers\Controller\ModuleController::class => 'index, exportDocumentation',
+                    \Nng\Nnhelpers\Controller\TestController::class => 'test',
+                ]),
                 [
                     'access'    => 'admin',
                     'icon'      => 'EXT:nnhelpers/Resources/Public/Icons/module-icon.svg',
@@ -23,5 +24,6 @@ call_user_func(
                 ]
             );
         }
+
     },
 'nnhelpers');

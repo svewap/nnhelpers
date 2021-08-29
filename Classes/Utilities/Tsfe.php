@@ -171,7 +171,7 @@ class Tsfe implements SingletonInterface {
 	
 			$this->bootstrap();
 
-		} else {
+		} else if (\nn\t3::t3Version() < 11){
 
 			$request = $GLOBALS['TYPO3_REQUEST'] ?? ServerRequestFactory::fromGlobals();
 			$site = $request->getAttribute('site');
@@ -211,6 +211,56 @@ class Tsfe implements SingletonInterface {
 
 			$GLOBALS['TSFE']->settingLanguage();
 			$GLOBALS['TSFE']->settingLocale();
+
+		} else if (\nn\t3::t3Version() < 12) {
+
+			$request = $GLOBALS['TYPO3_REQUEST'] ?? ServerRequestFactory::fromGlobals();
+			$site = $request->getAttribute('site');
+			if (!$site instanceof Site) {
+				$sites = GeneralUtility::makeInstance(SiteFinder::class)->getAllSites();
+				$site = reset($sites);
+				if (!$site instanceof Site) {
+					$site = new NullSite();
+				}
+			}
+			$language = $request->getAttribute('language');
+			if (!$language instanceof SiteLanguage) {
+				$language = $site->getDefaultLanguage();
+			}
+
+			$id = $request->getQueryParams()['id'] ?? $request->getParsedBody()['id'] ?? $site->getRootPageId();
+			$type = $request->getQueryParams()['type'] ?? $request->getParsedBody()['type'] ?? '0';
+	
+			$feUserAuth = GeneralUtility::makeInstance(\TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication::class);
+
+			$GLOBALS['TSFE'] = GeneralUtility::makeInstance(
+				TypoScriptFrontendController::class,
+				GeneralUtility::makeInstance(Context::class),
+				$site,
+				$language,
+				$request->getAttribute('routing', new PageArguments((int)$id, (string)$type, [])),
+				$feUserAuth
+			);
+
+			$GLOBALS['TSFE']->sys_page = GeneralUtility::makeInstance(PageRepository::class);
+			$GLOBALS['TSFE']->tmpl = GeneralUtility::makeInstance(TemplateService::class);
+
+			$objectManager = GeneralUtility::makeInstance(ObjectManager::class);
+			$configurationManager = $objectManager->get(ConfigurationManagerInterface::class);
+			$GLOBALS['TSFE']->tmpl->setup = $configurationManager->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_FULL_TYPOSCRIPT);
+			
+			$contentObject = GeneralUtility::makeInstance(ContentObjectRenderer::class);
+			$contentObject->start([]);
+			//$contentObject->cObjectDepthCounter = 100;
+
+
+			$GLOBALS['TSFE']->cObj = $contentObject;
+			$GLOBALS['TSFE']->settingLanguage();
+
+			$userSessionManager = \TYPO3\CMS\Core\Session\UserSessionManager::create('FE');
+			$userSession = $userSessionManager->createAnonymousSession();
+			$GLOBALS['TSFE']->fe_user = $userSession;
+
 		}
 
 	}

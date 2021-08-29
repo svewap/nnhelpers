@@ -16,11 +16,13 @@
                 {method.comment->f:format.raw()->f:format.nl2br()}
                 
                 <f:alias map="{btnid:'{nnt3:uniqid()}'}">
-                    <a href="#" class="btn btn-sm btn-default mt-3" data-toggle="collapse" data-target="#sc-{btnid}">
-                        <i class="fas fa-code"></i> {f:translate(key:'sourcecode')}
-                    </a>
-                    <div id="sc-{btnid}" class="collapse">
-                        <pre class="mt-4">{method.sourceCode}</pre>
+                    <div class="src-code">
+                        <a href="#" class="btn btn-sm btn-default mt-3" data-toggle="collapse" data-target="#sc-{btnid}" data-bs-toggle="collapse" data-bs-target="#sc-{btnid}">
+                            <i class="fas fa-code"></i> {f:translate(key:'sourcecode')}
+                        </a>
+                        <div id="sc-{btnid}" class="collapse">
+                            <pre class="mt-4">{method.sourceCode}</pre>
+                        </div>    
                     </div>
                 </f:alias>
 

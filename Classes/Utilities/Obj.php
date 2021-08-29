@@ -86,11 +86,11 @@ class Obj implements SingletonInterface {
 	}
 
 	/**
-	 * 	Prüft, ob es sich bei dem Object um eine Storage handelt.
-	 *	```
-	 *	\nn\t3::Obj()->isStorage( $obj );
-	 *	```
-	 * 	@return boolean
+	 * Prüft, ob es sich bei dem Object um eine Storage handelt.
+	 * ```
+	 * \nn\t3::Obj()->isStorage( $obj );
+	 * ```
+	 * @return boolean
 	 */
 	public function isStorage ( $obj ) {
 		if (!is_object($obj) || is_string($obj)) return false;
@@ -99,11 +99,11 @@ class Obj implements SingletonInterface {
 	}
 	
 	/**
-	 * 	Prüft, ob es sich bei dem Object um eine \TYPO3\CMS\Extbase\Domain\Model\FileReference handelt.
-	 *	```
-	 *	\nn\t3::Obj()->isFileReference( $obj );
-	 *	```
-	 * 	@return boolean
+	 * Prüft, ob es sich bei dem Object um eine `\TYPO3\CMS\Extbase\Domain\Model\FileReference` handelt.
+	 * ```
+	 * \nn\t3::Obj()->isFileReference( $obj );
+	 * ```
+	 * @return boolean
 	 */
 	public function isFileReference ( $obj ) {
 		if (!is_object($obj)) return false;
@@ -113,11 +113,11 @@ class Obj implements SingletonInterface {
 	}
 	
 	/**
-	 * 	Prüft, ob es sich bei dem Object um eine \TYPO3\CMS\Core\Resource\FileReference handelt.
-	 *	```
-	 *	\nn\t3::Obj()->isFalFile( $obj );
-	 *	```
-	 * 	@return boolean
+	 * Prüft, ob es sich bei dem Object um eine `\TYPO3\CMS\Core\Resource\FileReference` handelt.
+	 * ```
+	 * \nn\t3::Obj()->isFalFile( $obj );
+	 * ```
+	 * @return boolean
 	 */
 	public function isFalFile ( $obj ) {
 		if (!is_object($obj)) return false;
@@ -125,6 +125,20 @@ class Obj implements SingletonInterface {
 		return false;
 	}
 	
+	/**
+	 * Prüft, ob es sich bei dem Object um ein `\TYPO3\CMS\Core\Resource\File` handelt.
+	 * ```
+	 * \nn\t3::Obj()->isFile( $obj );
+	 * ```
+	 * @return boolean
+	 */
+	public function isFile ( $obj ) {
+		if (!is_object($obj)) return false;
+		if (is_a($obj, \TYPO3\CMS\Core\Resource\File::class)) return true;
+		return false;
+	}
+	
+
 	/**
 	 * Prüft, ob es sich bei dem Object um eine SysCategory handelt.
 	 * Berücksichtigt alle Modelle, die in `sys_category` gespeichert werden.

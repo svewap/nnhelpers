@@ -77,7 +77,11 @@ class Content implements SingletonInterface {
 	 * @return string
 	 */
 	public function render( $ttContentUid = null, $data = [] ) {
+
 		if (!$ttContentUid) return '';
+		
+		\nn\t3::Tsfe()->get();
+
 		$conf = [
 			'tables' => 'tt_content',
 			'source' => $ttContentUid,

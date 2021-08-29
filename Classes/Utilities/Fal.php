@@ -280,9 +280,8 @@ class Fal implements SingletonInterface {
 		} else {
 			// "Normale" Datei: Datei in Ordner kopieren und FAL erstellen
 
-			// Im Zielverzeichnis zunächst temp-Namen verwenden, um Überschreiben zu verhindern
-			$tmpName = uniqid();
-			$absTmpName = $absDestFolderPath . $tmpName;
+			// Name der Datei im Zielverzeichnis
+			$absTmpName = $absDestFolderPath . $srcFileBaseName;
 
 			// Kopieren
 			if ($forceCreateNew) {
@@ -296,6 +295,7 @@ class Fal implements SingletonInterface {
 					$success = \nn\t3::File()->move( $absSrcFile, $absTmpName );
 				}
 			}
+
 			if (!$success) return false;
 			
 			// Nutze die File-Indexer-Funktion, um die temporäre Datei in der Tabelle sys_file einzufügen
@@ -309,8 +309,8 @@ class Fal implements SingletonInterface {
 			
 			if (!$tmpFileObject) return false;
 
-			// Datei am Zielort zurück zu ursprünglichem Dateinamen umbenennen
-			$newFileObject = $tmpFileObject->moveTo($subfolderInStorage, $srcFileBaseName, DuplicationBehavior::RENAME);
+			// $newFileObject = $tmpFileObject->moveTo($subfolderInStorage, $srcFileBaseName, DuplicationBehavior::RENAME);
+			$newFileObject = $tmpFileObject;
 		}
 
 		if (!$newFileObject) return false;
@@ -342,24 +342,24 @@ class Fal implements SingletonInterface {
 	 *	Holt ein \File (FAL) Object (sys_file)
 	 *
 	 *	@param string $srcFile
-	 *	@return FileReference|boolean
+	 *	@return \TYPO3\CMS\Core\Resource\File|boolean
 	 */
 	public function getFalFile ( $srcFile ) {
-		
-		$storage = \nn\t3::File()->getStorage( $srcFile, true );
-		if (!$storage) return false;
 
-		$subfolderInStorage = \nn\t3::Storage()->getFolder($srcFile, $storage);
-		$srcFileBaseName = basename($srcFile);
-		
-		if ($storage->hasFileInFolder( $srcFileBaseName, $subfolderInStorage )) {
-			if ($existingFile = $storage->getFileInFolder( $srcFileBaseName, $subfolderInStorage )) {
-				$fileRepository = \nn\t3::injectClass( FileRepository::class );
-				$existingFile = $fileRepository->findByUid( $existingFile->getUid() );
-			}
-			return $existingFile;
+		try {
+			$srcFile = \nn\t3::File()->stripPathSite( $srcFile );
+			$storage = \nn\t3::File()->getStorage( $srcFile, true );	
+			if (!$storage) return false;
+
+			// \TYPO3\CMS\Core\Resource\File
+			$storageBasePath = $storage->getConfiguration()['basePath'];
+
+			$file = $storage->getFile( substr( $srcFile, strlen($storageBasePath) ) );
+			return $file;
+
+		} catch( \Exception $e ) {
+			return false;
 		}
-		return false;
 	}
 
 	/**
@@ -393,7 +393,7 @@ class Fal implements SingletonInterface {
 	 * @return File|boolean
 	 */	
 	public function getFileObjectFromCombinedIdentifier( $file = '' ) {	
-		$resourceFactory = ResourceFactory::getInstance();
+		$resourceFactory = GeneralUtility::makeInstance( ResourceFactory::class );
 		$storage = $resourceFactory->getStorageObjectFromCombinedIdentifier( $file );
 		$parts = \nn\t3::Arrays($file)->trimExplode(':');
 		if ($storage->hasFile($parts[1])) return $resourceFactory->getFileObjectFromCombinedIdentifier( $file );
@@ -555,7 +555,7 @@ class Fal implements SingletonInterface {
 	 * ```
 	 * \nn\t3::Fal()->createSysFile( 'fileadmin/bild.jpg' );
 	 * ```
-	 * @return File|\TYPO3\CMS\Core\Resource\File
+	 * @return false|\TYPO3\CMS\Core\Resource\File
 	 */
 	public function createSysFile ( $file, $autoCreateStorage = true ) {
 	
@@ -598,7 +598,11 @@ class Fal implements SingletonInterface {
 		$processedFileRepository = \nn\t3::injectClass( ProcessedFileRepository::class );
 		if (is_string($filenameOrSysFile)) return;
 
-		if ($processedFiles = $processedFileRepository->findAllByOriginalFile( $filenameOrSysFile->getOriginalResource() )) {
+		if (is_a($filenameOrSysFile, \TYPO3\CMS\Extbase\Domain\Model\File::class)) {
+			$filenameOrSysFile = $filenameOrSysFile->getOriginalResource();
+		}
+		
+		if ($processedFiles = $processedFileRepository->findAllByOriginalFile( $filenameOrSysFile )) {
 			foreach ($processedFiles as $file) {
 				if ($path = $file->getIdentifier()) {
 					if ($absFilePath = \nn\t3::File()->getPath( $path, $file->getStorage() )) {
@@ -630,11 +634,11 @@ class Fal implements SingletonInterface {
 			$data = \nn\t3::File()->getData( $filenameOrSysFile );
 		}
 
-		$storage = $filenameOrSysFile->getOriginalResource()->getStorage();
-		$destinationFile = ResourceFactory::getInstance()->retrieveFileOrFolderObject($filenameOrSysFile->getOriginalResource()->getPublicUrl());
+		$storage = \nn\t3::File()->getStorage( $filenameOrSysFile );
+		$publicUrl = \nn\t3::File()->getPublicUrl( $filenameOrSysFile );
+		$destinationFile = GeneralUtility::makeInstance( ResourceFactory::class )->retrieveFileOrFolderObject($publicUrl);
 		$indexer = GeneralUtility::makeInstance(Indexer::class, $storage);
 		$indexer->updateIndexEntry($destinationFile);
-
 	}
 
 
@@ -805,30 +809,29 @@ class Fal implements SingletonInterface {
 
 
 	/**
-	 *	Die URL zu einer FileReference holen
-	 *	```
-	 *	\nn\t3::Fal()->getFilePath( $fileReference );	// ergibt z.B. 'fileadmin/bilder/01.jpg'
-	 *	```
-	 * 	@param \TYPO3\CMS\Extbase\Domain\Model\FileReference $falReference
-	 * 	@return string
+	 * Die URL zu einer FileReference oder einem FalFile holen.
+	 * Alias zu `\nn\t3::File()->getPublicUrl()`.
+	 * ```
+	 * \nn\t3::Fal()->getFilePath( $fileReference );	// ergibt z.B. 'fileadmin/bilder/01.jpg'
+	 * ```
+	 * @param \TYPO3\CMS\Extbase\Domain\Model\FileReference|\TYPO3\CMS\Core\Resource\FileReference $falReference
+	 * @return string
 	 */
-	public function getFilePath(\TYPO3\CMS\Extbase\Domain\Model\FileReference $falReference) {
-		if (!$falReference || !$falReference->getOriginalResource()) return '';
-		return $falReference->getOriginalResource()->getPublicUrl();
+	public function getFilePath($falReference) {
+		return \nn\t3::File()->getPublicUrl( $falReference );
 	}
 
 	/**
-	 * 	Berechnet ein Bild über `maxWidth`, `maxHeight`, `cropVariant` etc.
-	 * 	Gibt URI zum Bild als String zurück. Hilfreich bei der Berechnung von Thumbnails im Backend.
-	 *	Alias zu `\nn\t3::File()->process()`
-	 *	```
-	 *	\nn\t3::File()->process( 'fileadmin/bilder/portrait.jpg', ['maxWidth'=>200] );
-	 *	\nn\t3::File()->process( '1:/bilder/portrait.jpg', ['maxWidth'=>200] );
-	 *	\nn\t3::File()->process( $sysFile, ['maxWidth'=>200] );
-	 *	\nn\t3::File()->process( $sysFileReference, ['maxWidth'=>200, 'cropVariant'=>'square'] );
-
-	 *	```
-	 *	@return string
+	 * Berechnet ein Bild über `maxWidth`, `maxHeight`, `cropVariant` etc.
+	 * Gibt URI zum Bild als String zurück. Hilfreich bei der Berechnung von Thumbnails im Backend.
+	 * Alias zu `\nn\t3::File()->process()`
+	 * ```
+	 * \nn\t3::File()->process( 'fileadmin/bilder/portrait.jpg', ['maxWidth'=>200] );
+	 * \nn\t3::File()->process( '1:/bilder/portrait.jpg', ['maxWidth'=>200] );
+	 * \nn\t3::File()->process( $sysFile, ['maxWidth'=>200] );
+	 * \nn\t3::File()->process( $sysFileReference, ['maxWidth'=>200, 'cropVariant'=>'square'] );
+	 * ```
+	 * @return string
 	 */
 	public function process ( $fileObj = '', $processing = [] ) {
 		return \nn\t3::File()->process( $fileObj, $processing );
@@ -836,12 +839,12 @@ class Fal implements SingletonInterface {
 
 
 	/**
-	 *	Eine FileReference in ein Array konvertieren.
-	 *	Enthält publicUrl, title, alternative, crop etc. der FileReference.
-	 *	Alias zu `\nn\t3::Obj()->toArray( $fileReference );`
-	 *	```
-	 *	\nn\t3::Fal()->toArray( $fileReference );	// ergibt ['publicUrl'=>'fileadmin/...', 'title'=>'...']
-	 *	```
+	 * Eine FileReference in ein Array konvertieren.
+	 * Enthält publicUrl, title, alternative, crop etc. der FileReference.
+	 * Alias zu `\nn\t3::Obj()->toArray( $fileReference );`
+	 * ```
+	 * \nn\t3::Fal()->toArray( $fileReference );	// ergibt ['publicUrl'=>'fileadmin/...', 'title'=>'...']
+	 * ```
 	 * @param \TYPO3\CMS\Extbase\Domain\Model\FileReference $falReference
 	 * @return array
 	 */

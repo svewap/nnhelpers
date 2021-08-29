@@ -144,6 +144,9 @@ class Registry implements SingletonInterface {
 		$rootlinefields = &$GLOBALS['TYPO3_CONF_VARS']['FE']['addRootLineFields'] ?? '';
 		$rootlinefields .= ($rootlinefields ? ',' : '') . join(',', $fields);
 		if ($translate) {
+			if (!($GLOBALS['TYPO3_CONF_VARS']['FE']['pageOverlayFields'] ?? false)) {
+				$GLOBALS['TYPO3_CONF_VARS']['FE']['pageOverlayFields'] = '';
+			}
 			$GLOBALS['TYPO3_CONF_VARS']['FE']['pageOverlayFields'] .= join(',', $fields);
 		}
 	}

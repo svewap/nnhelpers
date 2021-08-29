@@ -68,5 +68,12 @@ nnhelpers_test {
 		no_cache = 1
 	}		 
 	10 = USER_INT
-	10.userFunc = Nng\Nnhelpers\Controller\ModuleController->testAction
+	10.userFunc = Nng\Nnhelpers\Controller\TestController->testAction
+}
+
+plugin.tx_nnhelpers {
+	test = ok
+	settings {
+		test.deep = settings-ok
+	}
 }

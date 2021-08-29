@@ -1,5 +1,4 @@
-<?php
-namespace Nng\Nnhelpers\Helpers;
+<?php namespace Nng\Nnhelpers\Helpers;
 
 /**
  * Diverse Methoden zum Parsen von PHP-Quelltexten und Kommentaren im
@@ -56,9 +55,11 @@ class DocumentationHelper {
 		for ($i = 0; $i<count($tokens); $i++) {
 			if ($tokens[$i][0] === T_NAMESPACE) {
 				for ($j=$i+1;$j<count($tokens); $j++) {
-					if ($tokens[$j][0] === T_STRING) {
+
+					if ($tokens[$j][0] === T_STRING || $tokens[$j][0] === T_NAME_QUALIFIED) {
 						$namespace .= '\\'.$tokens[$j][1];
 					} else if ($tokens[$j] === '{' || $tokens[$j] === ';') {
+						
 						break;
 					}
 				}
@@ -132,7 +133,7 @@ class DocumentationHelper {
 	 * @return array
 	 */
 	public static function parseFile( $path = '', $returnMethods = true ) {
-		$className = self::getClassNameFromFile( $path ); 
+		$className = self::getClassNameFromFile( $path );
 		$data = self::parseClass( $className, $returnMethods );
 		$data = array_merge($data, [
 			'path' 		=> $path,
