@@ -62,5 +62,55 @@ class BackendUser implements SingletonInterface {
 		return $GLOBALS['BE_USER'];
 	}
 	
+	/**
+	 * Holt den aktuellen Backend-User.
+	 * Entspricht `$GLOBALS['BE_USER']` in früheren Typo3-Versionen.
+	 * ```
+	 * \nn\t3::BackendUser()->get();
+	 * ```
+	 * @return \TYPO3\CMS\Backend\FrontendBackendUserAuthentication
+	 */
+	public function get() {
+		return $GLOBALS['BE_USER'] ?? $this->start();
+	}
 
+	/**
+	 * Speichert userspezifische Einstellungen für den aktuell eingeloggten
+	 * Backend-User. Diese Einstellungen sind auch nach Logout und erneutem
+	 * Login wieder für den User verfügbar.
+	 * ```
+	 * \nn\t3::BackendUser()->saveSettings('myext', ['wants'=>['drink'=>'coffee']]);
+	 * ```
+	 * @return array
+	 */
+	public function saveSettings( $moduleName = 'nnhelpers', $settings = [] ) {
+		if ($beUser = $this->get()) {
+			if (!isset($beUser->uc[$moduleName])) {
+				$beUser->uc[$moduleName] = [];
+			}
+			foreach ($settings as $k=>$v) {
+				$beUser->uc[$moduleName][$k] = $v;
+			}
+			$beUser->writeUC();
+			return $beUser->uc[$moduleName];
+		}
+		return [];
+	}
+
+	/**
+	 * Holt userspezifische Einstellungen für den aktuell eingeloggten
+	 * Backend-User. Diese Einstellungen können mit `\nn\t3::BackendUser()->saveSettings()`
+	 * gespeichert werden.
+	 * ```
+	 * \nn\t3::BackendUser()->getSettings('myext');					// => ['wants'=>['drink'=>'coffee']]
+	 * \nn\t3::BackendUser()->getSettings('myext', 'wants');		// => ['drink'=>'coffee']
+	 * \nn\t3::BackendUser()->getSettings('myext', 'wants.drink');	// => 'coffee'
+	 * ```
+	 * @return mixed
+	 */
+	public function getSettings( $moduleName = 'nnhelpers', $path = null ) {
+		$data = $this->get()->uc[$moduleName] ?? [];
+		if (!$path) return $data;
+		return \nn\t3::Settings()->getFromPath( $path, $data );
+	}
 }
