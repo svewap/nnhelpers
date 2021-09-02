@@ -362,10 +362,8 @@ class TestController extends \Nng\Nnhelpers\Controller\AbstractController {
 				
 				case 'Page':
 
-					$tsfe = \nn\t3::Tsfe()->get();
-
 					// Link im Backend / Frontend erzeugen
-					$link = \nn\t3::Page()->getLink( 1 );
+					$link = \nn\t3::Page()->getLink( 448, true );
 					if (!$link) {
 						$errors[] = "getLink(1) - keine URL erzeugt";
 					} else {
@@ -387,7 +385,7 @@ class TestController extends \Nng\Nnhelpers\Controller\AbstractController {
 				
 				case 'Content':
 					
-					$row = \nn\t3::Db()->findOneByValues('tt_content');
+					$row = \nn\t3::Db()->findOneByValues('tt_content', ['CType'=>'text']);
 					$uid = $row['uid'];
 					if ($uid) {
 						$html = \nn\t3::Content()->render( $uid );

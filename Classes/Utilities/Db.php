@@ -313,7 +313,7 @@ class Db implements SingletonInterface {
 	 */
     public function insert ( $table = '', $data = [] ) {
 		$data = $this->filterDataForTable( $data, $table );
-
+		
 		if (\nn\t3::t3Version() < 8) {
 			$GLOBALS['TYPO3_DB']->exec_INSERTquery( $table, $data );
 			$data['uid'] = $GLOBALS['TYPO3_DB']->sql_insert_id();
@@ -493,7 +493,7 @@ class Db implements SingletonInterface {
 	 */
 	public function getColumns ( $table = '', $useSchemaManager = false ) {
 		$cols = $GLOBALS['TCA'][$table]['columns'];
-
+		
 		// Diese Felder sind nicht ausdrücklich im TCA, aber für Abfrage legitim
 		if ($cols) {
 			$cols = \nn\t3::Arrays( $cols )->merge(['uid'=>'uid', 'pid'=>'pid', 'tstamp'=>'tstamp', 'crdate'=>'crdate', 'endtime'=>'endtime', 'starttime'=>'starttime', 'deleted'=>'deleted', 'disable'=>'disable']);
@@ -506,7 +506,7 @@ class Db implements SingletonInterface {
 				->getSchemaManager()
 				->listTableColumns($table);
 		}
-		
+
 		foreach ($cols as $k=>$v) {
 			$cols[GeneralUtility::underscoredToLowerCamelCase($k)] = $v;
 		}

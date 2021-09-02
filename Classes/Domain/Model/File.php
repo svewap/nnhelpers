@@ -72,6 +72,16 @@ class File extends \TYPO3\CMS\Extbase\Domain\Model\File
 	}
 	
 	/**
+	 * @return string $filepath	 
+	 */
+	public function getPublicUrl() {
+		if ($resource = $this->getOriginalResource()) {
+			return $resource->getPublicUrl();
+		}
+		return '';
+	}
+	
+	/**
 	 * @return \TYPO3\CMS\Core\Resource\ResourceStorage $storage	 
 	 */
 	public function getStorage() {

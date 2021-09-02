@@ -42,27 +42,27 @@ class FileReference extends \TYPO3\CMS\Extbase\Domain\Model\FileReference {
 	/**
 	 * @var string
 	 */
-	protected $title = '';
+	protected $title;
 	
 	/**
 	 * @var string
 	 */
-	protected $description = '';
+	protected $description;
 	
 	/**
 	 * @var string
 	 */
-	protected $alternative = '';
+	protected $alternative;
 	
 	/**
 	 * @var string
 	 */
-	protected $link = '';
+	protected $link;
 	
 	/**
 	 * @var string
 	 */
-	protected $crop = '';
+	protected $crop;
 	
 	/**
 	 * @var \Nng\Nnhelpers\Domain\Model\File
@@ -298,10 +298,10 @@ class FileReference extends \TYPO3\CMS\Extbase\Domain\Model\FileReference {
 	}
 
 	/**
-	 * @param   string  $title  
+	 * @param   $title  
 	 * @return  self
 	 */
-	public function setTitle(string $title) {
+	public function setTitle($title) {
 		$this->title = $title;
 		return $this;
 	}
@@ -317,7 +317,7 @@ class FileReference extends \TYPO3\CMS\Extbase\Domain\Model\FileReference {
 	 * @param   string  $description  
 	 * @return  self
 	 */
-	public function setDescription(string $description) {
+	public function setDescription($description) {
 		$this->description = $description;
 		return $this;
 	}
@@ -333,7 +333,7 @@ class FileReference extends \TYPO3\CMS\Extbase\Domain\Model\FileReference {
 	 * @param   string  $alternative  
 	 * @return  self
 	 */
-	public function setAlternative(string $alternative) {
+	public function setAlternative($alternative) {
 		$this->alternative = $alternative;
 		return $this;
 	}
@@ -349,7 +349,7 @@ class FileReference extends \TYPO3\CMS\Extbase\Domain\Model\FileReference {
 	 * @param   string  $link  
 	 * @return  self
 	 */
-	public function setLink(string $link) {
+	public function setLink($link) {
 		$this->link = $link;
 		return $this;
 	}
@@ -365,7 +365,7 @@ class FileReference extends \TYPO3\CMS\Extbase\Domain\Model\FileReference {
 	 * @param   string  $crop  
 	 * @return  self
 	 */
-	public function setCrop(string $crop) {
+	public function setCrop($crop) {
 		$this->crop = $crop;
 		return $this;
 	}

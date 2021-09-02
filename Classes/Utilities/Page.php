@@ -190,17 +190,22 @@ class Page implements SingletonInterface {
 	 * 
 	 * ```
 	 * \nn\t3::Page()->getLink( $pid );
-	 * \nn\t3::Page()->getLink( $pid, $params );
+	 * \nn\t3::Page()->getLink( $pid, $params );		
 	 * \nn\t3::Page()->getLink( $params );
+	 * \nn\t3::Page()->getLink( $pid, true );
+	 * \nn\t3::Page()->getLink( $pid, $params, true );
 	 * \nn\t3::Page()->getLink( 'david@99grad.de' )
 	 * ```
 	 * @return array
 	 */
     public function getLink ( $pidOrParams = null, $params = [], $absolute = false ) {
 
-
 		$pid = is_array($pidOrParams) ? $this->getPid() : $pidOrParams;
 		$params = is_array($pidOrParams) ? $pidOrParams : $params;
+		if ($params === true) {
+			$params = [];
+			$absolute = true;
+		}
 
 		/*
 			// ToDo: Check this for v9+ - might make things easier
@@ -211,7 +216,7 @@ class Page implements SingletonInterface {
 		if (!\nn\t3::Environment()->isFrontend()) {
 			\nn\t3::Tsfe()->init();
 		}
-		
+
 		$cObj = \nn\t3::injectClass( \TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer::class );
 		$uri = $cObj->typolink_URL([
 			'parameter' => $pid,
