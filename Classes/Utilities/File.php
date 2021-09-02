@@ -319,11 +319,11 @@ class File implements SingletonInterface {
 			if ($b === '..') return dirname($a);
 			return preg_replace('/\/+/', '/', "{$a}/{$b}");
 		}, 0);
-		
+
+		if (!$hasStartingSlash) $path = ltrim( $path, '/');
 		$isFolder = is_dir( $path ) || $hasTrailingSlash;
 		$path = rtrim( $path, '/' );
 		if ($isFolder) $path .= '/';
-		if (!$hasStartingSlash) $path = ltrim( $path, '/');
 		return $path;
 	}
 

@@ -52,7 +52,7 @@ class Arrays extends \ArrayObject {
 		];
 
 		$args = func_get_args();
-		if ($this->initialArgument !== null && !is_array($args[1])) {
+		if ($this->initialArgument !== null && isset($args[1]) && !is_array($args[1])) {
 			array_unshift($args, $this->initialArgument );
 		}
 

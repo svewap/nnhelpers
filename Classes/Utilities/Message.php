@@ -93,7 +93,7 @@ class Message implements SingletonInterface {
 	 * 	Speichert eine Flash-Message in den Message-Queue für Frontend oder Backend.
 	 * 	@return void
 	 */
-    public function flash( $title = '', $text = '', $type = 'OK', $queueId = null ) {
+    public function flash( $title = '', $text = '', $type = 'OK', $queueID = null ) {
 		$message = GeneralUtility::makeInstance(FlashMessage::class,
 			$text,
 			$title,

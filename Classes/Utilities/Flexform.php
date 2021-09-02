@@ -150,12 +150,12 @@ class Flexform implements SingletonInterface {
 		foreach ($setup as $k=>$v) {
 			
 			// controllerAction in Typoscript gesetzt?
-			if (is_array($v) && $v['controllerAction']) {
+			if (is_array($v) && ($v['controllerAction'] ?? false)) {
 				$respectControllerAction = true;
 			}
 
 			// userFunc vorhanden? Dann auflösen...
-			if (is_array($v) && $v['userFunc']) {
+			if (is_array($v) && ($v['userFunc'] ?? false)) {
 				$result = \nn\t3::call( $v['userFunc'], $v );
 				unset($setup[$k]);
 				$setup = \nn\t3::Arrays($result)->merge($setup);
@@ -180,14 +180,14 @@ class Flexform implements SingletonInterface {
 		}
 
 		// Key in Klammern zeigen?
-		$hideKey = $config['config']['hideKey'] == 1;
+		$hideKey = ($config['config']['hideKey'] ?? 0) == 1;
 
 		foreach ($setup as $k=>$v) {
 			if (is_array($v)) {
 				$label = $v['_typoScriptNodeValue'] ?? $v['label'] ?? $v['title'] ?? $v;
 				$key = $v['classes'] ?? $k;
 				$keyStr = $hideKey ? '' : " ({$key})";
-				$limitToAction = \nn\t3::Arrays($v['controllerAction'])->trimExplode();
+				$limitToAction = \nn\t3::Arrays($v['controllerAction'] ?? '')->trimExplode();
 				if ($limitToAction && $selectedAction) {
 					if (array_intersect($limitToAction, $selectedAction)) {
 						$config['items'] = array_merge( $config['items'], [[$label.$keyStr, $k, '']] );

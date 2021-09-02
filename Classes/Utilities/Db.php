@@ -276,7 +276,7 @@ class Db implements SingletonInterface {
 	 * ```
 	 * @return boolean
 	 */
-    public function update ( $table = '', $data = [], $uid ) {
+    public function update ( $table = '', $data = [], $uid = null ) {
 
 		$queryBuilder = $this->getQueryBuilder( $table );
         $queryBuilder->getRestrictions()->removeAll();

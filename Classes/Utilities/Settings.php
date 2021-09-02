@@ -112,7 +112,7 @@ class Settings implements SingletonInterface {
 		// Fallback: Setup für das Plugin aus globaler TS-Konfiguration holen
 		if (!$pluginSettings) {
 			$setup = $this->getPlugin( $extensionName );
-			$pluginSettings = $setup['settings'] ?: [];
+			$pluginSettings = $setup['settings'] ?? [];
 		}
 		
 		// Eine tt_content.uid wurde übergeben. FlexForm des Elementes aus DB laden

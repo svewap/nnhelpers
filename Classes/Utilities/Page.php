@@ -263,13 +263,13 @@ class Page implements SingletonInterface {
 	 * 	@return int
 	 */
 	public function getPidFromRequest () {
-		if (!$pageUid) $pageUid = (int) $GLOBALS['_REQUEST']['popViewId'];
-		if (!$pageUid) $pageUid = (int) preg_replace( '/(.*)(id=)([0-9]*)(.*)/i', '\\3', $GLOBALS['_REQUEST']['returnUrl'] );
-		if (!$pageUid) $pageUid = (int) preg_replace( '/(.*)(id=)([0-9]*)(.*)/i', '\\3', $GLOBALS['_POST']['returnUrl'] );
-		if (!$pageUid) $pageUid = (int) preg_replace( '/(.*)(id=)([0-9]*)(.*)/i', '\\3', $GLOBALS['_GET']['returnUrl'] );
-		if (!$pageUid && $_GET['edit']['pages']) $pageUid = (int) array_keys($_GET['edit']['pages'])[0];
-		if (!$pageUid) $pageUid = (int) $_GET['id'];
-		return $pageUid;
+		$pageUid = $GLOBALS['_REQUEST']['popViewId'] ?? false;
+		if (!$pageUid) $pageUid = preg_replace( '/(.*)(id=)([0-9]*)(.*)/i', '\\3', $GLOBALS['_REQUEST']['returnUrl'] ?? '' );
+		if (!$pageUid) $pageUid = preg_replace( '/(.*)(id=)([0-9]*)(.*)/i', '\\3', $GLOBALS['_POST']['returnUrl'] ?? '' );
+		if (!$pageUid) $pageUid = preg_replace( '/(.*)(id=)([0-9]*)(.*)/i', '\\3', $GLOBALS['_GET']['returnUrl'] ?? '' );
+		if (!$pageUid && ($_GET['edit']['pages'] ?? false)) $pageUid = array_keys($_GET['edit']['pages'] ?? [])[0];
+		if (!$pageUid) $pageUid = $_GET['id'] ?? 0;
+		return (int) $pageUid;
 	}
 
 	/**
