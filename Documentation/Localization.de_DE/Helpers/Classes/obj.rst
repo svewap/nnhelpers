@@ -154,7 +154,7 @@ Gibt den DB-Tabellen-Namen für ein Model zurück
 \\nn\\t3::Obj()->isFalFile(``$obj``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Prüft, ob es sich bei dem Object um eine \TYPO3\CMS\Core\Resource\FileReference handelt.
+Prüft, ob es sich bei dem Object um eine ``\TYPO3\CMS\Core\Resource\FileReference`` handelt.
 
 .. code-block:: php
 
@@ -162,10 +162,21 @@ Prüft, ob es sich bei dem Object um eine \TYPO3\CMS\Core\Resource\FileReference
 
 | ``@return boolean``
 
+\\nn\\t3::Obj()->isFile(``$obj``);
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+Prüft, ob es sich bei dem Object um ein ``\TYPO3\CMS\Core\Resource\File`` handelt.
+
+.. code-block:: php
+
+	\nn\t3::Obj()->isFile( $obj );
+
+| ``@return boolean``
+
 \\nn\\t3::Obj()->isFileReference(``$obj``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Prüft, ob es sich bei dem Object um eine \TYPO3\CMS\Extbase\Domain\Model\FileReference handelt.
+Prüft, ob es sich bei dem Object um eine ``\TYPO3\CMS\Extbase\Domain\Model\FileReference`` handelt.
 
 .. code-block:: php
 

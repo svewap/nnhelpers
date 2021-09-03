@@ -173,7 +173,7 @@ Einen absoluten Link zu einer Seite generieren
 	\nn\t3::Page()->getAbsLink( $pid, ['type'=>'232322'] );
 	\nn\t3::Page()->getAbsLink( ['type'=>'232322'] );
 
-\\nn\\t3::Page()->getChildPids(``$parentPid = [], $recursive = 999``);
+\\nn\\t3::Page()->getChildPids(``$parentPid = 0, $recursive = 999``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
 Liste der Child-Uids einer oder mehrerer Seiten holen.
@@ -241,6 +241,8 @@ Aus dem Backend-Kontext werden absolute URLs ins Frontend generiert. Die URLs we
 	\nn\t3::Page()->getLink( $pid );
 	\nn\t3::Page()->getLink( $pid, $params );
 	\nn\t3::Page()->getLink( $params );
+	\nn\t3::Page()->getLink( $pid, true );
+	\nn\t3::Page()->getLink( $pid, $params, true );
 	\nn\t3::Page()->getLink( 'david@99grad.de' )
 
 | ``@return array``

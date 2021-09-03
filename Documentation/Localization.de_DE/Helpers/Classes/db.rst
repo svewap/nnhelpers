@@ -412,7 +412,7 @@ Datenbank-Eintrag wiederherstellen.
 
 | ``@return boolean``
 
-\\nn\\t3::Db()->update(``$table, $data, $uid``);
+\\nn\\t3::Db()->update(``$table = '', $data = [], $uid = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
 Datenbank-Eintrag aktualisieren. Schnell und einfach.

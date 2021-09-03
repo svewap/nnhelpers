@@ -226,6 +226,19 @@ Example:
 
 | ``@return string``
 
+\\nn\\t3::File()->getPublicUrl(``$obj = NULL``);
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+Gets path to file, relative to Typo3 installation directory (PATH_site).
+Can handle all types of objects
+
+.. code-block:: php
+
+	\nn\t3::File()->getPublicUrl( $falFile ); // \TYPO3\CMS\Core\Resource\FileReference.
+	\nn\t3::File()->getPublicUrl( $fileReference ); // \TYPO3\CMS\Extbase\Domain\Model\FileReference
+
+| ``@return string``
+
 \\nn\\t3::File()->getRelativePathInStorage(``$file, $storage = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
@@ -249,7 +262,9 @@ if the basePath of the storage matches the path of the file.
 
 .. code-block:: php
 
-	\nn\t3::File()->getLocalStorage('fileadmin/test/example.txt');
+	\nn\t3::File()->getStorage('fileadmin/test/example.txt');
+	\nn\t3::File()->getStorage( $falFile );
+	\nn\t3::File()->getStorage( $sysFileReference );
 	//returns ResourceStorage with basePath "fileadmin/"
 
 | ``@return ResourceStorage``

@@ -163,6 +163,17 @@ Prüft whether the object is a \TYPO3\CMS\Core\Resource\FileReference.
 
 | ``@return boolean``
 
+\\nn\\t3::Obj()->isFile(``$obj``);
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+Check whether the object is a ``\TYPO3\CMS\Core\Resource\File``.
+
+.. code-block:: php
+
+	\nn\t3::Obj()->isFile( $obj );
+
+| ``@return boolean``
+
 \\nn\\t3::Obj()->isFileReference(``$obj``);
 """""""""""""""""""""""""""""""""""""""""""""""
 

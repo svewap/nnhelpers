@@ -16,6 +16,32 @@ Methods to start a backend user if it does not exist (e.g. during a scheduler jo
 Overview of Methods
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+\\nn\\t3::BackendUser()->get();
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+Gets the current backend user.
+Corresponds to ``$GLOBALS['BE_USER']`` in earlier Typo3 versions.
+
+.. code-block:: php
+
+	\nn\t3::BackendUser()->get();
+
+| ``@return \TYPO3\CMS\Backend\FrontendBackendUserAuthentication``
+
+\\nn\\t3::BackendUser()->getSettings(``$moduleName = 'nnhelpers', $path = NULL``);
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+Gets user-specific settings for the currently logged-in backend user.
+See ``\nn\t3::BackendUser()->updateSettings()`` to save the data.
+
+.. code-block:: php
+
+	\nn\t3::BackendUser()->getSettings('myext'); // => ['wants'=>['drink'=>'coffee']]
+	\nn\t3::BackendUser()->getSettings('myext', 'wants'); // => ['drink'=>'coffee']
+	\nn\t3::BackendUser()->getSettings('myext', 'wants.drink'); // => 'coffee'
+
+| ``@return mixed``
+
 \\nn\\t3::BackendUser()->isAdmin();
 """""""""""""""""""""""""""""""""""""""""""""""
 
@@ -53,4 +79,17 @@ like ``log()`` are not possible if there is no active BE user.
 	\nn\t3::BackendUser()->start();
 
 | ``@return \TYPO3\CMS\Backend\FrontendBackendUserAuthentication``
+
+\\nn\\t3::BackendUser()->updateSettings(``$moduleName = 'nnhelpers', $settings = []``);
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+Saves user-specific settings for the currently logged in backend user.
+These settings are also available to the user after logout/login.
+See ``nn\t3::BackendUser()->getSettings('myext')`` to read out the data.
+
+.. code-block:: php
+
+	\nn\t3::BackendUser()->updateSettings('myext', ['wants'=>['drink'=>'coffee']]);
+
+| ``@return array``
 

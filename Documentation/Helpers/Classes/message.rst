@@ -74,7 +74,7 @@ Emits a "WARNING" flash message
 
 | ``@return void``
 
-\\nn\\t3::Message()->flash(``$title = '', $text = '', $type = 'OK', $queueId = NULL``);
+\\nn\\t3::Message()->flash(``$title = '', $text = '', $type = 'OK', $queueID = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
 Saves a flash message to the message queue for frontend or backend.

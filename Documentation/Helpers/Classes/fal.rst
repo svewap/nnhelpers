@@ -82,7 +82,7 @@ If not, a new storage is created.
 
 	\nn\t3::Fal()->createSysFile( 'fileadmin/image.jpg' );
 
-| ``@return File|\TYPO3\CMS\Core\Resource\File``
+| ``@return false|\TYPO3\CMS\Core\Resource\File``
 
 \\nn\\t3::Fal()->deleteSysFile(``$uidOrObject = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
@@ -194,7 +194,7 @@ Example:
 Gets a \File (FAL) Object (sys_file)
 
 | ``@param string $srcFile``
-| ``@return FileReference|boolean``
+| ``@return \TYPO3\CMS\Core\Resource\File|boolean``
 
 \\nn\\t3::Fal()->getFileObjectFromCombinedIdentifier(``$file = ''``);
 """""""""""""""""""""""""""""""""""""""""""""""
@@ -212,13 +212,14 @@ If file does not exist FALSE will be returned.
 \\nn\\t3::Fal()->getFilePath(``$falReference``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Get the URL to a FileReference
+Get the URL to a FileReference or FalFile.
+Alias to ``\nn\t3::File()->getPublicUrl()``.
 
 .. code-block:: php
 
-	\nn\t3::Fal()->getFilePath( $fileReference ); // yields e.g. 'fileadmin/pictures/01.jpg'
+	\nn\t3::Fal()->getFilePath( $fileReference ); // results in e.g. 'fileadmin/pictures/01.jpg'
 
-| ``@param \TYPO3\CMS\Extbase\Domain\Model\FileReference $falReference``
+| ``@param \TYPO3\CMS\Extbase\Domain\Model\FileReference|\TYPO3\CMS\Core\Resource\FileReference $falReference``
 | ``@return string``
 
 \\nn\\t3::Fal()->getFileReferenceByUid(``$uid = NULL``);

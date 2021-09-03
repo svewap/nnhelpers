@@ -40,7 +40,8 @@ class HtmlToSphinxViewHelper extends AbstractViewHelper {
 
 		$str = $arguments['str'] ?: $renderChildrenClosure();
 		
-		$dom = \DOMDocument::loadHTML( '<t>' . $str . '</t>', LIBXML_NOENT | LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_XINCLUDE | LIBXML_NOERROR | LIBXML_NOWARNING );
+		$dom = new \DOMDocument();
+		$dom->loadHTML( '<t>' . $str . '</t>', LIBXML_NOENT | LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_XINCLUDE | LIBXML_NOERROR | LIBXML_NOWARNING );
 
 		if (!$dom) return '';
 

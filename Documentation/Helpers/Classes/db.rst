@@ -413,7 +413,7 @@ Restore database entry
 
 | ``@return boolean``
 
-\\nn\\t3::Db()->update(``$table, $data, $uid``);
+\\nn\\t3::Db()->update(``$table = '', $data = [], $uid = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
 Update database entry. Quick and easy.
