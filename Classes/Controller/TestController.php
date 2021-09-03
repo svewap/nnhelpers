@@ -363,7 +363,7 @@ class TestController extends \Nng\Nnhelpers\Controller\AbstractController {
 				case 'Page':
 
 					// Link im Backend / Frontend erzeugen
-					$link = \nn\t3::Page()->getLink( 448, true );
+					$link = \nn\t3::Page()->getLink( 1, true );
 					if (!$link) {
 						$errors[] = "getLink(1) - keine URL erzeugt";
 					} else {
