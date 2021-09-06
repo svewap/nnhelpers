@@ -75,7 +75,7 @@ class Http implements SingletonInterface {
 
 		// Frontend initialisieren, falls nicht vorhanden
 		if (!\nn\t3::Environment()->isFrontend()) {
-			\nn\t3::Tsfe()->init();
+			\nn\t3::Tsfe()->get();
 		}
 
 		if (\nn\t3::t3Version() < 8) {

@@ -214,7 +214,7 @@ class Page implements SingletonInterface {
 		 */
 
 		if (!\nn\t3::Environment()->isFrontend()) {
-			\nn\t3::Tsfe()->init();
+			\nn\t3::Tsfe()->get();
 		}
 
 		$cObj = \nn\t3::injectClass( \TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer::class );
