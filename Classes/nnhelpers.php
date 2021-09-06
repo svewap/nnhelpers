@@ -305,20 +305,30 @@ class t3 {
 	 */
 	public static function newClass($class) {
 		if (!class_exists($class)) return false;
+		
+		if (is_a($class, \Nng\Nnhelpers\Singleton::class, true)) {
+			return call_user_func($class . '::makeInstance');
+		}
+
 		return new $class;
 	}
 
 	/**
-	 *  Schnellste Art, eine Klasse zu instanziieren.
-	 *  Verwendet ObjectManager.
-	 * 
-	 *  $example = \nn\t3::injectClass( \My\Example\ClassName::class );
-	 * 
-	 *  @return mixed  
+	 * Schnellste Art, eine Klasse zu instanziieren.
+	 * Verwendet ObjectManager.
+	 * ```
+	 * $example = \nn\t3::injectClass( \My\Example\ClassName::class );
+	 * ```
+	 * @return mixed  
 	 */
 	public static function injectClass($class) {
 		if (!class_exists($class)) return false;
 		$class = ltrim( $class, '\\');
+
+		if (is_a($class, \Nng\Nnhelpers\Singleton::class, true)) {
+			return call_user_func($class . '::makeInstance');
+		}
+
 		$objectManager = GeneralUtility::makeInstance(ObjectManager::class);
 		return $objectManager->get($class);
 	}

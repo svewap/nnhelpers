@@ -44,7 +44,6 @@ class CodeViewHelper extends AbstractViewHelper {
 		if ($download = $arguments['download']) {
 			$download = 'data-src="' . $download . '" data-nndownload data-download-link-label="Download"';
 		}
-
         return '<pre ' . $download . '><code class="language-' . $lang . '">'.trim(htmlspecialchars($str, ENT_QUOTES, 'UTF-8')).'</code></pre>';
 	}
 }
