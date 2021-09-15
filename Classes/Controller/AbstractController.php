@@ -4,7 +4,7 @@ namespace Nng\Nnhelpers\Controller;
 
 use TYPO3\CMS\Extbase\Mvc\View\ViewInterface;
 
-class AbstractController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController {
+abstract class AbstractController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController {
 
 	/**
 	 * Backend Template Container
