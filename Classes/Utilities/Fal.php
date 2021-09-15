@@ -156,6 +156,7 @@ class Fal implements SingletonInterface {
 	public function fromFile ( $params = [] ) {
 		
 		$params = \nn\t3::Arrays([
+			'dest'		=> '',
 			'forceNew'	=> false,
 			'copy'		=> true,
 			'single'	=> true,
@@ -200,8 +201,8 @@ class Fal implements SingletonInterface {
 			'tablenames' 		=> $params['table'],
 			'table_local' 		=> 'sys_file',
 			'uid_local' 		=> $newFile->getUid(),
-			'uid_foreign' 		=> $params['uid'],
-			'cruser_id' 		=> $params['cruser_id'],
+			'uid_foreign' 		=> $params['uid'] ?? '',
+			'cruser_id' 		=> $params['cruser_id'] ?? '',
 			'sorting_foreign' 	=> $params['sorting_foreign'] ?? $params['sorting'] ?? time(),
 			'pid' 				=> $params['pid'] ?? 0,
 			'description' 		=> $params['description'] ?? null,
@@ -412,7 +413,7 @@ class Fal implements SingletonInterface {
 	public function fileReferenceExists( $sysFile = null, $params = [] ) {
 		$where = [
 			'uid_local' 	=> $sysFile->getUid(),
-			'uid_foreign' 	=> $params['uid'],
+			'uid_foreign' 	=> $params['uid'] ?? '',
 			'tablenames' 	=> $params['table'],
 			'fieldname' 	=> GeneralUtility::camelCaseToLowerCaseUnderscored($params['field']),
 		];

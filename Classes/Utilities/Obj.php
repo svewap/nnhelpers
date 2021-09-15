@@ -21,7 +21,7 @@ class Obj implements SingletonInterface {
 	 * 	@var mixed
 	 */
 	protected $initialArgument;
-
+	
 	/**
 	 * 	Klasse konstruieren.
 	 */
@@ -179,7 +179,8 @@ class Obj implements SingletonInterface {
 	/**
 	 * 	Infos zum classSchema eines Models holen
 	 * 	```
-	 * 	\nn\t3::Obj()->getClassSchema( \My\Model\Name );
+	 * 	\nn\t3::Obj()->getClassSchema( \My\Model\Name::class );
+	 * 	\nn\t3::Obj()->getClassSchema( $myModel );
 	 * 	```
 	 * 	return DataMap
 	 */
@@ -187,8 +188,13 @@ class Obj implements SingletonInterface {
 		if (is_object($modelClassName)) {
 			$modelClassName = get_class( $modelClassName );
 		}
+		if ($cache = \nn\t3::Cache()->get($modelClassName, true)) {
+			return $cache;
+		}
 		$reflectionService = \nn\t3::injectClass( ReflectionService::class);
-		return $reflectionService->getClassSchema($modelClassName);
+		$schema = $reflectionService->getClassSchema($modelClassName);
+
+		return \nn\t3::Cache()->set( $modelClassName, $schema, true );
 	}
 
 	/**
@@ -352,6 +358,20 @@ class Obj implements SingletonInterface {
 		}
 
 		if ($settable) {
+
+			if (is_object($obj)) {
+				$schema = \nn\t3::Obj()->getClassSchema($obj);
+				$modelProperties = $schema->getProperties();
+				if ($prop = $modelProperties[$key] ?? false)	{
+					switch ($prop->getType()) {
+						case 'int':
+						case 'float':
+							$val = (int)$val;
+							break;
+					}
+				}
+			}
+	
 			if (in_array($key, ['deleted', 'hidden'])) $val = $val ? true : false;
 			ObjectAccess::setProperty($obj, $key, $val, !$useSetter);
 		}

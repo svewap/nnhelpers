@@ -29,7 +29,7 @@ class PageTitleProvider extends AbstractPageTitleProvider {
 		$rootLine = \nn\t3::Page()->getRootline();
 
 		foreach ($rootLine as $page) {
-			if ($suffix = trim($page['nnsite_suffix'])) break;
+			if ($suffix = trim($page['nnsite_suffix'] ?? '')) break;
 		}
 		return $title . ' ' . $suffix;
 	}

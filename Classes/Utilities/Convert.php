@@ -176,7 +176,7 @@ class Convert implements SingletonInterface {
 			}
 
 			// Model uid
-			$modelUid = \nn\t3::Obj()->get( $model, 'uid' ) ?: \nn\t3::Obj()->get( $parentModel, 'uid' ) ?: $arr['uid'] ?: false;
+			$modelUid = \nn\t3::Obj()->get( $model, 'uid' ) ?: \nn\t3::Obj()->get( $parentModel, 'uid' ) ?: ($arr['uid'] ?? false) ?: false;
 
 			// Ein Model ohne uid kann nicht einfach ein \TYPO3\CMS\Extbase\Domain\Model\FileReference umgewandelt werden 
 			$isFileReference = \nn\t3::Obj()->isFileReference($model);

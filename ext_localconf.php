@@ -27,6 +27,9 @@ call_user_func(
 			'groups'    => ['pages'],
 		];
 
+		// Hook, der beim Löschen des Cache im Backend aufgerufen wird
+		\nn\t3::Registry()->clearCacheHook( \Nng\Nnhelpers\Hooks\ClearCacheHook::class . '->postProcessClearCache' );
+
 		/*
 		// ToDo: Für \nn\t3::Log() Einen "echten" Logger nutzen... sobald das nicht in diesem Wahnsinn endet. Keep it simple, people.
 		$GLOBALS['TYPO3_CONF_VARS']['LOG']['Nng']['Nnhelpers']['Utilities']['Log']['writerConfiguration'] = [

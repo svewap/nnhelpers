@@ -234,9 +234,21 @@ class Registry implements SingletonInterface {
 	 * \nn\t3::Registry()->addPageConfig( '<INCLUDE_TYPOSCRIPT: source="FILE:EXT:extname/Configuration/TypoScript/page.txt">' );
 	 * \nn\t3::Settings()->addPageConfig( '@import "EXT:extname/Configuration/TypoScript/page.ts"' );
 	 * ```
-	 * 	@return void
+	 * @return void
 	 */
 	public function addPageConfig( $str = '' ) {
 		\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addPageTSConfig( $str );
+	}
+
+	/**
+	 * Fügt einen Hook ein, der beim Klick auf "Cache löschen" ausgeführt wird.
+	 * Folgendes Script kommt in die `ext_localconf.php` der eigenen Extension:
+	 * ```
+	 * \nn\t3::Registry()->clearCacheHook( \My\Ext\Path::class . '->myMethod' );
+	 * ```
+	 * @return void
+	 */
+	public function clearCacheHook( $classMethodPath = '' ) {
+		$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_tcemain.php']['clearCachePostProc'][] = $classMethodPath;
 	}
 }
