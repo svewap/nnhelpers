@@ -17,6 +17,11 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\Traits\CompileWithRenderStatic;
  * </nnt3:widget.accordion>
  * ```
  * ```
+ * <nnt3:widget.accordion template="EXT:myext/path/to/template.html" title="Titel" icon="fas fa-plus" class="nice-thing">
+ *   ...
+ * </nnt3:widget.accordion>
+ * ```
+ * ```
  * {nnt3:widget.accordion(title:'Titel', content:'...' icon:'fas fa-plus', class:'nice-thing')}
  * ```
  * @return string
@@ -30,6 +35,7 @@ class AccordionViewHelper extends AbstractViewHelper
     public function initializeArguments()
     {
         parent::initializeArguments();
+        $this->registerArgument('template', 'string', 'Pfad zum Template', false, 'EXT:nnhelpers/Resources/Private/Backend/ViewHelpers/Widget/Accordion/Index.html');
         $this->registerArgument('title', 'string', 'Titel des Akkordeons');
         $this->registerArgument('icon', 'string', 'Icon-Klasse');
         $this->registerArgument('class', 'string', 'Accordeon-Klasse');
@@ -51,6 +57,6 @@ class AccordionViewHelper extends AbstractViewHelper
             'uniqid'            => uniqid('acc-'),
         ]);
 
-        return \nn\t3::Template()->render('EXT:nnhelpers/Resources/Private/Backend/ViewHelpers/Widget/Accordion/Index.html', $vars );
+        return \nn\t3::Template()->render( $arguments['template'], $vars );
     }
 }

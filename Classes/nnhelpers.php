@@ -334,9 +334,11 @@ class t3 {
 	}
 	
 	/**
-	 *  Externe Libraries laden (nur bei Bedarf, um Konflikte zu vermeiden)
-	 * 
-	 *  @return void
+	 * Externe Libraries laden (nur bei Bedarf, um Konflikte zu vermeiden)
+	 * ```
+	 * \nn\t3::autoload();
+	 * ```
+	 * @return void
 	 */
 	public static function autoload() {
 		require_once( \nn\t3::Environment()->extPath('nnhelpers') . 'Resources/Libraries/vendor/autoload.php');

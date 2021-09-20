@@ -160,13 +160,20 @@ class FrontendUserAuthentication extends \TYPO3\CMS\Frontend\Authentication\Fron
 		$GLOBALS['TSFE']->fe_user->fetchGroupData();
 		
 		$session_data = $GLOBALS['TSFE']->fe_user->fetchUserSession();
-		setcookie($cookieName, $session_data['ses_id'], time() + (86400 * 30), "/");
+		$sessionId = $session_data['ses_id'] ?? '';
 
 		if (\nn\t3::t3Version() > 8) {
 			$context = \nn\t3::injectClass(Context::class);
+			$alternativeGroups = [];
 			$userAspect = GeneralUtility::makeInstance(UserAspect::class, $GLOBALS['TSFE']->fe_user, $alternativeGroups);
 			$context->setAspect('frontend.user', $userAspect);
 		}
+
+		if (\nn\t3::t3Version() >= 11) {
+			$sessionId = $GLOBALS['TSFE']->fe_user->userSession->getIdentifier();
+		}
+
+		setcookie($cookieName, $sessionId, time() + (86400 * 30), "/");
 
 		return $GLOBALS['TSFE']->fe_user->user;
 	}

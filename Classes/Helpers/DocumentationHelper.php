@@ -1,5 +1,7 @@
 <?php namespace Nng\Nnhelpers\Helpers;
 
+use \Nng\Nnhelpers\Helpers\MarkdownHelper;
+
 /**
  * Diverse Methoden zum Parsen von PHP-Quelltexten und Kommentaren im
  * Quelltext (Annotations). Zielsetzung: Automatisierte Dokumentation aus den Kommentaren
@@ -157,7 +159,7 @@ class DocumentationHelper {
 		$reflector = new \ReflectionClass( $className );
 		$docComment = $reflector->getDocComment();
 
-		$classComment = self::parseCommentString( $docComment );
+		$classComment = MarkdownHelper::parseComment( $docComment );
 
 		$classInfo = [
 			'className'		=> $className,
@@ -176,7 +178,7 @@ class DocumentationHelper {
 			if ($method->class == $reflector->getName()) {
 
 				if (strpos($method->name, '__') === false) {
-					$comment = self::parseCommentString($method->getDocComment());
+					$comment = MarkdownHelper::parseComment($method->getDocComment());
 
 					$params = $method->getParameters();
 					$paramInfo = [];
@@ -241,79 +243,6 @@ class DocumentationHelper {
 		$body = str_replace('    ', "\t", $body);
 		$body = str_replace("\n\t", "\n", $body);
 		return $body;   
-	}
-
-	/**
-	 * Kommentar-String zu lesbarem HTML-String konvertieren
-	 * Kommentare können Markdown verwenden.
-	 * Entfernt '*' und '/*' etc.
-	 * ```
-	 * \Nng\Nnhelpers\Helpers\DocumentationHelper::parseCommentString( '...' );
-	 * ```
-	 * @return string
-	 */
-	public static function parseCommentString ( $comment = '', $encode = true ) {
-
-		// Öffnenden und schließenden Kommentar löschen
-		$comment = trim(str_replace(['/**', '/*', '*/'], '', $comment));
-
-		// in Zeilen-Array konvertieren
-		$lines = \nn\t3::Arrays($comment)->trimExplode("\n");
-		$isCode = false;
-
-		foreach ($lines as $k=>$line) {
-
-			// \nn\t3...; immer als Code formatieren
-			//$line = preg_replace("/((.*)(t3:)(.*)(;))/", '`\1`', $line);
-			$line = preg_replace("/((.*)(@param)([^\$]*)([\$a-zA-Z]*))(.*)/", '`\1`\6', $line);
-			$line = preg_replace("/((.*)(@return)(.*))/", '`\1`', $line);
-
-			// Leerzeichen nach '* ' entfernen
-			$line = preg_replace("/(\*)(\s)(.*)/", '\3', $line);
-			$line = preg_replace("/`([\s]*)/", '`', $line, 1);
-			$line = str_replace('*', '', $line);
-
-			if (!$isCode) {
-				$line = trim($line);
-			}
-
-			if (strpos($line, '```') !== false) $isCode = !$isCode;
-
-			$lines[$k] = $line;
-		}
-
-		$comment = trim(join("\n", $lines));
-		if (!$encode) return $comment;
-
-		$comment = htmlspecialchars( $comment );
-
-		$parsedown = new \Parsedown();
-		$result = $parsedown->text( $comment );
-		$result = str_replace(['&amp;amp;', '&amp;gt;', '&amp;quot;', '&amp;apos;', '&amp;lt;'], ['&amp;', '&gt;', '&quot;', "&apos;", '&lt;'], $result);
-
-		if (!trim($result)) return '';
- 
-		//return \nn\t3::Dom( $result )->find();
-
-		$dom = new \DOMDocument();
-		$dom->loadXML( '<t>' . $result . '</t>', LIBXML_NOENT | LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD | LIBXML_XINCLUDE | LIBXML_NOERROR | LIBXML_NOWARNING );
-		
-		if (!$dom) return $result;
-
-		if ($pre = $dom->getElementsByTagName('pre'));
-		if (!$pre) return $result;
-
-		foreach ($pre as $el) {
-			if ($code = $el->getElementsByTagName('code')) {
-				foreach ($code as $codeEl) {
-					$codeEl->setAttribute('class', 'language-php');
-				}
-			}			
-		}
-
-		$html = $dom->saveHTML( $dom->getElementsByTagName('t')->nodeValue );
-				
-		return trim(str_replace(['<t>', '</t>'], '', $html));
 	}
 
 }

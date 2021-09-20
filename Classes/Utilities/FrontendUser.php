@@ -80,9 +80,9 @@ class FrontendUser implements SingletonInterface {
 		} else {
 			foreach ($feGroups as $obj) {
 				$uid = false;
-				if (is_int($obj)) $uid = $obj;
+				if (is_numeric($obj)) $uid = $obj;
 				if (is_array($obj) && isset($obj['uid'])) $uid = $obj['uid'];
-				if (method_exists($obj, 'getUid')) $uid = $obj->getUid();
+				if (is_object($obj) && method_exists($obj, 'getUid')) $uid = $obj->getUid();
 				if ($uid) $feGroupUids[] = $uid;
 			}
 		}
