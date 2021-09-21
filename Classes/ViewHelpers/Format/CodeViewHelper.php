@@ -22,6 +22,10 @@ use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
  * <nnt3:format.code lang="css" download="rte.css">
  *   ... Markup ...
  * </nnt3:format.code>
+ * 
+ * <nnt3:format.code lang="none">
+ *   ... Markup ...
+ * </nnt3:format.code>
  * ```
  * @return string  
  */
@@ -44,6 +48,9 @@ class CodeViewHelper extends AbstractViewHelper {
 		if ($download = $arguments['download']) {
 			$download = 'data-src="' . $download . '" data-nndownload data-download-link-label="Download"';
 		}
-        return '<pre ' . $download . '><code class="language-' . $lang . '">'.trim(htmlspecialchars($str, ENT_QUOTES, 'UTF-8')).'</code></pre>';
+
+		$lang = $lang !== 'none' ? "language-{$lang}" : '';
+
+        return '<pre ' . $download . '><code class="' . $lang . '">'.trim(htmlspecialchars($str, ENT_QUOTES, 'UTF-8')).'</code></pre>';
 	}
 }
