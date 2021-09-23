@@ -29,6 +29,10 @@ Build: https://bit.ly/3BLqmx0
 	<nnt3:format.code lang="css" download="rte.css">
 	  ... Markup ...
 	</nnt3:format.code>
+	
+	<nnt3:format.code lang="none">
+	  ... markup ...
+	</nnt3:format.code>
 
 | ``@return string``
 

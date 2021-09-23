@@ -19,7 +19,11 @@ Overview of Methods
 \\nn\\t3::Cache()->clear();
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Löscht den Cache, der per ``\nn\t3::Cache()->set()`` gesetzt wurde
+Löscht alle ``nnhelpers``-Caches:
+
+RAM-Caches
+CachingFramework-Caches, die per ``\nn\t3::Cache()->set()`` gesetzt wurde
+Datei-Caches, die per ``\nn\t3::Cache()->write()`` gesetzt wurde
 
 .. code-block:: php
 
@@ -67,6 +71,27 @@ Kann auch ein Array als Identifier verarbeiten.
 | ``@param mixed $indentifier``
 | ``@return string``
 
+\\nn\\t3::Cache()->read(``$identifier``);
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+Statischen Datei-Cache lesen.
+
+Liest die PHP-Datei, die per ``\nn\t3::Cache()->write()`` geschrieben wurde.
+
+.. code-block:: php
+
+	$cache = \nn\t3::Cache()->read( $identifier );
+
+Die PHP-Datei ist ein ausführbares PHP-Script mit dem ``return``-Befehl.
+Sie speichert den Cache-Inhalt in einem Array.
+
+.. code-block:: php
+
+	<?php
+	    return ['_'=>...];
+
+| ``@return string|array``
+
 \\nn\\t3::Cache()->set(``$identifier = '', $data = NULL, $useRamCache = false``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
@@ -98,4 +123,33 @@ Der Identifier ist ein beliebiger String oder ein Array, der den Cache eindeutif
 | ``integer``: Wie viele Sekunden cachen?
 
 | ``@return mixed``
+
+\\nn\\t3::Cache()->write(``$identifier, $cache``);
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+Statischen Datei-Cache schreiben.
+
+Schreibt eine PHP-Datei, die per ``$cache = require('...')`` geladen werden kann.
+
+Angelehnt an viele Core-Funktionen und Extensions (z.B. mask), die statische PHP-Dateien
+ins Filesystem legen, um performancelastige Prozesse wie Klassenpfade, Annotation-Parsing etc.
+besser zu cachen. Nutzt bewußt nicht die Core-Funktionen, um jeglichen Overhead zu
+vermeiden und größtmögliche Kompatibilität bei Core-Updates zu gewährleisten.
+
+.. code-block:: php
+
+	$cache = ['a'=>1, 'b'=>2];
+	$identifier = 'myid';
+	
+	\nn\t3::Cache()->write( $identifier, $cache );
+	$read = \nn\t3::Cache()->read( $identifier );
+
+Das Beispiel oben generiert eine PHP-Datei mit diesem Inhalt:
+
+.. code-block:: php
+
+	<?php
+	return ['_' => ['a'=>1, 'b'=>2]];
+
+| ``@return string|array``
 

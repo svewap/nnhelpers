@@ -29,6 +29,18 @@ addPageConfig
 
 | ``@return void``
 
+\\nn\\t3::Registry()->clearCacheHook(``$classMethodPath = ''``);
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+Insert a hook that will be executed when you click on "Clear Cache".
+The following script goes into the ``ext_localconf.php`` of your custom extension:
+
+.. code-block:: php
+
+	\nn\t3::Registry()->clearCacheHook( \My\Ext\Path::class . '->myMethod' );
+
+| ``@return void``
+
 \\nn\\t3::Registry()->configurePlugin(``$vendorName = '', $pluginName = '', $cacheableActions = [], $uncacheableActions = []``);
 """""""""""""""""""""""""""""""""""""""""""""""
 

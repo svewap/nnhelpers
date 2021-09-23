@@ -85,19 +85,6 @@ If you only know the path to the PHP file, use ``parseFile()``.
 
 | ``@return array``
 
-\\nn\\t3::DocumentationHelper()->parseCommentString(``$comment = '', $encode = true``);
-"""""""""""""""""""""""""""""""""""""""""""""""
-
-Convert comment string to readable HTML string.
-Comments canöt use Markdown.
-Removes '' and '' etc.
-
-.. code-block:: php
-
-	\Nng\Nnhelpers\Helpers\DocumentationHelper::parseCommentString( '...' );
-
-| ``@return string``
-
 \\nn\\t3::DocumentationHelper()->parseFile(``$path = '', $returnMethods = true``);
 """""""""""""""""""""""""""""""""""""""""""""""
 

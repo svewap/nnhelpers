@@ -94,10 +94,10 @@ Get info about the classSchema of a model
 
 .. code-block:: php
 
-	 \nn\t3::Obj()->getClassSchema( \My\Model\Name );
+	 \nn\t3::Obj()->getClassSchema( $myModel\Name::class );
+	    \nn\t3::Obj()->getClassSchema( $myModel );
 
 return DataMap
-.
 
 \\nn\\t3::Obj()->getKeys(``$obj``);
 """""""""""""""""""""""""""""""""""""""""""""""

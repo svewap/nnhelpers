@@ -20,7 +20,11 @@ Overview of Methods
 \\nn\\t3::Cache()->clear();
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Löclears the cache set by ``\nn\t3::Cache()->set()``
+Lödeletes all ``nnhelpers`` caches:
+
+RAM caches
+CachingFramework caches set via ``nn\t3::Cache()->set()``
+File caches set by ``\nn\t3::Cache()->write()``
 
 .. code-block:: php
 
@@ -68,6 +72,27 @@ Can also handle an array as an identifier.
 | ``@param mixed $indentifier``
 | ``@return string``
 
+\\nn\\t3::Cache()->read(``$identifier``);
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+Read static file cache.
+
+Reads the PHP file written via ``\nn\t3::Cache()->write()``.
+
+.. code-block:: php
+
+	$cache = \nn\t3::Cache()->read( $identifier );
+
+The PHP file is an executable PHP script with the ``return`` command.
+It stores the cache contents in an array.
+
+.. code-block:: php
+
+	<?php
+	    return ['_'=>...];
+
+| ``@return string|array``
+
 \\nn\\t3::Cache()->set(``$identifier = '', $data = NULL, $useRamCache = false``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
@@ -101,4 +126,33 @@ The identifier is an arbitrary string or array that uniquely identifies the cach
 | ``@return mixed``
 
 .
+
+\\nn\\t3::Cache()->write(``$identifier, $cache``);
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+Write static file cache.
+
+Writes a PHP file that can be loaded via ``$cache = require('...')``.
+
+Mimics many core functions and extensions (e.g. mask) that put static PHP files
+into the filesystem to better cache performance-heavy processes such as classpaths, annotation parsing, etc.
+better cached. Consciously do not use the core functions to avoid any overhead and to be more
+overhead and to ensure maximum compatibility with core updates.
+
+.. code-block:: php
+
+	$cache = ['a'=>1, 'b'=>2];
+	$identifier = 'myid';
+	
+	\nn\t3::Cache()->write( $identifier, $cache );
+	$read = \nn\t3::Cache()->read( $identifier );
+
+The example above generates a PHP file with this content:
+
+.. code-block:: php
+
+	<?php
+	return ['_' => ['a'=>1, 'b'=>2]];
+
+| ``@return string|array``
 

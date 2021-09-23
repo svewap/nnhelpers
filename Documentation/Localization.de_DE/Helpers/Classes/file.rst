@@ -325,8 +325,9 @@ Gibt an, ob der Dateityp verboten ist
 
 .. code-block:: php
 
-	\nn\t3::File()->isForbidden('bild.jpg'); => gibt 'false' zurück
-	\nn\t3::File()->isForbidden('hack.php'); => gibt 'true' zurück
+	\nn\t3::File()->isForbidden('bild.jpg');     => gibt 'false' zurück
+	\nn\t3::File()->isForbidden('hack.php');     => gibt 'true' zurück
+	\nn\t3::File()->isForbidden('.htaccess');    => gibt 'true' zurück
 
 | ``@return boolean``
 
@@ -366,11 +367,15 @@ Verschiebt eine Datei
 \\nn\\t3::File()->moveUploadedFile(``$src = NULL, $dest = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Eine Upload-Datei verschieben
+Eine Upload-Datei ins Zielverzeichnis verschieben.
+
+Kann absoluter Pfad zur tmp-Datei des Uploads sein – oder ein ``TYPO3\CMS\Core\Http\UploadedFile``,
+das sich im Controller über ``$this->request->getUploadedFiles()`` holen lässt.
 
 .. code-block:: php
 
-	\nn\t3::File()->moveUploadedFile('fileadmin/bild.jpg', 'fileadmin/bild-kopie.jpg');
+	\nn\t3::File()->moveUploadedFile('/tmp/xjauGSaudsha', 'fileadmin/bild-kopie.jpg');
+	\nn\t3::File()->moveUploadedFile( $fileObj, 'fileadmin/bild-kopie.jpg');
 
 | ``@return string``
 
@@ -460,7 +465,8 @@ EXT: Prefix auflösen zu relativer Pfadangabe
 .. code-block:: php
 
 	\nn\t3::File()->resolvePathPrefixes('EXT:extname/bild.jpg');         => /typo3conf/ext/extname/bild.jpg
-	\nn\t3::File()->resolvePathPrefixes('EXT:extname/bild.jpg', true);   => /var/www/website/typo3conf/ext/extname/bild.jpg
+	\nn\t3::File()->resolvePathPrefixes('EXT:extname/bild.jpg');         => /typo3conf/ext/extname/bild.jpg
+	\nn\t3::File()->resolvePathPrefixes('1:/uploads/bild.jpg', true);    => /var/www/website/fileadmin/uploads/bild.jpg
 
 | ``@return string``
 

@@ -53,6 +53,12 @@ If e.g. the f:image-ViewHelper is used, all calculated image sizes will be
 are stored in the table sys_file_processedfile. Ächanges the original image,
 an image from the cache may still be accessed.
 
+.. code-block:: php
+
+	\nn\t3::Fal()->clearCache( 'fileadmin/file.jpg' );
+	\nn\t3::Fal()->clearCache( $fileReference );
+	\nn\t3::Fal()->clearCache( $falFile );
+
 | ``@param $filenameOrSysFile`` FAL or path (string) to the file.
 | ``@return void``
 
@@ -61,7 +67,7 @@ an image from the cache may still be accessed.
 
 Creates a \File (FAL) Object (sys_file)
 
-nn\t3::createFalFile( $storageConfig, $srcFile, $keepSrcFile, $forceCreateNew );
+nn\t3::Fal()->createFalFile( $storageConfig, $srcFile, $keepSrcFile, $forceCreateNew );
 
 | ``@param string $storageConfig`` Path/folder where FAL file should be stored (e.g. 'fileadmin/projectdata/').
 | ``@param string $srcFile`` Source file to be converted to FAL (e.g. 'uploads/tx_nnfesubmit/example.jpg').
@@ -154,23 +160,58 @@ Checks if a SysFileReference to the same SysFile already exists for a record
 Creates a FileRefence object (table: ``sys_file_reference``) and associates it with a record.
 Example: Uploaded JPG should be attached as FAL to tt_news record
 
-parameter:
-| ``src`` => path to source file (can also be http link to YouTube video).
-| ``dest`` => path to destination folder (optional if file is to be moved/copied).
-| ``table`` => target table to which FileReference should be assigned (e.g. ``tx_myext_domain_model_entry``).
-| ``title`` => title.
-| ``description`` => description.
-| ``link`` => link
-| ``crop`` => crop.
-| ``table`` => Target table to which the FileReference is to be mapped (e.g. ``tx_myext_domain_model_entry``).
-| ``sorting`` => (int) sorting.
-| ``field`` => Column name of the target table to which the FileReference should be assigned (e.g., ``image``).
-| ``uid`` => (int) uid of the record in the target table (``tx_myext_domain_model_entry.uid``).
-| ``pid`` => (int) pid of the record in the target table.
-| ``cruser_id`` => cruser_id of the record in the target table.
-| ``copy`` => do not move src file but copy it (default: ``true``)
-| ``forceNew`` => Force new file in destination folder (otherwise check if file already exists) default: ``false``
-| ``single`` => Ensure that same FileReference is linked only 1x per record (default: ``true``)
+Parameters:
+
+key
+description
+
+| ``src``
+path to source file (can also be http link to YouTube video)
+
+| ``dest``
+Path to destination folder (optional if file is to be moved/copied)
+
+| ``table``
+Target table to which FileReference should be assigned (e.g. ``tx_myext_domain_model_entry``)
+
+| ``title``
+title
+
+| ``description``
+description
+
+| ``link``
+link
+
+| ``crop``
+crop
+
+| ``table``
+Target table to which the FileReference should be assigned (e.g. ``tx_myext_domain_model_entry``)
+
+| ``sorting``
+(int) sorting
+
+| ``field``
+Column name of the target table to which the FileReference should be assigned (e.g., ``image``)
+
+| ``uid``
+(int) uid of the record in the target table (``tx_myext_domain_model_entry.uid``)
+
+| ``pid``
+(int) pid of the record in the destination table
+
+| ``cruser_id``
+cruser_id of the record in the target table
+
+| ``copy``
+src file do not move but copy (default: ``true``)
+
+| ``forceNew``
+Force new file in destination folder (otherwise checks if file already exists) default: ``false``
+
+| ``single``
+Make sure that same FileReference is linked only 1x per record (default: ``true``)
 
 Example:
 
@@ -191,7 +232,11 @@ Example:
 \\nn\\t3::Fal()->getFalFile(``$srcFile``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Gets a \File (FAL) Object (sys_file)
+Gets a \File (FAL) object (``sys_file``)
+
+.. code-block:: php
+
+	\nn\t3::Fal()->getFalFile( 'fileadmin/image.jpg' );
 
 | ``@param string $srcFile``
 | ``@return \TYPO3\CMS\Core\Resource\File|boolean``
@@ -204,7 +249,7 @@ If file does not exist FALSE will be returned.
 
 .. code-block:: php
 
-	\nn\t3::getFileObjectFromCombinedIdentifier( '1:/uploads/example.txt' );
+	\nn\t3::Fal()->getFileObjectFromCombinedIdentifier( '1:/uploads/example.txt' );
 
 | ``@param string $file`` Combined Identifier ('1:/uploads/example.txt')
 | ``@return file|boolean``
@@ -227,6 +272,10 @@ Alias to ``\nn\t3::File()->getPublicUrl()``.
 
 Gets a SysFileReference based on the uid.
 Alias to ``\nn\t3::Convert( $uid )->toFileReference()``;
+
+.. code-block:: php
+
+	\nn\t3::Fal()->getFileReferenceByUid( 123 );
 
 | ``@param $uid``
 | ``@return \TYPO3\CMS\Extbase\Domain\Model\FileReference``
@@ -341,11 +390,16 @@ Alias to ``\nn\t3::Fal()->deleteSysFile()``
 \\nn\\t3::Fal()->updateMetaData(``$filenameOrSysFile = '', $data = []``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Update the details in sys_file_metadata and sys_file
+Update the data in ``sys_file_metadata`` and ``sys_file``
+
+.. code-block:: php
+
+	\nn\t3::Fal()->updateMetaData( 'fileadmin/file.jpg' );
+	\nn\t3::Fal()->updateMetaData( $fileReference );
+	\nn\t3::Fal()->updateMetaData( $falFile );
 
 | ``@param $filenameOrSysFile`` FAL or path (string) to the file.
 | ``@param $data`` Array of data to be updated.
 If empty, image data will be read automatically
-
 | ``@return void``
 

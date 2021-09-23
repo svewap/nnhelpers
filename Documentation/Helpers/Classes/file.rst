@@ -325,7 +325,8 @@ Indicates whether the file type is forbidden
 .. code-block:: php
 
 	\nn\t3::File()->isForbidden('image.jpg'); => returns 'false'
-	\nn\t3::File()->isForbidden('hack.php'); => returns 'true'
+	\nn\t3::File()->isForbidden('hack.php'); => return true
+	\nn\t3::File()->isForbidden('.htaccess'); => returns 'true'
 
 | ``@return boolean``
 
@@ -365,11 +366,15 @@ Moves a file
 \\nn\\t3::File()->moveUploadedFile(``$src = NULL, $dest = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Move an upload file
+Move an upload file to the destination directory
+
+Can be absolute path to the upload tmp file – or a ``TYPO3\CMS\Core\Http\UploadedFile``,
+which can be fetched in the controller via ``$this->request->getUploadedFiles()``
 
 .. code-block:: php
 
-	\nn\t3::File()->moveUploadedFile('fileadmin/image.jpg', 'fileadmin/image-copy.jpg');
+	\nn\t3::File()->moveUploadedFile('/tmp/xjauGSaudsha', 'fileadmin/image-copy.jpg');
+	\nn\t3::File()->moveUploadedFile( $fileObj, 'fileadmin/image-copy.jpg');
 
 | ``@return string``
 
@@ -459,7 +464,8 @@ EXT: resolve prefix to relative path
 .. code-block:: php
 
 	\nn\t3::File()->resolvePathPrefixes('EXT:extname/image.jpg'); => /typo3conf/ext/extname/image.jpg
-	\nn\t3::File()->resolvePathPrefixes('EXT:extname/image.jpg', true); => /var/www/website/typo3conf/ext/extname/image.jpg
+	\nn\t3::File()->resolvePathPrefixes('EXT:extname/image.jpg'); => /typo3conf/ext/extname/image.jpg
+	\nn\t3::File()->resolvePathPrefixes('1:/uploads/image.jpg', true); => /var/www/website/fileadmin/uploads/image.jpg
 
 | ``@return string``
 
