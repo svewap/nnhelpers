@@ -13,7 +13,7 @@
 
             <nnt3:widget.accordion title="<strong>{methodName}</strong>({method.paramString})" class="method">
 
-                {method.comment->f:format.raw()->f:format.nl2br()}
+                {method.comment->f:format.raw()}
                 
                 <f:alias map="{btnid:'{nnt3:uniqid()}'}">
                     <div class="src-code">

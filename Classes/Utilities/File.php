@@ -214,20 +214,33 @@ class File implements SingletonInterface {
 	}
 
 	/**
-	 * Eine Upload-Datei verschieben
+	 * Eine Upload-Datei ins Zielverzeichnis verschieben.
+	 * 
+	 * Kann absoluter Pfad zur tmp-Datei des Uploads sein – oder ein `TYPO3\CMS\Core\Http\UploadedFile`,
+	 * das sich im Controller über `$this->request->getUploadedFiles()` holen lässt.
 	 * ```
-	 * \nn\t3::File()->moveUploadedFile('fileadmin/bild.jpg', 'fileadmin/bild-kopie.jpg');
+	 * \nn\t3::File()->moveUploadedFile('/tmp/xjauGSaudsha', 'fileadmin/bild-kopie.jpg');
+	 * \nn\t3::File()->moveUploadedFile( $fileObj, 'fileadmin/bild-kopie.jpg');
 	 * ```
 	 * @return string
 	 */
 	public function moveUploadedFile ( $src = null, $dest = null ) {
-		$src = $this->absPath( $src );
+
 		$dest = $this->uniqueFilename($this->absPath( $dest ));
+
 		if (!$this->isAllowed($dest)) {
 			\nn\t3::Exception('\nn\t3::File()->moveUploadedFile() :: Filetype not allowed.');
 			return false;
 		}
-		if (move_uploaded_file( $src, $dest )) {
+
+		if (!is_string($src) && is_a($src, \TYPO3\CMS\Core\Http\UploadedFile::class)) {
+			$src->moveTo( $dest );
+		} else {
+			$src = $this->absPath( $src );
+			move_uploaded_file( $src, $dest );
+		}
+
+		if (file_exists($dest)) {
 			return $dest;
 		}
 		return false;
@@ -265,11 +278,22 @@ class File implements SingletonInterface {
 	 * EXT: Prefix auflösen zu relativer Pfadangabe
 	 * ```
 	 * \nn\t3::File()->resolvePathPrefixes('EXT:extname/bild.jpg'); 		=> /typo3conf/ext/extname/bild.jpg
-	 * \nn\t3::File()->resolvePathPrefixes('EXT:extname/bild.jpg', true); 	=> /var/www/website/typo3conf/ext/extname/bild.jpg
+	 * \nn\t3::File()->resolvePathPrefixes('EXT:extname/bild.jpg'); 		=> /typo3conf/ext/extname/bild.jpg
+	 * \nn\t3::File()->resolvePathPrefixes('1:/uploads/bild.jpg', true); 	=> /var/www/website/fileadmin/uploads/bild.jpg
 	 * ```
 	 * @return string
 	 */
 	public function resolvePathPrefixes ( $file = null, $absolute = false ) {
+
+		// `1:/uploads`
+		if (preg_match('/^([0-9]*)(:\/)(.*)/i', $file, $matches)) {
+			$resourceFactory = GeneralUtility::makeInstance( ResourceFactory::class );
+			$storage = $resourceFactory->getStorageObject($matches[1]);
+			if (!$storage) return $file;
+			$basePath = $storage->getConfiguration()['basePath'];
+			$file = $basePath . $matches[3];
+		}
+
 		$absPathName = GeneralUtility::getFileAbsFileName( $file );
 		if (!$absPathName) return $file;
 		if ($absolute) return $this->absPath($absPathName);
@@ -348,14 +372,16 @@ class File implements SingletonInterface {
 	/**
 	 * Gibt an, ob der Dateityp verboten ist
 	 * ```
-	 * \nn\t3::File()->isForbidden('bild.jpg');	=> gibt 'false' zurück
-	 * \nn\t3::File()->isForbidden('hack.php');	=> gibt 'true' zurück
+	 * \nn\t3::File()->isForbidden('bild.jpg');		=> gibt 'false' zurück
+	 * \nn\t3::File()->isForbidden('hack.php');		=> gibt 'true' zurück
+	 * \nn\t3::File()->isForbidden('.htaccess');	=> gibt 'true' zurück
 	 * ```
 	 * @return boolean
 	 */
 	// isForbidden
 	public function isForbidden ( $filename = null ) {
 		if (!$filename) return false;
+		if (substr($filename, 0, 1) == '.') return true;
 		$types = array_values(self::$TYPES);
 		$allowed = array_merge(...$types);
 		return !in_array($this->suffix($filename), $allowed );

@@ -39,27 +39,27 @@ use TYPO3\CMS\Extbase\Service\ImageService;
 class Fal implements SingletonInterface {
 
 	/**
-	 * 	@var \TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager
+	 * @var \TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager
 	 */
 	protected $persistenceManager;
 
 	/**
-	 * 	Konstruieren
+	 * Konstruieren
 	 */
 	public function __construct () {
 		$this->persistenceManager = \nn\t3::injectClass(\TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager::class);
 	}
 
 	/**
-	 * 	Eine Datei zu einem FileReference-Object konvertieren und
-	 * 	an die Property oder ObjectStorage eines Models hängen.
-	 * 	Siehe auch: `\nn\t3::Fal()->setInModel( $member, 'falslideshow', $imagesToSet );` mit dem
-	 *	Array von mehreren Bildern an eine ObjectStorage gehängt werden können.
-	 *	```
-	 *	\nn\t3::Fal()->attach( $model, $fieldName, $filePath );
-	 *	\nn\t3::Fal()->attach( $model, 'image', 'fileadmin/user_uploads/image.jpg' );
-	 *	```
-	 *	@return \TYPO3\CMS\Extbase\Domain\Model\FileReference
+	 * Eine Datei zu einem FileReference-Object konvertieren und
+	 * an die Property oder ObjectStorage eines Models hängen.
+	 * Siehe auch: `\nn\t3::Fal()->setInModel( $member, 'falslideshow', $imagesToSet );` mit dem
+	 * Array von mehreren Bildern an eine ObjectStorage gehängt werden können.
+	 * ```
+	 * \nn\t3::Fal()->attach( $model, $fieldName, $filePath );
+	 * \nn\t3::Fal()->attach( $model, 'image', 'fileadmin/user_uploads/image.jpg' );
+	 * ```
+	 * @return \TYPO3\CMS\Extbase\Domain\Model\FileReference
 	 */
 	public function attach ( $model, $field, $filePath = null ) {
 
@@ -93,14 +93,14 @@ class Fal implements SingletonInterface {
 	}
 
 	/**
-	 * 	Leert eine ObjectStorage in einem Model oder entfernt ein 
-	 * 	einzelnes Object vom Model oder einer ObjectStorage.
-	 *	Im Beispiel kann `image` eine ObjectStorage oder eine einzelne `FileReference` sein: 
-	 *	```
-	 *	\nn\t3::Fal()->detach( $model, 'image' );
-	 *	\nn\t3::Fal()->detach( $model, 'image', $singleObjToRemove );
-	 *	```
-	 *	@return void
+	 * Leert eine ObjectStorage in einem Model oder entfernt ein 
+	 * einzelnes Object vom Model oder einer ObjectStorage.
+	 * Im Beispiel kann `image` eine ObjectStorage oder eine einzelne `FileReference` sein: 
+	 * ```
+	 * \nn\t3::Fal()->detach( $model, 'image' );
+	 * \nn\t3::Fal()->detach( $model, 'image', $singleObjToRemove );
+	 * ```
+	 * @return void
 	 */
 	public function detach ( $model, $field, $obj = null ) {
 		$propVal = \nn\t3::Obj()->prop($model, $field);
@@ -118,40 +118,43 @@ class Fal implements SingletonInterface {
 	}
 
 	/**
-	 *	Erzeugt ein FileRefence Objekt (Tabelle: `sys_file_reference`) und verknüpft es mit einem Datensatz.
-	 *	Beispiel: Hochgeladenes JPG soll als FAL an tt_news-Datensatz angehängt werden
+	 * Erzeugt ein FileRefence Objekt (Tabelle: `sys_file_reference`) und verknüpft es mit einem Datensatz.
+	 * Beispiel: Hochgeladenes JPG soll als FAL an tt_news-Datensatz angehängt werden
 	 *
-	 *	__Parameter:__
-	 *	`src` 			=> Pfad zur Quelldatei (kann auch http-Link zu YouTube-Video sein)
-	 *	`dest`			=> Pfad zum Zielordner (optional, falls Datei verschoben/kopiert werden soll)
-	 *	`table`			=> Ziel-Tabelle, dem die FileReference zugeordnet werden soll (z.B. `tx_myext_domain_model_entry`)
-	 *	`title`			=> Titel
-	 *	`description`	=> Beschreibung
-	 *	`link`			=> Link
-	 *	`crop`			=> Beschnitt
-	 *	`table`			=> Ziel-Tabelle, dem die FileReference zugeordnet werden soll (z.B. `tx_myext_domain_model_entry`)
-	 *	`sorting`		=> (int) Sortierung
-	 *	`field`			=> Column-Name der Ziel-Tabelle, dem die FileReference zugeordnet werden soll (z.B. `image`)
-	 *	`uid`			=> (int) uid des Datensatzes in der Zieltabelle (`tx_myext_domain_model_entry.uid`)
-	 *	`pid`			=> (int) pid des Datensatzes in der Zieltabelle 
-	 *	`cruser_id`		=> cruser_id des Datensatzes in der Zieltabelle
-	 *	`copy`			=> src-Datei nicht verschieben sondern kopieren (default: `true`)
-	 *	`forceNew`		=> Im Zielordner neue Datei erzwingen (sonst wird geprüft, ob bereits Datei existiert) default: `false`
-	 *	`single`		=> Sicherstellen, dass gleiche FileReferenz nur 1x pro Datensatz verknüpft wird (default: `true`)
-	 *	
-	 *	__Beispiel:__
-	 *	```
-	 *	$fal = \nn\t3::Fal()->fromFile([
-	 *		'src'			=> 'fileadmin/test/bild.jpg',
-	 *		'dest' 			=> 'fileadmin/test/fal/',
-	 *		'pid'			=> 132, 
-	 *		'uid'			=> 5052, 
-	 *		'table'			=> 'tx_myext_domain_model_entry', 
-	 *		'field'			=> 'fallistimage'
-	 *	]);
-	 *	```
+	 * __Parameter:__
+	 * 
+	 * | key | Beschreibung |
+	 * | --- | --- |
+	 * | `src` 			| Pfad zur Quelldatei (kann auch http-Link zu YouTube-Video sein)
+	 * | `dest`			| Pfad zum Zielordner (optional, falls Datei verschoben/kopiert werden soll)
+	 * | `table`		| Ziel-Tabelle, dem die FileReference zugeordnet werden soll (z.B. `tx_myext_domain_model_entry`)
+	 * | `title`		| Titel
+	 * | `description`  | Beschreibung
+	 * | `link`			| Link
+	 * | `crop`			| Beschnitt
+	 * | `table`		| Ziel-Tabelle, dem die FileReference zugeordnet werden soll (z.B. `tx_myext_domain_model_entry`)
+	 * | `sorting`		| (int) Sortierung
+	 * | `field`		| Column-Name der Ziel-Tabelle, dem die FileReference zugeordnet werden soll (z.B. `image`)
+	 * | `uid`			| (int) uid des Datensatzes in der Zieltabelle (`tx_myext_domain_model_entry.uid`)
+	 * | `pid`			| (int) pid des Datensatzes in der Zieltabelle 
+	 * | `cruser_id`	| cruser_id des Datensatzes in der Zieltabelle
+	 * | `copy`			| src-Datei nicht verschieben sondern kopieren (default: `true`)
+	 * | `forceNew`		| Im Zielordner neue Datei erzwingen (sonst wird geprüft, ob bereits Datei existiert) default: `false`
+	 * | `single`		| Sicherstellen, dass gleiche FileReferenz nur 1x pro Datensatz verknüpft wird (default: `true`)
+	 * 
+	 * __Beispiel:__
+	 * ```
+	 * $fal = \nn\t3::Fal()->fromFile([
+	 * 	'src'			=> 'fileadmin/test/bild.jpg',
+	 * 	'dest' 			=> 'fileadmin/test/fal/',
+	 * 	'pid'			=> 132, 
+	 * 	'uid'			=> 5052, 
+	 * 	'table'			=> 'tx_myext_domain_model_entry', 
+	 * 	'field'			=> 'fallistimage'
+	 * ]);
+	 * ```
 	 *
-	 *	@return \TYPO3\CMS\Extbase\Domain\Model\FileReference
+	 * @return \TYPO3\CMS\Extbase\Domain\Model\FileReference
 	 */ 	
 	public function fromFile ( $params = [] ) {
 		
@@ -224,7 +227,7 @@ class Fal implements SingletonInterface {
 	/**
 	 *	Erzeugt ein \File (FAL) Object (sys_file)
 	 *	
-	 *	\nn\t3::createFalFile( $storageConfig, $srcFile, $keepSrcFile, $forceCreateNew );
+	 *	\nn\t3::Fal()->createFalFile( $storageConfig, $srcFile, $keepSrcFile, $forceCreateNew );
 	 *
 	 *	@param string $storageConfig	Pfad/Ordner, in die FAL-Datei gespeichert werden soll (z.B. 'fileadmin/projektdaten/')
 	 *	@param string $srcFile			Quelldatei, die in FAL umgewandelt werden soll  (z.B. 'uploads/tx_nnfesubmit/beispiel.jpg')
@@ -246,6 +249,11 @@ class Fal implements SingletonInterface {
 
 		// Absoluter Pfad zur Quell-Datei ('/var/www/website/uploads/bild.jpg')
 		$absSrcFile = \nn\t3::File()->absPath( $srcFile );
+
+		// Keine externe URL (YouTube...) und Datei existiert nicht? Dann abbrechen!
+		if (!$isExternalMedia && !\nn\t3::File()->exists($srcFile)) {
+			return false;
+		}
 
 		// Object, Storage-Model für Zielverzeichnis (z.B. Object für 'fileadmin/' wenn $storageConfig = 'fileadmin/test/was/')
 		$storage = \nn\t3::File()->getStorage($storageConfig, true);
@@ -340,10 +348,12 @@ class Fal implements SingletonInterface {
 	
 	
 	/**
-	 *	Holt ein \File (FAL) Object (sys_file)
-	 *
-	 *	@param string $srcFile
-	 *	@return \TYPO3\CMS\Core\Resource\File|boolean
+	 * Holt ein \File (FAL) Object (`sys_file`)
+	 * ```
+	 * \nn\t3::Fal()->getFalFile( 'fileadmin/image.jpg' );
+	 * ```
+	 * @param string $srcFile
+	 * @return \TYPO3\CMS\Core\Resource\File|boolean
 	 */
 	public function getFalFile ( $srcFile ) {
 
@@ -388,7 +398,7 @@ class Fal implements SingletonInterface {
 	 * Holt ein SysFile aus der CombinedIdentifier-Schreibweise ('1:/uploads/beispiel.txt').
 	 * Falls Datei nicht exisitert wird FALSE zurückgegeben.
 	 * ```
-	 * \nn\t3::getFileObjectFromCombinedIdentifier( '1:/uploads/beispiel.txt' );
+	 * \nn\t3::Fal()->getFileObjectFromCombinedIdentifier( '1:/uploads/beispiel.txt' );
 	 * ```
 	 * @param string $file		Combined Identifier ('1:/uploads/beispiel.txt')
 	 * @return File|boolean
@@ -433,26 +443,28 @@ class Fal implements SingletonInterface {
 	}
 	
 	/**
-	 *	Holt eine SysFileReference anhand der uid
-	 *	Alias zu `\nn\t3::Convert( $uid )->toFileReference()`;
-	 *
-	 * 	@param $uid
-	 * 	@return \TYPO3\CMS\Extbase\Domain\Model\FileReference
+	 * Holt eine SysFileReference anhand der uid
+	 * Alias zu `\nn\t3::Convert( $uid )->toFileReference()`;
+	 * ```
+	 * \nn\t3::Fal()->getFileReferenceByUid( 123 );
+	 * ```
+	 * @param $uid
+	 * @return \TYPO3\CMS\Extbase\Domain\Model\FileReference
 	 */	
 	public function getFileReferenceByUid( $uid = null ) {
 		return \nn\t3::Convert( $uid )->toFileReference();
 	}
 
 	/**
-	 *	Löscht eine SysFileReference.
-	 *	Siehe auch `\nn\t3::Fal()->detach( $model, $field );` zum Löschen aus einem Model. 
-	 *	```
-	 *	\nn\t3::Fal()->deleteSysFileReference( 112 );
-	 *	\nn\t3::Fal()->deleteSysFileReference( \TYPO3\CMS\Extbase\Domain\Model\FileReference );
-	 *	```
-	 * 	@param $uidOrFileReference
+	 * Löscht eine SysFileReference.
+	 * Siehe auch `\nn\t3::Fal()->detach( $model, $field );` zum Löschen aus einem Model. 
+	 * ```
+	 * \nn\t3::Fal()->deleteSysFileReference( 112 );
+	 * \nn\t3::Fal()->deleteSysFileReference( \TYPO3\CMS\Extbase\Domain\Model\FileReference );
+	 * ```
+	 * @param $uidOrFileReference
 	 *
-	 * 	@return mixed
+	 * @return mixed
 	 */	
 	public function deleteSysFileReference( $uidOrFileReference = null ) {
 
@@ -582,13 +594,17 @@ class Fal implements SingletonInterface {
 
 
 	/**
-	 * 	Löscht den Cache für die Bildgrößen eines FAL inkl. der umgerechneten Bilder
-	 * 	Wird z.B. der f:image-ViewHelper verwendet, werden alle berechneten Bildgrößen
-	 * 	in der Tabelle sys_file_processedfile gespeichert. Ändert sich das Originalbild,
-	 * 	wird evtl. noch auf ein Bild aus dem Cache zugegriffen.
-	 * 
-	 * 	@param $filenameOrSysFile 	FAL oder Pfad (String) zu der Datei
-	 * 	@return void
+	 * Löscht den Cache für die Bildgrößen eines FAL inkl. der umgerechneten Bilder
+	 * Wird z.B. der f:image-ViewHelper verwendet, werden alle berechneten Bildgrößen
+	 * in der Tabelle sys_file_processedfile gespeichert. Ändert sich das Originalbild,
+	 * wird evtl. noch auf ein Bild aus dem Cache zugegriffen.
+	 * ```
+	 * \nn\t3::Fal()->clearCache( 'fileadmin/file.jpg' );
+	 * \nn\t3::Fal()->clearCache( $fileReference );
+	 * \nn\t3::Fal()->clearCache( $falFile );
+	 * ```
+	 * @param $filenameOrSysFile 	FAL oder Pfad (String) zu der Datei
+	 * @return void
 	 */
 	public function clearCache ( $filenameOrSysFile = '' ) {
 		if (is_string($filenameOrSysFile)) {
@@ -616,13 +632,16 @@ class Fal implements SingletonInterface {
 	}
 
 	/**
-	 * 	Update der Angaben in sys_file_metadata und sys_file
-	 * 
-	 * 	@param $filenameOrSysFile 	FAL oder Pfad (String) zu der Datei
-	 * 	@param $data 				Array mit Daten, die geupdated werden sollen.
+	 * Update der Angaben in `sys_file_metadata` und `sys_file`
+	 * ```
+	 * \nn\t3::Fal()->updateMetaData( 'fileadmin/file.jpg' );
+	 * \nn\t3::Fal()->updateMetaData( $fileReference );
+	 * \nn\t3::Fal()->updateMetaData( $falFile );
+	 * ```
+	 * @param $filenameOrSysFile 	FAL oder Pfad (String) zu der Datei
+	 * @param $data 				Array mit Daten, die geupdated werden sollen.
 	 *								Falls leer, werden Bilddaten automatisch gelesen
-	 * 
-	 * 	@return void
+	 * @return void
 	 */
 	public function updateMetaData ( $filenameOrSysFile = '', $data = [] ) {
 

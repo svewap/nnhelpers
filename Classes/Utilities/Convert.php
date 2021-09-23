@@ -266,7 +266,7 @@ class Convert implements SingletonInterface {
 									}
 								} else {
 									$attach = false;
-									\nn\t3::Exception('\nn\t3::Convert()->toModel() konnte sys_file nicht erzeugen aus Datei' . $imgUrl);
+									\nn\t3::Exception('\nn\t3::Convert()->toModel() konnte sys_file nicht erzeugen aus Datei `' . $imgUrl . '`');
 								}
 							}
 						}

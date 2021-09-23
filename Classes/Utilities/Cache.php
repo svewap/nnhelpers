@@ -214,6 +214,7 @@ class Cache implements SingletonInterface {
 	 * @return string|array
 	 */
 	public function read( $identifier ) {
+
 		if ($cache = $this->get( $identifier, true )) return $cache;
 		$identifier = self::getIdentifier( $identifier );
 		$path = \TYPO3\CMS\Core\Core\Environment::getVarPath() . "/cache/code/nnhelpers/{$identifier}.php";
