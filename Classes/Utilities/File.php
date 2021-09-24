@@ -683,6 +683,7 @@ class File implements SingletonInterface {
 	 * Legt auch die Ordner an, falls sie nicht existieren.
 	 * ```
 	 * \nn\t3::File()->write('fileadmin/some/deep/folder/');
+	 * \nn\t3::File()->write('1:/some/deep/folder/');
 	 * \nn\t3::File()->write('fileadmin/some/deep/folder/file.json', 'TEXT');
 	 * ```
 	 * @return boolean
@@ -703,6 +704,7 @@ class File implements SingletonInterface {
 	 * Einen Ordner anlegen
 	 * ```
 	 * \nn\t3::File()->mkdir( 'fileadmin/mein/ordner/' );
+	 * \nn\t3::File()->mkdir( '1:/mein/ordner/' );
 	 * ```
 	 * @return boolean
 	 */
