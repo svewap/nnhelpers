@@ -52,11 +52,11 @@ page.10 {
 		[field-lower] = TEXT
 		[field-lower].value = Beispiel-Text
 
-		# Geht auch direkt per ViewHelper! {nnt3:content.column(colPos:10)}
+		# Geht auch direkt per ViewHelper -- siehe "nnt3:content.column()"
 		content_10 < styles.content.get
 		content_10.select.where = colPos = 10
 
-		# Geht auch direkt per ViewHelper! {nnt3:content.column(colPos:20)}
+		# Geht auch direkt per ViewHelper -- siehe "nnt3:content.column()"
 		content_20 < styles.content.get
 		content_20.select.where = colPos = 20
 	}

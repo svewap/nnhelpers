@@ -234,7 +234,19 @@ class File implements SingletonInterface {
 		}
 
 		if (!is_string($src) && is_a($src, \TYPO3\CMS\Core\Http\UploadedFile::class)) {
-			$src->moveTo( $dest );
+			if (\nn\t3::t3Version() < 10) {
+				if ($stream = $src->getStream()) {
+					$handle = fopen($dest, 'wb+');
+					if ($handle === false) return false;
+					$stream->rewind();
+					while (!$stream->eof()) {
+						fwrite($handle, $stream->read(4096));
+					}
+					fclose($handle);
+				}
+			} else {
+				$src->moveTo( $dest );
+			}
 		} else {
 			$src = $this->absPath( $src );
 			move_uploaded_file( $src, $dest );

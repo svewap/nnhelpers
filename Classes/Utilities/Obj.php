@@ -362,11 +362,14 @@ class Obj implements SingletonInterface {
 			if (is_object($obj)) {
 				$schema = \nn\t3::Obj()->getClassSchema($obj);
 				$modelProperties = $schema->getProperties();
-				if ($prop = $modelProperties[$key] ?? false)	{
-					switch ($prop->getType()) {
+				if ($prop = $modelProperties[$key] ?? false) {
+					$type = \nn\t3::Obj()->get( $prop, 'type' );
+					switch ($type) {
 						case 'int':
-						case 'float':
 							$val = (int)$val;
+							break;
+						case 'float':
+							$val = (float)$val;
 							break;
 					}
 				}

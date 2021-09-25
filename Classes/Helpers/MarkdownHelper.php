@@ -63,7 +63,7 @@ class MarkdownHelper {
 			}			
 		}
 
-		$html = $dom->saveHTML( $dom->getElementsByTagName('t')->nodeValue );
+		$html = $dom->saveHTML( $dom->getElementsByTagName('t')->nodeValue ?? null );
 				
 		return trim(str_replace(['<t>', '</t>'], '', $html));
 	}
