@@ -53,7 +53,7 @@ class Environment implements SingletonInterface {
 	 * 	@return string
 	 */
 	public function getBaseURL () {
-		if ($baseUrl = $GLOBALS['TSFE']->baseUrl) return $baseUrl;
+		if ($baseUrl = $GLOBALS['TSFE']->baseUrl ?? false) return $baseUrl;
 		$setup = \nn\t3::Settings()->getFullTyposcript();
 		if ($baseUrl = $setup['config']['baseURL'] ?? false) return $baseUrl;
 		$server = (isset($_SERVER['HTTPS']) ? 'https' : 'http') . "://{$_SERVER['HTTP_HOST']}/";
