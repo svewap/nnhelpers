@@ -224,6 +224,10 @@ class Obj implements SingletonInterface {
 		$type = is_object($obj) ? get_class($obj) : false;
 		$final = [];
 
+		if (is_a($obj, \TYPO3\CMS\Extbase\Persistence\Generic\QueryResult::class)) {
+			$obj = $obj->toArray();
+		}
+
 		if (is_a($obj, \DateTime::class)) {
 
 			// DateTime in UTC konvertieren

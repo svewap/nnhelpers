@@ -378,7 +378,7 @@ class Page implements SingletonInterface {
 			return \nn\t3::injectClass( PageRenderer::class );
 		}
 
-		if (\nn\t3::t3Version() < 9) {
+		if (\nn\t3::t3Version() >= 9) {
 			return \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Page\PageRenderer::class);
 		}
 		
