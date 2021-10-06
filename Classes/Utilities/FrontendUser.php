@@ -14,55 +14,128 @@ class FrontendUser implements SingletonInterface {
 	 * Alias zu `\nn\t3::FrontendUser()->getCurrentUser();`
 	 * ```
 	 * \nn\t3::FrontendUser()->get(); 
-	 *  ```
+	 * ```
 	 * Existiert auch als ViewHelper:
 	 * ```
 	 * {nnt3:frontendUser.get(key:'first_name')}
  	 * {nnt3:frontendUser.get()->f:variable.set(name:'feUser')}
 	 * ```
-	 * @return User
+	 * @return array
 	 */
 	public function get() {
 		return $this->getCurrentUser();
 	}
+ 	
+	/**
+	 * Benutzergruppen des aktuellen FE-User holen.
+	 * Alias zu `\nn\t3::FrontendUser()->getCurrentUserGroups();`
+	 * ```
+	 * // nur title, uid und pid der Gruppen laden
+	 * \nn\t3::FrontendUser()->getGroups();
+	 * // kompletten Datensatz der Gruppen laden
+	 * \nn\t3::FrontendUser()->getGroups( true ); 
+	 * ```
+	 * @return array
+	 */
+	public function getGroups( $returnRowData = false ) {
+		return $this->getCurrentUserGroups( $returnRowData );
+	}
 
 	/**
-	 * User-Gruppe des aktuellen FE-Users holen.
+	 * Array mit den Daten des aktuellen FE-Users holen.
 	 * ```
 	 * \nn\t3::FrontendUser()->getCurrentUser(); 
 	 * ```
-	 * @return User
+	 * @return array
 	 */
 	public function getCurrentUser() {
 		if (!$this->isLoggedIn()) return [];
-		return $GLOBALS['TSFE']->fe_user->user ?? [];
+
+		// Wenn wir ein Frontend haben, sind die fe_user-Daten global und vollständig im TSFE gespeichert
+		if (\nn\t3::t3Version() < 9 || (($GLOBALS['TSFE'] ?? false) && $GLOBALS['TSFE']->fe_user)) {
+			return $GLOBALS['TSFE']->fe_user->user ?? [];
+		}
+
+		// Ohne Frontend könnten wir uns z.B. in einer Middleware befinden. Nach AUTH sind die Daten evtl im Aspect.
+		$context = GeneralUtility::makeInstance(Context::class);
+		$userAspect = $context->getAspect('frontend.user');
+		if (!$userAspect) return [];
+
+		$usergroupUids = array_column($this->resolveUserGroups( $userAspect->get('groupIds') ), 'uid');
+
+		// Daten zu Standard-Darstellung normalisieren
+		return [
+			'uid'			=> $userAspect->get('id'),
+			'username'		=> $userAspect->get('username'),
+			'usergroup'		=> join(',', $usergroupUids)
+		] ?? [];
 	}
 	
 	/**
+	 * Wandelt ein Array oder eine kommaseparierte Liste mit Benutzergrupen-UIDs in 
+	 * `fe_user_groups`-Daten aus der Datenbank auf. Prüft auf geerbte Untergruppe.
 	 * ```
-	 * \nn\t3::FrontendUser()->getCurrentUserGroups();			=> [1 => ['title'=>'Gruppe A', 'uid' => 1]] 
-	 * \nn\t3::FrontendUser()->getCurrentUserGroups( true );	=> [1 => [... alle Felder der DB] ] 
+	 * \nn\t3::FrontendUser()->resolveUserGroups( [1,2,3] );
+	 * \nn\t3::FrontendUser()->resolveUserGroups( '1,2,3' );
+	 * ```
+	 * @return array
+	 */
+	public function resolveUserGroups( $arr = [] ) {
+		$arr = \nn\t3::Arrays( $arr )->intExplode();
+		$groupDataArr = GeneralUtility::makeInstance(\TYPO3\CMS\Core\Authentication\GroupResolver::class)->resolveGroupsForUser(['usergroup'=>join(',', $arr)], 'fe_groups');
+		return $groupDataArr;
+	}
+
+	/**
+	 * Benutzergruppen des aktuellen FE-Users als Array holen.
+	 * Die uids der Benutzergruppen werden im zurückgegebenen Array als Key verwendet. 
+	 * ```
+	 * // Minimalversion: Per default gibt Typo3 nur title, uid und pid zurück
+	 * \nn\t3::FrontendUser()->getCurrentUserGroups();			// [1 => ['title'=>'Gruppe A', 'uid' => 1, 'pid'=>5]] 
+	 * 
+	 * // Mit true kann der komplette Datensatz für die fe_user_group aus der DB gelesen werden
+	 * \nn\t3::FrontendUser()->getCurrentUserGroups( true );	// [1 => [... alle Felder der DB] ] 
 	 * ```
 	 * @return array
 	 */
 	public function getCurrentUserGroups( $returnRowData = false ) {
 		if (!$this->isLoggedIn()) return [];
-		$rawGroupData = $GLOBALS['TSFE']->fe_user->groupData;
-		$groupDataByUid = [];
-		foreach ($rawGroupData['uid'] as $i=>$uid) {
-			$groupDataByUid[$uid] = [];
-			if ($returnRowData) {
-				$groupDataByUid[$uid] = \nn\t3::Db()->findByUid('fe_groups', $uid);
+
+		if (($GLOBALS['TSFE'] ?? false) && $GLOBALS['TSFE']->fe_user) {
+
+			// Wenn wir ein Frontend haben...
+			$rawGroupData = $GLOBALS['TSFE']->fe_user->groupData;
+			$groupDataByUid = [];
+			foreach ($rawGroupData['uid'] as $i=>$uid) {
+				$groupDataByUid[$uid] = [];
+				if ($returnRowData) {
+					$groupDataByUid[$uid] = \nn\t3::Db()->findByUid('fe_groups', $uid);
+				}
+				foreach ($rawGroupData as $field=>$arr) {
+					$groupDataByUid[$uid][$field] = $arr[$i];
+				}
 			}
-			foreach ($rawGroupData as $field=>$arr) {
-				$groupDataByUid[$uid][$field] = $arr[$i];
+			return $groupDataByUid;	
+
+		} else if (\nn\t3::t3Version() >= 9) {
+
+			// ... oder in einem Kontext ohne Frontend sind (z.B. einer Middleware)
+			$context = GeneralUtility::makeInstance(Context::class);
+			$userAspect = $context->getAspect('frontend.user');
+			if (!$userAspect) return [];
+			$userGroups = $this->resolveUserGroups($userAspect->get('groupIds'));
+			if ($returnRowData) {
+				return \nn\t3::Arrays($userGroups)->key('uid')->toArray() ?: [];
+			} else {
+				return \nn\t3::Arrays($userGroups)->key('uid')->pluck(['uid', 'title', 'pid'])->toArray();
 			}
 		}
-		return $groupDataByUid;
+
+		return [];
 	}
 	
 	/**
-	 * Prüft, ob der aktuelle fe-user innerhalb einer bestimmte Benutzergruppe ist.
+	 * Prüft, ob der aktuelle Frontend-User innerhalb einer bestimmte Benutzergruppe ist.
 	 * ```
 	 * \nn\t3::FrontendUser()->isInUserGroup( 1 );
 	 * \nn\t3::FrontendUser()->isInUserGroup( ObjectStorage<FrontendUserGroup> );
@@ -144,7 +217,10 @@ class FrontendUser implements SingletonInterface {
 	 * @return string
 	 */
 	public function getSessionId(){
-		return $GLOBALS['TSFE']->fe_user ? $GLOBALS['TSFE']->fe_user->id : null;
+		if ($sessionId = $GLOBALS['TSFE']->fe_user ? $GLOBALS['TSFE']->fe_user->id : null) {
+			return $sessionId;
+		}
+		return $_COOKIE['fe_typo_user'] ?? null;
 	}
 
 	/**
@@ -217,10 +293,8 @@ class FrontendUser implements SingletonInterface {
 			$loginSuccess = $GLOBALS['TSFE']->fe_user->compareUident($user, $loginData);
 
 			$cookieName = \nn\t3::Environment()->getLocalConf('FE.cookieName');
-			$cookieDomain = \nn\t3::Environment()->getCookieDomain();
-			$cookiePath = $cookieDomain ? '/' : GeneralUtility::getIndpEnv('TYPO3_SITE_PATH');
+			$this->setCookie( $session_data['ses_id'] );
 
-			setcookie($cookieName, $session_data['ses_id'], time() + (86400 * 30), $cookiePath, $cookieDomain);
 			setcookie('nc_staticfilecache', 'fe_typo_user_logged_in', time() + (86400 * 30), "/");
 			
 			// $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_userauth.php']['postUserLookUp'][]
@@ -246,9 +320,16 @@ class FrontendUser implements SingletonInterface {
 		if (!$this->isLoggedIn()) return false;
 		
 		// In der MiddleWare ist der FE-User evtl. noch nicht initialisiert...
-		$TSFE = \nn\t3::Tsfe()->get();
-		if ($TSFE->fe_user) {
-			$TSFE->fe_user->logoff();
+		if ($TSFE = \nn\t3::Tsfe()->get()) {
+			if ($TSFE->fe_user && $TSFE->fe_user->logoff) {
+				$TSFE->fe_user->logoff();
+			}	
+		}
+
+		// Session-Daten aus Tabelle `fe_sessions` löschen
+		if ($sessionManager = GeneralUtility::makeInstance(\TYPO3\CMS\Core\Session\SessionManager::class)) {
+			$sessionBackend = $sessionManager->getSessionBackend('FE');
+			$sessionBackend->remove( $this->getSessionId() );	
 		}
 
 		// ... aber Cookie löschen geht immer!
@@ -277,7 +358,22 @@ class FrontendUser implements SingletonInterface {
 	}
 
 	/**
-	 * Aktuellen fe_typo_user-Cookie manuell löschen
+	 * Cookie-Name des Frontend-User-Cookies holen.
+	 * Üblicherweise `fe_typo_user`, außer es wurde in der LocalConfiguration geändert.
+	 * ```
+	 * \nn\t3::FrontendUser()->getCookieName();
+	 * ```
+	 * return string
+	 */
+	public function getCookieName() {
+		if ($cookieName = $GLOBALS['TYPO3_CONF_VARS']['FE']['cookieName'] ?? false) {
+			return $cookieName;
+		}
+		return \nn\t3::Environment()->getLocalConf('FE.cookieName');
+	}
+
+	/**
+	 * Aktuellen `fe_typo_user`-Cookie manuell löschen
 	 * ```
 	 * \nn\t3::FrontendUser()->removeCookie()
 	 * ```
@@ -289,6 +385,26 @@ class FrontendUser implements SingletonInterface {
 		$cookieName = \nn\t3::Environment()->getLocalConf('FE.cookieName');
 		setcookie($cookieName, null, -1, $cookiePath, $cookieDomain);
 		unset($_COOKIE[$cookieName]);
+	}
+
+	/**
+	 * Den `fe_typo_user`-Cookie manuell setzen.
+	 * Wird keine `sessionID` übergeben, sucht Typo3 selbst nach der Session-ID des FE-Users.
+	 * ```
+	 * \nn\t3::FrontendUser()->setCookie();
+	 * \nn\t3::FrontendUser()->setCookie( $sessionId );
+	 * ```
+	 * @return void
+	 */
+	public function setCookie( $sessionId = null ) {
+		if (!$sessionId) $sessionId = $this->getSessionId();
+		
+		$cookieName = \nn\t3::Environment()->getLocalConf('FE.cookieName');
+		$cookieDomain = \nn\t3::Environment()->getCookieDomain();
+		$cookiePath = $cookieDomain ? '/' : GeneralUtility::getIndpEnv('TYPO3_SITE_PATH');
+
+		$_COOKIE[$cookieName] = $sessionId;
+		setcookie($cookieName, $sessionId, time() + (86400 * 30), $cookiePath, $cookieDomain);
 	}
 
 	/**

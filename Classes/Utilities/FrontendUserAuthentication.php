@@ -154,6 +154,15 @@ class FrontendUserAuthentication extends \TYPO3\CMS\Frontend\Authentication\Fron
 
 		$cookieName = \nn\t3::Environment()->getLocalConf('FE.cookieName') ?: 'fe_typo_user';
 		
+		if (!$GLOBALS['TSFE'] && \nn\t3::t3Version() >= 9) {
+			$frontendUser = GeneralUtility::makeInstance(\TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication::class);
+			$frontendUser->start();
+			$session = $frontendUser->createUserSession( $user_db );
+			$sessionId = $session->getIdentifier();
+			\nn\t3::FrontendUser()->setCookie( $sessionId );
+			return $user_db;
+		}
+
 		$GLOBALS['TSFE']->fe_user->createUserSession($user_db);
 		$GLOBALS['TSFE']->fe_user->user = $user_db;
 		$GLOBALS['TSFE']->fe_user->setKey('ses', $cookieName, $user_db);
@@ -173,7 +182,7 @@ class FrontendUserAuthentication extends \TYPO3\CMS\Frontend\Authentication\Fron
 			$sessionId = $GLOBALS['TSFE']->fe_user->userSession->getIdentifier();
 		}
 
-		setcookie($cookieName, $sessionId, time() + (86400 * 30), "/");
+		\nn\t3::FrontendUser()->setCookie( $sessionId );
 
 		return $GLOBALS['TSFE']->fe_user->user;
 	}
