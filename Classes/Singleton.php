@@ -25,10 +25,10 @@ abstract class Singleton {
 
 	private function __construct() {}
 
-	public static function makeInstance() {
+	public static function makeInstance( $args = null ) {
 	   	$className = get_called_class();
 		if (!isset( self::$instances[ $className ] ) ) {
-			self::$instances[ $className ] = new $className();
+			self::$instances[ $className ] = new $className( $args );
 		}
 		return self::$instances[ $className ];
 	}

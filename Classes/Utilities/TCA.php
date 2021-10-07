@@ -417,4 +417,190 @@ class TCA implements SingletonInterface {
 		}
 		return $config;
 	}
+
+	/**
+	 * Basis-Konfiguration für das TCA holen.
+	 * Das sind die Felder wie `hidden`, `starttime` etc., die bei (fast) allen Tabellen immer gleich sind.
+	 * 
+	 * ALLE typischen Felder holen:
+	 * ```
+	 * 'columns' => \nn\t3::TCA()->createConfig(
+	 * 	'tx_myext_domain_model_entry', true,
+	 * 	['title'=>...]
+	 * )
+	 * ```
+	 * 
+	 * Nur bestimmte Felder holen:
+	 * ```
+	 * 'columns' => \nn\t3::TCA()->createConfig(
+	 * 	'tx_myext_domain_model_entry',
+	 * 	['sys_language_uid', 'l10n_parent', 'l10n_source', 'l10n_diffsource', 'hidden', 'cruser_id', 'pid', 'crdate', 'tstamp', 'sorting', 'starttime', 'endtime', 'fe_group'],
+	 * 	['title'=>...]
+	 * )
+	 * ```
+	 * @return array
+	 */
+	public function createConfig( $tablename = '', $basics = [], $custom = [] ) {
+
+		if ($basics === true) {
+			$basics = ['sys_language_uid', 'l10n_parent', 'l10n_source', 'l10n_diffsource', 'hidden', 'cruser_id', 'pid', 'crdate', 'tstamp', 'sorting', 'starttime', 'endtime'];
+		}
+
+		$defaults = [
+			'sys_language_uid' => [
+				'exclude' => true,
+				'label' => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.language',
+				'config' => [
+					'type' => 'select',
+					'renderType' => 'selectSingle',
+					'special' => 'languages',
+					'items' => [
+						[
+							'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.allLanguages',
+							-1,
+							'flags-multiple'
+						],
+					],
+					'default' => 0,
+				]
+			],
+			'l10n_parent' => [
+				'displayCond' => 'FIELD:sys_language_uid:>:0',
+				'label' => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.l18n_parent',
+				'config' => [
+					'type' => 'group',
+					'internal_type' => 'db',
+					'allowed' => $tablename,
+					'size' => 1,
+					'maxitems' => 1,
+					'minitems' => 0,
+					'default' => 0,
+				],
+			],
+			'l10n_source' => [
+				'config' => [
+					'type' => 'passthrough'
+				]
+			],
+			'l10n_diffsource' => [
+				'config' => [
+					'type' => 'passthrough',
+					'default' => ''
+				]
+			],
+			'hidden' => [
+				'exclude' => true,
+				'label' => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.hidden',
+				'config' => [
+					'type' => 'check',
+					'renderType' => 'checkboxToggle',
+					'default' => 0,
+					'items' => [
+						[
+							0 => '',
+							1 => '',
+						]
+					],
+				]
+			],
+			'cruser_id' => [
+				'label' => 'cruser_id',
+				'config' => [
+					'type' => 'passthrough'
+				]
+			],
+			'pid' => [
+				'label' => 'pid',
+				'config' => [
+					'type' => 'passthrough'
+				]
+			],
+			'crdate' => [
+				'label' => 'crdate',
+				'config' => [
+					'type' => 'input',
+					'renderType' => 'inputDateTime',
+					'eval' => 'datetime',
+				]
+			],
+			'tstamp' => [
+				'label' => 'tstamp',
+				'config' => [
+					'type' => 'input',
+					'renderType' => 'inputDateTime',
+					'eval' => 'datetime',
+				]
+			],
+			'sorting' => [
+				'label' => 'sorting',
+				'config' => [
+					'type' => 'passthrough',
+				]
+			],
+			'starttime' => [
+				'exclude' => true,
+				'label' => 'LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:starttime_formlabel',
+				'config' => [
+					'type' => 'input',
+					'renderType' => 'inputDateTime',
+					'size' => 16,
+					'eval' => 'datetime,int',
+					'default' => 0,
+					'behaviour' => [
+						'allowLanguageSynchronization' => true,
+					],
+				]
+			],
+			'endtime' => [
+				'exclude' => true,
+				'label' => 'LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:endtime_formlabel',
+				'config' => [
+					'type' => 'input',
+					'renderType' => 'inputDateTime',
+					'size' => 16,
+					'eval' => 'datetime,int',
+					'default' => 0,
+					'behaviour' => [
+						'allowLanguageSynchronization' => true,
+					],
+				]
+			],
+			'fe_group' => [
+				'exclude' => true,
+				'label' => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.fe_group',
+				'config' => [
+					'type' => 'select',
+					'renderType' => 'selectMultipleSideBySide',
+					'size' => 5,
+					'maxitems' => 20,
+					'items' => [
+						[
+							'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.hide_at_login',
+							-1,
+						],
+						[
+							'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.any_login',
+							-2,
+						],
+						[
+							'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.usergroups',
+							'--div--',
+						],
+					],
+					'exclusiveKeys' => '-1,-2',
+					'foreign_table' => 'fe_groups',
+					'foreign_table_where' => 'ORDER BY fe_groups.title',
+				],
+			],
+		];
+
+		$result = [];
+		foreach ($basics as $key) {
+			if ($config = $defaults[$key] ?? false) {
+				$result[$key] = $config;
+			}
+		}
+
+		return array_merge( $result, $custom );
+	}
 }

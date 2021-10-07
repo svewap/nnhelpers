@@ -9,22 +9,45 @@
 			'title'	=> 'LLL:EXT:[ext-lower]/Resources/Private/Language/locallang_db.xlf:tx_[ext-lower]_domain_model_[model-lower]',
 			'label' => 'title',
 			'enablecolumns' => [],
-			'hideTable' => true,
+			//'hideTable' => true,
 			'searchFields' => '',
+			'tstamp' => 'tstamp',
+            'crdate' => 'crdate',
+            'cruser_id' => 'cruser_id',
+            'dividers2tabs' => TRUE,
+            'languageField' => 'sys_language_uid',
+            'transOrigPointerField' => 'l18n_parent',
+            'transOrigDiffSourceField' => 'l18n_diffsource',
+            'delete' => 'deleted',
+            'iconfile' => 'EXT:[ext-lower]/Resources/Public/Icons/Extension.svg'
 		],
 
 		'interface' => [],
 		
 		'types' => [
-			'0' => ['showitem' => ''],
+			'0' => ['showitem' => '
+				--div--;Allgemein,
+					--palette--;;1,
+					sys_language_uid,l10n_parent,l10n_diffsource,
+					title, 
+				--div--;Zugriff,
+					--palette--;;2
+			'],
 		],
 
 		'palettes' => [
+			'1' => ['showitem' => ''],
+			'2' => ['showitem' => 'hidden, starttime, endtime,--linebreak--, fe_group'],
 		],
 		
-		'columns' => [
-			// Hier TCA-Definitionen einfügen		
-		],
+		'columns' => \nn\t3::TCA()->createConfig(
+            'tx_[ext-lower]_domain_model_[model-lower]',
+			// true ergibt: ['sys_language_uid', 'l10n_parent', 'l10n_source', 'l10n_diffsource', 'hidden', 'cruser_id', 'pid', 'crdate', 'tstamp', 'sorting', 'starttime', 'endtime', 'fe_group'], 
+			true
+            [
+				// Hier TCA-Definitionen einfügen
+			]
+		),
 	];
 	</nnt3:format.code>
 </article>

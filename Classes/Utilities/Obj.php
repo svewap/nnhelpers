@@ -11,6 +11,7 @@ use TYPO3\CMS\Extbase\Domain\Model\FileReference as FalFileReference;
 use TYPO3\CMS\Extbase\Reflection\ReflectionService;
 use Nng\Nnhelpers\Domain\Model\FileReference;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Utility\TypeHandlingUtility;
 
 /**
  * Alles, was man für Objects und Models braucht.
@@ -85,6 +86,18 @@ class Obj implements SingletonInterface {
 		return $obj;
 	}
 
+	/**
+	 * Prüft, ob es sich bei dem Object um ein Domain-Model handelt.
+	 * ```
+	 * \nn\t3::Obj()->isModel( $obj );
+	 * ```
+	 * @return boolean
+	 */
+	public function isModel ( $obj ) {
+		if (!is_object($obj) || is_string($obj)) return false;
+		return is_a($obj, \TYPO3\CMS\Extbase\DomainObject\AbstractEntity::class);
+	}
+	
 	/**
 	 * Prüft, ob es sich bei dem Object um eine Storage handelt.
 	 * ```
@@ -177,12 +190,12 @@ class Obj implements SingletonInterface {
 	}
 
 	/**
-	 * 	Infos zum classSchema eines Models holen
-	 * 	```
-	 * 	\nn\t3::Obj()->getClassSchema( \My\Model\Name::class );
-	 * 	\nn\t3::Obj()->getClassSchema( $myModel );
-	 * 	```
-	 * 	return DataMap
+	 * Infos zum classSchema eines Models holen
+	 * ```
+	 * \nn\t3::Obj()->getClassSchema( \My\Model\Name::class );
+	 * \nn\t3::Obj()->getClassSchema( $myModel );
+	 * ```
+	 * return DataMap
 	 */
 	public function getClassSchema( $modelClassName = null ) {
 		if (is_object($modelClassName)) {
@@ -195,6 +208,94 @@ class Obj implements SingletonInterface {
 		$schema = $reflectionService->getClassSchema($modelClassName);
 
 		return \nn\t3::Cache()->set( $modelClassName, $schema, true );
+	}
+	
+	/**
+	 * Infos zu den Argumenten einer Methode holen.
+	 * Berücksichtigt auch das per `@param` angegebene Typehinting, z.B. zu `ObjectStorage<ModelName>`.
+	 * ```
+	 * \nn\t3::Obj()->getMethodArguments( \My\Model\Name::class, 'myMethodName' );
+	 * \nn\t3::Obj()->getMethodArguments( $myClassInstance, 'myMethodName' );
+	 * ```
+	 * Gibt als Beispiel zurück:
+	 * ```
+	 * 'varName' => [
+	 * 	'type' => 'Storage<Model>', 
+	 * 	'storageType' => 'Storage', 
+	 * 	'elementType' => 'Model', 
+	 *  'optional' => true, 
+	 *  'defaultValue' => '123'
+	 * ]
+	 * ```
+	 * return array
+	 */
+	public function getMethodArguments( $className = null, $methodName = null ) {
+
+		$result = [];
+		$parameters = $this->getClassSchema( $className )->getMethod( $methodName )->getParameters();
+		if (!$parameters) return [];
+		foreach ($parameters as $param) {
+			
+			$paramType = $param->getType();
+			$typeInfo = $this->parseType( $paramType );
+			
+			$result[$param->getName()] = [
+				'type' 			=> $paramType,
+				'simple' 		=> $typeInfo['simple'],
+				'storageType' 	=> $typeInfo['type'],
+				'elementType' 	=> $typeInfo['elementType'],
+				'optional' 		=> $param->isOptional(),
+				'defaultValue'	=> $param->getDefaultValue()
+			];
+		}
+		return $result;
+	}
+
+	/**
+	 * Einen String mit Infos zu `ObjectStorage<Model>` parsen.
+	 * ```
+	 * \nn\t3::Obj()->parseType( 'string' );
+	 * \nn\t3::Obj()->parseType( 'Nng\Nnrestapi\Domain\Model\ApiTest' );
+	 * \nn\t3::Obj()->parseType( '\TYPO3\CMS\Extbase\Persistence\ObjectStorage<Nng\Nnrestapi\Domain\Model\ApiTest>' );
+	 * ```
+	 * Git ein Array mit Infos zurück:
+	 * `type` ist dabei nur gesetzt, falls es ein Array oder eine ObjectStorage ist.
+	 * `elementType` ist immer der Typ des Models oder das TypeHinting der Variable
+	 *
+	 * ```
+	 * [
+	 * 	'elementType' => 'Nng\Nnrestapi\Domain\Model\ApiTest', 
+	 * 	'type' => 'TYPO3\CMS\Extbase\Persistence\ObjectStorage',
+	 * 	'simple' => FALSE
+	 * ]
+	 * ```
+	 *  
+	 * @return array
+	 */
+	public function parseType( $paramType = '' ) {
+		
+		if (!trim($paramType)) {
+			return ['elementType'=>'', 'type'=>'', 'simple'=>true ];
+		}
+
+		if (class_exists(TypeHandlingUtility::class)) {
+			$typeInfo = \TYPO3\CMS\Extbase\Utility\TypeHandlingUtility::parseType( $paramType );
+		} else {
+			preg_match( '/([^<]*)<?([^>]*)?>?/', $paramType, $type );
+			$typeInfo = [
+				'elementType' => ltrim($type[2], '\\'), 
+				'type' => ltrim($type[1], '\\')
+			];
+		}
+
+		if (!$typeInfo['elementType']) {
+			$typeInfo['elementType'] = $typeInfo['type'];
+			$typeInfo['type'] = '';
+		}
+
+		$typeInfo['simple'] = in_array($typeInfo['elementType'], ['array', 'string', 'float', 'double', 'integer', 'int', 'boolean', 'bool']);
+
+		return $typeInfo;
 	}
 
 	/**

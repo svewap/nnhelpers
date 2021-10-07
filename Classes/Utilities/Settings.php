@@ -202,10 +202,10 @@ class Settings implements SingletonInterface {
 		$root = array_shift($parts);
 		$plugin = array_shift($parts);
 
-		$setup = $setup[$root] ?: [];
+		$setup = $setup[$root] ?? [];
 		if (!$plugin) return $setup;
 
-		$setup = $setup[$plugin] ?: [];
+		$setup = $setup[$plugin] ?? [];
 		if (!count($parts)) return $setup;
 
 		while (count($parts) > 0) {

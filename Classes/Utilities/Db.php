@@ -266,17 +266,41 @@ class Db implements SingletonInterface {
 
 	/**
 	 * Datenbank-Eintrag aktualisieren. Schnell und einfach.
+	 * Das Update kann entweder per Tabellenname und Daten-Array passieren.
+	 * Oder man übergibt ein Model.
+	 * 
+	 * Beispiele:
 	 * ```
-	 * \nn\t3::Db()->update('table', [], 1);
-	 * \nn\t3::Db()->update('table', [], ['email'=>'david@99grad.de', 'pid'=>12, ...]);
+	 * // UPDATES table SET title='new' WHERE uid=1 
+	 * \nn\t3::Db()->update('table', ['title'=>'new'], 1);
+	 * 
+	 * // UPDATE table SET title='new' WHERE email='david@99grad.de' AND pid=12
+	 * \nn\t3::Db()->update('table', ['title'=>'new'], ['email'=>'david@99grad.de', 'pid'=>12, ...]);
 	 * ```
+	 * 
 	 * Mit `true` statt einer `$uid` werden ALLE Datensätze der Tabelle geupdated.
 	 * ```
+	 * // UPDATE table SET test='1' WHERE 1
 	 * \nn\t3::Db()->update('table', ['test'=>1], true);
 	 * ```
-	 * @return boolean
+	 * 
+	 * Statt einem Tabellenname kann auch ein einfach Model übergeben werden.
+	 * Das Repository wird automatisch ermittelt und das Model direkt persistiert.
+	 * ```
+	 * $model = $myRepo->findByUid(1);
+	 * \nn\t3::Db()->update( $model );
+	 * ```
+	 * @return mixed
 	 */
     public function update ( $table = '', $data = [], $uid = null ) {
+
+		if (\nn\t3::Obj()->isModel($table)) {
+			$model = $table;
+			$repository = $this->getRepositoryForModel( $model );
+			$repository->update( $model );
+			$this->persistAll();
+			return $model;
+		}
 
 		$queryBuilder = $this->getQueryBuilder( $table );
         $queryBuilder->getRestrictions()->removeAll();
@@ -305,13 +329,32 @@ class Db implements SingletonInterface {
 	
 	/**
 	 * Datenbank-Eintrag einfügen. Simpel und idiotensicher.
-	 * Gibt Array der eingefügten Daten zurück inkl. insertUid des Eintrags
+	 * Entweder kann der Tabellenname und ein Array übergeben werden - oder ein Domain-Model.
+	 * 
+	 * Einfügen eines neuen Datensatzes per Tabellenname und Daten-Array:
 	 * ```
 	 * $insertArr = \nn\t3::Db()->insert('table', ['bodytext'=>'...']);
 	 * ```
+	 * 
+	 * Einfügen eines neuen Models. Das Repository wird automatisch ermittelt.
+	 * Das Model wird direkt persistiert.
+	 * ```
+	 * $model = new \My\Nice\Model();
+	 * $persistedModel = \nn\t3::Db()->insert( $model );
+	 * ```
+	 * 
 	 * @return int 
 	 */
     public function insert ( $table = '', $data = [] ) {
+
+		if (\nn\t3::Obj()->isModel($table)) {
+			$model = $table;
+			$repository = $this->getRepositoryForModel( $model );
+			$repository->add( $model );
+			$this->persistAll();
+			return $model;
+		}
+
 		$data = $this->filterDataForTable( $data, $table );
 		
 		if (\nn\t3::t3Version() < 8) {
@@ -352,14 +395,29 @@ class Db implements SingletonInterface {
 	
 	/**
 	 * Datenbank-Eintrag löschen. Klein und Fein.
+	 * Es kann entweder ein Tabellenname und die UID übergeben werden - oder ein Model.
 	 * 
+	 * Löschen eines Datensatzes per Tabellenname und uid oder einem beliebigen Constraint:
 	 * ```
 	 * \nn\t3::Db()->delete('table', $uid);
 	 * \nn\t3::Db()->delete('table', ['uid_local'=>$uid]);
 	 * ```
+	 * 
+	 * Löschen eines Datensatzes per Model:
+	 * ```
+	 * \nn\t3::Db()->delete( $model );
+	 * ```
 	 * @return boolean 
 	 */
     public function delete ( $table = '', $constraint = [], $reallyDelete = false ) {
+
+		if (\nn\t3::Obj()->isModel($table)) {
+			$model = $table;
+			$repository = $this->getRepositoryForModel( $model );
+			$repository->remove( $model );
+			$this->persistAll();
+			return $model;
+		}
 
 		if (!$constraint) return false;
 		if (is_numeric($constraint)) {
@@ -716,7 +774,7 @@ class Db implements SingletonInterface {
 	 * ```
 	 * \nn\t3::Db()->getRepositoryForModel( \My\Domain\Model\Name );
 	 * ```
-	 * @return string
+	 * @return \TYPO3\CMS\Extbase\Persistence\Repository
 	 */
 	public function getRepositoryForModel( $className = null ) {
 		if (!is_string($className)) $className = get_class($className);
