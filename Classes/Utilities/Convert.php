@@ -84,6 +84,7 @@ class Convert implements SingletonInterface {
 				if (!$childType || is_a($item, $childType)) {
 					$objectStorage->attach( $item );					
 				} else {
+
 					$uid = is_numeric($item) ? $item : \nn\t3::Obj()->get($item, 'uid');
 					if ($uid) {
 						if ($childType == \Nng\Nnhelpers\Domain\Model\FileReference::class) {
@@ -207,9 +208,8 @@ class Convert implements SingletonInterface {
 				$prop = isset($modelProperties[$key]) ? $modelProperties[$key] : $modelProperties[$camelCaseKey];
 
 				if ($isStorage && is_array($value) && $prop) {
-
 					$expectedModelTypeInStorage = \nn\t3::Obj()->get($prop, 'elementType');
-
+					
 					$objectStorageArray = \nn\t3::Convert($value)->toObjectStorage( $expectedModelTypeInStorage )->toArray();
 					$newStorage = \nn\t3::injectClass( get_class($node) );
 
@@ -247,7 +247,7 @@ class Convert implements SingletonInterface {
 								if ($entry = \nn\t3::Fal()->fromFile( $falParams )) {
 
 									$sysFileRefUid = $entry->getOriginalResource()->getUid();
-									
+
 									// @returns \TYPO3\CMS\Core\Resource\FileReference
 									//$fileRepository = GeneralUtility::makeInstance(\TYPO3\CMS\Core\Resource\FileRepository::class);
 									//$fileObject = $fileRepository->findByUid($entry['uid']);
