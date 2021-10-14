@@ -6,6 +6,8 @@ call_user_func(
     function( $extKey )
     {
 		
+		// (!!!) Wichtig: In der ext_emconf.php UND composer.json die Dependency zu nnhelpers angeben!
+		
 		\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addLLrefForTCAdescr('tx_[ext-lower]_domain_model_[model-lower]', 'EXT:[ext-lower]/Resources/Private/Language/locallang.xlf');
 		\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::allowTableOnStandardPages('tx_[ext-lower]_domain_model_[model-lower]');
 

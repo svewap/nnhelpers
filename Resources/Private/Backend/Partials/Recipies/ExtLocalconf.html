@@ -5,8 +5,9 @@ defined('TYPO3_MODE') || die('Access denied.');
 call_user_func(
     function( $extKey )
     {
+        // (!!!) Wichtig: In der ext_emconf.php UND composer.json die Dependency zu nnhelpers angeben!
 
-        // Ein Plugin registrieren
+        // Ein Plugin registrieren.
         \nn\t3::Registry()->configurePlugin( '[vendor-ucc]\[ext-ucc]', '[ext-lower]', 
             [\[vendor-ucc]\[ext-ucc]\Controller\MainController::class => 'show'],
             [\[vendor-ucc]\[ext-ucc]\Controller\MainController::class => '']

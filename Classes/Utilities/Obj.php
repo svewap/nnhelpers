@@ -32,55 +32,155 @@ class Obj implements SingletonInterface {
 	}
 
 	/**
-	 * 	Merge eines Arrays in ein Object
-	 * 	```
-	 *	\nn\t3::Obj( \My\Doman\Model )->merge(['title'=>'Neuer Titel']);
-	 *	```
-	 *	Damit können sogar FileReferences geschrieben / überschrieben werden.
-	 *	In diesem Beispiel wird `$data` mit einem existierende Model gemerged. 
-	 *	`falMedia` ist im Beispiel eine ObjectStorage. Das erste Element in `falMedia` exisitert 
-	 *	bereits in der Datenbank (`uid = 12`). Hier wird nur der Titel aktualisiert. 
-	 * 	Das zweite Element im Array (ohne `uid`) ist neu. Dafür wird automatisch eine neue 
-	 * 	`sys_file_reference` in der Datenbank erzeugt.
-	 *	```
-	 *	$data = [
-	 *		'uid' => 10,
-	 *		'title' => 'Der Titel',
-	 *		'falMedia' => [
-	 *			['uid'=>12, 'title'=>'1. Bildtitel'],
-	 *			['title'=>'NEU Bildtitel', 'publicUrl'=>'fileadmin/_tests/5e505e6b6143a.jpg'],
-	 *		]
-	 *	];
-	 *	$oldModel = $repository->findByUid( $data['uid'] );
-	 *	$mergedModel = \nn\t3::Obj($oldModel)->merge($data);
-	 *	```
-	 *	__Hinweis__
-	 * 	Um ein neues Model mit Daten aus einem Array zu erzeugen gibt
-	 *	es die Methode `$newModel = \nn\t3::Convert($data)->toModel( \My\Model\Name::class );`
-	 *	
-	 *	@return Object
+	 * Merge eines Arrays in ein Object
+	 * ```
+	 * \nn\t3::Obj( \My\Doman\Model )->merge(['title'=>'Neuer Titel']);
+	 * ```
+	 * Damit können sogar FileReferences geschrieben / überschrieben werden.
+	 * In diesem Beispiel wird `$data` mit einem existierende Model gemerged. 
+	 * `falMedia` ist im Beispiel eine ObjectStorage. Das erste Element in `falMedia` exisitert 
+	 * bereits in der Datenbank (`uid = 12`). Hier wird nur der Titel aktualisiert. 
+	 * Das zweite Element im Array (ohne `uid`) ist neu. Dafür wird automatisch eine neue 
+	 * `sys_file_reference` in der Datenbank erzeugt.
+	 * ```
+	 * $data = [
+	 * 	'uid' => 10,
+	 * 	'title' => 'Der Titel',
+	 * 	'falMedia' => [
+	 * 		['uid'=>12, 'title'=>'1. Bildtitel'],
+	 * 		['title'=>'NEU Bildtitel', 'publicUrl'=>'fileadmin/_tests/5e505e6b6143a.jpg'],
+	 * 	]
+	 * ];
+	 * $oldModel = $repository->findByUid( $data['uid'] );
+	 * $mergedModel = \nn\t3::Obj($oldModel)->merge($data);
+	 * ```
+	 * __Hinweis__
+	 * Um ein neues Model mit Daten aus einem Array zu erzeugen gibt
+	 * es die Methode `$newModel = \nn\t3::Convert($data)->toModel( \My\Model\Name::class );`
+	 * 
+	 * @return Object
 	 */
-	public function merge( $obj = null, $overlay = null ) {
+	public function merge( $model = null, $overlay = null ) {
 
-		$overlay = $this->initialArgument !== null ? $obj : $overlay;
-		$obj = $this->initialArgument !== null ? $this->initialArgument : $obj;
+		$overlay = $this->initialArgument !== null ? $model : $overlay;
+		$model = $this->initialArgument !== null ? $this->initialArgument : $model;
 
-		if (is_array($overlay)) {
+		$schema = \nn\t3::Obj()->getClassSchema($model);
+		$modelProperties = $schema->getProperties();
 
-			// Storages etc. umwandeln, damit über getter/setter darauf zugegriffen werden kann
-			$overlayObject = \nn\t3::Convert($overlay)->toModel( get_class($obj), $obj );
+		if (!is_array($overlay)) return $model;
 
-			// Wenn etwas schief ging, dann Fallback auf das overlay-array
-			if ($overlayObject === false) $overlayObject = $overlay;
+		foreach ($overlay as $propName=>$value) {
+			if ($propInfo = $modelProperties[$propName]) {
+				
+				// Typ für Property des Models, z.B. `string`
+				$propType = $this->get( $propInfo, 'type');
 
-			unset($overlay['uid']);
-			foreach ($overlay as $k=>$v) {
-				$val = \nn\t3::Obj()->get( $overlayObject, $k );
-				\nn\t3::Obj()->set( $obj, $k, $val );
+				// Einfache Typen (`string`, `int` etc.) können direkt gesetzt werden.
+				if ($this->isSimpleType($propType)) {
+					$this->set( $model, $propName, $value );	
+					continue;				
+				}
+
+				if (!class_exists($propType)) {
+					\nn\t3::Exception( "Class of type `{$propType}` is not defined." );
+				}
+
+				// Es ist ein `Model`, `FileReference` etc.
+
+				$child = \nn\t3::newClass( $propType );
+				$curPropValue = $this->get( $model, $propName );
+
+				// Property ist eine einzelne `SysFileReference` – keine `ObjectStorage`
+				if ($this->isFileReference($child)) {
+					$curPublicUrl = \nn\t3::File()->getPublicUrl( $curPropValue );
+					$publicUrl = \nn\t3::File()->getPublicUrl( $value );
+
+					if ($curPublicUrl == $publicUrl) {
+						// An der URL hat sich nichts geändert. Bisherige `SysFileReference` weiter verwenden.
+						$value = $curPropValue;
+					} else {
+						// Neue URL. Neue `SysFileReference` erzeugen.
+						\nn\t3::Fal()->attach( $model, $propName, $value );
+						continue;
+					}
+				}
+
+				// Property ist eine `ObjectStorage`
+				else if ($this->isStorage($child)) {
+
+					$value = $this->forceArray( $value );
+
+					$childPropType = \nn\t3::Obj()->get($propInfo, 'elementType');
+
+					if (!class_exists($childPropType)) {
+						\nn\t3::Exception( "Class of type `{$childPropType}` is not defined." );
+					}
+
+					$storageItemInstance = \nn\t3::newClass( $childPropType );
+					$isFileReference = $this->isFileReference( $storageItemInstance );
+
+					// Array der existierende Items in der `ObjectStorage` holen. Key ist `uid` oder `publicUrl`
+					$existingStorageItemsByUid = [];
+					foreach ($curPropValue as $item) {
+						$uid = $isFileReference ? \nn\t3::File()->getPublicUrl( $item ) : $this->get( $item, 'uid' );
+						if (!isset($existingStorageItemsByUid)) {
+							$existingStorageItemsByUid[$uid] = [];
+						}
+						$existingStorageItemsByUid[$uid][] = $item;
+					}
+					
+					$objectStorage =  \nn\t3::newClass( get_class($child) );
+
+					foreach ($value as $itemData) {
+						$uid = false;
+						// `[1, ...]`
+						if (is_numeric($itemData)) $uid = $itemData;
+						// `[['publicUrl'=>'bild.jpg'], ...]` oder `[['bild.jpg'], ...]`
+						if (!$uid && $isFileReference) $uid = \nn\t3::File()->getPublicUrl( $itemData );
+						// `[['uid'=>'1'], ...]`
+						if (!$uid) $uid = $this->get( $itemData, 'uid' );
+
+						if (!$uid) continue;
+
+						$arrayReference = $existingStorageItemsByUid[$uid] ?? [];
+						$item = array_shift($arrayReference);
+						
+						if (!$item) {
+							if ($isFileReference) {
+								$item = \nn\t3::Fal()->createForModel( $model, $propName, $itemData );
+							} else {
+								$item = \nn\t3::Convert( $value )->toModel( $childPropType );
+							}
+						} else {
+							$item = \nn\t3::Obj( $item )->merge( $itemData );
+						}
+
+						if (!$item) continue;
+
+						$objectStorage->attach( $item );
+					}
+
+					$value = $objectStorage;
+				}
+
+				else {
+					$value = \nn\t3::Obj( $child )->merge( $value );
+				}
+
+				$this->set( $model, $propName, $value );
+				
 			}
 		}
-		return $obj;
+
+		// 		foreach ($model->getFiles() as $fal) {
+		// 			\nn\t3::debug( \nn\t3::File()->getPublicUrl($fal), $fal->getOriginalResource()->getUid() );
+		// 		}
+		// die("LETS GO!");
+
+		return $model;
 	}
+
 
 	/**
 	 * Prüft, ob es sich bei dem Object um ein Domain-Model handelt.
@@ -289,9 +389,22 @@ class Obj implements SingletonInterface {
 			$typeInfo['type'] = '';
 		}
 
-		$typeInfo['simple'] = in_array($typeInfo['elementType'], ['array', 'string', 'float', 'double', 'integer', 'int', 'boolean', 'bool']);
+		$typeInfo['simple'] = $this->isSimpleType($typeInfo['elementType']);
 
 		return $typeInfo;
+	}
+
+	/**
+	 * Prüft, ob es sich bei einem Typ (string) um einen "einfachen" Typ handelt.
+	 * Einfache Typen sind alle Typen außer Models, Klassen etc. - also z.B. `array`, `string`, `boolean` etc.
+	 * ```
+	 * $isSimple = \nn\t3::Obj()->isSimpleType( 'string' );							// true
+	 * $isSimple = \nn\t3::Obj()->isSimpleType( \My\Extname\ClassName::class );		// false
+	 * ```
+	 * @return boolean
+	 */
+	public function isSimpleType( $type = '' ) {
+		return in_array($type, ['array', 'string', 'float', 'double', 'integer', 'int', 'boolean', 'bool']);
 	}
 
 	/**

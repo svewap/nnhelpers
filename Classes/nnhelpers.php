@@ -43,7 +43,6 @@ use TYPO3\CMS\Core\Utility\VersionNumberUtility;
 use TYPO3\CMS\Extbase\Utility\DebuggerUtility;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Extbase\Persistence\Generic\Query;
-use TYPO3Fluid\Fluid\Exception;
 
 class t3 {
 
