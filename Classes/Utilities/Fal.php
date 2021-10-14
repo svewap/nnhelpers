@@ -58,10 +58,15 @@ class Fal implements SingletonInterface {
 	 * ```
 	 * \nn\t3::Fal()->attach( $model, $fieldName, $filePath );
 	 * \nn\t3::Fal()->attach( $model, 'image', 'fileadmin/user_uploads/image.jpg' );
+	 * \nn\t3::Fal()->attach( $model, 'image', ['publicUrl'=>'fileadmin/user_uploads/image.jpg'] );
 	 * ```
 	 * @return \TYPO3\CMS\Extbase\Domain\Model\FileReference
 	 */
 	public function attach ( $model, $field, $filePath = null ) {
+
+		if (is_array($filePath) && $url = $filePath['publicUrl'] ?? false) {
+			$filePath = $url;
+		}
 
 		if (!$filePath || !\nn\t3::File()->exists($filePath)) {
 			\nn\t3::Exception('\nn\t3::Fal()->attach() :: File not found.');

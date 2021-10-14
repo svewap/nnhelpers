@@ -185,16 +185,16 @@ class Convert implements SingletonInterface {
 				return false;
 			}
 
-			// Alles, was KEINE Storage ist kann einfach gesetzt werden
+			// Alles, was KEINE Storage und KEINE FileReference ist, kann einfach gesetzt werden
 			foreach($arr as $key=>$value) {
 				$node = \nn\t3::Obj()->get( $model, $key );
 				$isStorage = \nn\t3::Obj()->isStorage( $node );
-
-				if (!$isStorage) {
+				$isFileReference = ($modelProperties[$key] ?? false) && $modelProperties[$key]->getType() == \TYPO3\CMS\Extbase\Domain\Model\FileReference::class;
+				if (!$isStorage && !$isFileReference) {
 					\nn\t3::Obj()->set( $model, $key, $value );
 				}
 			}
-	
+
 			// Jetzt pid aus dem Model holen
 			$modelPid = \nn\t3::Obj()->get( $model, 'pid' ) ?: \nn\t3::Obj()->get( $parentModel, 'pid' );
 
@@ -203,6 +203,8 @@ class Convert implements SingletonInterface {
 
 				$node = \nn\t3::Obj()->get( $model, $key );
 				$isStorage = \nn\t3::Obj()->isStorage( $node );
+
+				$isFileReference = ($modelProperties[$key] ?? false) && $modelProperties[$key]->getType() == \TYPO3\CMS\Extbase\Domain\Model\FileReference::class;
 
 				$camelCaseKey = GeneralUtility::underscoredToLowerCamelCase( $key );
 				$prop = isset($modelProperties[$key]) ? $modelProperties[$key] : $modelProperties[$camelCaseKey];
@@ -282,6 +284,18 @@ class Convert implements SingletonInterface {
 
 					$value = $newStorage;
 					\nn\t3::Obj()->set( $model, $key, $value );
+				}
+
+				// Es handelt sich um ein einzelnes FAL (keine ObjectStorage)
+				if ($isFileReference) {
+					if (is_string($value)) {
+						$value = ['publicUrl'=>$value ?? ''];
+					}
+					if ($value['publicUrl']) {
+						\nn\t3::Fal()->attach( $model, $key, $value );
+					} else {
+						\nn\t3::Obj()->set( $model, $key, null );
+					}
 				}
 			}
 		}

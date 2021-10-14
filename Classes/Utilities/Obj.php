@@ -75,11 +75,7 @@ class Obj implements SingletonInterface {
 
 			unset($overlay['uid']);
 			foreach ($overlay as $k=>$v) {
-				if (is_string($v)) {
-					$val = $v;
-				} else {
-					$val = \nn\t3::Obj()->get( $overlayObject, $k );
-				}
+				$val = \nn\t3::Obj()->get( $overlayObject, $k );
 				\nn\t3::Obj()->set( $obj, $k, $val );
 			}
 		}
