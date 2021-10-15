@@ -516,12 +516,20 @@ class Fal implements SingletonInterface {
 		}
 
 		if ($uid) {
+			
 			// ToDo: Ab Typo3 v10 prüfen, ob delete() implementiert wurde
 			/*
 			$resourceFactory = \nn\t3::injectClass( \TYPO3\CMS\Core\Resource\ResourceFactory::class );
 			$fileReferenceObject = $resourceFactory->getFileReferenceObject( $uid );
 			$fileReferenceObject->delete();
 			*/
+
+			// ToDo: Ab Typo3 v8 prüfen, ob das hier nicht einfacher wäre:
+			/*
+			$fal = $this->persistenceManager->getObjectByIdentifier($uid, \TYPO3\CMS\Extbase\Domain\Model\FileReference::class, false);
+			$this->persistenceManager->remove( $fal );
+			*/
+			
 			\nn\t3::Db()->delete('sys_file_reference', $uid);
 		}
 	}

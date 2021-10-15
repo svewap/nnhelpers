@@ -57,6 +57,21 @@ class Db implements SingletonInterface {
 	}
 
 	/**
+	 * Ein Domain-Model/Entity anhand einer `uid` holen.
+	 * Liefert das "echte" Model/Object inklusive aller Relationen, 
+	 * analog zu einer Query über das Repository.  
+	 * ```
+	 * $model = \nn\t3::Db()->get( $uid, \Nng\MyExt\Domain\Model\Name::class );
+	 * ```
+	 * @return Object
+	 */
+	public function get( $uid, $modelType = '') {
+		$persistenceManager = \nn\t3::injectClass( PersistenceManager::class );
+		$entity = $persistenceManager->getObjectByIdentifier($uid, $modelType, false);
+		return $entity;
+	}
+
+	/**
 	 * Findet einen Eintrag anhand der UID.
 	 * Funktioniert auch, wenn	Frontend noch nicht initialisiert wurden,
 	 * z.B. während AuthentificationService läuft oder im Scheduler.
@@ -95,7 +110,7 @@ class Db implements SingletonInterface {
 	 * @return void
 	 */	
 	public function persistAll () {
-		$persistenceManager = \nn\t3::injectClass( PersistenceManager::class );		
+		$persistenceManager = \nn\t3::injectClass( PersistenceManager::class );
 		$persistenceManager->persistAll();
 	}
 
@@ -292,21 +307,20 @@ class Db implements SingletonInterface {
 	 * ```
 	 * @return mixed
 	 */
-    public function update ( $table = '', $data = [], $uid = null ) {
-
-		if (\nn\t3::Obj()->isModel($table)) {
-			$model = $table;
-			$repository = $this->getRepositoryForModel( $model );
-			$repository->update( $model );
-			$this->persistAll();
-			return $model;
+    public function update ( $tableNameOrModel = '', $data = [], $uid = null ) {
+		
+		if (\nn\t3::Obj()->isModel( $tableNameOrModel )) {
+			$persistenceManager = \nn\t3::injectClass( PersistenceManager::class );
+			$persistenceManager->update( $tableNameOrModel );
+			$persistenceManager->persistAll();
+			return $tableNameOrModel;
 		}
 
-		$queryBuilder = $this->getQueryBuilder( $table );
+		$queryBuilder = $this->getQueryBuilder( $tableNameOrModel );
         $queryBuilder->getRestrictions()->removeAll();
-		$queryBuilder->update($table);
+		$queryBuilder->update( $tableNameOrModel );
 
-		$data = $this->filterDataForTable( $data, $table );
+		$data = $this->filterDataForTable( $data, $tableNameOrModel );
 		if (!$data) return false;
 
 		foreach ($data as $k=>$v) {
@@ -345,25 +359,24 @@ class Db implements SingletonInterface {
 	 * 
 	 * @return int 
 	 */
-    public function insert ( $table = '', $data = [] ) {
+    public function insert ( $tableNameOrModel = '', $data = [] ) {
 
-		if (\nn\t3::Obj()->isModel($table)) {
-			$model = $table;
-			$repository = $this->getRepositoryForModel( $model );
-			$repository->add( $model );
-			$this->persistAll();
-			return $model;
+		if (\nn\t3::Obj()->isModel( $tableNameOrModel )) {
+			$persistenceManager = \nn\t3::injectClass( PersistenceManager::class );
+			$persistenceManager->add( $tableNameOrModel );
+			$persistenceManager->persistAll();
+			return $tableNameOrModel;
 		}
 
-		$data = $this->filterDataForTable( $data, $table );
+		$data = $this->filterDataForTable( $data, $tableNameOrModel );
 		
 		if (\nn\t3::t3Version() < 8) {
-			$GLOBALS['TYPO3_DB']->exec_INSERTquery( $table, $data );
+			$GLOBALS['TYPO3_DB']->exec_INSERTquery( $tableNameOrModel, $data );
 			$data['uid'] = $GLOBALS['TYPO3_DB']->sql_insert_id();
 			return $data;
 		} else {
-			$queryBuilder = $this->getQueryBuilder( $table );
-			$queryBuilder->insert($table)
+			$queryBuilder = $this->getQueryBuilder( $tableNameOrModel );
+			$queryBuilder->insert( $tableNameOrModel )
 				->values($data)->execute();
 			$data['uid'] = $queryBuilder->getConnection()->lastInsertId();
 			return $data;
@@ -797,11 +810,13 @@ class Db implements SingletonInterface {
 			$query = $queryParser->convertQueryToDoctrineQueryBuilder($query);
 		}
 
-		$str = $query->getSQL();
 		$dcValues = $query->getParameters();
 		$dcValuesFull = [];
 		foreach ($dcValues as $k=>$v) {
-			$dcValuesFull[":{$k}"] = "'{$v}'";
+			if (!is_numeric($v)) {
+				$v = "'" . addslashes($v) . "'";
+			}
+			$dcValuesFull[":{$k}"] = $v;
 		}
 
 		$str = $query->getSQL();

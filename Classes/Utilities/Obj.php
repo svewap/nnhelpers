@@ -3,13 +3,13 @@
 namespace Nng\Nnhelpers\Utilities;
 
 use TYPO3\CMS\Core\SingletonInterface;
+use TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager;
 use TYPO3\CMS\Extbase\Persistence\Generic\LazyObjectStorage;
 use TYPO3\CMS\Extbase\Persistence\Generic\ObjectStorage;
 use TYPO3\CMS\Extbase\Persistence\Generic\Mapper\DataMapper;
 use TYPO3\CMS\Extbase\Reflection\ObjectAccess;
 use TYPO3\CMS\Extbase\Domain\Model\FileReference as FalFileReference;
 use TYPO3\CMS\Extbase\Reflection\ReflectionService;
-use Nng\Nnhelpers\Domain\Model\FileReference;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Utility\TypeHandlingUtility;
 
@@ -64,20 +64,23 @@ class Obj implements SingletonInterface {
 
 		$overlay = $this->initialArgument !== null ? $model : $overlay;
 		$model = $this->initialArgument !== null ? $this->initialArgument : $model;
-
 		$schema = \nn\t3::Obj()->getClassSchema($model);
 		$modelProperties = $schema->getProperties();
-
+		
 		if (!is_array($overlay)) return $model;
-
+		
 		foreach ($overlay as $propName=>$value) {
+
 			if ($propInfo = $modelProperties[$propName]) {
 				
 				// Typ für Property des Models, z.B. `string`
 				$propType = $this->get( $propInfo, 'type');
 
-				// Einfache Typen (`string`, `int` etc.) können direkt gesetzt werden.
 				if ($this->isSimpleType($propType)) {
+					
+					// -----
+					// Es ist ein "einfacher Typ" (`string`, `int` etc.). Kann direkt gesetzt werden!
+
 					$this->set( $model, $propName, $value );	
 					continue;				
 				}
@@ -91,8 +94,11 @@ class Obj implements SingletonInterface {
 				$child = \nn\t3::newClass( $propType );
 				$curPropValue = $this->get( $model, $propName );
 
-				// Property ist eine einzelne `SysFileReference` – keine `ObjectStorage`
 				if ($this->isFileReference($child)) {
+
+					// -----
+					// Die Property ist eine einzelne `SysFileReference` – keine `ObjectStorage`
+
 					$curPublicUrl = \nn\t3::File()->getPublicUrl( $curPropValue );
 					$publicUrl = \nn\t3::File()->getPublicUrl( $value );
 
@@ -100,14 +106,28 @@ class Obj implements SingletonInterface {
 						// An der URL hat sich nichts geändert. Bisherige `SysFileReference` weiter verwenden.
 						$value = $curPropValue;
 					} else {
-						// Neue URL. Neue `SysFileReference` erzeugen.
-						\nn\t3::Fal()->attach( $model, $propName, $value );
-						continue;
+
+						// Neue URL. Falls bereits ein FAL am Model: Entfernen
+						if ($this->isFileReference($curPropValue)) {
+							$persistenceManager = \nn\t3::injectClass( PersistenceManager::class );
+							$persistenceManager->remove( $curPropValue );
+						}
+
+						// ... und neues FAL erzeugen
+						if ($value) {
+							\nn\t3::Fal()->attach( $model, $propName, $value );
+							continue;							
+						} else {
+							$value = null;
+						}
+
 					}
 				}
 
-				// Property ist eine `ObjectStorage`
 				else if ($this->isStorage($child)) {
+					
+					// -----
+					// Die Property ist eine `ObjectStorage`
 
 					$value = $this->forceArray( $value );
 
@@ -132,7 +152,9 @@ class Obj implements SingletonInterface {
 					
 					$objectStorage =  \nn\t3::newClass( get_class($child) );
 
+					// Jedes Item in die Storage einfügen. Dabei werden bereits vorhandene Items aus der alten Storage verwendet.
 					foreach ($value as $itemData) {
+
 						$uid = false;
 						// `[1, ...]`
 						if (is_numeric($itemData)) $uid = $itemData;
@@ -141,23 +163,41 @@ class Obj implements SingletonInterface {
 						// `[['uid'=>'1'], ...]`
 						if (!$uid) $uid = $this->get( $itemData, 'uid' );
 
-						if (!$uid) continue;
-
+						// Gibt es das Item bereits? Dann vorhandenes Item verwenden, kein neues erzeugen!
 						$arrayReference = $existingStorageItemsByUid[$uid] ?? [];
-						$item = array_shift($arrayReference);
-						
-						if (!$item) {
-							if ($isFileReference) {
-								$item = \nn\t3::Fal()->createForModel( $model, $propName, $itemData );
-							} else {
-								$item = \nn\t3::Convert( $value )->toModel( $childPropType );
-							}
+						$item = array_shift($arrayReference);	
+
+						// Item bereits vorhanden?
+						if ($item) {
+							
+							// ... dann das bisherige Item verwenden.
+							// $item = \nn\t3::Obj( $item )->merge( $itemData );
+
+						} else if ($isFileReference) {
+
+							// sonst: Falls eine FileReference gewünscht ist, dann neu erzeugen!
+							$item = \nn\t3::Fal()->createForModel( $model, $propName, $itemData );
+							
+						} else if ($uid) {
+
+							// Alles AUSSER `FileReference` – und `uid` übergeben/bekannt? Dann das Model aus der Datenbank laden.
+							$item = \nn\t3::Db()->get( $uid, $childPropType );
+							
+							// Model nicht in DB gefunden? Dann ignorieren.
+							if (!$item) continue;
+
 						} else {
-							$item = \nn\t3::Obj( $item )->merge( $itemData );
+
+							// Keine `FileReference` und KEINE `uid` übergeben? Dann neues Model erzeugen.
+							$item = \nn\t3::newClass( $childPropType );
+
 						}
 
+						// Model konnte nicht erzeugt / gefunden werden? Dann ignorieren!
 						if (!$item) continue;
 
+						// Merge der neuen Overlay-Daten und ans Storage hängen
+						$item = \nn\t3::Obj( $item )->merge( $itemData );
 						$objectStorage->attach( $item );
 					}
 
@@ -165,18 +205,24 @@ class Obj implements SingletonInterface {
 				}
 
 				else {
-					$value = \nn\t3::Obj( $child )->merge( $value );
+
+					// -----
+					// Property enthält eine einzelne Relation, ist aber weder eine `FileReference` noch eine `ObjectStorage`
+					
+					if ($uid = is_numeric($value) ? $value : $this->get( $value, 'uid' )) {
+						$child = \nn\t3::Db()->get( $uid, get_class($child) );
+						if (!$child) $value = null;
+					}
+					
+					if ($value) {
+						$value = \nn\t3::Obj( $child )->merge( $value );
+					}
 				}
 
 				$this->set( $model, $propName, $value );
-				
+
 			}
 		}
-
-		// 		foreach ($model->getFiles() as $fal) {
-		// 			\nn\t3::debug( \nn\t3::File()->getPublicUrl($fal), $fal->getOriginalResource()->getUid() );
-		// 		}
-		// die("LETS GO!");
 
 		return $model;
 	}
