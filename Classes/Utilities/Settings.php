@@ -9,6 +9,7 @@ use TYPO3\CMS\Extbase\Configuration\ConfigurationManager;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 
+
 /**
  * Methoden, um den Zugriff auf TypoScript Setup, Constanten und PageTsConfig
  * zu vereinfachen.
@@ -363,4 +364,30 @@ class Settings implements SingletonInterface {
 		return GeneralUtility::makeInstance(ExtensionConfiguration::class)->get($extName) ?: [];
 	}
 
+	/**
+	 * Site-Konfiguration holen.
+	 * Das ist die Konfiguration, die ab TYPO3 9 in den YAML-Dateien im Ordner `/sites` definiert wurden.
+	 * Einige der Einstellungen sind auch über das Seitenmodul "Sites" einstellbar.
+	 * 
+	 * Im Kontext einer MiddleWare ist evtl. die `site` noch nicht geparsed / geladen.
+	 * In diesem Fall kann der `$request` aus der MiddleWare übergeben werden, um die Site zu ermitteln. 
+	 * ```
+	 * $config = \nn\t3::Settings()->getSiteConfig();
+	 * $config = \nn\t3::Settings()->getSiteConfig( $request );
+	 * ```
+	 * @return array
+	 */
+	public function getSiteConfig( $request = null ) {
+		
+		if (\nn\t3::t3Version() < 9) return [];
+
+		$site = \nn\t3::Environment()->getSite();
+		if (!$site) return [];
+
+		if (!is_a($site, \TYPO3\CMS\Core\Site\Entity\NullSite::class)) {
+			return $site->getConfiguration() ?? [];
+		}
+
+		return [];
+	}
 }

@@ -9,12 +9,50 @@ use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\PathUtility;
 use Psr\Http\Message\ServerRequestInterface;
 
+use TYPO3\CMS\Core\Routing\SiteMatcher;
+use TYPO3\CMS\Core\Site\SiteFinder;
+
 /**
  * Alles, was man über die Umgebung der Anwendung wissen muss.
  * Von Sprach-ID des Users, der baseUrl bis zu der Frage, welche Extensions am Start sind.
  */
 class Environment implements SingletonInterface {
    
+	/**
+	 * Das aktuelle `Site` Object holen.
+	 * Über dieses Object kann z.B. ab TYPO3 9 auf die Konfiguration aus der site YAML-Datei zugegriffen werden.
+	 *  
+	 * Im Kontext einer MiddleWare ist evtl. die `site` noch nicht geparsed / geladen.
+	 * In diesem Fall kann der `$request` aus der MiddleWare übergeben werden, um die Site zu ermitteln. 
+	 * 
+	 * Siehe auch `\nn\t3::Settings()->getSiteConfig()`, um die site-Konfiguration auszulesen.
+	 * 
+	 * ```
+	 * \nn\t3::Environment()->getSite();
+	 * \nn\t3::Environment()->getSite( $request );
+	 * 
+	 * \nn\t3::Environment()->getSite()->getConfiguration();
+	 * \nn\t3::Environment()->getSite()->getIdentifier();
+	 * ```
+	 * @return \TYPO3\CMS\Core\Site\Entity\Site
+	 */
+	public function getSite ( $request = null ) {
+
+		if (\nn\t3::t3Version() < 9) return [];
+		$request = $request ?: $GLOBALS['TYPO3_REQUEST'] ?? false;
+
+		if (!$request) return [];
+		$site = $request->getAttribute('site');
+		
+		if (!$site) {
+			$matcher = GeneralUtility::makeInstance( SiteMatcher::class, GeneralUtility::makeInstance(SiteFinder::class));
+			$routeResult = $matcher->matchRequest($request);
+			$site = $routeResult->getSite();	
+		}
+
+		return $site;
+	}
+	
 	/**
 	 * 	Die aktuelle Sprache (als Zahl) des Frontends holen.
 	 *	```

@@ -374,22 +374,49 @@ class Obj implements SingletonInterface {
 	public function getMethodArguments( $className = null, $methodName = null ) {
 
 		$result = [];
-		$parameters = $this->getClassSchema( $className )->getMethod( $methodName )->getParameters();
-		if (!$parameters) return [];
-		foreach ($parameters as $param) {
-			
-			$paramType = $param->getType();
-			$typeInfo = $this->parseType( $paramType );
-			
-			$result[$param->getName()] = [
-				'type' 			=> $paramType,
-				'simple' 		=> $typeInfo['simple'],
-				'storageType' 	=> $typeInfo['type'],
-				'elementType' 	=> $typeInfo['elementType'],
-				'optional' 		=> $param->isOptional(),
-				'defaultValue'	=> $param->getDefaultValue()
-			];
+		$method = $this->getClassSchema( $className )->getMethod( $methodName );
+
+		if (\nn\t3::t3Version() < 10) {
+
+			$parameters = $method['params'];
+			if (!$parameters) return [];
+
+			foreach ($parameters as $name=>$param) {
+				
+				$paramType = $param['type'];
+				$typeInfo = $this->parseType( $paramType );
+
+				$result[$name] = [
+					'type' 			=> $paramType,
+					'simple' 		=> $typeInfo['simple'],
+					'storageType' 	=> $typeInfo['type'],
+					'elementType' 	=> $typeInfo['elementType'],
+					'optional' 		=> $param['optional'],
+					'defaultValue'	=> $param['defaultValue'],
+				];
+			}
+
+		} else {
+
+			$parameters = $method->getParameters();
+			if (!$parameters) return [];
+
+			foreach ($parameters as $param) {
+				
+				$paramType = $param->getType();
+				$typeInfo = $this->parseType( $paramType );
+				
+				$result[$param->getName()] = [
+					'type' 			=> $paramType,
+					'simple' 		=> $typeInfo['simple'],
+					'storageType' 	=> $typeInfo['type'],
+					'elementType' 	=> $typeInfo['elementType'],
+					'optional' 		=> $param->isOptional(),
+					'defaultValue'	=> $param->getDefaultValue()
+				];
+			}	
 		}
+
 		return $result;
 	}
 
