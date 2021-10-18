@@ -351,7 +351,7 @@ class Settings implements SingletonInterface {
 	/**
 	 * Extension-Konfiguration holen.
 	 * Kommen aus der `LocalConfiguration.php`, werden über die Extension-Einstellungen
-	 * im Backend bzw. ext_conf_template.txt definiert
+	 * im Backend bzw. `ext_conf_template.txt` definiert
 	 * 
 	 * Früher: `$GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['your_extension_key']`
 	 * ```
@@ -363,6 +363,22 @@ class Settings implements SingletonInterface {
 		if (\nn\t3::t3Version() < 9) return unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf'][$extName]);
 		return GeneralUtility::makeInstance(ExtensionConfiguration::class)->get($extName) ?: [];
 	}
+
+	/**
+	 * Extension-Konfiguration schreiben.
+	 * Schreibt eine Extension-Konfiguration in die `LocalConfiguration.php`. Die Werte können bei
+	 * entsprechender Konfiguration in der `ext_conf_template.txt` auch über den Extension-Manager / die
+	 * Extension Konfiguration im Backend bearbeitet werden.
+	 * ```
+	 * \nn\t3::Settings()->setExtConf( 'extname', 'key', 'value' );
+	 * ```
+	 * @return mixed
+	 */
+	public function setExtConf( $extName = '', $key = '', $value = '' ) {
+		$coreConfigurationManager = GeneralUtility::makeInstance(\TYPO3\CMS\Core\Configuration\ConfigurationManager::class);
+		$result = $coreConfigurationManager->setLocalConfigurationValueByPath("EXTENSIONS/{$extName}/{$key}", $value);
+	}
+
 
 	/**
 	 * Site-Konfiguration holen.

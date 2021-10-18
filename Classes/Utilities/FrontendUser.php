@@ -389,14 +389,23 @@ class FrontendUser implements SingletonInterface {
 
 	/**
 	 * Den `fe_typo_user`-Cookie manuell setzen.
+	 * 
 	 * Wird keine `sessionID` übergeben, sucht Typo3 selbst nach der Session-ID des FE-Users.
+	 * 
+	 * Bei Aufruf dieser Methode aus einer MiddleWare sollte der `Request` mit übergeben werden.
+	 * Dadurch kann z.B. der globale `$_COOKIE`-Wert und der `cookieParams.fe_typo_user` im Request 
+	 * vor Authentifizierung über `typo3/cms-frontend/authentication` in einer eigenen MiddleWare
+	 * gesetzt werden. Hilfreich, falls eine Crossdomain-Authentifizierung erforderlich ist (z.B.
+	 * per Json Web Token / JWT).
+	 * 
 	 * ```
 	 * \nn\t3::FrontendUser()->setCookie();
 	 * \nn\t3::FrontendUser()->setCookie( $sessionId );
+	 * \nn\t3::FrontendUser()->setCookie( $sessionId, $request );
 	 * ```
 	 * @return void
 	 */
-	public function setCookie( $sessionId = null ) {
+	public function setCookie( $sessionId = null, &$request = null ) {
 		if (!$sessionId) $sessionId = $this->getSessionId();
 		
 		$cookieName = \nn\t3::Environment()->getLocalConf('FE.cookieName');
@@ -405,6 +414,17 @@ class FrontendUser implements SingletonInterface {
 
 		$_COOKIE[$cookieName] = $sessionId;
 		setcookie($cookieName, $sessionId, time() + (86400 * 30), $cookiePath, $cookieDomain);
+
+		if (\nn\t3::t3Version() < 9) return;
+
+		if (!$request) {
+			$request = $GLOBALS['TYPO3_REQUEST'] ?? false;
+		}
+		if ($request) {
+			$cookies = $request->getCookieParams();
+			$cookies[$cookieName] = $sessionId;
+			$request = $request->withCookieParams( $cookies );	
+		}		
 	}
 
 	/**

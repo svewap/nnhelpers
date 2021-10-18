@@ -102,16 +102,63 @@ class FrontendUserAuthentication extends \TYPO3\CMS\Frontend\Authentication\Fron
 		return $feUser;
 	}
 	
-	
 	/**
-	 * 	Login eines FE-Users anhand einer Session-ID
-	 *	```
-	 *	\nn\t3::FrontendUserAuthentication()->loginBySessionId( $sessionId );
-	 *	```
-	 * 	@return array
+	 * Eine neue FrontenUser-Session in der Tabelle `fe_sessions` anlegen.
+	 * Es kann wahlweise die `fe_users.uid` oder der `fe_users.username` übergeben werden.
+	 * 
+	 * Der User wird dabei nicht automatisch eingeloggt. Stattdessen wird nur eine gültige Session
+	 * in der Datenbank angelegt und vorbereitet, die Typo3 später zur Authentifizierung verwenden kann.
+	 * 
+	 * Gibt die Session-ID zurück.
+	 * 
+	 * Die Session-ID entspricht hierbei exakt dem Wert im `fe_typo_user`-Cookie - aber nicht zwingend dem 
+	 * Wert, der in `fe_sessions.ses_id` gespeichert wird. Der Wert in der Datenbank wird ab TYPO3 v11
+	 * gehashed.
+	 * 
+	 * ```
+	 * $sessionId = \nn\t3::FrontendUserAuthentication()->prepareSession( 1 );
+	 * $sessionId = \nn\t3::FrontendUserAuthentication()->prepareSession( 'david' );
+	 * 
+	 * $hashInDatabase = \nn\t3::Encrypt()->hashSessionId( $sessionId );
+	 * ```
+	 * @return string
+	 */
+	public function prepareSession( $usernameOrUid = null ) {
+
+		if (!$usernameOrUid) return null;
+
+		if ($uid = intval($usernameOrUid)) {
+			$user = \nn\t3::Db()->findByUid('fe_users', $uid);
+		} else {
+			$user = \nn\t3::Db()->findOneByValues('fe_users', ['username'=>$usernameOrUid]);
+		}
+
+		if (!$user) return null;
+		
+		$this->start();
+		$session = $this->createUserSession( $user );
+		
+		if (!$session) return null;
+
+		return \nn\t3::Obj()->get($session, 'identifier');
+	}
+
+	/**
+	 * Login eines FE-Users anhand einer Session-ID.
+	 * 
+	 * Die Session-ID entspricht dem TYPO3 Cookie `fe_typo_user`. In der Regel gibt es für
+	 * jede Fe-User-Session einen Eintrag in der Tabelle `fe_sessions`. Bis zu Typo3 v11 entsprach
+	 * die Spalte `ses_id` exakt dem Cookie-Wert. Ab Typo3 v11 wird der Wert zusätzlich gehashed.
+	 * 
+	 * Siehe auch `\nn\t3::Encrypt()->hashSessionId( $sessionId );`
+	 * ```
+	 * \nn\t3::FrontendUserAuthentication()->loginBySessionId( $sessionId );
+	 * ```
+	 * @return array
 	 */
 	public function loginBySessionId( $sessionId = '' ) {
 		if (!trim($sessionId)) return [];
+		$sessionId = \nn\t3::Encrypt()->hashSessionId( $sessionId );
 		$session = \nn\t3::Db()->findOneByValues( 'fe_sessions', ['ses_id'=>$sessionId] );
 		if (!$session) return [];
 		if ($feUserUid = $session['ses_userid']) {
@@ -147,8 +194,8 @@ class FrontendUserAuthentication extends \TYPO3\CMS\Frontend\Authentication\Fron
 
 
 	/**
-	 * 	Session-Data setzen, Gruppen-Daten holen
-	 * 	@return void
+	 * Session-Data setzen, Gruppen-Daten holen
+	 * @return void
 	 */
 	private function setSession($user_db) {
 

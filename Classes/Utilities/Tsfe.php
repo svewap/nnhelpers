@@ -254,9 +254,12 @@ class Tsfe implements SingletonInterface {
 				$contentObject->start([]);
 				//$contentObject->cObjectDepthCounter = 100;
 
-
 				$GLOBALS['TSFE']->cObj = $contentObject;
-				$GLOBALS['TSFE']->settingLanguage();
+
+				// Typo3 v11 -> v11.5 LTS: `settingLanguage()` ist private geworden
+				if (is_callable([$GLOBALS['TSFE'], 'settingLanguage'])) {
+					$GLOBALS['TSFE']->settingLanguage();
+				}
 
 				$userSessionManager = \TYPO3\CMS\Core\Session\UserSessionManager::create('FE');
 				$userSession = $userSessionManager->createAnonymousSession();

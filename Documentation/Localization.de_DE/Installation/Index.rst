@@ -40,3 +40,33 @@ Wenn es Dich glücklich macht, ziehe es Dir wie die "harten Jungs" über die Kom
 .. code-block:: bash
 
    git clone https://bitbucket.org/99grad/nnhelpers/src/master/
+
+
+Dependencies festlegen
+========================
+
+Wenn Du `nnhelpers` in Deiner eigenen Extension verwenden möchtest, denke daran, die Abhängigkeiten in der `ext_emconf.php` und `composer.json` zu definieren:
+
+Das hier kommt in die `ext_emconf.php` Deiner Extension:
+
+.. code-block:: php
+
+   $EM_CONF[$_EXTKEY] = [
+      ...
+      'constraints' => [
+         'depends' => [
+            'nnhelpers' => '1.3.0-0.0.0',
+         ],
+      ],
+   ];
+
+Und das hier kommt in die `composer.json` Deiner Extension:
+
+.. code-block:: json
+
+   {
+      ...
+      "require": {
+         "nng/nnhelpers": "^1.3"
+      },
+   }

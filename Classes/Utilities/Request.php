@@ -191,4 +191,98 @@ class Request implements SingletonInterface {
 			'content' => $result
 		];
 	}
+
+
+	/** 
+	 * Den Authorization-Header aus dem Request auslesen.
+	 * ```
+	 * \nn\t3::Request()->getAuthorizationHeader();
+	 * ```
+	 * Wichtig: Wenn das hier nicht funktioniert, fehlt in der .htaccess 
+	 * wahrscheinlich folgende Zeile:
+	 * ```
+	 * # nnhelpers: Verwenden, wenn PHP im PHP-CGI-Mode ausgeführt wird
+	 * RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization},L]
+	 * ```
+	 * @return string
+	 */
+	public function getAuthorizationHeader(){
+
+		$headers = null;
+		if (isset($_SERVER['Authorization'])) {
+			$headers = trim($_SERVER['Authorization']);
+		} else if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
+			$headers = trim($_SERVER["HTTP_AUTHORIZATION"]);
+		} elseif (function_exists('apache_request_headers')) {
+			$requestHeaders = apache_request_headers();
+			foreach ($requestHeaders as $k=>$v) {
+				$requestHeaders[ucwords($k)] = $v;
+			}
+			if (isset($requestHeaders['Authorization'])) {
+				$headers = trim($requestHeaders['Authorization']);
+			}
+		}
+
+		return $headers;
+	}
+
+	/**
+	 * Den Basic Authorization Header aus dem Request auslesen.
+	 * Falls vorhanden, wird der Username und das Passwort zurückgeben.
+	 * ```
+	 * $credentials = \nn\t3::Request()->getBasicAuth(); // ['username'=>'...', 'password'=>'...']
+	 * ```
+	 * Beispiel-Aufruf von einem Testscript aus:
+	 * ```
+	 * echo file_get_contents('https://username:password@www.testsite.com');
+	 * ```
+	 * @return array
+	 */
+	public function getBasicAuth() {
+		if (isset($_SERVER['PHP_AUTH_USER'])) {
+            $username = $_SERVER['PHP_AUTH_USER'];
+            $password = $_SERVER['PHP_AUTH_PW'];
+		} else {
+			$check = ['HTTP_AUTHENTICATION', 'HTTP_AUTHORIZATION', 'REDIRECT_HTTP_AUTHORIZATION'];
+			[$username, $password] = current(array_filter( $check, function ( $key ) {
+				if ($value = $_SERVER[$key] ?? false) {
+					if (strpos(strtolower($value), 'basic') === 0) {
+						return explode(':', base64_decode(substr($value, 6)));
+					}
+				}
+			})) ?: [];
+		}
+		if (!$username && !$password) return [];
+		return ['username'=>$username, 'password'=>$password];
+	}
+
+	/**
+	 * Den `Bearer`-Header auslesen.
+	 * Wird u.a. verwendet, um ein JWT (Json Web Token) zu übertragen.
+	 * ```
+	 * \nn\t3::Request()->getBearerToken();
+	 * ```
+	 * @return string|null
+	 */
+	public function getBearerToken() {
+		$headers = $this->getAuthorizationHeader();
+		if (!empty($headers)) {
+			if (preg_match('/Bearer\s(\S+)/', $headers, $matches)) {
+				return $matches[1];
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Den JWT (Json Web Token) aus dem Request auslesen, validieren und bei
+	 * erfolgreichem Prüfen der Signatur den Payload des JWT zurückgeben.
+	 * ```
+	 * \nn\t3::Request()->getJwt();
+	 * ```
+	 * @return array|string
+	 */
+	public function getJwt() {
+		return \nn\t3::Encrypt()->parseJwt($this->getBearerToken());
+	}
 }

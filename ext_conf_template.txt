@@ -10,3 +10,6 @@ deeplApiUrl = https://api-free.deepl.com/v2/translate
 
 # cat=Basic; type=boolean; label=DEV-Mode aktivieren
 devModeEnabled = 0
+
+# cat=Basic; type=string; label=Encrypt salting key
+saltingKey = 

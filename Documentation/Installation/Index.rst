@@ -35,3 +35,33 @@ You can get the latest version from bitbucket.org by using the git command:
 .. code-block:: bash
 
    git clone https://bitbucket.org/99grad/nnhelpers/src/master/
+
+
+Defining dependencies
+========================
+
+If you want to use `nnhelpers` in your own extension, make sure to define the dependeny in your `ext_emconf.php` and `composer.json`:
+
+This goes in the `ext_emconf.php` of your extension:
+
+.. code-block:: php
+
+   $EM_CONF[$_EXTKEY] = [
+      ...
+      'constraints' => [
+         'depends' => [
+            'nnhelpers' => '1.3.0-0.0.0',
+         ],
+      ],
+   ];
+
+And this is the part for the `composer.json` of your extension:
+
+.. code-block:: json
+
+   {
+      ...
+      "require": {
+         "nng/nnhelpers": "^1.3"
+      },
+   }
