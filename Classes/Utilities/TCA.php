@@ -443,7 +443,7 @@ class TCA implements SingletonInterface {
 	public function createConfig( $tablename = '', $basics = [], $custom = [] ) {
 
 		if ($basics === true) {
-			$basics = ['sys_language_uid', 'l10n_parent', 'l10n_source', 'l10n_diffsource', 'hidden', 'cruser_id', 'pid', 'crdate', 'tstamp', 'sorting', 'starttime', 'endtime'];
+			$basics = ['sys_language_uid', 'l10n_parent', 'l10n_source', 'l10n_diffsource', 'hidden', 'cruser_id', 'pid', 'crdate', 'tstamp', 'sorting', 'starttime', 'endtime', 'fe_group'];
 		}
 
 		$defaults = [
