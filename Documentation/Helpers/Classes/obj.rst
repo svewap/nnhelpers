@@ -113,6 +113,31 @@ Access ALL keys to be fetched in an object
 | ``@param mixed $obj`` Model, array, or class name.
 | ``@return array``
 
+\\nn\\t3::Obj()->getMethodArguments(``$className = NULL, $methodName = NULL``);
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+Get info about the arguments to a method.
+| ``Also takes into account the typehinting specified by``@param``, e.g. to``ObjectStorage<ModelName>``.``
+
+.. code-block:: php
+
+	\nn\t3::Obj()->getMethodArguments( \My\Model\Name::class, 'myMethodName' );
+	\nn\t3::Obj()->getMethodArguments( $myClassInstance, 'myMethodName' );
+
+Returns as an example:
+
+.. code-block:: php
+
+	'varName' => [
+	    'type' => 'storage<model>',
+	    'storageType' => 'Storage',
+	    'elementType' => 'Model',
+	 'optional' => true,
+	 'defaultValue' => '123'
+	]
+
+return array
+
 \\nn\\t3::Obj()->getProps(``$obj, $key = 'type', $onlySettable = true``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
@@ -185,6 +210,30 @@ Prüft whether the object is a \TYPO3\CMS\Extbase\Domain\Model\FileReference.
 
 | ``@return boolean``
 
+\\nn\\t3::Obj()->isModel(``$obj``);
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+Prüft whether the object is a domain model.
+
+.. code-block:: php
+
+	\nn\t3::Obj()->isModel( $obj );
+
+| ``@return boolean``
+
+\\nn\\t3::Obj()->isSimpleType(``$type = ''``);
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+Checks whether a type (string) is a "simple" type.
+Simple types are all types except models, classes, etc. - e.g. ``array``, ``string``, ``boolean`` etc.
+
+.. code-block:: php
+
+	$isSimple = \nn\t3::Obj()->isSimpleType( 'string' ); // true
+	$isSimple = \nn\t3::Obj()->isSimpleType( \My\Extname\ClassName::class ); // false
+
+| ``@return boolean``
+
 \\nn\\t3::Obj()->isStorage(``$obj``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
@@ -211,7 +260,7 @@ Takes into account all models that are stored in ``sys_category``
 
 | ``@return boolean``
 
-\\nn\\t3::Obj()->merge(``$obj = NULL, $overlay = NULL``);
+\\nn\\t3::Obj()->merge(``$model = NULL, $overlay = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
 Merge an array into an object
@@ -245,6 +294,31 @@ In order to create a new model with data from an array there is
 there is a method ``$newModel = \nn\t3::Convert($data)->toModel( \My\Model\Name::class );``
 
 | ``@return Object``
+
+\\nn\\t3::Obj()->parseType(``$paramType = ''``);
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+Parse a string with info about ``ObjectStorage<Model>``.
+
+.. code-block:: php
+
+	\nn\t3::Obj()->parseType( 'string' );
+	\nn\t3::Obj()->parseType( 'Nng\Nnrestapi\Domain\Model\ApiTest' );
+	\nn\t3::Obj()->parseType( '\TYPO3\CMS\Extbase\Persistence\ObjectStorage<Nng\Nnrestapi\Domain\Model\ApiTest>' );
+
+Git back an array of info:
+| ``type`` is only set if it is an array or an ObjectStorage.
+| ``elementType`` is always the type of the model or the TypeHinting of the variable
+
+.. code-block:: php
+
+	[
+	    'elementType' => 'Nng\Nnrestapi\Domain\Model\ApiTest',
+	    'type' => 'TYPO3\CMS\Extbase\Persistence\ObjectStorage',
+	    'simple' => FALSE
+	]
+
+| ``@return array``
 
 \\nn\\t3::Obj()->prop(``$obj, $key``);
 """""""""""""""""""""""""""""""""""""""""""""""

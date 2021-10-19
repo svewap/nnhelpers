@@ -27,6 +27,64 @@ Application: compare the password hash of a fe_user in the database with a given
 
 | ``@return boolean``
 
+\\nn\\t3::Encrypt()->createJwtSignature(``$header = [], $payload = []``);
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+Create a signature for a JWT (Json Web Token).
+The signature is later transmitted as part of the token by the user.
+
+.. code-block:: php
+
+	$signature = \nn\t3::Encrypt()->createJwtSignature(['alg'=>'HS256', 'type'=>'JWT'], ['test'=>123]);
+
+| ``@param array $header``
+| ``@param array $payload``
+| ``@return string``
+
+\\nn\\t3::Encrypt()->decode(``$data = ''``);
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+Encrypts a string or an array.
+To encrypt the data, ``\nn\t3::Encrypt()->encode()`` can be used.
+See ``\nn\t3::Encrypt()->encode()`` for a complete example.
+
+.. code-block:: php
+
+	\nn\t3::Encrypt()->decode( '...' );
+
+| ``@return string``
+
+\\nn\\t3::Encrypt()->encode(``$data = ''``);
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+Encrypt a string or array.
+
+Unlike ``\nn\t3::Encrypt()->hash()``, an encrypted value can be decrypted by ``\nn\t3::Encrypt()->decode()``
+can be decrypted again. This method is therefore not suitable for storing sensitive data such as passwords
+in a database. Nevertheless, the protection is relatively high, as even identical data encrypted with
+encrypted with the same salting key will look different.
+
+For encryption, a salting key is generated and stored in the extension manager of ``nnhelpers``
+This key is unique for each installation. If it is changed, then already encrypted data cannot be decrypted again.
+be decrypted again.
+
+.. code-block:: php
+
+	\nn\t3::Encrypt()->encode( 'mySecretSomething' );
+	\nn\t3::Encrypt()->encode( ['some'=>'secret'] );
+
+Complete example with encryption and decryption:
+
+.. code-block:: php
+
+	$encryptedResult = \nn\t3::Encrypt()->encode( ['password'=>'mysecretsomething'] );
+	echo \nn\t3::Encrypt()->decode( $encryptedResult )['password'];
+	
+	$encryptedResult = \nn\t3::Encrypt()->encode( 'some_secret_phrase' );
+	echo \nn\t3::Encrypt()->decode( $encryptedResult );
+
+| ``@return string``
+
 \\nn\\t3::Encrypt()->getHashInstance(``$passwordHash = '', $loginType = 'FE'``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
@@ -39,6 +97,19 @@ e.g., to know at fe_user how the password was encrypted in the DB.
 	// => \TYPO3\CMS\Core\Crypto\PasswordHashing\PhpassPasswordHash
 
 | ``@return class``
+
+\\nn\\t3::Encrypt()->getSaltingKey();
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+Gets the enryption / salting key from the extension configuration for ``nnhelpers``
+If no key has been set in the extension manager yet, it will be generated automatically
+and stored in the ``LocalConfiguration.php``.
+
+.. code-block:: php
+
+	\nn\t3::Encrypt()->getSaltingKey();
+
+| ``@return string``
 
 \\nn\\t3::Encrypt()->hash(``$string = ''``);
 """""""""""""""""""""""""""""""""""""""""""""""
@@ -81,6 +152,64 @@ An automatic password update could look like this in a manual FE user authentica
 	}
 
 | ``@return boolean``
+
+\\nn\\t3::Encrypt()->hashSessionId(``$sessionId = NULL``);
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+Get session hash for ``fe_sessions.ses_id``
+Corresponds to the value stored in the database for the cookie ``fe_typo_user``
+
+In TYPO3 v11, an unchanged value is returned here. As of TYPO3 v11, the session ID is stored in the
+Cookie ``fe_typo_user`` is no longer stored directly in the database, but hashed.
+See: ``TYPO3\CMS\Core\Session\Backend\DatabaseSessionBackend->hash()``.
+
+.. code-block:: php
+
+	\nn\t3::Encrypt()->hashSessionId( $sessionIdFromCookie );
+
+Example:
+
+.. code-block:: php
+
+	$cookie = $_COOKIE['fe_typo_user'];
+	$hash = \nn\t3::Encrypt()->hashSessionId( $cookie );
+	$sessionFromDatabase = \nn\t3::Db()->findOneByValues('fe_sessions', ['ses_id'=>$hash]);
+
+Used by, among others: ``nn\t3::FrontendUserAuthentication()->loginBySessionId()``.
+
+| ``@return string``
+.
+
+\\nn\\t3::Encrypt()->jwt(``$payload = []``);
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+Create a JWT (Json Web Token), sign it, and return it ``base64`` encoded.
+
+Don't forget: A JWT is "fälschungssicher", because the signature hash only with
+with the correct key/salt – but all data in the JWT is für anyone.
+by ``base64_decode()``. A JWT is in no way suitable for storing sensitive data such as
+passwords or logins!
+
+.. code-block:: php
+
+	\nn\t3::Encrypt()->jwt(['test'=>123]);
+
+| ``@param array $payload``
+| ``@return string``
+
+\\nn\\t3::Encrypt()->parseJwt(``$token = ''``);
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+Parse a JWT (Json Web Token) and check the signature.
+If the signature is valid (and thus the payload has not been tampered with), the
+payload is returned. If the signature is invalid, ``FALSE`` is returned.
+
+.. code-block:: php
+
+	\nn\t3::Encrypt()->parseJwt('adhjdf.fsdfkjds.HKdfgfksfdsf');
+
+| ``@param string $token``
+| ``@return array|false``
 
 \\nn\\t3::Encrypt()->password(``$clearTextPassword = '', $context = 'FE'``);
 """""""""""""""""""""""""""""""""""""""""""""""

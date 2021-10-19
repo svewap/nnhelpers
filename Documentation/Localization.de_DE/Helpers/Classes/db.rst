@@ -31,11 +31,20 @@ Debug MySQL Query
 """""""""""""""""""""""""""""""""""""""""""""""
 
 Datenbank-Eintrag löschen. Klein und Fein.
+Es kann entweder ein Tabellenname und die UID übergeben werden - oder ein Model.
+
+Löschen eines Datensatzes per Tabellenname und uid oder einem beliebigen Constraint:
 
 .. code-block:: php
 
 	\nn\t3::Db()->delete('table', $uid);
 	\nn\t3::Db()->delete('table', ['uid_local'=>$uid]);
+
+Löschen eines Datensatzes per Model:
+
+.. code-block:: php
+
+	\nn\t3::Db()->delete( $model );
 
 | ``@return boolean``
 
@@ -105,6 +114,19 @@ Findet EINEN Eintrag anhand von gewünschten Feld-Werten.
 | ``@param boolean $useLogicalOr``
 | ``@param boolean $ignoreEnableFields``
 | ``@return array``
+
+\\nn\\t3::Db()->get(``$uid, $modelType = ''``);
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+Ein Domain-Model/Entity anhand einer ``uid`` holen.
+Liefert das "echte" Model/Object inklusive aller Relationen,
+analog zu einer Query über das Repository.
+
+.. code-block:: php
+
+	$model = \nn\t3::Db()->get( $uid, \Nng\MyExt\Domain\Model\Name::class );
+
+| ``@return Object``
 
 \\nn\\t3::Db()->getColumn(``$table = '', $colName = '', $useSchemaManager = false``);
 """""""""""""""""""""""""""""""""""""""""""""""
@@ -197,7 +219,7 @@ Repository für ein Model holen.
 
 	\nn\t3::Db()->getRepositoryForModel( \My\Domain\Model\Name );
 
-| ``@return string``
+| ``@return \TYPO3\CMS\Extbase\Persistence\Repository``
 
 \\nn\\t3::Db()->getTableNameForModel(``$className = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
@@ -240,15 +262,25 @@ Sollte das nicht reichen oder zu kompliziert werden, siehe:
 
 | ``@return boolean``
 
-\\nn\\t3::Db()->insert(``$table = '', $data = []``);
+\\nn\\t3::Db()->insert(``$tableNameOrModel = '', $data = []``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
 Datenbank-Eintrag einfügen. Simpel und idiotensicher.
-Gibt Array der eingefügten Daten zurück inkl. insertUid des Eintrags
+Entweder kann der Tabellenname und ein Array übergeben werden - oder ein Domain-Model.
+
+Einfügen eines neuen Datensatzes per Tabellenname und Daten-Array:
 
 .. code-block:: php
 
 	$insertArr = \nn\t3::Db()->insert('table', ['bodytext'=>'...']);
+
+Einfügen eines neuen Models. Das Repository wird automatisch ermittelt.
+Das Model wird direkt persistiert.
+
+.. code-block:: php
+
+	$model = new \My\Nice\Model();
+	$persistedModel = \nn\t3::Db()->insert( $model );
 
 | ``@return int``
 
@@ -412,21 +444,37 @@ Datenbank-Eintrag wiederherstellen.
 
 | ``@return boolean``
 
-\\nn\\t3::Db()->update(``$table = '', $data = [], $uid = NULL``);
+\\nn\\t3::Db()->update(``$tableNameOrModel = '', $data = [], $uid = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
 Datenbank-Eintrag aktualisieren. Schnell und einfach.
+Das Update kann entweder per Tabellenname und Daten-Array passieren.
+Oder man übergibt ein Model.
+
+Beispiele:
 
 .. code-block:: php
 
-	\nn\t3::Db()->update('table', [], 1);
-	\nn\t3::Db()->update('table', [], ['email'=>'david@99grad.de', 'pid'=>12, ...]);
+	// UPDATES table SET title='new' WHERE uid=1
+	\nn\t3::Db()->update('table', ['title'=>'new'], 1);
+	
+	// UPDATE table SET title='new' WHERE email='david@99grad.de' AND pid=12
+	\nn\t3::Db()->update('table', ['title'=>'new'], ['email'=>'david@99grad.de', 'pid'=>12, ...]);
 
 Mit ``true`` statt einer ``$uid`` werden ALLE Datensätze der Tabelle geupdated.
 
 .. code-block:: php
 
+	// UPDATE table SET test='1' WHERE 1
 	\nn\t3::Db()->update('table', ['test'=>1], true);
 
-| ``@return boolean``
+Statt einem Tabellenname kann auch ein einfach Model übergeben werden.
+Das Repository wird automatisch ermittelt und das Model direkt persistiert.
+
+.. code-block:: php
+
+	$model = $myRepo->findByUid(1);
+	\nn\t3::Db()->update( $model );
+
+| ``@return mixed``
 

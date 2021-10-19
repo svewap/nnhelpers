@@ -76,6 +76,67 @@ Only get files from ``tx_nnfesubmit_nnfesubmit[fal_media]``.
 
 | ``@return array``
 
+\\nn\\t3::Request()->getAuthorizationHeader();
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+Read the authorization header from the request.
+
+.. code-block:: php
+
+	\nn\t3::Request()->getAuthorizationHeader();
+
+Important: If this doesn't work, the following line is probably missing from the .htaccess
+is probably missing the following line:
+
+.. code-block:: php
+
+	# nnhelpers: use when running PHP in PHP CGI mode.
+	RewriteRule . - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization},L]
+
+| ``@return string``
+
+\\nn\\t3::Request()->getBasicAuth();
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+Read the Basic Authorization header from the request.
+If present, the username and password will be returned.
+
+.. code-block:: php
+
+	$credentials = \nn\t3::Request()->getBasicAuth(); // ['username'=>'...', 'password'=>'...']
+
+Example call from a test script:
+
+.. code-block:: php
+
+	echo file_get_contents('https://username:password@www.testsite.com');
+
+| ``@return array``
+
+\\nn\\t3::Request()->getBearerToken();
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+Read the ``Bearer`` header.
+Used to transfer a JWT (Json Web Token), among other things.
+
+.. code-block:: php
+
+	\nn\t3::Request()->getBearerToken();
+
+| ``@return string|null``
+
+\\nn\\t3::Request()->getJwt();
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+Read the JWT (Json Web Token) from the request, validate it and, if the signature is
+validate the signature and return the payload of the JWT.
+
+.. code-block:: php
+
+	\nn\t3::Request()->getJwt();
+
+| ``@return array|string``
+
 \\nn\\t3::Request()->getUri(``$varName = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 

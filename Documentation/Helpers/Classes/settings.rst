@@ -180,6 +180,23 @@ Values from the FlexForm will not be remembered.
 
 | ``@return array``
 
+\\nn\\t3::Settings()->getSiteConfig(``$request = NULL``);
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+Get site configuration.
+This is the configuration defined in the YAML files in the ``/sites`` folder as of TYPO3 9.
+Some of the settings are also üadjustable via the "Sites" page module.
+
+In the context of a MiddleWare, the ``site`` may not yet be parsed/loaded.
+In this case, the ``$request`` from the MiddleWare can be übergeben to determine the site.
+
+.. code-block:: php
+
+	$config = \nn\t3::Settings()->getSiteConfig();
+	$config = \nn\t3::Settings()->getSiteConfig( $request );
+
+| ``@return array``
+
 \\nn\\t3::Settings()->getStoragePid(``$extName = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
@@ -241,4 +258,18 @@ Use ``getFullTyposcript``.
 
 | ``@return object``
 .
+
+\\nn\\t3::Settings()->setExtConf(``$extName = '', $key = '', $value = ''``);
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+Write Extension Configuration.
+Writes an extension configuration to ``LocalConfiguration.php``. The values can be used with an
+the values can be edited in the ``ext_conf_template.txt`` via the extension manager / extension configuration in the backend.
+Extension Configuration in the backend.
+
+.. code-block:: php
+
+	\nn\t3::Settings()->setExtConf( 'extname', 'key', 'value' );
+
+| ``@return mixed``
 

@@ -19,12 +19,28 @@ Overview of Methods
 \\nn\\t3::File()->absPath(``$file = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Absoluter Pfad zu einer Datei
+Absoluter Pfad zu einer Datei auf dem Server.
+
+Gibt den kompletten Pfad ab der Server-Root zurück, z.B. ab ``/var/www/...``.
+Falls der Pfad bereits absolut war, wird er unverändert zurückgegeben.
 
 .. code-block:: php
 
-	\nn\t3::File()->absPath('fileadmin/bild.jpg');                   => /var/www/website/fileadmin/bild.jpg
-	\nn\t3::File()->absPath('/var/www/website/fileadmin/bild.jpg');  => /var/www/website/fileadmin/bild.jpg
+	\nn\t3::File()->absPath('fileadmin/bild.jpg');                   // => /var/www/website/fileadmin/bild.jpg
+	\nn\t3::File()->absPath('/var/www/website/fileadmin/bild.jpg');  // => /var/www/website/fileadmin/bild.jpg
+
+Außer dem Dateipfad als String können auch alle denkbaren Objekte übergeben werden:
+
+.. code-block:: php
+
+	// \TYPO3\CMS\Core\Resource\Folder
+	\nn\t3::File()->absPath( $folderObject );    => /var/www/website/fileadmin/bild.jpg
+	
+	// \TYPO3\CMS\Core\Resource\File
+	\nn\t3::File()->absPath( $fileObject );      => /var/www/website/fileadmin/bild.jpg
+	
+	// \TYPO3\CMS\Extbase\Domain\Model\FileReference
+	\nn\t3::File()->absPath( $fileReference );   => /var/www/website/fileadmin/bild.jpg
 
 Existiert auch als ViewHelper:
 
@@ -236,6 +252,7 @@ Kann mit allen Arten von Objekten umgehen.
 
 	\nn\t3::File()->getPublicUrl( $falFile );        // \TYPO3\CMS\Core\Resource\FileReference
 	\nn\t3::File()->getPublicUrl( $fileReference );  // \TYPO3\CMS\Extbase\Domain\Model\FileReference
+	\nn\t3::File()->getPublicUrl( $folder );         // \TYPO3\CMS\Core\Resource\Folder
 
 | ``@return string``
 
@@ -350,6 +367,7 @@ Einen Ordner anlegen
 .. code-block:: php
 
 	\nn\t3::File()->mkdir( 'fileadmin/mein/ordner/' );
+	\nn\t3::File()->mkdir( '1:/mein/ordner/' );
 
 | ``@return boolean``
 
@@ -574,6 +592,7 @@ Legt auch die Ordner an, falls sie nicht existieren.
 .. code-block:: php
 
 	\nn\t3::File()->write('fileadmin/some/deep/folder/');
+	\nn\t3::File()->write('1:/some/deep/folder/');
 	\nn\t3::File()->write('fileadmin/some/deep/folder/file.json', 'TEXT');
 
 | ``@return boolean``

@@ -29,7 +29,7 @@ Checklist:
 Overview of Methods
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-\\nn\\t3::Fal()->attach(``$model, $field, $filePath = NULL``);
+\\nn\\t3::Fal()->attach(``$model, $field, $itemData = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
 Convert a file to a FileReference object, and attach it
@@ -41,9 +41,10 @@ array of multiple images can be attached to an ObjectStorage.
 
 	\nn\t3::Fal()->attach( $model, $fieldName, $filePath );
 	\nn\t3::Fal()->attach( $model, 'image', 'fileadmin/user_uploads/image.jpg' );
+	\nn\t3::Fal()->attach( $model, 'image', ['publicUrl'=>'fileadmin/user_uploads/image.jpg'] );
+	\nn\t3::Fal()->attach( $model, 'image', ['publicUrl'=>'fileadmin/user_uploads/image.jpg', 'title'=>'Title...'] );
 
 | ``@return \TYPO3\CMS\Extbase\Domain\Model\FileReference``
-.
 
 \\nn\\t3::Fal()->clearCache(``$filenameOrSysFile = ''``);
 """""""""""""""""""""""""""""""""""""""""""""""
@@ -76,6 +77,23 @@ Can also be URL to YouTube/Vimeo video (e.g. https://www.youtube.com/watch?v=7Bb
 | ``@param boolean $forceCreateNew`` Should new file always be created? If not, it returns existing File object if necessary
 
 | ``@return \Nng\Nnhelpers\Domain\Model\File|\TYPO3\CMS\Core\Resource\File|boolean``
+
+\\nn\\t3::Fal()->createForModel(``$model, $field, $itemData = NULL``);
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+Convert a file to a FileReference object and für ``attach()`` to an existing
+Prepare model and field/property. The FileReference will not be attached to the model automatically.
+automatically attached to the model. To set the FAL directly in the model, you can use the helper
+| ``\nn\t3::Fal()->attach( $model, $field, $itemData )`` can be used.
+
+.. code-block:: php
+
+	\nn\t3::Fal()->createForModel( $model, $fieldName, $filePath );
+	\nn\t3::Fal()->createForModel( $model, 'image', 'fileadmin/user_uploads/image.jpg' );
+	\nn\t3::Fal()->createForModel( $model, 'image', ['publicUrl'=>'fileadmin/user_uploads/image.jpg'] );
+	\nn\t3::Fal()->createForModel( $model, 'image', ['publicUrl'=>'fileadmin/user_uploads/image.jpg', 'title'=>'Title...'] );
+
+| ``@return \TYPO3\CMS\Extbase\Domain\Model\FileReference``
 
 \\nn\\t3::Fal()->createSysFile(``$file, $autoCreateStorage = true``);
 """""""""""""""""""""""""""""""""""""""""""""""

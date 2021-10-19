@@ -288,21 +288,21 @@ class Fal implements SingletonInterface {
 
 		// Absoluter Pfad zur Quell-Datei ('/var/www/website/uploads/bild.jpg')
 		$absSrcFile = \nn\t3::File()->absPath( $srcFile );
-
+		
 		// Keine externe URL (YouTube...) und Datei existiert nicht? Dann abbrechen!
 		if (!$isExternalMedia && !\nn\t3::File()->exists($srcFile)) {
 			return false;
 		}
-
+		
 		// Object, Storage-Model für Zielverzeichnis (z.B. Object für 'fileadmin/' wenn $storageConfig = 'fileadmin/test/was/')
 		$storage = \nn\t3::File()->getStorage($storageConfig, true);
-
+		
 		// Object, relativer Unterordner innerhalb der Storage, (z.B. Object für 'test/was/' wenn $storageConfig = 'fileadmin/test/was/')
 		$subfolderInStorage = \nn\t3::Storage()->getFolder($storageConfig, $storage);
-		
+
 		// String, absoluter Pfad zum Zielverzeichnis
-		$absDestFolderPath = \nn\t3::File()->absPath( $subfolderInStorage->getPublicUrl() );
-		
+		$absDestFolderPath = \nn\t3::File()->absPath( $subfolderInStorage );
+
 		// Dateiname, ohne Pfad ('fileadmin/test/bild.jpg' => 'bild.jpg')
 		$srcFileBaseName = basename($srcFile);
 
@@ -330,7 +330,7 @@ class Fal implements SingletonInterface {
 
 			// Name der Datei im Zielverzeichnis
 			$absTmpName = $absDestFolderPath . $srcFileBaseName;
-
+			
 			// Kopieren
 			if ($forceCreateNew) {
 				$success = \nn\t3::File()->copy( $absSrcFile, $absTmpName, $forceCreateNew );
@@ -343,7 +343,7 @@ class Fal implements SingletonInterface {
 					$success = \nn\t3::File()->move( $absSrcFile, $absTmpName );
 				}
 			}
-
+			
 			if (!$success) return false;
 			
 			// Nutze die File-Indexer-Funktion, um die temporäre Datei in der Tabelle sys_file einzufügen
@@ -351,7 +351,7 @@ class Fal implements SingletonInterface {
 
 			// String, relativer Pfad der Datei innerhalb der Storage. Ermittelt selbstständig die passende Storage ()
 			$relPathInStorage = \nn\t3::File()->getRelativePathInStorage( $absTmpName );
-			
+
 			// File-Object für tmp-Datei holen
 			$tmpFileObject = $storage->getFile($relPathInStorage);
 			

@@ -37,6 +37,7 @@ class File implements SingletonInterface {
 	 * ```
 	 * \nn\t3::File()->getPublicUrl( $falFile );		// \TYPO3\CMS\Core\Resource\FileReference
 	 * \nn\t3::File()->getPublicUrl( $fileReference );	// \TYPO3\CMS\Extbase\Domain\Model\FileReference
+	 * \nn\t3::File()->getPublicUrl( $folder );			// \TYPO3\CMS\Core\Resource\Folder
 	 * ```
 	 * @return string
 	 */
@@ -49,6 +50,8 @@ class File implements SingletonInterface {
 			$url = $obj->getOriginalResource()->getPublicUrl();
 		} else if (is_array($obj) && $url = ($obj['publicUrl'] ?? false)) {
 			return $url;
+		} else if (is_a($obj, \TYPO3\CMS\Core\Resource\Folder::class, true)) {
+			return ltrim($obj->getPublicUrl(), '/');
 		}
 		return $url;
 	}
@@ -155,13 +158,12 @@ class File implements SingletonInterface {
 	 * @return string|boolean
 	 */
 	public function copy ( $src = null, $dest = null, $renameIfFileExists = true ) {
-
+		
 		if (!file_exists( $src )) return false;
 		if (!$renameIfFileExists && $this->exists($dest)) return false;
 		
 		$dest = $this->uniqueFilename( $dest );
 		$path = pathinfo( $dest, PATHINFO_DIRNAME ).'/';
-
 		// Ordner anlegen, falls noch nicht vorhanden
 		\nn\t3::Storage()->getFolder( $path );
 		\TYPO3\CMS\Core\Utility\GeneralUtility::upload_copy_move($src, $dest);
@@ -258,11 +260,28 @@ class File implements SingletonInterface {
 	}
 
 	/**
-	 * Absoluter Pfad zu einer Datei
+	 * Absoluter Pfad zu einer Datei auf dem Server.
+	 * 
+	 * Gibt den kompletten Pfad ab der Server-Root zurück, z.B. ab `/var/www/...`.
+	 * Falls der Pfad bereits absolut war, wird er unverändert zurückgegeben.
+	 * 
 	 * ```
-	 * \nn\t3::File()->absPath('fileadmin/bild.jpg'); 					=> /var/www/website/fileadmin/bild.jpg
-	 * \nn\t3::File()->absPath('/var/www/website/fileadmin/bild.jpg'); 	=> /var/www/website/fileadmin/bild.jpg
+	 * \nn\t3::File()->absPath('fileadmin/bild.jpg'); 					// => /var/www/website/fileadmin/bild.jpg
+	 * \nn\t3::File()->absPath('/var/www/website/fileadmin/bild.jpg'); 	// => /var/www/website/fileadmin/bild.jpg
 	 * ```
+	 * 
+	 * Außer dem Dateipfad als String können auch alle denkbaren Objekte übergeben werden:
+	 * ```
+	 * // \TYPO3\CMS\Core\Resource\Folder
+	 * \nn\t3::File()->absPath( $folderObject ); 	=> /var/www/website/fileadmin/bild.jpg
+	 * 
+	 * // \TYPO3\CMS\Core\Resource\File
+	 * \nn\t3::File()->absPath( $fileObject ); 		=> /var/www/website/fileadmin/bild.jpg
+	 * 
+	 * // \TYPO3\CMS\Extbase\Domain\Model\FileReference
+	 * \nn\t3::File()->absPath( $fileReference ); 	=> /var/www/website/fileadmin/bild.jpg
+	 * ```
+	 * 
 	 * Existiert auch als ViewHelper:
 	 * ```
 	 * {nnt3:file.absPath(file:'pfad/zum/bild.jpg')}
@@ -270,13 +289,22 @@ class File implements SingletonInterface {
 	 * @return boolean
 	 */
 	public function absPath ( $file = null ) {
-		if (strpos($file, sys_get_temp_dir()) !== false) return $file;
+
+		if (!is_string($file)) {
+			$file = $this->getPublicUrl( $file );
+		}
+
+		if (strpos($file, sys_get_temp_dir()) !== false) {
+			return $file;
+		}
+		
+		$pathSite = \nn\t3::Environment()->getPathSite();
 
 		$file = $this->resolvePathPrefixes( $file );
-		$file = $this->normalizePath($file);
+		$file = $this->normalizePath( $file );
 
-		$pathSite = \nn\t3::Environment()->getPathSite();
 		$file = str_replace( $pathSite, '', $file );
+		$file = ltrim( $file, '/' );
 
 		if (\nn\t3::t3Version() > 9) {
 			return GeneralUtility::getFileAbsFileName($file);

@@ -325,7 +325,7 @@ class TestController extends \Nng\Nnhelpers\Controller\AbstractController {
 
 						$result = $entryRepository->findByUid($uid);
 						\nn\t3::Db()->delete( 'tx_nnhelpers_domain_model_entry', $uid, true );
-
+						
 						if (!$result || !count($result->getMedia())) {
 							$errors[] = "FAL wurde nicht an Model angehängt.";
 						} else {

@@ -30,7 +30,7 @@ Existiert auch als ViewHelper:
 	{nnt3:frontendUser.get(key:'first_name')}
 	{nnt3:frontendUser.get()->f:variable.set(name:'feUser')}
 
-| ``@return User``
+| ``@return array``
 
 \\nn\\t3::FrontendUser()->getAvailableUserGroups();
 """""""""""""""""""""""""""""""""""""""""""""""
@@ -43,24 +43,42 @@ Alle existierende User-Gruppen zurückgeben
 
 | ``@return array``
 
+\\nn\\t3::FrontendUser()->getCookieName();
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+Cookie-Name des Frontend-User-Cookies holen.
+Üblicherweise ``fe_typo_user``, außer es wurde in der LocalConfiguration geändert.
+
+.. code-block:: php
+
+	\nn\t3::FrontendUser()->getCookieName();
+
+return string
+
 \\nn\\t3::FrontendUser()->getCurrentUser();
 """""""""""""""""""""""""""""""""""""""""""""""
 
-User-Gruppe des aktuellen FE-Users holen.
+Array mit den Daten des aktuellen FE-Users holen.
 
 .. code-block:: php
 
 	\nn\t3::FrontendUser()->getCurrentUser();
 
-| ``@return User``
+| ``@return array``
 
 \\nn\\t3::FrontendUser()->getCurrentUserGroups(``$returnRowData = false``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
+Benutzergruppen des aktuellen FE-Users als Array holen.
+Die uids der Benutzergruppen werden im zurückgegebenen Array als Key verwendet.
+
 .. code-block:: php
 
-	\nn\t3::FrontendUser()->getCurrentUserGroups();          => [1 => ['title'=>'Gruppe A', 'uid' => 1]]
-	\nn\t3::FrontendUser()->getCurrentUserGroups( true );    => [1 => [... alle Felder der DB] ]
+	// Minimalversion: Per default gibt Typo3 nur title, uid und pid zurück
+	\nn\t3::FrontendUser()->getCurrentUserGroups();          // [1 => ['title'=>'Gruppe A', 'uid' => 1, 'pid'=>5]]
+	
+	// Mit true kann der komplette Datensatz für die fe_user_group aus der DB gelesen werden
+	\nn\t3::FrontendUser()->getCurrentUserGroups( true );    // [1 => [... alle Felder der DB] ]
 
 | ``@return array``
 
@@ -74,6 +92,21 @@ UID des aktuellen Frontend-Users holen
 	$uid = \nn\t3::FrontendUser()->getCurrentUserUid();
 
 | ``@return int``
+
+\\nn\\t3::FrontendUser()->getGroups(``$returnRowData = false``);
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+Benutzergruppen des aktuellen FE-User holen.
+Alias zu ``\nn\t3::FrontendUser()->getCurrentUserGroups();``
+
+.. code-block:: php
+
+	// nur title, uid und pid der Gruppen laden
+	\nn\t3::FrontendUser()->getGroups();
+	// kompletten Datensatz der Gruppen laden
+	\nn\t3::FrontendUser()->getGroups( true );
+
+| ``@return array``
 
 \\nn\\t3::FrontendUser()->getLanguage();
 """""""""""""""""""""""""""""""""""""""""""""""
@@ -123,7 +156,7 @@ Prüft, ob der User eine bestimmte Rolle hat.
 \\nn\\t3::FrontendUser()->isInUserGroup(``$feGroups = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Prüft, ob der aktuelle fe-user innerhalb einer bestimmte Benutzergruppe ist.
+Prüft, ob der aktuelle Frontend-User innerhalb einer bestimmte Benutzergruppe ist.
 
 .. code-block:: php
 
@@ -175,11 +208,45 @@ Aktuellen FE-USer manuell ausloggen
 \\nn\\t3::FrontendUser()->removeCookie();
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Aktuellen fe_typo_user-Cookie manuell löschen
+Aktuellen ``fe_typo_user``-Cookie manuell löschen
 
 .. code-block:: php
 
 	\nn\t3::FrontendUser()->removeCookie()
+
+| ``@return void``
+
+\\nn\\t3::FrontendUser()->resolveUserGroups(``$arr = []``);
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+Wandelt ein Array oder eine kommaseparierte Liste mit Benutzergrupen-UIDs in
+| ``fe_user_groups``-Daten aus der Datenbank auf. Prüft auf geerbte Untergruppe.
+
+.. code-block:: php
+
+	\nn\t3::FrontendUser()->resolveUserGroups( [1,2,3] );
+	\nn\t3::FrontendUser()->resolveUserGroups( '1,2,3' );
+
+| ``@return array``
+
+\\nn\\t3::FrontendUser()->setCookie(``$sessionId = NULL, $request = NULL``);
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+Den ``fe_typo_user``-Cookie manuell setzen.
+
+Wird keine ``sessionID`` übergeben, sucht Typo3 selbst nach der Session-ID des FE-Users.
+
+Bei Aufruf dieser Methode aus einer MiddleWare sollte der ``Request`` mit übergeben werden.
+Dadurch kann z.B. der globale ``$_COOKIE``-Wert und der ``cookieParams.fe_typo_user`` im Request
+vor Authentifizierung über ``typo3/cms-frontend/authentication`` in einer eigenen MiddleWare
+gesetzt werden. Hilfreich, falls eine Crossdomain-Authentifizierung erforderlich ist (z.B.
+per Json Web Token / JWT).
+
+.. code-block:: php
+
+	\nn\t3::FrontendUser()->setCookie();
+	\nn\t3::FrontendUser()->setCookie( $sessionId );
+	\nn\t3::FrontendUser()->setCookie( $sessionId, $request );
 
 | ``@return void``
 

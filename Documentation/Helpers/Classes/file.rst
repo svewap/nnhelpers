@@ -19,12 +19,28 @@ Overview of Methods
 \\nn\\t3::File()->absPath(``$file = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Absolute path to a file
+Absolute path to a file on the server.
+
+Returns the complete path from the server root, for example from ``/var/www/...``
+If the path was already absolute, it will be returned unmodified.
 
 .. code-block:: php
 
-	\nn\t3::File()->absPath('fileadmin/image.jpg'); => /var/www/website/fileadmin/image.jpg
-	\nn\t3::File()->absPath('/var/www/website/fileadmin/image.jpg'); => /var/www/website/fileadmin/image.jpg
+	\nn\t3::File()->absPath('fileadmin/image.jpg'); // => /var/www/website/fileadmin/image.jpg
+	\nn\t3::File()->absPath('/var/www/website/fileadmin/image.jpg'); // => /var/www/website/fileadmin/image.jpg
+
+In addition to the file path as a string, any conceivable object can also be passed:
+
+.. code-block:: php
+
+	// \TYPO3\CMS\Core\Resource\Folder.
+	\nn\t3::File()->absPath( $folderObject ); => /var/www/website/fileadmin/image.jpg
+	
+	// \TYPO3\CMS\Core\Resource\File
+	\nn\t3::File()->absPath( $fileObject ); => /var/www/website/fileadmin/image.jpg
+	
+	// \TYPO3\CMS\Extbase\Domain\Model\FileReference
+	\nn\t3::File()->absPath( $fileReference ); => /var/www/website/fileadmin/image.jpg
 
 Also acts as a ViewHelper:
 
@@ -236,6 +252,7 @@ Can handle all types of objects
 
 	\nn\t3::File()->getPublicUrl( $falFile ); // \TYPO3\CMS\Core\Resource\FileReference.
 	\nn\t3::File()->getPublicUrl( $fileReference ); // \TYPO3\CMS\Extbase\Domain\Model\FileReference
+	\nn\t3::File()->getPublicUrl( $folder ); // \TYPO3\CMS\Core\Resource\Folder
 
 | ``@return string``
 
@@ -349,6 +366,7 @@ Create a folder
 .. code-block:: php
 
 	\nn\t3::File()->mkdir( 'fileadmin/my/folder/' );
+	\nn\t3::File()->mkdir( '1:/my/folder/' );
 
 | ``@return boolean``
 
@@ -571,6 +589,7 @@ Also creates the folders if they do not exist.
 .. code-block:: php
 
 	\nn\t3::File()->write('fileadmin/some/deep/folder/');
+	\nn\t3::File()->write('1:/some/deep/folder/');
 	\nn\t3::File()->write('fileadmin/some/deep/folder/file.json', 'TEXT');
 
 | ``@return boolean``

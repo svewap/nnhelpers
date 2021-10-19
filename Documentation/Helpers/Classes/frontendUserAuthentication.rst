@@ -33,7 +33,13 @@ Login of a FE user based on username and password
 \\nn\\t3::FrontendUserAuthentication()->loginBySessionId(``$sessionId = ''``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Login of a FE user using a session ID
+Login of a FE user using a session ID.
+
+The session ID corresponds to the TYPO3 cookie ``fe_typo_user``. As a rule, there is an entry for every
+each fe-user session an entry in the ``fe_sessions`` table. Up to Typo3 v11, this corresponded to
+the ``ses_id`` column was exactly the cookie value. As of Typo3 v11, the value is additionally hashed.
+
+See also ``\nn\t3::Encrypt()->hashSessionId( $sessionId );``
 
 .. code-block:: php
 
@@ -74,6 +80,30 @@ Login of a FE user using a fe_user.uid
 	\nn\t3::FrontendUserAuthentication()->loginUid( 1 );
 
 | ``@return array``
+
+\\nn\\t3::FrontendUserAuthentication()->prepareSession(``$usernameOrUid = NULL``);
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+Create a new FrontenUser session in the ``fe_sessions`` table.
+You can either specify the ``fe_users.uid`` or the ``fe_users.username``
+
+The user will not be logged in automatically. Instead, only a valid session is created and prepared in the database.
+is created and prepared in the database, which Typo3 can use later for authentication.
+
+Returns the session ID.
+
+The session ID here corresponds exactly to the value in the ``fe_typo_user`` cookie - but not necessarily to the
+value stored in ``fe_sessions.ses_id``. The value in the database is hashed as of TYPO3 v11.
+hashed.
+
+.. code-block:: php
+
+	$sessionId = \nn\t3::FrontendUserAuthentication()->prepareSession( 1 );
+	$sessionId = \nn\t3::FrontendUserAuthentication()->prepareSession( 'david' );
+	
+	$hashInDatabase = \nn\t3::Encrypt()->hashSessionId( $sessionId );
+
+| ``@return string``
 
 \\nn\\t3::FrontendUserAuthentication()->setPassword(``$feUserUid = NULL, $password = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""

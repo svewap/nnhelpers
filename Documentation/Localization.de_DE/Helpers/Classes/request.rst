@@ -76,6 +76,67 @@ Nur Dateien aus ``tx_nnfesubmit_nnfesubmit[fal_media]`` holen.
 
 | ``@return array``
 
+\\nn\\t3::Request()->getAuthorizationHeader();
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+Den Authorization-Header aus dem Request auslesen.
+
+.. code-block:: php
+
+	\nn\t3::Request()->getAuthorizationHeader();
+
+Wichtig: Wenn das hier nicht funktioniert, fehlt in der .htaccess
+wahrscheinlich folgende Zeile:
+
+.. code-block:: php
+
+	# nnhelpers: Verwenden, wenn PHP im PHP-CGI-Mode ausgeführt wird
+	RewriteRule . - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization},L]
+
+| ``@return string``
+
+\\nn\\t3::Request()->getBasicAuth();
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+Den Basic Authorization Header aus dem Request auslesen.
+Falls vorhanden, wird der Username und das Passwort zurückgeben.
+
+.. code-block:: php
+
+	$credentials = \nn\t3::Request()->getBasicAuth(); // ['username'=>'...', 'password'=>'...']
+
+Beispiel-Aufruf von einem Testscript aus:
+
+.. code-block:: php
+
+	echo file_get_contents('https://username:password@www.testsite.com');
+
+| ``@return array``
+
+\\nn\\t3::Request()->getBearerToken();
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+Den ``Bearer``-Header auslesen.
+Wird u.a. verwendet, um ein JWT (Json Web Token) zu übertragen.
+
+.. code-block:: php
+
+	\nn\t3::Request()->getBearerToken();
+
+| ``@return string|null``
+
+\\nn\\t3::Request()->getJwt();
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+Den JWT (Json Web Token) aus dem Request auslesen, validieren und bei
+erfolgreichem Prüfen der Signatur den Payload des JWT zurückgeben.
+
+.. code-block:: php
+
+	\nn\t3::Request()->getJwt();
+
+| ``@return array|string``
+
 \\nn\\t3::Request()->getUri(``$varName = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 

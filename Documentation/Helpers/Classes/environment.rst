@@ -193,6 +193,27 @@ Get relative path to Typo3 root directory. e.g. ``../``
 
 | ``@return string``
 
+\\nn\\t3::Environment()->getSite(``$request = NULL``);
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+Get the current ``site`` object.
+This object can be used to access the configuration from the site YAML file, e.g. as of TYPO3 9.
+
+In the context of a MiddleWare, the ``site`` may not yet be parsed / loaded.
+In this case, the ``$request`` can be passed from the MiddleWare üto determine the site.
+
+See also ``\nn\t3::Settings()->getSiteConfig()`` to read the site configuration.
+
+.. code-block:: php
+
+	\nn\t3::Environment()->getSite();
+	\nn\t3::Environment()->getSite( $request );
+	
+	\nn\t3::Environment()->getSite()->getConfiguration();
+	\nn\t3::Environment()->getSite()->getIdentifier();
+
+| ``@return \TYPO3\CMS\Core\Site\Entity\Site``
+
 \\nn\\t3::Environment()->isBackend();
 """""""""""""""""""""""""""""""""""""""""""""""
 

@@ -67,7 +67,7 @@ Existiert auch als ViewHelper:
 
 Extension-Konfiguration holen.
 Kommen aus der ``LocalConfiguration.php``, werden über die Extension-Einstellungen
-im Backend bzw. ext_conf_template.txt definiert
+im Backend bzw. ``ext_conf_template.txt`` definiert
 
 Früher: ``$GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['your_extension_key']``
 
@@ -180,6 +180,23 @@ Werte aus dem FlexForm werden dabei nicht gemerged.
 
 | ``@return array``
 
+\\nn\\t3::Settings()->getSiteConfig(``$request = NULL``);
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+Site-Konfiguration holen.
+Das ist die Konfiguration, die ab TYPO3 9 in den YAML-Dateien im Ordner ``/sites`` definiert wurden.
+Einige der Einstellungen sind auch über das Seitenmodul "Sites" einstellbar.
+
+Im Kontext einer MiddleWare ist evtl. die ``site`` noch nicht geparsed / geladen.
+In diesem Fall kann der ``$request`` aus der MiddleWare übergeben werden, um die Site zu ermitteln.
+
+.. code-block:: php
+
+	$config = \nn\t3::Settings()->getSiteConfig();
+	$config = \nn\t3::Settings()->getSiteConfig( $request );
+
+| ``@return array``
+
 \\nn\\t3::Settings()->getStoragePid(``$extName = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
@@ -241,4 +258,18 @@ Interne Funktion – nicht zur Verwendung gedacht.
 | ``getFullTyposcript`` nutzen.
 
 | ``@return object``
+
+\\nn\\t3::Settings()->setExtConf(``$extName = '', $key = '', $value = ''``);
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+Extension-Konfiguration schreiben.
+Schreibt eine Extension-Konfiguration in die ``LocalConfiguration.php``. Die Werte können bei
+entsprechender Konfiguration in der ``ext_conf_template.txt`` auch über den Extension-Manager / die
+Extension Konfiguration im Backend bearbeitet werden.
+
+.. code-block:: php
+
+	\nn\t3::Settings()->setExtConf( 'extname', 'key', 'value' );
+
+| ``@return mixed``
 

@@ -30,7 +30,7 @@ Also acts as a ViewHelper:
 	{nnt3:frontendUser.get(key:'first_name')}
 	{nnt3:frontendUser.get()->f:variable.set(name:'feUser')}
 
-| ``@return User``
+| ``@return array``
 
 \\nn\\t3::FrontendUser()->getAvailableUserGroups();
 """""""""""""""""""""""""""""""""""""""""""""""
@@ -43,24 +43,42 @@ Return all existing user groups
 
 | ``@return array``
 
+\\nn\\t3::FrontendUser()->getCookieName();
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+Get cookie name of frontend user cookie.
+Usually ``fe_typo_user``, unless it has been changed in the LocalConfiguration.
+
+.. code-block:: php
+
+	\nn\t3::FrontendUser()->getCookieName();
+
+return string
+
 \\nn\\t3::FrontendUser()->getCurrentUser();
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Get user group of current FE user;
+Get array with the data of the current FE user.
 
 .. code-block:: php
 
 	\nn\t3::FrontendUser()->getCurrentUser();
 
-| ``@return User``
+| ``@return array``
 
 \\nn\\t3::FrontendUser()->getCurrentUserGroups(``$returnRowData = false``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
+Get user groups of the current FE user as an array.
+The uids of the usergroups are used as keys in the returned array.
+
 .. code-block:: php
 
-	\nn\t3::FrontendUser()->getCurrentUserGroups(); => [1 => ['title'=>'Group A', 'uid' => 1]]
-	\nn\t3::FrontendUser()->getCurrentUserGroups( true ); => [1 => [... all fields of the DB] ]
+	// Minimal version: By default Typo3 returns only title, uid and pid.
+	\nn\t3::FrontendUser()->getCurrentUserGroups(); // [1 => ['title'=>'Group A', 'uid' => 1, 'pid'=>5]]
+	
+	// With true the complete dataset für the fe_user_group can be read from the DB
+	\nn\t3::FrontendUser()->getCurrentUserGroups( true ); // [1 => [... all fields of the DB] ]
 
 | ``@return array``
 
@@ -74,6 +92,21 @@ Get the UID of the current frontend user
 	$uid = \nn\t3::FrontendUser()->getCurrentUserUid();
 
 | ``@return int``
+
+\\nn\\t3::FrontendUser()->getGroups(``$returnRowData = false``);
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+Get user groups of the current FE user.
+Alias to ``nn\t3::FrontendUser()->getCurrentUserGroups();``
+
+.. code-block:: php
+
+	// load only title, uid and pid of the groups.
+	\nn\t3::FrontendUser()->getGroups();
+	// load the complete record of the groups
+	\nn\t3::FrontendUser()->getGroups( true );
+
+| ``@return array``
 
 \\nn\\t3::FrontendUser()->getLanguage();
 """""""""""""""""""""""""""""""""""""""""""""""
@@ -123,7 +156,7 @@ Prüft whether the user has a specific role.
 \\nn\\t3::FrontendUser()->isInUserGroup(``$feGroups = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Prüft whether the current fe-user is within a specified user group.
+Checks if the current frontend user is within a specific user group.
 
 .. code-block:: php
 
@@ -180,6 +213,40 @@ Manually delete the current fe_typo_user cookie
 .. code-block:: php
 
 	\nn\t3::FrontendUser()->removeCookie()
+
+| ``@return void``
+
+\\nn\\t3::FrontendUser()->resolveUserGroups(``$arr = []``);
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+Converts an array or comma-separated list of user group UIDs to.
+| ``fe_user_groups`` data from the database. Prüft on inherited subgroup.
+
+.. code-block:: php
+
+	\nn\t3::FrontendUser()->resolveUserGroups( [1,2,3] );
+	\nn\t3::FrontendUser()->resolveUserGroups( '1,2,3' );
+
+| ``@return array``
+
+\\nn\\t3::FrontendUser()->setCookie(``$sessionId = NULL, $request = NULL``);
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+Set the ``fe_typo_user`` cookie manually.
+
+If no ``sessionID`` is passed, Typo3 itself searches for the session ID of the FE user.
+
+When calling this method from a MiddleWare, the ``request`` should be passed with ü.
+This allows, for example, the global ``$_COOKIE`` value and the ``cookieParams.fe_typo_user`` to be passed in the request
+before authentication via ``typo3/cms-frontend/authentication`` in a separate middleware.
+must be set. Helpful if crossdomain authentication is required (e.g.
+Per Json Web Token / JWT).
+
+.. code-block:: php
+
+	\nn\t3::FrontendUser()->setCookie();
+	\nn\t3::FrontendUser()->setCookie( $sessionId );
+	\nn\t3::FrontendUser()->setCookie( $sessionId, $request );
 
 | ``@return void``
 

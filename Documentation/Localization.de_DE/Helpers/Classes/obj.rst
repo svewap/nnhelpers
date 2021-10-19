@@ -94,8 +94,8 @@ Infos zum classSchema eines Models holen
 
 .. code-block:: php
 
-	    \nn\t3::Obj()->getClassSchema( \My\Model\Name::class );
-	    \nn\t3::Obj()->getClassSchema( $myModel );
+	\nn\t3::Obj()->getClassSchema( \My\Model\Name::class );
+	\nn\t3::Obj()->getClassSchema( $myModel );
 
 return DataMap
 
@@ -112,6 +112,31 @@ Zugriff auf ALLE Keys, die in einem Object zu holen sind
 
 | ``@param mixed $obj`` Model, Array oder Klassen-Name
 | ``@return array``
+
+\\nn\\t3::Obj()->getMethodArguments(``$className = NULL, $methodName = NULL``);
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+Infos zu den Argumenten einer Methode holen.
+| ``Berücksichtigt auch das per``@param``angegebene Typehinting, z.B. zu``ObjectStorage<ModelName>``.``
+
+.. code-block:: php
+
+	\nn\t3::Obj()->getMethodArguments( \My\Model\Name::class, 'myMethodName' );
+	\nn\t3::Obj()->getMethodArguments( $myClassInstance, 'myMethodName' );
+
+Gibt als Beispiel zurück:
+
+.. code-block:: php
+
+	'varName' => [
+	    'type' => 'Storage<Model>',
+	    'storageType' => 'Storage',
+	    'elementType' => 'Model',
+	 'optional' => true,
+	 'defaultValue' => '123'
+	]
+
+return array
 
 \\nn\\t3::Obj()->getProps(``$obj, $key = 'type', $onlySettable = true``);
 """""""""""""""""""""""""""""""""""""""""""""""
@@ -185,6 +210,30 @@ Prüft, ob es sich bei dem Object um eine ``\TYPO3\CMS\Extbase\Domain\Model\File
 
 | ``@return boolean``
 
+\\nn\\t3::Obj()->isModel(``$obj``);
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+Prüft, ob es sich bei dem Object um ein Domain-Model handelt.
+
+.. code-block:: php
+
+	\nn\t3::Obj()->isModel( $obj );
+
+| ``@return boolean``
+
+\\nn\\t3::Obj()->isSimpleType(``$type = ''``);
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+Prüft, ob es sich bei einem Typ (string) um einen "einfachen" Typ handelt.
+Einfache Typen sind alle Typen außer Models, Klassen etc. - also z.B. ``array``, ``string``, ``boolean`` etc.
+
+.. code-block:: php
+
+	$isSimple = \nn\t3::Obj()->isSimpleType( 'string' );                         // true
+	$isSimple = \nn\t3::Obj()->isSimpleType( \My\Extname\ClassName::class );     // false
+
+| ``@return boolean``
+
 \\nn\\t3::Obj()->isStorage(``$obj``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
@@ -211,7 +260,7 @@ Berücksichtigt alle Modelle, die in ``sys_category`` gespeichert werden.
 
 | ``@return boolean``
 
-\\nn\\t3::Obj()->merge(``$obj = NULL, $overlay = NULL``);
+\\nn\\t3::Obj()->merge(``$model = NULL, $overlay = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
 Merge eines Arrays in ein Object
@@ -245,6 +294,31 @@ Um ein neues Model mit Daten aus einem Array zu erzeugen gibt
 es die Methode ``$newModel = \nn\t3::Convert($data)->toModel( \My\Model\Name::class );``
 
 | ``@return Object``
+
+\\nn\\t3::Obj()->parseType(``$paramType = ''``);
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+Einen String mit Infos zu ``ObjectStorage<Model>`` parsen.
+
+.. code-block:: php
+
+	\nn\t3::Obj()->parseType( 'string' );
+	\nn\t3::Obj()->parseType( 'Nng\Nnrestapi\Domain\Model\ApiTest' );
+	\nn\t3::Obj()->parseType( '\TYPO3\CMS\Extbase\Persistence\ObjectStorage<Nng\Nnrestapi\Domain\Model\ApiTest>' );
+
+Git ein Array mit Infos zurück:
+| ``type`` ist dabei nur gesetzt, falls es ein Array oder eine ObjectStorage ist.
+| ``elementType`` ist immer der Typ des Models oder das TypeHinting der Variable
+
+.. code-block:: php
+
+	[
+	    'elementType' => 'Nng\Nnrestapi\Domain\Model\ApiTest',
+	    'type' => 'TYPO3\CMS\Extbase\Persistence\ObjectStorage',
+	    'simple' => FALSE
+	]
+
+| ``@return array``
 
 \\nn\\t3::Obj()->prop(``$obj, $key``);
 """""""""""""""""""""""""""""""""""""""""""""""

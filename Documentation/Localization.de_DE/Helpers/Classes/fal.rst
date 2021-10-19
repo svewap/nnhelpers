@@ -29,7 +29,7 @@ Spickzettel:
 Overview of Methods
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-\\nn\\t3::Fal()->attach(``$model, $field, $filePath = NULL``);
+\\nn\\t3::Fal()->attach(``$model, $field, $itemData = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
 Eine Datei zu einem FileReference-Object konvertieren und
@@ -41,6 +41,8 @@ Array von mehreren Bildern an eine ObjectStorage gehängt werden können.
 
 	\nn\t3::Fal()->attach( $model, $fieldName, $filePath );
 	\nn\t3::Fal()->attach( $model, 'image', 'fileadmin/user_uploads/image.jpg' );
+	\nn\t3::Fal()->attach( $model, 'image', ['publicUrl'=>'fileadmin/user_uploads/image.jpg'] );
+	\nn\t3::Fal()->attach( $model, 'image', ['publicUrl'=>'fileadmin/user_uploads/image.jpg', 'title'=>'Titel...'] );
 
 | ``@return \TYPO3\CMS\Extbase\Domain\Model\FileReference``
 
@@ -75,6 +77,23 @@ Kann auch URL zu YouTube/Vimeo-Video sein (z.B. https://www.youtube.com/watch?v=
 | ``@param boolean $forceCreateNew``    Soll immer neue Datei erzeugt werden? Falls nicht, gibt er ggf. bereits existierendes File-Object zurück
 
 | ``@return \Nng\Nnhelpers\Domain\Model\File|\TYPO3\CMS\Core\Resource\File|boolean``
+
+\\nn\\t3::Fal()->createForModel(``$model, $field, $itemData = NULL``);
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+Eine Datei zu einem FileReference-Object konvertieren und für ``attach()`` an ein vorhandenes
+Model und Feld / Property vorbereiten. Die FileReference wird dabei nicht automatisch
+an das Model gehängt. Um das FAL direkt in dem Model zu setzen, kann der Helper
+| ``\nn\t3::Fal()->attach( $model, $field, $itemData )`` verwendet werden.
+
+.. code-block:: php
+
+	\nn\t3::Fal()->createForModel( $model, $fieldName, $filePath );
+	\nn\t3::Fal()->createForModel( $model, 'image', 'fileadmin/user_uploads/image.jpg' );
+	\nn\t3::Fal()->createForModel( $model, 'image', ['publicUrl'=>'fileadmin/user_uploads/image.jpg'] );
+	\nn\t3::Fal()->createForModel( $model, 'image', ['publicUrl'=>'fileadmin/user_uploads/image.jpg', 'title'=>'Titel...'] );
+
+| ``@return \TYPO3\CMS\Extbase\Domain\Model\FileReference``
 
 \\nn\\t3::Fal()->createSysFile(``$file, $autoCreateStorage = true``);
 """""""""""""""""""""""""""""""""""""""""""""""

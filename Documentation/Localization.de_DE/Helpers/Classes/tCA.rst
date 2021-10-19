@@ -31,6 +31,33 @@ Klassischerweise in ``Configuration/TCA/Overrides/pages.php`` genutzt, früher i
 
 | ``@return void``
 
+\\nn\\t3::TCA()->createConfig(``$tablename = '', $basics = [], $custom = []``);
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+Basis-Konfiguration für das TCA holen.
+Das sind die Felder wie ``hidden``, ``starttime`` etc., die bei (fast) allen Tabellen immer gleich sind.
+
+ALLE typischen Felder holen:
+
+.. code-block:: php
+
+	'columns' => \nn\t3::TCA()->createConfig(
+	    'tx_myext_domain_model_entry', true,
+	    ['title'=>...]
+	)
+
+Nur bestimmte Felder holen:
+
+.. code-block:: php
+
+	'columns' => \nn\t3::TCA()->createConfig(
+	    'tx_myext_domain_model_entry',
+	    ['sys_language_uid', 'l10n_parent', 'l10n_source', 'l10n_diffsource', 'hidden', 'cruser_id', 'pid', 'crdate', 'tstamp', 'sorting', 'starttime', 'endtime', 'fe_group'],
+	    ['title'=>...]
+	)
+
+| ``@return array``
+
 \\nn\\t3::TCA()->getColorPickerTCAConfig();
 """""""""""""""""""""""""""""""""""""""""""""""
 
