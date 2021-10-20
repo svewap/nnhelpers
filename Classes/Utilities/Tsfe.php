@@ -79,7 +79,7 @@ class Tsfe implements SingletonInterface {
 	 *	```
 	 */
 	public function cObjGetSingle( $type = '', $conf = [] ) {
-		return $this->get()->cObj->cObjGetSingle( $type, $conf );
+		return $this->cObj()->cObjGetSingle( $type, $conf );
 	}
 
 	/**
@@ -133,7 +133,11 @@ class Tsfe implements SingletonInterface {
 				$GLOBALS['TSFE'] = GeneralUtility::makeInstance( TypoScriptFrontendController::class,  $GLOBALS['TYPO3_CONF_VARS'], $pid, $typeNum);
 				$GLOBALS['TSFE']->connectToDB();
 				$GLOBALS['TSFE']->initFEuser();
-				$GLOBALS['TSFE']->determineId();
+				try {
+					$GLOBALS['TSFE']->determineId();
+				} catch( \Exception $e ) {
+					// Seite evtl. gesperrt? Rootpage pid nicht ermittelt?
+				}
 				$GLOBALS['TSFE']->initTemplate();
 				$GLOBALS['TSFE']->getConfigArray();
 				
@@ -148,13 +152,18 @@ class Tsfe implements SingletonInterface {
 			} else if (\nn\t3::t3Version() < 10) {
 
 				$context = GeneralUtility::makeInstance(Context::class);
-
+				
 				$GLOBALS['TSFE'] = GeneralUtility::makeInstance(TypoScriptFrontendController::class, $GLOBALS['TYPO3_CONF_VARS'], $pid, $typeNum);
 				$GLOBALS['TSFE']->connectToDB();
 				$GLOBALS['TSFE']->initFEuser();
 				$GLOBALS['TSFE']->initUserGroups(); // ?
 				$GLOBALS['TSFE']->checkAlternativeIdMethods();  // ?
-				$GLOBALS['TSFE']->determineId();
+
+				try {
+					$GLOBALS['TSFE']->determineId();
+				} catch( \Exception $e ) {
+					// Seite evtl. gesperrt? Rootpage pid nicht ermittelt?
+				}
 
 				$GLOBALS['TSFE']->tmpl = GeneralUtility::makeInstance(TemplateService::class, $context);
 				$GLOBALS['TSFE']->getConfigArray();
@@ -169,7 +178,6 @@ class Tsfe implements SingletonInterface {
 				
 				$GLOBALS['TSFE']->settingLanguage();
 				$GLOBALS['TSFE']->settingLocale();
-		
 				$this->bootstrap();
 
 			} else if (\nn\t3::t3Version() < 11){
