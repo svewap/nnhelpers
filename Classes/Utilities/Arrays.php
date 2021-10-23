@@ -182,7 +182,7 @@ class Arrays extends \ArrayObject {
 				if ($getSingleKey) {
 					$pluckedArray[$n] = $v[$key];
 				} else {
-					if (!$pluckedArray[$n]) $pluckedArray[$n] = [];
+					if (!isset($pluckedArray[$n])) $pluckedArray[$n] = [];
 					$pluckedArray[$n][$key] = $v[$key];
 				}
 			}

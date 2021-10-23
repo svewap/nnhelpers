@@ -130,16 +130,16 @@ class Flexform implements SingletonInterface {
 	 */
 	public function insertOptions( $config, $a = null ) {
 		
-		if ($path = $config['config']['typoscriptPath']) {
+		if ($path = $config['config']['typoscriptPath'] ?? false) {
 			// 'typoscriptPath' angegeben: Standard TypoScript-Setup verwenden 
 			$setup = \nn\t3::Settings()->getFromPath( $path );
-		} elseif ( $path = $config['config']['pageconfigPath']) {
+		} elseif ( $path = $config['config']['pageconfigPath'] ?? false) {
 			// 'pageconfigPath' angegeben: PageTSConfig verwenden 
 			$setup = \nn\t3::Settings()->getPageConfig( $path );
 		}
 
 		if (!$setup) {
-			if ($config['items']) return $config;
+			if ($config['items'] ?? false) return $config;
 			$config['items'] = [['Keine Konfiguration gefunden - Auswahl kann in '.$path.' definiert werden', '']];
 			return $config;
 		}
@@ -163,7 +163,7 @@ class Flexform implements SingletonInterface {
 		}
 
 		// Ausgewählte Action aus FlexForm 'switchableControllerActions' holen
-		if ($config['flexParentDatabaseRow']) {
+		if ($config['flexParentDatabaseRow'] ?? false) {
 			$selectedAction = $config['flexParentDatabaseRow']['pi_flexform']['data']['sDEF']['lDEF']['switchableControllerActions']['vDEF'] ?? false;
 			if ($respectControllerAction) {
 				$selectedAction = \nn\t3::Arrays($selectedAction)->trimExplode(';');
