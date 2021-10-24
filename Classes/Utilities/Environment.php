@@ -137,11 +137,11 @@ class Environment implements SingletonInterface {
 	 */
 	public function getExtConf ( $ext = 'nnhelpers', $param = '' ) {
 		if (\nn\t3::t3Version() < 10) {
-			$extConfig = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf'][$ext]);
+			$extConfig = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf'][$ext] ?? '');
 		} else {
-			$extConfig = $GLOBALS['TYPO3_CONF_VARS']['EXTENSIONS'][$ext];
+			$extConfig = $GLOBALS['TYPO3_CONF_VARS']['EXTENSIONS'][$ext] ?? [];
 		}
-		return $param ? $extConfig[$param] : $extConfig;
+		return $param ? ($extConfig[$param] ?? '') : $extConfig;
 	}
 
 	/**
