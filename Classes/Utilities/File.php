@@ -1085,6 +1085,8 @@ class File implements SingletonInterface {
 	 * 
 	 * ```
 	 * \nn\t3::File()->download( 'fileadmin/test.pdf' );
+	 * \nn\t3::File()->download( $fileReference );
+	 * \nn\t3::File()->download( $sysFile );
 	 * \nn\t3::File()->download( 'fileadmin/test.pdf', 'download.pdf' );
 	 * ```
 	 * 
