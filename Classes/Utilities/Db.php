@@ -254,10 +254,12 @@ class Db implements SingletonInterface {
 				$restrictions->removeByType( \TYPO3\CMS\Core\Database\Query\Restriction\EndTimeRestriction::class );
 			}
 			if ($ignoreHidden) {
-				$restrictions->removeByType( \TYPO3\CMS\Core\Database\Query\Restriction\HiddenRestriction::class );
+				$hiddenRestrictionClass = \nn\t3::injectClass( \TYPO3\CMS\Core\Database\Query\Restriction\HiddenRestriction::class );
+				$restrictions->removeByType( get_class( $hiddenRestrictionClass ) );
 			}
 			if ($ignoreDeleted) {
-				$restrictions->removeByType( \TYPO3\CMS\Core\Database\Query\Restriction\DeletedRestriction::class );
+				$deletedRestrictionClass = \nn\t3::injectClass( \TYPO3\CMS\Core\Database\Query\Restriction\DeletedRestriction::class );
+				$restrictions->removeByType( get_class($deletedRestrictionClass) );
 			}
 			return $queryOrRepository;
 
