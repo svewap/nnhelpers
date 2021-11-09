@@ -121,9 +121,18 @@ class FrontendUserAuthentication extends \TYPO3\CMS\Frontend\Authentication\Fron
 	 * 
 	 * $hashInDatabase = \nn\t3::Encrypt()->hashSessionId( $sessionId );
 	 * ```
+	 * 
+	 * Falls die Session mit einer existierenden SessionId erneut aufgebaut werden soll, kann als optionaler,
+	 * zweiter Parameter eine (nicht-gehashte) SessionId übergeben werden:
+	 * 
+	 * ```
+	 * \nn\t3::FrontendUserAuthentication()->prepareSession( 1, 'meincookiewert' );
+	 * \nn\t3::FrontendUserAuthentication()->prepareSession( 1, $_COOKIE['fe_typo_user'] );
+	 * ```
+	 * 
 	 * @return string
 	 */
-	public function prepareSession( $usernameOrUid = null ) {
+	public function prepareSession( $usernameOrUid = null, $unhashedSessionId = null ) {
 
 		if (!$usernameOrUid) return null;
 
@@ -135,12 +144,24 @@ class FrontendUserAuthentication extends \TYPO3\CMS\Frontend\Authentication\Fron
 
 		if (!$user) return null;
 		
-		$this->start();
-		$session = $this->createUserSession( $user );
+		if (!$unhashedSessionId) {
+			$unhashedSessionId = $this->createSessionId();
+		}
+		$hashedSessionId = \nn\t3::Encrypt()->hashSessionId( $unhashedSessionId );
 		
-		if (!$session) return null;
+		$existingSession = \nn\t3::Db()->findOneByValues('fe_sessions', ['ses_id'=>$hashedSessionId]);
 
-		return \nn\t3::Obj()->get($session, 'identifier');
+		if (!$existingSession) {
+			$this->id = $hashedSessionId;
+			$record = $this->getNewSessionRecord($user);
+			\nn\t3::Db()->insert('fe_sessions', $record);
+		} else {
+			\nn\t3::Db()->update('fe_sessions', ['ses_tstamp'=>$GLOBALS['EXEC_TIME']], ['ses_id'=>$hashedSessionId]);
+		}
+
+		$this->start();
+
+		return $unhashedSessionId;
 	}
 
 	/**

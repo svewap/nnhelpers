@@ -508,10 +508,10 @@ class Obj implements SingletonInterface {
 		$final = [];
 
 		if (is_a($obj, \TYPO3\CMS\Extbase\Persistence\Generic\QueryResult::class)) {
+			
 			$obj = $obj->toArray();
-		}
 
-		if (is_a($obj, \DateTime::class)) {
+		} else if (is_a($obj, \DateTime::class)) {
 
 			// DateTime in UTC konvertieren
 			$utc = $obj->getTimestamp();
