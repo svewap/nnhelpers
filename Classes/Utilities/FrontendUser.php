@@ -9,6 +9,11 @@ use TYPO3\CMS\Core\Utility\ArrayUtility;
 
 class FrontendUser implements SingletonInterface {
 
+	/**
+	 * lokaler Cache
+	 */
+	protected $cache = [];
+
  	/**
 	 * Den aktuellen FE-User holen.
 	 * Alias zu `\nn\t3::FrontendUser()->getCurrentUser();`
@@ -80,10 +85,31 @@ class FrontendUser implements SingletonInterface {
 	 * ```
 	 * @return array
 	 */
-	public function resolveUserGroups( $arr = [] ) {
+	public function resolveUserGroups( $arr = [], $ignoreUids = [] ) {
+
 		$arr = \nn\t3::Arrays( $arr )->intExplode();
-		$groupDataArr = GeneralUtility::makeInstance(\TYPO3\CMS\Core\Authentication\GroupResolver::class)->resolveGroupsForUser(['usergroup'=>join(',', $arr)], 'fe_groups');
-		return $groupDataArr;
+		if (!$arr) return [];
+
+		if (\nn\t3::t3Version() > 9) {
+			return GeneralUtility::makeInstance(\TYPO3\CMS\Core\Authentication\GroupResolver::class)->resolveGroupsForUser(['usergroup'=>join(',', $arr)], 'fe_groups');
+		}
+		
+		$allGroupsByUid = $this->getAvailableUserGroups( true );
+		$allGroups = array_intersect_key( $allGroupsByUid, array_flip($arr) );
+		
+		$allSubGroups = \nn\t3::Arrays( join(',', array_column( $allGroups, 'subgroup') ) )->intExplode();
+
+		$additionalGroups = array_diff( $allSubGroups, $ignoreUids  );
+		$ignoreUids = array_merge( $ignoreUids, array_keys($allGroups), $additionalGroups );
+
+		if (!$additionalGroups) {
+			return $allGroups;
+		}
+
+		$resolvedSubGroups = $this->resolveUserGroups( $additionalGroups, array_keys($ignoreUids) );
+		$allGroups = array_merge( $resolvedSubGroups, $allGroups );
+
+		return $allGroups;
 	}
 
 	/**
@@ -164,15 +190,31 @@ class FrontendUser implements SingletonInterface {
 	}
 	
 	/**
-	 * Alle existierende User-Gruppen zurückgeben
+	 * Alle existierende User-Gruppen zurückgeben.
+	 * Gibt ein assoziatives Array zurück, key ist die `uid`, value der `title`.
 	 * ```
 	 * \nn\t3::FrontendUser()->getAvailableUserGroups();
 	 * ```
+	 * Alternativ kann mit `true` der komplette Datensatz für die Benutzergruppen 
+	 * zurückgegeben werden: 
+	 * ```
+	 * \nn\t3::FrontendUser()->getAvailableUserGroups( true );
+	 * ```
 	 * @return array
 	 */
-	public function getAvailableUserGroups() {
-		$userGroups = \nn\t3::Db()->findAll('fe_groups');
-		return \nn\t3::Arrays( $userGroups )->key('uid')->pluck('title')->toArray();
+	public function getAvailableUserGroups( $returnRowData = false ) {
+
+		if (!($userGroupsByUid = $this->cache['userGroupsByUid'] ?? false)) {
+			$userGroups = \nn\t3::Db()->findAll('fe_groups');			
+			$userGroupsByUid = \nn\t3::Arrays( $userGroups )->key('uid');
+			$userGroupsByUid = $this->cache['userGroupsByUid'] = $userGroupsByUid->toArray();
+		}
+
+		if ($returnRowData) {
+			return $userGroupsByUid;
+		}
+		
+		return \nn\t3::Arrays($userGroupsByUid)->pluck('title')->toArray();
 	}
 
 	/**

@@ -422,7 +422,7 @@ class t3 {
 	 * @var array $params2				=> zweiter Parameter, der an Funktion übergeben werden sollen
 	 * @var array $params3				=> dritter Parameter, der an Funktion übergeben werden sollen
 	 *
-	 *  @return mixed
+	 * @return mixed
 	 */
 	public static function call ( $funcStr, &$params = [], &$params2 = null, &$params3 = null, &$params4 = null ) {
 		if (!trim($funcStr)) self::Exception("\\nn\\t3::call() - Keine Klasse angegeben.");

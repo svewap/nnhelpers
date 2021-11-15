@@ -22,11 +22,11 @@ class Page implements SingletonInterface {
    
 
 	/**
-	 * 	Daten einer Seiten holen (aus Tabelle "pages")
-	 *	```
-	 *	\nn\t3::Page()->get( $uid );
-	 *	```
-	 *  @return array
+	 * Daten einer Seiten holen (aus Tabelle "pages")
+	 * ```
+	 * \nn\t3::Page()->get( $uid );
+	 * ```
+	 * @return array
 	 */
     public function get ( $uid = null ) {
 		if (\nn\t3::t3Version() < 10) {
@@ -132,15 +132,15 @@ class Page implements SingletonInterface {
 	}
 
 	/**
-	 * 	PID der aktuellen Seite holen.
-	 * 	Im Frontend: Die aktuelle `TSFE->id`
-	 *	Im Backend: Die Seite, die im Seitenbaum ausgewählt wurde
-	 *	Ohne Context: Die pid der site-Root
-	 *	```
-	 *	\nn\t3::Page()->getPid();
-	 *	\nn\t3::Page()->getPid( $fallbackPid );
-	 *	```
-	 * 	@return int
+	 * PID der aktuellen Seite holen.
+	 * Im Frontend: Die aktuelle `TSFE->id`
+	 * Im Backend: Die Seite, die im Seitenbaum ausgewählt wurde
+	 * Ohne Context: Die pid der site-Root
+	 * ```
+	 * \nn\t3::Page()->getPid();
+	 * \nn\t3::Page()->getPid( $fallbackPid );
+	 * ```
+	 * @return int
 	 */
     public function getPid ( $fallback = null ) {
 
@@ -196,7 +196,7 @@ class Page implements SingletonInterface {
 	 * \nn\t3::Page()->getLink( $pid, $params, true );
 	 * \nn\t3::Page()->getLink( 'david@99grad.de' )
 	 * ```
-	 * @return array
+	 * @return string
 	 */
     public function getLink ( $pidOrParams = null, $params = [], $absolute = false ) {
 
@@ -227,25 +227,26 @@ class Page implements SingletonInterface {
 	}
 
 	/**
-	 * 	Einen absoluten Link zu einer Seite generieren
-	 *	```
-	 *	\nn\t3::Page()->getAbsLink( $pid );
-	 *	\nn\t3::Page()->getAbsLink( $pid, ['type'=>'232322'] );
-	 *	\nn\t3::Page()->getAbsLink( ['type'=>'232322'] );
-	 *	```
+	 * Einen absoluten Link zu einer Seite generieren
+	 * ```
+	 * \nn\t3::Page()->getAbsLink( $pid );
+	 * \nn\t3::Page()->getAbsLink( $pid, ['type'=>'232322'] );
+	 * \nn\t3::Page()->getAbsLink( ['type'=>'232322'] );
+	 * ```
+	 * @return string
 	 */
 	public function getAbsLink( $pidOrParams = null, $params = [] ) {
 		return $this->getLink( $pidOrParams, $params, true );
 	}
 
 	/**
-	 * 	PID der Site-Root(s) holen.
-	 * 	Entspricht der Seite im Backend, die die "Weltkugel" als Symbol hat 
-	 * 	(in den Seiteneigenschaften "als Anfang der Webseite nutzen")
-	 *	```
-	 *	\nn\t3::Page()->getSiteRoot();
-	 *	```
-	 * 	@return int
+	 * PID der Site-Root(s) holen.
+	 * Entspricht der Seite im Backend, die die "Weltkugel" als Symbol hat 
+	 * (in den Seiteneigenschaften "als Anfang der Webseite nutzen")
+	 * ```
+	 * \nn\t3::Page()->getSiteRoot();
+	 * ```
+	 * @return int
 	 */
 	public function getSiteRoot( $returnAll = false ) {
 		$queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable('pages');
@@ -260,12 +261,12 @@ class Page implements SingletonInterface {
 
 
 	/**
-	 * 	PID aus Request-String holen, z.B. in Backend Modulen.
-	 * 	Hacky. ToDo: Prüfen, ob es eine bessere Methode gibt.
-	 *	```
-	 *	\nn\t3::Page()->getPidFromRequest();
-	 *	```
-	 * 	@return int
+	 * PID aus Request-String holen, z.B. in Backend Modulen.
+	 * Hacky. ToDo: Prüfen, ob es eine bessere Methode gibt.
+	 * ```
+	 * \nn\t3::Page()->getPidFromRequest();
+	 * ```
+	 * @return int
 	 */
 	public function getPidFromRequest () {
 		$pageUid = $GLOBALS['_REQUEST']['popViewId'] ?? false;
@@ -278,11 +279,11 @@ class Page implements SingletonInterface {
 	}
 
 	/**
-	 * 	Rootline für gegebene PID holen
-	 *	```
-	 *	\nn\t3::Page()->getRootline();
-	 *	```
-	 * 	@return array
+	 * Rootline für gegebene PID holen
+	 * ```
+	 * \nn\t3::Page()->getRootline();
+	 * ```
+	 * @return array
 	 */
 	public function getRootline( $pid = null ) {
 		if (!$pid) $pid = $this->getPid();
@@ -292,13 +293,13 @@ class Page implements SingletonInterface {
 	}
 	
 	/**
-	 * 	Menü für gegebene PID holen
-	 *	```
-	 *	\nn\t3::Page()->getSubpages();
-	 *	\nn\t3::Page()->getSubpages( $pid );
-	 *	\nn\t3::Page()->getSubpages( $pid, true );	// Auch versteckte Seiten holen
-	 *	```
-	 * 	@return array
+	 * Menü für gegebene PID holen
+	 * ```
+	 * \nn\t3::Page()->getSubpages();
+	 * \nn\t3::Page()->getSubpages( $pid );
+	 * \nn\t3::Page()->getSubpages( $pid, true );	// Auch versteckte Seiten holen
+	 * ```
+	 * @return array
 	 */
 	public function getSubpages( $pid = null, $includeHidden = false ) {
 
@@ -325,11 +326,11 @@ class Page implements SingletonInterface {
 	}
 	
 	/**
-	 * 	Prüft, ob eine Seite Untermenüs hat
-	 *	```
-	 *	\nn\t3::Page()->hasSubpages();
-	 *	```
-	 * 	@return boolean
+	 * Prüft, ob eine Seite Untermenüs hat
+	 * ```
+	 * \nn\t3::Page()->hasSubpages();
+	 * ```
+	 * @return boolean
 	 */
 	public function hasSubpages( $pid = null ) {
 		return count( $this->getSubpages($pid) ) > 0;
@@ -355,11 +356,11 @@ class Page implements SingletonInterface {
 	}
 	
 	/**
-	 * 	Aktuellen Page-Title (ohne Suffix) holen
-	 *	```
-	 *	\nn\t3::Page()->getTitle();
-	 *	```
-	 * 	@return string
+	 * Aktuellen Page-Title (ohne Suffix) holen
+	 * ```
+	 * \nn\t3::Page()->getTitle();
+	 * ```
+	 * @return string
 	 */
 	public function getTitle () {
 		$titleProvider = \nn\t3::injectClass( PageTitleProvider::class );
@@ -367,11 +368,11 @@ class Page implements SingletonInterface {
 	}
 
 	/**
-	 * 	Page-Renderer holen
-	 *	```
-	 *	\nn\t3::Page()->getPageRenderer();
-	 *	```
-	 * 	@return PageRenderer
+	 * Page-Renderer holen
+	 * ```
+	 * \nn\t3::Page()->getPageRenderer();
+	 * ```
+	 * @return PageRenderer
 	 */
 	public function getPageRenderer() {
 		if (\nn\t3::Environment()->isFrontend()) {
@@ -387,35 +388,35 @@ class Page implements SingletonInterface {
 	}
 
 	/**
-	 * 	HTML-Code in <head> einschleusen
-	 *	Siehe `\nn\t3::Page()->addHeader()` für einfachere Version.
-	 *	```
-	 *	\nn\t3::Page()->addHeaderData( '<script src="..."></script>' );
-	 *	```
-	 * 	@return void
+	 * HTML-Code in <head> einschleusen
+	 * Siehe `\nn\t3::Page()->addHeader()` für einfachere Version.
+	 * ```
+	 * \nn\t3::Page()->addHeaderData( '<script src="..."></script>' );
+	 * ```
+	 * @return void
 	 */
 	public function addHeaderData( $html = '' ) {
 		$this->getPageRenderer()->addHeaderData( $html );
 	}
 	
 	/**
-	 * 	HTML-Code vor Ende der <body> einschleusen
-	 *	Siehe `\nn\t3::Page()->addFooter()` für einfachere Version.
-	 *	```
-	 *	\nn\t3::Page()->addFooterData( '<script src="..."></script>' );
-	 *	```
-	 * 	@return void
+	 * HTML-Code vor Ende der <body> einschleusen
+	 * Siehe `\nn\t3::Page()->addFooter()` für einfachere Version.
+	 * ```
+	 * \nn\t3::Page()->addFooterData( '<script src="..."></script>' );
+	 * ```
+	 * @return void
 	 */
 	public function addFooterData( $html = '' ) {
 		$this->getPageRenderer()->addFooterData( $html );
 	}
 
 	/**
-	 * 	JS-Library in <head> einschleusen.
-	 *	```
-	 *	\nn\t3::Page()->addJsLibrary( 'path/to/file.js' );
-	 *	```
-	 * 	@return void
+	 * JS-Library in <head> einschleusen.
+	 * ```
+	 * \nn\t3::Page()->addJsLibrary( 'path/to/file.js' );
+	 * ```
+	 * @return void
 	 */
 	public function addJsLibrary($path, $compress = false, $atTop = false, $wrap = false, $concat = false ) {
 		$pageRenderer = $this->getPageRenderer();
@@ -423,23 +424,23 @@ class Page implements SingletonInterface {
 	}
 	
 	/**
-	 * 	JS-Library am Ende der <body> einschleusen
-	 *	```
-	 *	\nn\t3::Page()->addJsFooterLibrary( 'path/to/file.js' );
-	 *	```
-	 * 	@return void
+	 * JS-Library am Ende der <body> einschleusen
+	 * ```
+	 * \nn\t3::Page()->addJsFooterLibrary( 'path/to/file.js' );
+	 * ```
+	 * @return void
 	 */
 	public function addJsFooterLibrary($path, $compress = false, $atTop = false, $wrap = false, $concat = false ) {
 		$this->getPageRenderer()->addJsFooterLibrary( $path, $path, NULL, $compress, $atTop, $wrap, $concat );
 	}
 
 	/**
-	 * 	JS-Datei in <head> einschleusen
-	 *	Siehe `\nn\t3::Page()->addHeader()` für einfachere Version.
-	 *	```
-	 *	\nn\t3::Page()->addJsFile( 'path/to/file.js' );
-	 *	```
-	 * 	@return void
+	 * JS-Datei in <head> einschleusen
+	 * Siehe `\nn\t3::Page()->addHeader()` für einfachere Version.
+	 * ```
+	 * \nn\t3::Page()->addJsFile( 'path/to/file.js' );
+	 * ```
+	 * @return void
 	 */
 	public function addJsFile($path, $compress = false, $atTop = false, $wrap = false, $concat = false ) {
 		$pageRenderer = $this->getPageRenderer();
@@ -447,50 +448,50 @@ class Page implements SingletonInterface {
 	}
 	
 	/**
-	 * 	JS-Datei am Ende der <body> einschleusen
-	 *	Siehe `\nn\t3::Page()->addJsFooterFile()` für einfachere Version.
-	 *	```
-	 *	\nn\t3::Page()->addJsFooterFile( 'path/to/file.js' );
-	 *	```
-	 * 	@return void
+	 * JS-Datei am Ende der <body> einschleusen
+	 * Siehe `\nn\t3::Page()->addJsFooterFile()` für einfachere Version.
+	 * ```
+	 * \nn\t3::Page()->addJsFooterFile( 'path/to/file.js' );
+	 * ```
+	 * @return void
 	 */
 	public function addJsFooterFile($path, $compress = false, $atTop = false, $wrap = false, $concat = false ) {
 		$this->getPageRenderer()->addJsFooterFile( $path, NULL, $compress, $atTop, $wrap, $concat );
 	}
 	
 	/**
-	 * 	CSS-Library in <head> einschleusen
-	 *	```
-	 *	\nn\t3::Page()->addCssLibrary( 'path/to/style.css' );
-	 *	```
-	 * 	@return void
+	 * CSS-Library in <head> einschleusen
+	 * ```
+	 * \nn\t3::Page()->addCssLibrary( 'path/to/style.css' );
+	 * ```
+	 * @return void
 	 */
 	public function addCssLibrary($path, $compress = false, $atTop = false, $wrap = false, $concat = false ) {
 		$this->getPageRenderer()->addCssLibrary( $path, 'stylesheet', 'all', '', $compress, $atTop, $wrap, $concat );
 	}
 
 	/**
-	 * 	CSS-Datei in <head> einschleusen
-	 *	Siehe `\nn\t3::Page()->addHeader()` für einfachere Version.
-	 *	```
-	 *	\nn\t3::Page()->addCss( 'path/to/style.css' );
-	 *	```
-	 * 	@return void
+	 * CSS-Datei in <head> einschleusen
+	 * Siehe `\nn\t3::Page()->addHeader()` für einfachere Version.
+	 * ```
+	 * \nn\t3::Page()->addCss( 'path/to/style.css' );
+	 * ```
+	 * @return void
 	 */
 	public function addCssFile($path, $compress = false, $atTop = false, $wrap = false, $concat = false ) {
 		$this->getPageRenderer()->addCssFile( $path, 'stylesheet', 'all', '', $compress, $atTop, $wrap, $concat );
 	}
 
 	/**
-	 * 	CSS oder JS oder HTML-Code an Footer anhängen.
-	 * 	Entscheidet selbst, welche Methode des PageRenderes zu verwenden ist.
-	 *	```
-	 *	\nn\t3::Page()->addFooter( 'fileadmin/style.css' );
-	 *	\nn\t3::Page()->addFooter( ['fileadmin/style.css', 'js/script.js'] );
-	 *	\nn\t3::Page()->addFooter( 'js/script.js' );
-	 *	\nn\t3::Page()->addFooter( '<script>....</script>' );
-	 *	```
-	 * 	@return void
+	 * CSS oder JS oder HTML-Code an Footer anhängen.
+	 * Entscheidet selbst, welche Methode des PageRenderes zu verwenden ist.
+	 * ```
+	 * \nn\t3::Page()->addFooter( 'fileadmin/style.css' );
+	 * \nn\t3::Page()->addFooter( ['fileadmin/style.css', 'js/script.js'] );
+	 * \nn\t3::Page()->addFooter( 'js/script.js' );
+	 * \nn\t3::Page()->addFooter( '<script>....</script>' );
+	 * ```
+	 * @return void
 	 */
 	public function addFooter ( $str = '' ) {
 		if (!is_array($str)) $str = [$str];
@@ -511,15 +512,15 @@ class Page implements SingletonInterface {
 	}
 	
 	/**
-	 * 	CSS oder JS oder HTML-Code an Footer anhängen.
-	 * 	Entscheidet selbst, welche Methode des PageRenderes zu verwenden ist.
-	 *	```
-	 *	\nn\t3::Page()->addHeader( 'fileadmin/style.css' );
-	 *	\nn\t3::Page()->addHeader( ['fileadmin/style.css', 'js/script.js'] );
-	 *	\nn\t3::Page()->addHeader( 'js/script.js' );
-	 *	\nn\t3::Page()->addHeader( '<script>....</script>' );
-	 *	```
-	 * 	@return void
+	 * CSS oder JS oder HTML-Code an Footer anhängen.
+	 * Entscheidet selbst, welche Methode des PageRenderes zu verwenden ist.
+	 * ```
+	 * \nn\t3::Page()->addHeader( 'fileadmin/style.css' );
+	 * \nn\t3::Page()->addHeader( ['fileadmin/style.css', 'js/script.js'] );
+	 * \nn\t3::Page()->addHeader( 'js/script.js' );
+	 * \nn\t3::Page()->addHeader( '<script>....</script>' );
+	 * ```
+	 * @return void
 	 */
 	public function addHeader ( $str = '' ) {
 		if (!is_array($str)) $str = [$str];
@@ -540,12 +541,12 @@ class Page implements SingletonInterface {
 	}
 
 	/**
-	 * 	Seiten-Cache einer (oder mehrerer) Seiten löschen
-	 *	```
-	 *	\nn\t3::Page()->clearCache( $pid );
-	 *	\nn\t3::Page()->clearCache( [1,2,3] );
-	 *	\nn\t3::Page()->clearCache();
-	 *	```
+	 * Seiten-Cache einer (oder mehrerer) Seiten löschen
+	 * ```
+	 * \nn\t3::Page()->clearCache( $pid );
+	 * \nn\t3::Page()->clearCache( [1,2,3] );
+	 * \nn\t3::Page()->clearCache();
+	 * ```
 	 *  @return void
 	 */
     public function clearCache ( $pid = null ) {

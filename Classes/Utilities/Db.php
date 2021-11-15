@@ -57,18 +57,37 @@ class Db implements SingletonInterface {
 	}
 
 	/**
-	 * Ein Domain-Model/Entity anhand einer `uid` holen.
+	 * Ein oder mehrere Domain-Model/Entity anhand einer `uid` holen.
+	 * Es kann eine einzelne `$uid` oder eine Liste von `$uids` übergeben werden.
+	 * 
 	 * Liefert das "echte" Model/Object inklusive aller Relationen, 
-	 * analog zu einer Query über das Repository.  
+	 * analog zu einer Query über das Repository.
+	 * 
 	 * ```
-	 * $model = \nn\t3::Db()->get( $uid, \Nng\MyExt\Domain\Model\Name::class );
+	 * // Ein einzelnes Model anhand seiner uid holen
+	 * $model = \nn\t3::Db()->get( 1, \Nng\MyExt\Domain\Model\Name::class );
+	 * 
+	 * // Ein Array an Models anhand ihrer uids holen
+	 * $modelArray = \nn\t3::Db()->get( [1,2,3], \Nng\MyExt\Domain\Model\Name::class );
+	 * 
+	 * // Gibt auch hidden Models zurück
+	 * $modelArrayWithHidden = \nn\t3::Db()->get( [1,2,3], \Nng\MyExt\Domain\Model\Name::class, true );
 	 * ```
 	 * @return Object
 	 */
-	public function get( $uid, $modelType = '') {
-		$persistenceManager = \nn\t3::injectClass( PersistenceManager::class );
-		$entity = $persistenceManager->getObjectByIdentifier($uid, $modelType, false);
-		return $entity;
+	public function get( $uid, $modelType = '', $ignoreEnableFields = false) {
+
+		if (!is_array($uid)) {
+			$persistenceManager = \nn\t3::injectClass( PersistenceManager::class );
+			$entity = $persistenceManager->getObjectByIdentifier($uid, $modelType, false);
+			return $entity;
+		}
+
+		$dataMapper = \nn\t3::injectClass(DataMapper::class);
+		$tableName = $this->getTableNameForModel( $modelType);
+		$rows = $this->findByUids( $tableName, $uid, $ignoreEnableFields ); 
+		
+		return $dataMapper->map( $modelType, $rows);
 	}
 
 	/**
@@ -85,6 +104,20 @@ class Db implements SingletonInterface {
 	public function findByUid( $table = '', $uid = null, $ignoreEnableFields = false ) {
 		$rows = $this->findByValues( $table, ['uid' => $uid], false, $ignoreEnableFields );
 		return $rows ? array_shift($rows) : [];
+	}
+	
+	/**
+	 * Findet Einträge anhand mehrerer UIDs.
+	 * ```
+	 * \nn\t3::Db()->findByUids('fe_user', [12,13]);
+	 * \nn\t3::Db()->findByUids('fe_user', [12,13], true);
+	 * ```
+	 * @param int $uid
+	 * @return array
+	 */
+	public function findByUids( $table = '', $uids = null, $ignoreEnableFields = false ) {
+		$rows = $this->findByValues( $table, ['uid' => $uids], false, $ignoreEnableFields );
+		return $rows;
 	}
 	
 	/**
@@ -133,9 +166,13 @@ class Db implements SingletonInterface {
 	/**
 	 * action findByCustomField
 	 * Findet ALLE Einträge anhand eines gewünschten Feld-Wertes.
-	 * Funktioniert auch, wenn	Frontend noch nicht initialisiert wurden,
+	 * Funktioniert auch, wenn	Frontend noch nicht initialisiert wurden.
 	 * ```
+	 * // SELECT * FROM fe_users WHERE email = 'david@99grad.de'
 	 * \nn\t3::Db()->findByValues('fe_users', ['email'=>'david@99grad.de']);
+	 * 
+	 * // SELECT * FROM fe_users WHERE uid IN (1,2,3)
+	 * \nn\t3::Db()->findByValues('fe_users', ['uid'=>[1,2,3]]);
 	 * ```
 	 * @param string $table
 	 * @param array $whereArr
@@ -149,7 +186,14 @@ class Db implements SingletonInterface {
 		if (\nn\t3::t3Version() < 8) {
 			$where = ['1=1'];
 			foreach ($whereArr as $k=>$v) {
-				$where[] = "{$k} = " . $GLOBALS['TYPO3_DB']->fullQuoteStr($v, $table);
+				if (is_array($v)) {
+					foreach ($v as $n=>$vv) {
+						$v[$n] = $GLOBALS['TYPO3_DB']->fullQuoteStr( $vv );
+					}
+					$where[] = "{$k} IN (" . join(',', $vv) . ')';
+				} else {
+					$where[] = "{$k} = " . $GLOBALS['TYPO3_DB']->fullQuoteStr($v, $table);
+				}
 			}
 			$where = '(' . ($useLogicalOr ? join(' OR ', $where) : join(' AND ', $where )) . ')';
 			if (!$ignoreEnableFields) {
@@ -173,7 +217,14 @@ class Db implements SingletonInterface {
 
 		if ($whereArr) {
 			foreach ($whereArr as $colName=>$v) {
-				$expr = $queryBuilder->expr()->eq( $colName, $queryBuilder->createNamedParameter( $v ));
+				if (is_array($v)) {
+					$expr = $queryBuilder->expr()->in($colName, $v );
+					if ($uids = \nn\t3::Arrays($v)->intExplode()) {
+						$this->orderBy( $queryBuilder, ["{$table}.{$colName}"=>$uids] );
+					}
+				} else {
+					$expr = $queryBuilder->expr()->eq( $colName, $queryBuilder->createNamedParameter( $v ) );
+				}
 				if (!$useLogicalOr) {
 					$queryBuilder->andWhere( $expr );	
 				} else {
@@ -198,6 +249,12 @@ class Db implements SingletonInterface {
 	 * $ordering = ['title' => \TYPO3\CMS\Extbase\Persistence\QueryInterface::ORDER_DESCENDING];
 	 * \nn\t3::Db()->orderBy( $queryOrRepository, $ordering );
 	 * ```
+	 * Kann auch zum Sortieren nach einer Liste von Werten (z.B. `uids`) verwendet werden.
+	 * Dazu wird ein Array für den Wert des einzelnen orderings übergeben:
+	 * ```
+	 * $ordering = ['uid' => [3,7,2,1]];
+	 * \nn\t3::Db()->orderBy( $queryOrRepository, $ordering );
+	 * ```
 	 * @return $queryOrRepository
 	 */
 	public function orderBy( $queryOrRepository, $ordering = [] ) {
@@ -208,7 +265,14 @@ class Db implements SingletonInterface {
 			// ToDo!
 		} else if ($isQueryBuilderObject) {
 			foreach ($ordering as $colName => $ascDesc) {
-				$queryOrRepository->addOrderBy( $colName, $ascDesc );
+				if (is_array($ascDesc)) {
+					foreach ($ascDesc as &$v) {
+						$v = $queryOrRepository->createNamedParameter( $v );
+					}
+					$queryOrRepository->add('orderBy', "FIELD({$colName}," . implode(',', $ascDesc) . ')', true );
+				} else {
+					$queryOrRepository->addOrderBy( $colName, $ascDesc );
+				}
 			}
 		} else {
 			$queryOrRepository->setDefaultOrderings( $ordering );
@@ -820,6 +884,11 @@ class Db implements SingletonInterface {
 			}
 			$dcValuesFull[":{$k}"] = $v;
 		}
+
+		// Sicherstellen, dass zuerst `:value55` vor `:value5` ersetzt wird 
+		uksort($dcValuesFull, function($a, $b) {
+			return strlen($a) > strlen($b) ? -1 : 1;
+		});
 
 		$str = $query->getSQL();
 		$str = str_replace( array_keys($dcValuesFull), array_values($dcValuesFull), $str );
