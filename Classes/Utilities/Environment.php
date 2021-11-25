@@ -170,6 +170,25 @@ class Environment implements SingletonInterface {
 	}
 
 	/**
+	 * Absoluten Pfad zu dem `/var`-Verzeichnis von Typo3 holen.
+	 * 
+	 * Dieses Verzeichnis speichert temporäre Cache-Dateien.
+	 * Je nach Version von Typo3 und Installationstyp (Composer oder Non-Composer mode)
+	 * ist dieses Verzeichnis an unterschiedlichen Orten zu finden.
+	 * 
+	 * ```
+	 * // /full/path/to/typo3temp/var/
+	 * $path = \nn\t3::Environment()->getVarPath();
+	 * ```
+	 */
+	public function getVarPath() {
+		if (\nn\t3::t3Version() >= 9) {
+			return rtrim(\TYPO3\CMS\Core\Core\Environment::getVarPath(), '/').'/';
+		}
+		return \nn\t3::File()->absPath('typo3temp/var/');
+	}
+
+	/**
 	 * 	Absoluten Pfad zum Typo3-Root-Verzeichnis holen. z.B. `/var/www/website/`
 	 *	```
 	 *	\nn\t3::Environment()->getPathSite()

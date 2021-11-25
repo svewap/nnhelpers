@@ -58,10 +58,9 @@ class DocumentationHelper {
 			if ($tokens[$i][0] === T_NAMESPACE) {
 				for ($j=$i+1;$j<count($tokens); $j++) {
 
-					if ($tokens[$j][0] === T_STRING || $tokens[$j][0] === T_NAME_QUALIFIED) {
+					if ($tokens[$j][0] === T_STRING || (PHP_VERSION_ID >= 80000 && ($tokens[$j][0] == T_NAME_QUALIFIED || $tokens[$j][0] == T_NAME_FULLY_QUALIFIED))) {
 						$namespace .= '\\'.$tokens[$j][1];
 					} else if ($tokens[$j] === '{' || $tokens[$j] === ';') {
-						
 						break;
 					}
 				}

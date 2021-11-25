@@ -180,10 +180,10 @@ class Arrays extends \ArrayObject {
 		foreach ($keys as $key) {
 			foreach ($arr as $n=>$v) {
 				if ($getSingleKey) {
-					$pluckedArray[$n] = $v[$key];
+					$pluckedArray[$n] = $v[$key] ?? '';
 				} else {
 					if (!isset($pluckedArray[$n])) $pluckedArray[$n] = [];
-					$pluckedArray[$n][$key] = $v[$key];
+					$pluckedArray[$n][$key] = $v[$key] ?? '';
 				}
 			}
 		}

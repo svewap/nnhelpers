@@ -192,6 +192,7 @@ class File implements SingletonInterface {
 	 * ```
 	 * \nn\t3::File()->unlink('fileadmin/bild.jpg');					// Pfad zum Bild
 	 * \nn\t3::File()->unlink('/abs/path/to/file/fileadmin/bild.jpg');	// absoluter Pfad zum Bild
+	 * \nn\t3::File()->unlink('1:/my/image.jpg');						// Combined identifier Schreibweise
 	 * \nn\t3::File()->unlink( $model->getImage() );					// \TYPO3\CMS\Extbase\Domain\Model\FileReference
 	 * \nn\t3::File()->unlink( $falFile );			 					// \TYPO3\CMS\Core\Resource\FileReference
 	 * ```

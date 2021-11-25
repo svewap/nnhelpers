@@ -154,7 +154,7 @@ class Cache implements SingletonInterface {
 		$GLOBALS['nnhelpers_cache'] = [];
 
 		// File-Cache löschen
-		$files = \TYPO3\CMS\Core\Core\Environment::getVarPath() . "/cache/code/nnhelpers/*.php";
+		$files = \nn\t3::Environment()->getVarPath() . "/cache/code/nnhelpers/*.php";
 		foreach (glob($files) as $file) {
 			unlink( $file );
 		}
@@ -191,7 +191,7 @@ class Cache implements SingletonInterface {
 		$identifier = self::getIdentifier( $identifier );
 		$phpCode = '<?php return ' . var_export(['_' => $cache], true) . ';';
 
-		$path = \TYPO3\CMS\Core\Core\Environment::getVarPath() . "/cache/code/nnhelpers/{$identifier}.php";
+		$path = \nn\t3::Environment()->getVarPath() . "/cache/code/nnhelpers/{$identifier}.php";
 		\TYPO3\CMS\Core\Utility\GeneralUtility::writeFileToTypo3tempDir( $path, $phpCode );
 
 		return $cache;
@@ -217,7 +217,7 @@ class Cache implements SingletonInterface {
 
 		if ($cache = $this->get( $identifier, true )) return $cache;
 		$identifier = self::getIdentifier( $identifier );
-		$path = \TYPO3\CMS\Core\Core\Environment::getVarPath() . "/cache/code/nnhelpers/{$identifier}.php";
+		$path = \nn\t3::Environment()->getVarPath() . "/cache/code/nnhelpers/{$identifier}.php";
 		
 		if (!file_exists($path)) {
 			return null;

@@ -90,14 +90,15 @@ class Mail implements SingletonInterface {
 			}
 			if ($file = $node->getAttribute('href')) {
 				if (!isset($attachedFiles[$pathSite . $file])) {
+					$absPath = \nn\t3::File()->absPath( $file );
 					if ($useSwiftMailer) {
-						$attachment = \Swift_Attachment::fromPath($pathSite . $file);
+						$attachment = \Swift_Attachment::fromPath($absPath);
 						$mail->attach($attachment);
 						$node->parentNode->removeChild($node);
 					} else {
-						$mail->attachFromPath( $pathSite . $file );
+						$mail->attachFromPath( $absPath );
 					}
-					$attachedFiles[$pathSite . $file] = true;
+					$attachedFiles[$absPath] = true;
 				}
 			}
 		}
@@ -106,13 +107,14 @@ class Mail implements SingletonInterface {
 		$attachments = \nn\t3::Arrays($params['attachments'])->trimExplode();
 		foreach ($attachments as $path) {
 			if (!isset($attachedFiles[$pathSite . $path])) {
+				$absPath = \nn\t3::File()->absPath( $path );
 				if ($useSwiftMailer) {
-					$attachment = \Swift_Attachment::fromPath($pathSite . $path);
+					$attachment = \Swift_Attachment::fromPath( $absPath );
 					$mail->attach($attachment);
 				} else {
-					$mail->attachFromPath($pathSite . $path);
+					$mail->attachFromPath( $absPath );
 				}
-				$attachedFiles[$pathSite . $path] = true;
+				$attachedFiles[ $absPath ] = true;
 			}
 		}
 

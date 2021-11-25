@@ -116,6 +116,7 @@ class Db implements SingletonInterface {
 	 * @return array
 	 */
 	public function findByUids( $table = '', $uids = null, $ignoreEnableFields = false ) {
+		if (!$uids) return [];
 		$rows = $this->findByValues( $table, ['uid' => $uids], false, $ignoreEnableFields );
 		return $rows;
 	}

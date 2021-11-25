@@ -370,6 +370,21 @@ class t3 {
 	}
 	
 	/**
+	 *  Wirft einen Fehler.
+	 *  Alias zu \nn\t3::Errors()->Error( $message, $code );
+	 *  ```
+	 *  \nn\t3::Error( 'Damn.' );
+	 *  \nn\t3::Error( 'Damn.', '4711' );
+	 *  ```
+	 *  @param string $text     Fehler-Meldung
+	 *  @param string $code     Fehler-Code (Optional)
+	 *	@return void
+	 */
+	public static function Error( $message = '', $code = '' ) {
+	   \nn\t3::Errors()->Error( $message, $code );
+	}
+	
+	/**
 	 *  Der bessere Debugger für alles.
 	 *  Gibt auch Zeilen-Nummer und Class mit an, die den Debug aufgerufen hat – 
 	 *  dadurch leichter wiederzufinden.

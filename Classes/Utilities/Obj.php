@@ -18,6 +18,9 @@ use TYPO3\CMS\Extbase\Utility\TypeHandlingUtility;
  */
 class Obj implements SingletonInterface {
    
+
+	const END_OF_RECURSION = '%#EOR#%';
+
 	/**
 	 * 	@var mixed
 	 */
@@ -202,6 +205,18 @@ class Obj implements SingletonInterface {
 					}
 
 					$value = $objectStorage;
+				}
+
+				else if ( is_a($child, \DateTime::class, true )) {
+
+					// -----
+					// Die Property ist ein `DateTime`
+
+					if ($value) {
+						$value = (new \DateTime())->setTimestamp( $value );
+					} else {
+						$value = null;
+					}
 				}
 
 				else {
@@ -497,15 +512,24 @@ class Obj implements SingletonInterface {
 	 */
 	public function toArray ( $obj, $depth = 3, $fields = [], $addClass = false ) {
 
-		$depth--;
-		if ($depth < 0) return;
-
-		if (!is_object($obj) && !is_array($obj)) {
-			return $obj;
+		if ($obj === null) {
+			return null;
 		}
 
+		$isSimpleType = $this->isSimpleType( gettype($obj) );
+		$isStorage = !$this->isSimpleType && $this->isStorage($obj);
+
+		if ($depth < 0) {
+			return $isSimpleType && !is_array($obj) ? $obj : self::END_OF_RECURSION;
+		}
+
+		if ($isSimpleType && !is_array($obj)) {
+			return $obj;
+		}
+		
 		$type = is_object($obj) ? get_class($obj) : false;
 		$final = [];
+		$depth--;
 
 		if (is_a($obj, \TYPO3\CMS\Extbase\Persistence\Generic\QueryResult::class)) {
 			
@@ -517,8 +541,8 @@ class Obj implements SingletonInterface {
 			$utc = $obj->getTimestamp();
 			return $utc;
 
-		} else if ($this->isStorage($obj)) {
-
+		} else if ($isStorage) {
+			
 			// StorageObject in einfaches Array konvertieren
 			$obj = $this->forceArray( $obj );
 			if ($addClass) $obj['__class'] = ObjectStorage::class;
@@ -564,16 +588,21 @@ class Obj implements SingletonInterface {
 
 			// Alle anderen Objekte
 			$keys = $fields ?: $this->getKeys($obj);
+
 			foreach ($keys as $field) {
 				$val = $this->prop($obj, $field);
 				$val = $this->toArray($val, $depth, $fields, $addClass);
+				if ($val === self::END_OF_RECURSION) continue;
 				$final[$field] = $val;
 			}
 			return $final;
+
 		}
 
-		foreach ($obj as $k=>$v) {			
-			$final[$k] = $this->toArray( $v, $depth, $fields, $addClass );
+		foreach ($obj as $k=>$v) {
+			$val = $this->toArray( $v, $depth, $fields, $addClass );
+			if ($val === self::END_OF_RECURSION) continue;
+			$final[$k] = $val;
 		}
 
 		return $final;		
