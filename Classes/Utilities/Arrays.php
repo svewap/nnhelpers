@@ -123,13 +123,13 @@ class Arrays extends \ArrayObject {
 	 * 	@return array
 	 */
     public function intExplode( $delimiter = ',' ) {
+		$finals = [];
 		if ($arr = $this->trimExplode($delimiter)) {
-			$finals = [];
 			foreach ($arr as $k=>$v) {
 				if (is_numeric($v)) $finals[] = $v;
 			}
 		}
-		return $arr;
+		return $finals;
 	}
 
 	/**
