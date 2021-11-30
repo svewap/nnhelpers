@@ -87,6 +87,21 @@ class TCA implements SingletonInterface {
 	public function getColumns( $tableName = '', $useSchemaManager = false) {
 		return \nn\t3::Db()->getColumns( $tableName, $useSchemaManager );
 	}
+	
+	/**
+	 * Holt alle Feldnamen aus dem TCA-Array, die eine SysFileReference-Relation haben.
+	 * Bei der Tabelle `tt_content` wären das z.B. `assets`, `media` etc.
+	 * ```
+	 * \nn\t3::TCA()->getColumns( 'pages' );	// => ['media', 'assets', 'image']
+	 * ```
+	 * @return array
+	 */
+	public function getFalFields( $tableName = '' ) {
+		$fields = array_filter( \nn\t3::Db()->getColumns( $tableName ), function ( $item ) {
+			return ($item['config']['foreign_table'] ?? false) == 'sys_file_reference';
+		});
+		return array_keys( $fields );
+	}
 
 	/**
 	 * FAL Konfiguration für das TCA holen.

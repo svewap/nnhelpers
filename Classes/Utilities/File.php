@@ -38,22 +38,24 @@ class File implements SingletonInterface {
 	 * \nn\t3::File()->getPublicUrl( $falFile );		// \TYPO3\CMS\Core\Resource\FileReference
 	 * \nn\t3::File()->getPublicUrl( $fileReference );	// \TYPO3\CMS\Extbase\Domain\Model\FileReference
 	 * \nn\t3::File()->getPublicUrl( $folder );			// \TYPO3\CMS\Core\Resource\Folder
+	 * \nn\t3::File()->getPublicUrl( $folder, true );	// https://.../fileadmin/bild.jpg
 	 * ```
 	 * @return string
 	 */
-	public function getPublicUrl( $obj = null ) {
+	public function getPublicUrl( $obj = null, $absolute = false ) {
 		$url = false;
-		if (is_string($obj)) return $obj;
-		if (\nn\t3::Obj()->isFalFile( $obj ) || \nn\t3::Obj()->isFile( $obj )) {
+		if (is_string($obj)) {
+			$url = $obj;
+		} else if (\nn\t3::Obj()->isFalFile( $obj ) || \nn\t3::Obj()->isFile( $obj )) {
 			$url = $obj->getPublicUrl();
 		} else if (\nn\t3::Obj()->isFileReference($obj)) {
 			$url = $obj->getOriginalResource()->getPublicUrl();
 		} else if (is_array($obj) && $url = ($obj['publicUrl'] ?? false)) {
-			return $url;
+			// $url kann genutzt werden!
 		} else if (is_a($obj, \TYPO3\CMS\Core\Resource\Folder::class, true)) {
-			return ltrim($obj->getPublicUrl(), '/');
+			$url = ltrim($obj->getPublicUrl(), '/');
 		}
-		return $url;
+		return !$absolute ? $url : $this->absUrl( $url );
 	}
 
 	/**
@@ -258,6 +260,30 @@ class File implements SingletonInterface {
 			return $dest;
 		}
 		return false;
+	}
+
+	/**
+	 * Absolute URL zu einer Datei generieren.
+	 * Gibt den kompletten Pfad zur Datei inkl. `https://.../` zurück.
+	 * 
+	 * ```
+	 * // => https://www.myweb.de/fileadmin/bild.jpg
+	 * \nn\t3::File()->absUrl( 'fileadmin/bild.jpg' );
+	 * 
+	 * // => https://www.myweb.de/fileadmin/bild.jpg
+	 * \nn\t3::File()->absUrl( 'https://www.myweb.de/fileadmin/bild.jpg' );
+	 * 
+	 * // => /var/www/vhost/somewhere/fileadmin/bild.jpg
+	 * \nn\t3::File()->absUrl( 'https://www.myweb.de/fileadmin/bild.jpg' );
+	 * ```
+	 * 
+	 * @return string
+	 */
+	public function absUrl( $file = null ) {
+		$baseUrl = \nn\t3::Environment()->getBaseURL();
+		$file = $this->stripPathSite( $file );
+		$file = str_replace( $baseUrl, '', $file );
+		return $baseUrl . ltrim( $file, '/' );
 	}
 
 	/**

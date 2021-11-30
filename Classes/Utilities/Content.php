@@ -43,23 +43,28 @@ class Content implements SingletonInterface {
 	}
 
 	/**
-	 * Lädt Relationen (`media`, `assets`, ...) zu einem `tt_content`-Data-Array.
-	 * Nutzt dafür eine `EXT:mask`-Methode.
+	 * Lädt Relationen (`media`, `assets`, ...) zu einem `tt_content`-Data-Array. 
+	 * Falls `EXT:mask` installiert ist, wird die entsprechende Methode aus mask genutzt.
+	 * 
 	 * ```
 	 * \nn\t3::Content()->addRelations( $data );
 	 * ```
-	 * @todo: Von mask entkoppeln
 	 * @return array
 	 */
 	public function addRelations ( $data = [] ) {
 		if (!$data) return [];
+
 		if (\nn\t3::Environment()->extLoaded('mask')) {
 			$maskProcessor = GeneralUtility::makeInstance( \MASK\Mask\DataProcessing\MaskProcessor::class );
 			$cObjRenderer = GeneralUtility::makeInstance( \TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer::class );
 			$dataWithRelations = $maskProcessor->process( $cObjRenderer, [], [], ['data'=>$data, 'current'=>null] );
 			$data = $dataWithRelations['data'] ?: [];
 		} else {
-			\nn\t3::Exception( 'EXT:mask muss installiert sein, um die getRelations() Option zu nutzen.' );
+			$falFields = \nn\t3::Tca()->getFalFields('tt_content');
+			$fileRepository = GeneralUtility::makeInstance(\TYPO3\CMS\Core\Resource\FileRepository::class);
+			foreach ($falFields as $field) {
+				$data[$field] = $fileRepository->findByRelation('tt_content', $field, $data['uid']);
+			}
 		}
 		return $data;
 	}
