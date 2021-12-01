@@ -6,7 +6,10 @@ use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Mail\MailMessage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\ArrayUtility;
-use TYPO3\CMS\Core\Exception;
+
+use Pelago\Emogrifier\CssInliner;
+use Pelago\Emogrifier\HtmlProcessor\CssToAttributeConverter;
+use Pelago\Emogrifier\HtmlProcessor\HtmlPruner;
 
 /**
  * Helferlein für den Mailversand
@@ -124,12 +127,10 @@ class Mail implements SingletonInterface {
 		if ($params['absPrefix']) {
 			$html = \nn\t3::Dom()->absPrefix( $html );
 		}
-		
+
 		// CSS in Inline-Styles umwandeln
 		if ($params['emogrify']) {
-			$emogrifier = new \Pelago\Emogrifier();
-			$emogrifier->setHtml($html);
-			$html = $emogrifier->emogrify();
+			$html = CssInliner::fromHtml($html)->inlineCss()->render();
 		}
 
 		$plaintext = $params['plaintext'] ?: strip_tags($html);
