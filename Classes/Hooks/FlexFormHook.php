@@ -31,7 +31,8 @@ class FlexFormHook {
    public function parseDataStructureByIdentifierPostProcess(array $dataStructure, array $identifier): array
    {
 		foreach (($dataStructure['sheets'] ?? []) as $sheetName=>$sheet) {
-			foreach (($sheet['ROOT']['el'] ?? []) as $field=>$conf) {
+			if (!is_array($sheet['ROOT']['el'] ?? false)) continue;
+			foreach ($sheet['ROOT']['el'] as $field=>$conf) {
 				if (($conf['TCEforms']['config']['type'] ?? false) == 'nnt3_flex') {
 					if ($path = $conf['TCEforms']['config']['path'] ?? false) {
 						$path = \nn\t3::File()->resolvePathPrefixes( $path );
