@@ -137,6 +137,18 @@ per Übergabe eines fixen Wertes statt eines ``override``-Arrays setzen:
 
 | ``@return array``
 
+\\nn\\t3::TCA()->getFalFields(``$tableName = ''``);
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+Holt alle Feldnamen aus dem TCA-Array, die eine SysFileReference-Relation haben.
+Bei der Tabelle ``tt_content`` wären das z.B. ``assets``, ``media`` etc.
+
+.. code-block:: php
+
+	\nn\t3::TCA()->getColumns( 'pages' );    // => ['media', 'assets', 'image']
+
+| ``@return array``
+
 \\nn\\t3::TCA()->getFileFieldTCAConfig(``$fieldName = 'media', $override = []``);
 """""""""""""""""""""""""""""""""""""""""""""""
 

@@ -83,16 +83,33 @@ z.B. während AuthentificationService läuft oder im Scheduler.
 | ``@param int $uid``
 | ``@return array``
 
+\\nn\\t3::Db()->findByUids(``$table = '', $uids = NULL, $ignoreEnableFields = false``);
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+Findet Einträge anhand mehrerer UIDs.
+
+.. code-block:: php
+
+	\nn\t3::Db()->findByUids('fe_user', [12,13]);
+	\nn\t3::Db()->findByUids('fe_user', [12,13], true);
+
+| ``@param int $uid``
+| ``@return array``
+
 \\nn\\t3::Db()->findByValues(``$table = NULL, $whereArr = [], $useLogicalOr = false, $ignoreEnableFields = false``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
 action findByCustomField
 Findet ALLE Einträge anhand eines gewünschten Feld-Wertes.
-Funktioniert auch, wenn Frontend noch nicht initialisiert wurden,
+Funktioniert auch, wenn Frontend noch nicht initialisiert wurden.
 
 .. code-block:: php
 
+	// SELECT  FROM fe_users WHERE email = 'david@99grad.de'
 	\nn\t3::Db()->findByValues('fe_users', ['email'=>'david@99grad.de']);
+	
+	// SELECT  FROM fe_users WHERE uid IN (1,2,3)
+	\nn\t3::Db()->findByValues('fe_users', ['uid'=>[1,2,3]]);
 
 | ``@param string $table``
 | ``@param array $whereArr``
@@ -115,16 +132,25 @@ Findet EINEN Eintrag anhand von gewünschten Feld-Werten.
 | ``@param boolean $ignoreEnableFields``
 | ``@return array``
 
-\\nn\\t3::Db()->get(``$uid, $modelType = ''``);
+\\nn\\t3::Db()->get(``$uid, $modelType = '', $ignoreEnableFields = false``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Ein Domain-Model/Entity anhand einer ``uid`` holen.
+Ein oder mehrere Domain-Model/Entity anhand einer ``uid`` holen.
+Es kann eine einzelne ``$uid`` oder eine Liste von ``$uids`` übergeben werden.
+
 Liefert das "echte" Model/Object inklusive aller Relationen,
 analog zu einer Query über das Repository.
 
 .. code-block:: php
 
-	$model = \nn\t3::Db()->get( $uid, \Nng\MyExt\Domain\Model\Name::class );
+	// Ein einzelnes Model anhand seiner uid holen
+	$model = \nn\t3::Db()->get( 1, \Nng\MyExt\Domain\Model\Name::class );
+	
+	// Ein Array an Models anhand ihrer uids holen
+	$modelArray = \nn\t3::Db()->get( [1,2,3], \Nng\MyExt\Domain\Model\Name::class );
+	
+	// Gibt auch hidden Models zurück
+	$modelArrayWithHidden = \nn\t3::Db()->get( [1,2,3], \Nng\MyExt\Domain\Model\Name::class, true );
 
 | ``@return Object``
 
@@ -292,6 +318,14 @@ Sortierung für ein Repository oder einen Query setzen.
 .. code-block:: php
 
 	$ordering = ['title' => \TYPO3\CMS\Extbase\Persistence\QueryInterface::ORDER_DESCENDING];
+	\nn\t3::Db()->orderBy( $queryOrRepository, $ordering );
+
+Kann auch zum Sortieren nach einer Liste von Werten (z.B. ``uids``) verwendet werden.
+Dazu wird ein Array für den Wert des einzelnen orderings übergeben:
+
+.. code-block:: php
+
+	$ordering = ['uid' => [3,7,2,1]];
 	\nn\t3::Db()->orderBy( $queryOrRepository, $ordering );
 
 | ``@return $queryOrRepository``

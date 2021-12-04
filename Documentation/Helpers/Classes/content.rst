@@ -19,14 +19,13 @@ Overview of Methods
 \\nn\\t3::Content()->addRelations(``$data = []``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-L&l;dt relations (``media``, ``assets``, ...) to a ``tt_content`` data array.
-Uses an ``EXT:mask`` method for this.
+Lädt relations (``media``, ``assets``, ...) to a ``tt_content`` data array.
+If ``EXT:mask`` is installed, the corresponding method from mask is used.
 
 .. code-block:: php
 
 	\nn\t3::Content()->addRelations( $data );
 
-@todo: Decouple from mask.
 | ``@return array``
 
 \\nn\\t3::Content()->column(``$colPos, $pageUid = NULL, $slide = NULL``);

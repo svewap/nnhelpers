@@ -72,7 +72,7 @@ Initialize if not present (because in BE).
 
 | ``@return \TYPO3\CMS\FrontendController\TypoScriptFrontendController``
 
-\\nn\\t3::Tsfe()->init(``$pid = 0, $typeNum = 0``);
+\\nn\\t3::Tsfe()->init(``$pid = [], $typeNum = []``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
 Initialize the TSFE.

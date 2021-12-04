@@ -50,6 +50,25 @@ Also acts as a ViewHelper:
 
 | ``@return boolean``
 
+\\nn\\t3::File()->absUrl(``$file = NULL``);
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+Generate absolute URL to a file.
+Returns the full path to the file including ``https://.../``.
+
+.. code-block:: php
+
+	// => https://www.myweb.de/fileadmin/bild.jpg
+	\nn\t3::File()->absUrl( 'fileadmin/image.jpg' );
+	
+	// => https://www.myweb.de/fileadmin/bild.jpg
+	\nn\t3::File()->absUrl( 'https://www.myweb.de/fileadmin/bild.jpg' );
+	
+	// => /var/www/vhost/somewhere/fileadmin/image.jpg
+	\nn\t3::File()->absUrl( 'https://www.myweb.de/fileadmin/bild.jpg' );
+
+| ``@return string``
+
 \\nn\\t3::File()->addPathSite(``$file``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
@@ -115,6 +134,8 @@ security warnings of the Finder, the function uses ``tar``
 .. code-block:: php
 
 	\nn\t3::File()->download( 'fileadmin/test.pdf' );
+	\nn\t3::File()->download( $fileReference );
+	\nn\t3::File()->download( $sysFile );
 	\nn\t3::File()->download( 'fileadmin/test.pdf', 'download.pdf' );
 
 When an array is üpassed, a tar/zip download is started.
@@ -242,7 +263,7 @@ Example:
 
 | ``@return string``
 
-\\nn\\t3::File()->getPublicUrl(``$obj = NULL``);
+\\nn\\t3::File()->getPublicUrl(``$obj = NULL, $absolute = false``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
 Gets path to file, relative to Typo3 installation directory (PATH_site).
@@ -253,6 +274,7 @@ Can handle all types of objects
 	\nn\t3::File()->getPublicUrl( $falFile ); // \TYPO3\CMS\Core\Resource\FileReference.
 	\nn\t3::File()->getPublicUrl( $fileReference ); // \TYPO3\CMS\Extbase\Domain\Model\FileReference
 	\nn\t3::File()->getPublicUrl( $folder ); // \TYPO3\CMS\Core\Resource\Folder
+	\nn\t3::File()->getPublicUrl( $folder, true ); // https://.../fileadmin/bild.jpg
 
 | ``@return string``
 
@@ -575,6 +597,7 @@ For security, no PHP or HTML files can be deleted.
 
 	\nn\t3::File()->unlink('fileadmin/image.jpg'); // Path to the image.
 	\nn\t3::File()->unlink('/abs/path/to/file/fileadmin/image.jpg'); // absolute path to the image
+	\nn\t3::File()->unlink('1:/my/image.jpg'); // Combined identifier notation
 	\nn\t3::File()->unlink( $model->getImage() ); // \TYPO3\CMS\Extbase\Domain\Model\FileReference
 	\nn\t3::File()->unlink( $falFile ); // \TYPO3\CMS\Core\Resource\FileReference
 

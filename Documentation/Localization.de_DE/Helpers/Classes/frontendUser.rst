@@ -32,14 +32,22 @@ Existiert auch als ViewHelper:
 
 | ``@return array``
 
-\\nn\\t3::FrontendUser()->getAvailableUserGroups();
+\\nn\\t3::FrontendUser()->getAvailableUserGroups(``$returnRowData = false``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Alle existierende User-Gruppen zurückgeben
+Alle existierende User-Gruppen zurückgeben.
+Gibt ein assoziatives Array zurück, key ist die ``uid``, value der ``title``.
 
 .. code-block:: php
 
 	\nn\t3::FrontendUser()->getAvailableUserGroups();
+
+Alternativ kann mit ``true`` der komplette Datensatz für die Benutzergruppen
+zurückgegeben werden:
+
+.. code-block:: php
+
+	\nn\t3::FrontendUser()->getAvailableUserGroups( true );
 
 | ``@return array``
 
@@ -216,7 +224,7 @@ Aktuellen ``fe_typo_user``-Cookie manuell löschen
 
 | ``@return void``
 
-\\nn\\t3::FrontendUser()->resolveUserGroups(``$arr = []``);
+\\nn\\t3::FrontendUser()->resolveUserGroups(``$arr = [], $ignoreUids = []``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
 Wandelt ein Array oder eine kommaseparierte Liste mit Benutzergrupen-UIDs in

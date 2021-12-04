@@ -81,7 +81,7 @@ Login eines FE-Users anhand einer fe_user.uid
 
 | ``@return array``
 
-\\nn\\t3::FrontendUserAuthentication()->prepareSession(``$usernameOrUid = NULL``);
+\\nn\\t3::FrontendUserAuthentication()->prepareSession(``$usernameOrUid = NULL, $unhashedSessionId = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
 Eine neue FrontenUser-Session in der Tabelle ``fe_sessions`` anlegen.
@@ -102,6 +102,14 @@ gehashed.
 	$sessionId = \nn\t3::FrontendUserAuthentication()->prepareSession( 'david' );
 	
 	$hashInDatabase = \nn\t3::Encrypt()->hashSessionId( $sessionId );
+
+Falls die Session mit einer existierenden SessionId erneut aufgebaut werden soll, kann als optionaler,
+zweiter Parameter eine (nicht-gehashte) SessionId übergeben werden:
+
+.. code-block:: php
+
+	\nn\t3::FrontendUserAuthentication()->prepareSession( 1, 'meincookiewert' );
+	\nn\t3::FrontendUserAuthentication()->prepareSession( 1, $_COOKIE['fe_typo_user'] );
 
 | ``@return string``
 

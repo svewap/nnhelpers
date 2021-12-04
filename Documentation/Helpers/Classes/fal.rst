@@ -108,6 +108,27 @@ If not, a new storage is created.
 
 | ``@return false|\TYPO3\CMS\Core\Resource\File``
 
+\\nn\\t3::Fal()->deleteProcessedImages(``$sysFile = ''``);
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+Deletes all physical thumbnail files that have been generated for an image incl.
+the records in the ``sys_file_processedfile`` table.
+
+The original image, passed as argument ``$path`` üis not deleted in the process.
+The whole thing forces the regeneration of thumbnails for an image if, for example, the source image has changed.
+source image has changed but the filename has remained the same.
+
+Another use case: clean up files on the server, e.g. because sensitive, personal data has been deleted.
+Data should be deleted incl. all generated thumbnails.
+
+.. code-block:: php
+
+	\nn\t3::Fal()->deleteProcessedImages( 'fileadmin/path/sample.jpg' );
+	\nn\t3::Fal()->deleteProcessedImages( $sysFileReference );
+	\nn\t3::Fal()->deleteProcessedImages( $sysFile );
+
+| ``@return mixed``
+
 \\nn\\t3::Fal()->deleteSysFile(``$uidOrObject = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 

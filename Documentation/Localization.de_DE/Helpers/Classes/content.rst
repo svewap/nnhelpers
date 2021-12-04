@@ -19,13 +19,12 @@ Overview of Methods
 """""""""""""""""""""""""""""""""""""""""""""""
 
 Lädt Relationen (``media``, ``assets``, ...) zu einem ``tt_content``-Data-Array.
-Nutzt dafür eine ``EXT:mask``-Methode.
+Falls ``EXT:mask`` installiert ist, wird die entsprechende Methode aus mask genutzt.
 
 .. code-block:: php
 
 	\nn\t3::Content()->addRelations( $data );
 
-@todo: Von mask entkoppeln
 | ``@return array``
 
 \\nn\\t3::Content()->column(``$colPos, $pageUid = NULL, $slide = NULL``);

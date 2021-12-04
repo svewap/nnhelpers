@@ -214,6 +214,20 @@ See also ``\nn\t3::Settings()->getSiteConfig()`` to read the site configuration.
 
 | ``@return \TYPO3\CMS\Core\Site\Entity\Site``
 
+\\nn\\t3::Environment()->getVarPath();
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+Get the absolute path to the ``/var`` directory of Typo3.
+
+This directory stores temporäre cache files.
+Depending on the version of Typo3 and the type of installation (composer or non-composer mode)
+this directory can be found in different locations.
+
+.. code-block:: php
+
+	// /full/path/to/typo3temp/var/
+	$path = \nn\t3::Environment()->getVarPath();
+
 \\nn\\t3::Environment()->isBackend();
 """""""""""""""""""""""""""""""""""""""""""""""
 

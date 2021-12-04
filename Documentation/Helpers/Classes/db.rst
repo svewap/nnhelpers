@@ -84,16 +84,33 @@ e.g. while AuthentificationService is running or in the scheduler.
 | ``@param int $uid``
 | ``@return array``
 
+\\nn\\t3::Db()->findByUids(``$table = '', $uids = NULL, $ignoreEnableFields = false``);
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+Finds entries based on multiple UIDs.
+
+.. code-block:: php
+
+	\nn\t3::Db()->findByUids('fe_user', [12,13]);
+	\nn\t3::Db()->findByUids('fe_user', [12,13], true);
+
+| ``@param int $uid``
+| ``@return array``
+
 \\nn\\t3::Db()->findByValues(``$table = NULL, $whereArr = [], $useLogicalOr = false, $ignoreEnableFields = false``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
 action findByCustomField.
 Finds ALL entries based on a desired field value.
-Works even if frontends have not been initialized yet,
+Works even if frontends have not been initialized yet.
 
 .. code-block:: php
 
+	// SELECT FROM fe_users WHERE email = 'david@99grad.de'
 	\nn\t3::Db()->findByValues('fe_users', ['email'=>'david@99grad.de']);
+	
+	// SELECT FROM fe_users WHERE uid IN (1,2,3)
+	\nn\t3::Db()->findByValues('fe_users', ['uid'=>[1,2,3]]);
 
 | ``@param string $table``
 | ``@param array $whereArr``
@@ -116,18 +133,28 @@ Finds ONE entry based on desired field values.
 | ``@param boolean $ignoreEnableFields``
 | ``@return array``
 
-\\nn\\t3::Db()->get(``$uid, $modelType = ''``);
+\\nn\\t3::Db()->get(``$uid, $modelType = '', $ignoreEnableFields = false``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Get a domain model/entity based on a ``uid``
+Get one or more domain models/entities based on a ``uid``
+A single ``$uid`` or a list of ``$uids`` ücan be passed.
+
 Returns the "real" model/object including all relations,
 analogous to a query about the repository.
 
 .. code-block:: php
 
-	$model = \nn\t3::Db()->get( $uid, \Nng\MyExt\Domain\Model\Name::class );
+	// Get a single model by its uid.
+	$model = \nn\t3::Db()->get( 1, \Nng\MyExt\Domain\Model\Name::class );
+	
+	// Get an array of models by their uids
+	$modelArray = \nn\t3::Db()->get( [1,2,3], \Nng\MyExt\Domain\Model\Name::class );
+	
+	// Returns hidden models as well
+	$modelArrayWithHidden = \nn\t3::Db()->get( [1,2,3], \Nng\MyExt\Domain\Model\Name::class, true );
 
 | ``@return Object``
+.
 
 \\nn\\t3::Db()->getColumn(``$table = '', $colName = '', $useSchemaManager = false``);
 """""""""""""""""""""""""""""""""""""""""""""""
@@ -293,6 +320,14 @@ Set sorting for a repository or query.
 .. code-block:: php
 
 	$ordering = ['title' => \TYPO3\CMS\Extbase\Persistence\QueryInterface::ORDER_DESCENDING];
+	\nn\t3::Db()->orderBy( $queryOrRepository, $ordering );
+
+Can also be used to sort by a list of values (e.g. ``uids``).
+This is done by passing an array für the value of the single ordering:
+
+.. code-block:: php
+
+	$ordering = ['uid' => [3,7,2,1]];
 	\nn\t3::Db()->orderBy( $queryOrRepository, $ordering );
 
 | ``@return $queryOrRepository``

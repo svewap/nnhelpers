@@ -173,7 +173,9 @@ Generate an absolute link to a page
 	\nn\t3::Page()->getAbsLink( $pid, ['type'=>'232322'] );
 	\nn\t3::Page()->getAbsLink( ['type'=>'232322'] );
 
-\\nn\\t3::Page()->getChildPids(``$parentPid = 0, $recursive = 999``);
+| ``@return string``
+
+\\nn\\t3::Page()->getChildPids(``$parentPid = [], $recursive = 999``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
 Get list of child uids of one or more pages.
@@ -245,7 +247,7 @@ Absolute URLs are generated from the backend context into the frontend. The URLs
 	\nn\t3::Page()->getLink( $pid, $params, true );
 	\nn\t3::Page()->getLink( 'david@99grad.de' )
 
-| ``@return array``
+| ``@return string``
 
 \\nn\\t3::Page()->getPageRenderer();
 """""""""""""""""""""""""""""""""""""""""""""""
