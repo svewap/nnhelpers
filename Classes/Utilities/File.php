@@ -295,6 +295,7 @@ class File implements SingletonInterface {
 	 * ```
 	 * \nn\t3::File()->absPath('fileadmin/bild.jpg'); 					// => /var/www/website/fileadmin/bild.jpg
 	 * \nn\t3::File()->absPath('/var/www/website/fileadmin/bild.jpg'); 	// => /var/www/website/fileadmin/bild.jpg
+	 * \nn\t3::File()->absPath('EXT:nnhelpers'); 					 	// => /var/www/website/typo3conf/ext/nnhelpers/
 	 * ```
 	 * 
 	 * Außer dem Dateipfad als String können auch alle denkbaren Objekte übergeben werden:
@@ -343,7 +344,8 @@ class File implements SingletonInterface {
 	/**
 	 * EXT: Prefix auflösen zu relativer Pfadangabe
 	 * ```
-	 * \nn\t3::File()->resolvePathPrefixes('EXT:extname/bild.jpg'); 		=> /typo3conf/ext/extname/bild.jpg
+	 * \nn\t3::File()->resolvePathPrefixes('EXT:extname'); 					=> /typo3conf/ext/extname/
+	 * \nn\t3::File()->resolvePathPrefixes('EXT:extname/'); 				=> /typo3conf/ext/extname/
 	 * \nn\t3::File()->resolvePathPrefixes('EXT:extname/bild.jpg'); 		=> /typo3conf/ext/extname/bild.jpg
 	 * \nn\t3::File()->resolvePathPrefixes('1:/uploads/bild.jpg', true); 	=> /var/www/website/fileadmin/uploads/bild.jpg
 	 * ```
@@ -360,8 +362,15 @@ class File implements SingletonInterface {
 			$file = $basePath . $matches[3];
 		}
 
+		// `EXT:extname` => `EXT:extname/`
+		if (strpos($file, 'EXT:') == 0 && !pathinfo($file, PATHINFO_EXTENSION)) {
+			$file = rtrim($file, '/') . '/';
+		}
+
+		// `EXT:extname/` => `typo3conf/ext/extname/` 
 		$absPathName = GeneralUtility::getFileAbsFileName( $file );
 		if (!$absPathName) return $file;
+
 		if ($absolute) return $this->absPath($absPathName);
 		$pathSite = \nn\t3::Environment()->getPathSite();
 		return str_replace( $pathSite, '', $absPathName );
