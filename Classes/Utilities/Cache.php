@@ -191,7 +191,7 @@ class Cache implements SingletonInterface {
 		$identifier = self::getIdentifier( $identifier );
 		$phpCode = '<?php return ' . var_export(['_' => $cache], true) . ';';
 
-		$path = \nn\t3::Environment()->getVarPath() . "/cache/code/nnhelpers/{$identifier}.php";
+		$path = \nn\t3::Environment()->getVarPath() . "cache/code/nnhelpers/{$identifier}.php";
 		\TYPO3\CMS\Core\Utility\GeneralUtility::writeFileToTypo3tempDir( $path, $phpCode );
 
 		return $cache;
