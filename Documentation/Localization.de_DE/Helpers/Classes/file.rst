@@ -28,6 +28,7 @@ Falls der Pfad bereits absolut war, wird er unverändert zurückgegeben.
 
 	\nn\t3::File()->absPath('fileadmin/bild.jpg');                   // => /var/www/website/fileadmin/bild.jpg
 	\nn\t3::File()->absPath('/var/www/website/fileadmin/bild.jpg');  // => /var/www/website/fileadmin/bild.jpg
+	\nn\t3::File()->absPath('EXT:nnhelpers');                        // => /var/www/website/typo3conf/ext/nnhelpers/
 
 Außer dem Dateipfad als String können auch alle denkbaren Objekte übergeben werden:
 
@@ -504,7 +505,8 @@ EXT: Prefix auflösen zu relativer Pfadangabe
 
 .. code-block:: php
 
-	\nn\t3::File()->resolvePathPrefixes('EXT:extname/bild.jpg');         => /typo3conf/ext/extname/bild.jpg
+	\nn\t3::File()->resolvePathPrefixes('EXT:extname');                  => /typo3conf/ext/extname/
+	\nn\t3::File()->resolvePathPrefixes('EXT:extname/');                 => /typo3conf/ext/extname/
 	\nn\t3::File()->resolvePathPrefixes('EXT:extname/bild.jpg');         => /typo3conf/ext/extname/bild.jpg
 	\nn\t3::File()->resolvePathPrefixes('1:/uploads/bild.jpg', true);    => /var/www/website/fileadmin/uploads/bild.jpg
 

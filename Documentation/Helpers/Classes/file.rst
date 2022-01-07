@@ -21,19 +21,20 @@ Overview of Methods
 
 Absolute path to a file on the server.
 
-Returns the complete path from the server root, for example from ``/var/www/...``
-If the path was already absolute, it will be returned unmodified.
+Returns the complete path starting from the server root, e.g. starting from ``/var/www/...``
+If the path was already absolute, it will be returned unchanged.
 
 .. code-block:: php
 
 	\nn\t3::File()->absPath('fileadmin/image.jpg'); // => /var/www/website/fileadmin/image.jpg
 	\nn\t3::File()->absPath('/var/www/website/fileadmin/image.jpg'); // => /var/www/website/fileadmin/image.jpg
+	\nn\t3::File()->absPath('EXT:nnhelpers'); // => /var/www/website/typo3conf/ext/nnhelpers/
 
-In addition to the file path as a string, any conceivable object can also be passed:
+In addition to the file path as a string, all conceivable objects can also be passed:
 
 .. code-block:: php
 
-	// \TYPO3\CMS\Core\Resource\Folder.
+	// \TYPO3\CMS\Core\Resource\Folder
 	\nn\t3::File()->absPath( $folderObject ); => /var/www/website/fileadmin/image.jpg
 	
 	// \TYPO3\CMS\Core\Resource\File
@@ -503,7 +504,8 @@ EXT: resolve prefix to relative path
 
 .. code-block:: php
 
-	\nn\t3::File()->resolvePathPrefixes('EXT:extname/image.jpg'); => /typo3conf/ext/extname/image.jpg
+	\nn\t3::File()->resolvePathPrefixes('EXT:extname'); => /typo3conf/ext/extname/
+	\nn\t3::File()->resolvePathPrefixes('EXT:extname/'); => /typo3conf/ext/extname/
 	\nn\t3::File()->resolvePathPrefixes('EXT:extname/image.jpg'); => /typo3conf/ext/extname/image.jpg
 	\nn\t3::File()->resolvePathPrefixes('1:/uploads/image.jpg', true); => /var/www/website/fileadmin/uploads/image.jpg
 
