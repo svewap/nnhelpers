@@ -69,7 +69,7 @@ class DocumentationHelper {
 			if ($tokens[$i][0] === T_CLASS) {
 				for ($j=$i+1;$j<count($tokens);$j++) {
 					if ($tokens[$j] === '{') {
-						$class = $tokens[$i+2][1];
+						$class = $tokens[$i+2][1] ?? null;
 					}
 				}
 			}
