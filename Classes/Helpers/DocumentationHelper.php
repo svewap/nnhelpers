@@ -46,7 +46,8 @@ class DocumentationHelper {
 	 * ```
 	 * @return string
 	 */
-	public static function getClassNameFromFile( $file ) {
+	public static function getClassNameFromFile( $file ) 
+	{
 		$file = \nn\t3::File()->absPath( $file );
 
 		$fileStr = php_strip_whitespace($file);
@@ -93,8 +94,8 @@ class DocumentationHelper {
 	 * ```
 	 * @return array
 	 */
-	public static function parseFolder( $path = '', $options = [] ) {
-
+	public static function parseFolder( $path = '', $options = [] ) 
+	{
 		$options = array_merge([
 			'recursive' 	=> true,
 			'suffix'		=> 'php',
@@ -133,7 +134,8 @@ class DocumentationHelper {
 	 * ```
 	 * @return array
 	 */
-	public static function parseFile( $path = '', $returnMethods = true ) {
+	public static function parseFile( $path = '', $returnMethods = true ) 
+	{
 		$className = self::getClassNameFromFile( $path );
 		$data = self::parseClass( $className, $returnMethods );
 		$data = array_merge($data, [
@@ -153,8 +155,8 @@ class DocumentationHelper {
 	 * ```
 	 * @return array
 	 */
-	public static function parseClass( $className = '', $returnMethods = true ) {
-
+	public static function parseClass( $className = '', $returnMethods = true ) 
+	{
 		$reflector = new \ReflectionClass( $className );
 		$docComment = $reflector->getDocComment();
 
@@ -218,16 +220,16 @@ class DocumentationHelper {
 	 * ``` 
 	 * @return string 	
 	 */
-	public static function getSourceCode($class, $method){
-
+	public static function getSourceCode($class, $method)
+	{
 		$func = new \ReflectionMethod($class, $method);
 	
 		$f = $func->getFileName();
 		$start_line = $func->getStartLine() - 1;
 		$end_line = $func->getEndLine();
-		$length = $end_line - $start_line;
-	
-		if (!self::$sourceCodeCache[$f]) {
+		
+		$cache = self::$sourceCodeCache[$f] ?? false;
+		if (!$cache) {
 			$source = file($f);
 			$source = implode('', array_slice($source, 0, count($source)));
 			$source = preg_split("/".PHP_EOL."/", $source);
