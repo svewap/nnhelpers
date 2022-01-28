@@ -37,11 +37,12 @@ class ModuleController extends \Nng\Nnhelpers\Controller\AbstractController {
 	/**
 	 * @return void
 	 */
-	public function indexAction () {
-		
+	public function indexAction () 
+	{	
 		$args = $this->request->getArguments();
 		$isDevMode = \nn\t3::Environment()->getExtConf('nnhelpers', 'devModeEnabled');
-		$enableCache = !$args['updateTranslation'] && !$isDevMode;
+		$updateTranslation = $args['updateTranslation'] ?? false;
+		$enableCache = !$updateTranslation && !$isDevMode;
 		$beUserLang = $GLOBALS['BE_USER']->uc['lang'] ?: 'en';
 		if ($beUserLang == 'default') $beUserLang = 'en';
 		
@@ -64,8 +65,8 @@ class ModuleController extends \Nng\Nnhelpers\Controller\AbstractController {
 			'viewhelpers'		=> $docViewhelper,
 			'additional'		=> $docAdditional,
 			'docLang' 			=> $beUserLang,
-			'docSrcLang' 		=> $sourceLang,
-			'updateTranslation' => $args['updateTranslation'] ?? false,
+			'docSrcLang' 		=> $this->sourceLang,
+			'updateTranslation' => $updateTranslation,
 		]);
 
 		$html = $this->view->render();

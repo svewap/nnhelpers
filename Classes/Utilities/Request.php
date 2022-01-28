@@ -250,7 +250,7 @@ class Request implements SingletonInterface {
 						return explode(':', base64_decode(substr($value, 6)));
 					}
 				}
-			})) ?: [];
+			})) ?: ['', ''];
 		}
 		if (!$username && !$password) return [];
 		return ['username'=>$username, 'password'=>$password];

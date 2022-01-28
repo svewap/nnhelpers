@@ -517,7 +517,7 @@ class Obj implements SingletonInterface {
 		}
 
 		$isSimpleType = $this->isSimpleType( gettype($obj) );
-		$isStorage = !$this->isSimpleType && $this->isStorage($obj);
+		$isStorage = !$isSimpleType && $this->isStorage($obj);
 
 		if ($depth < 0) {
 			return $isSimpleType && !is_array($obj) ? $obj : self::END_OF_RECURSION;

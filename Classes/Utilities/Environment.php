@@ -12,6 +12,8 @@ use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Routing\SiteMatcher;
 use TYPO3\CMS\Core\Site\SiteFinder;
 
+use TYPO3\CMS\Core\Core\ClassLoadingInformation;
+
 /**
  * Alles, was man über die Umgebung der Anwendung wissen muss.
  * Von Sprach-ID des Users, der baseUrl bis zu der Frage, welche Extensions am Start sind.
@@ -167,6 +169,47 @@ class Environment implements SingletonInterface {
 		$cookieDomain = $this->getLocalConf( $loginType . '.cookieDomain' ) 
 			?: $this->getLocalConf( 'SYS.cookieDomain' );
 		return $cookieDomain;
+	}
+
+	/**
+	 * Liste der PSR4 Prefixes zurückgeben.
+	 * 
+	 * Das ist ein Array mit allen Ordnern, die beim autoloading / Bootstrap von TYPO3 nach Klassen 
+	 * geparsed werden müssen. In einer TYPO3 Extension ist das per default der Ordern `Classes/*`.
+	 * Die Liste wird von Composer/TYPO3 generiert.
+	 * 
+	 * Zurückgegeben wird ein array. Key ist `Vendor\Namespace\`, Wert ist ein Array mit Pfaden zu den Ordnern, 
+	 * die rekursiv nach Klassen durchsucht werden. Es spielt dabei keine Rolle, ob TYPO3 im composer
+	 * mode läuft oder nicht.
+	 * 
+	 * ```
+	 * \nn\t3::Environment()->getPsr4Prefixes();
+	 * ```
+	 * 
+	 * Beispiel für Rückgabe:
+	 * ```
+	 * [
+	 * 	'Nng\Nnhelpers\' => ['/pfad/zu/composer/../../public/typo3conf/ext/nnhelpers/Classes', ...],
+	 * 	'Nng\Nnrestapi\' => ['/pfad/zu/composer/../../public/typo3conf/ext/nnrestapi/Classes', ...]
+	 * ]
+	 * ```
+	 * @return array
+	 */
+	public function getPsr4Prefixes() {
+		if (\nn\t3::t3Version() >= 11) {
+			$composerClassLoader = ClassLoadingInformation::getClassLoader();
+			$psr4prefixes = $composerClassLoader->getPrefixesPsr4();
+		} else {
+			if (\TYPO3\CMS\Core\Core\Environment::isComposerMode()){
+				$psr4path = \TYPO3\CMS\Core\Core\Environment::getProjectPath() . '/vendor/composer/' . ClassLoadingInformation::AUTOLOAD_PSR4_FILENAME;
+			} else {
+				$psr4path = \TYPO3\CMS\Core\Core\Environment::getLegacyConfigPath() . '/' .
+							ClassLoadingInformation::AUTOLOAD_INFO_DIR .
+							ClassLoadingInformation::AUTOLOAD_PSR4_FILENAME;
+			}
+			$psr4prefixes = require( $psr4path );
+		}
+		return $psr4prefixes;
 	}
 
 	/**
