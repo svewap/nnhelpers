@@ -74,7 +74,7 @@ class Obj implements SingletonInterface {
 		
 		foreach ($overlay as $propName=>$value) {
 
-			if ($propInfo = $modelProperties[$propName]) {
+			if ($propInfo = $modelProperties[$propName] ?? false) {
 				
 				// Typ für Property des Models, z.B. `string`
 				$propType = $this->get( $propInfo, 'type');

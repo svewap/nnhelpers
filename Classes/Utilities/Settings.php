@@ -17,9 +17,14 @@ use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 class Settings implements SingletonInterface {
 	
 	/**
-	 * 	@var array
+	 * @var array
 	 */
 	protected $typoscriptSetupCache;
+
+	/**
+     * @var \TYPO3\CMS\Core\TypoScript\ExtendedTemplateService
+     */
+    protected $typoscriptObjectCache;
 
 	/**
 	 * Holt das TypoScript-Setup und dort den Abschnitt "settings".
