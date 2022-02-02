@@ -342,8 +342,16 @@ class Obj implements SingletonInterface {
 		if (is_object($modelClassName)) {
 			$modelClassName = get_class( $modelClassName );
 		}
+		$tableName = '';
 		$dataMapper = \nn\t3::injectClass( DataMapper::class );
-		return $dataMapper->getDataMap($modelClassName)->getTableName();
+		try {
+			$tableName = $dataMapper->getDataMap($modelClassName)->getTableName();
+		} catch ( \Exception $e ) {
+		} catch ( \Error $e ) {
+			// silent
+		}
+
+		return $tableName;
 	}
 
 	/**

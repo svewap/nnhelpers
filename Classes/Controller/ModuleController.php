@@ -4,6 +4,7 @@ namespace Nng\Nnhelpers\Controller;
 
 use Nng\Nnhelpers\Domain\Repository\EntryRepository;
 use Nng\Nnhelpers\Helpers\DocumentationHelper;
+use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 
 use TYPO3\CMS\Extbase\Mvc\View\ViewInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -61,6 +62,7 @@ class ModuleController extends \Nng\Nnhelpers\Controller\AbstractController {
 		$this->localizeDocumentation( $docAdditional, $beUserLang );
 
 		$this->view->assignMultiple([
+			'version'			=> ExtensionManagementUtility::getExtensionVersion('nnhelpers'),
 			'documentation' 	=> $doc,
 			'viewhelpers'		=> $docViewhelper,
 			'additional'		=> $docAdditional,
