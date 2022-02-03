@@ -74,7 +74,7 @@ class Obj implements SingletonInterface {
 		
 		foreach ($overlay as $propName=>$value) {
 
-			if ($propInfo = $modelProperties[$propName]) {
+			if ($propInfo = $modelProperties[$propName] ?? false) {
 				
 				// Typ für Property des Models, z.B. `string`
 				$propType = $this->get( $propInfo, 'type');
@@ -342,8 +342,16 @@ class Obj implements SingletonInterface {
 		if (is_object($modelClassName)) {
 			$modelClassName = get_class( $modelClassName );
 		}
+		$tableName = '';
 		$dataMapper = \nn\t3::injectClass( DataMapper::class );
-		return $dataMapper->getDataMap($modelClassName)->getTableName();
+		try {
+			$tableName = $dataMapper->getDataMap($modelClassName)->getTableName();
+		} catch ( \Exception $e ) {
+		} catch ( \Error $e ) {
+			// silent
+		}
+
+		return $tableName;
 	}
 
 	/**
