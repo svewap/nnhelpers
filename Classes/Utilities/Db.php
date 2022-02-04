@@ -238,7 +238,7 @@ class Db implements SingletonInterface {
 				}
 			}
 		}
-\nn\t3::debug($queryBuilder);
+
 		// "deleted" IMMER berücksichtigen!
 		if ($deleteCol = $this->getDeleteColumn( $table )) {
 			$queryBuilder->andWhere( $queryBuilder->expr()->eq($deleteCol, 0) );	
