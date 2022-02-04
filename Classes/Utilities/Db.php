@@ -219,6 +219,11 @@ class Db implements SingletonInterface {
 		if ($whereArr) {
 			foreach ($whereArr as $colName=>$v) {
 				if (is_array($v)) {
+					foreach ($v as &$vv) {
+						if (!is_numeric($vv)) {
+							$vv = $this->quote( $vv );
+						}
+					}
 					$expr = $queryBuilder->expr()->in($colName, $v );
 					if ($uids = \nn\t3::Arrays($v)->intExplode()) {
 						$this->orderBy( $queryBuilder, ["{$table}.{$colName}"=>$uids] );
@@ -233,7 +238,7 @@ class Db implements SingletonInterface {
 				}
 			}
 		}
-
+\nn\t3::debug($queryBuilder);
 		// "deleted" IMMER berücksichtigen!
 		if ($deleteCol = $this->getDeleteColumn( $table )) {
 			$queryBuilder->andWhere( $queryBuilder->expr()->eq($deleteCol, 0) );	
