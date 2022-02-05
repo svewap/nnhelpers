@@ -171,17 +171,31 @@ Typoscript setup:
 
 | ``@return void``
 
-\\nn\\t3::Registry()->set(``$extName = '', $path = '', $settings = []``);
+\\nn\\t3::Registry()->set(``$extName = '', $path = '', $settings = [], $clear = false``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
 Save a value in the sys_registry table.
-Data in this table is retained übeyond the session.
+Data in this table will be preserved beyond the session.
 For example, a scheduler job can store the last time it was executed.
 it was executed.
 
+Arrays are recursively merged/merged by default:
+
 .. code-block:: php
 
-	\nn\t3::Registry()->set( 'nnsite', 'lastRun', ['test'=>'ok'] );
+	\nn\t3::Registry()->set( 'nnsite', 'lastRun', ['one'=>'1'] );
+	\nn\t3::Registry()->set( 'nnsite', 'lastRun', ['two =>'2'] );
+	
+	\nn\t3::Registry()->get( 'nnsite', 'lastRun' ); // => ['one'=>1, 'two'=>2]
+
+With ``true`` at the end, the previous values will be deleted:
+
+.. code-block:: php
+
+	\nn\t3::Registry()->set( 'nnsite', 'lastRun', ['one'=>'1'] );
+	\nn\t3::Registry()->set( 'nnsite', 'lastRun', ['two'=>'2'], true );
+	
+	\nn\t3::Registry()->get( 'nnsite', 'lastRun' ); // => ['two'=>2]
 
 | ``@return void``
 

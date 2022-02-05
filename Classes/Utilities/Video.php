@@ -19,12 +19,12 @@ class Video implements SingletonInterface {
 	);
 
 	/**
-	 * 	Prüft, ob es sich bei der URL um ein Video auf YouTube oder Vimeo handelt.
-	 * 	Gibt ein Array mit Daten zum Einbetten zurück.
-	 *	```
-	 *	\nn\t3::Video()->isExternal( 'https://www.youtube.com/...' );
-	 *	```
-	 * 	@return array
+	 * Prüft, ob es sich bei der URL um ein externes Video auf YouTube oder Vimeo handelt.
+	 * Gibt ein Array mit Daten zum Einbetten zurück.
+	 * ```
+	 * \nn\t3::Video()->isExternal( 'https://www.youtube.com/...' );
+	 * ```
+	 * @return array
 	 */
 	public function isExternal ( $url = null ) {
 		return $this->getExternalType( $url );
@@ -32,11 +32,11 @@ class Video implements SingletonInterface {
 	
 
 	/**
-	 * 	Gibt Infos über die Streaming-Platform und Code zum Einbetten eines Videos zurück
-	 *	```
-	 *	\nn\t3::Video()->getExternalType( 'https://www.youtube.com/watch/abTAgsdjA' );
-	 *	```
-	 * 	@return array
+	 * Gibt ein Array mit Infos über die Streaming-Platform und Code zum Einbetten eines Videos zurück.
+	 * ```
+	 * \nn\t3::Video()->getExternalType( 'https://www.youtube.com/watch/abTAgsdjA' );
+	 * ```
+	 * @return array
 	 */
 	public function getExternalType( $url = null ) {
 		foreach (self::$VIDEO_PREGS as $type=>$pregs) {

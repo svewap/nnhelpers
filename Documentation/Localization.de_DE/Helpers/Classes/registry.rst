@@ -171,7 +171,7 @@ Typoscript-Setup:
 
 | ``@return void``
 
-\\nn\\t3::Registry()->set(``$extName = '', $path = '', $settings = []``);
+\\nn\\t3::Registry()->set(``$extName = '', $path = '', $settings = [], $clear = false``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
 Einen Wert in der Tabelle sys_registry speichern.
@@ -179,9 +179,23 @@ Daten in dieser Tabelle bleiben über die Session hinaus erhalten.
 Ein Scheduler-Job kann z.B. speichern, wann er das letzte Mal
 ausgeführt wurde.
 
+Arrays werden per default rekursiv zusammengeführt / gemerged:
+
 .. code-block:: php
 
-	\nn\t3::Registry()->set( 'nnsite', 'lastRun', ['test'=>'ok'] );
+	\nn\t3::Registry()->set( 'nnsite', 'lastRun', ['eins'=>'1'] );
+	\nn\t3::Registry()->set( 'nnsite', 'lastRun', ['zwei'=>'2'] );
+	
+	\nn\t3::Registry()->get( 'nnsite', 'lastRun' ); // => ['eins'=>1, 'zwei'=>2]
+
+Mit ``true`` am Ende werden die vorherigen Werte gelöscht:
+
+.. code-block:: php
+
+	\nn\t3::Registry()->set( 'nnsite', 'lastRun', ['eins'=>'1'] );
+	\nn\t3::Registry()->set( 'nnsite', 'lastRun', ['zwei'=>'2'], true );
+	
+	\nn\t3::Registry()->get( 'nnsite', 'lastRun' ); // => ['zwei'=>2]
 
 | ``@return void``
 

@@ -45,6 +45,8 @@ class LL implements SingletonInterface {
 			return 'Bitte API Key und URL für DeepL im Extension-Manager angeben';
 		}
 
+		$srcText = \nn\t3::Convert($srcText)->toUTF8();
+
 		$result = \nn\t3::Request()->POST( $deeplConfig['deeplApiUrl'], [
 			'auth_key'		=> $deeplConfig['deeplApiKey'],
 			'text'			=> "\n<LL>\n" . $srcText . "\n</LL>",
