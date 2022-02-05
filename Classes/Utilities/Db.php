@@ -165,7 +165,6 @@ class Db implements SingletonInterface {
 	}
 
 	/**
-	 * action findByCustomField
 	 * Findet ALLE Einträge anhand eines gewünschten Feld-Wertes.
 	 * Funktioniert auch, wenn	Frontend noch nicht initialisiert wurden.
 	 * ```
@@ -219,11 +218,7 @@ class Db implements SingletonInterface {
 		if ($whereArr) {
 			foreach ($whereArr as $colName=>$v) {
 				if (is_array($v)) {
-					foreach ($v as &$vv) {
-						if (!is_numeric($vv)) {
-							$vv = $this->quote( $vv );
-						}
-					}
+					$v = $this->quote( $v );
 					$expr = $queryBuilder->expr()->in($colName, $v );
 					if ($uids = \nn\t3::Arrays($v)->intExplode()) {
 						$this->orderBy( $queryBuilder, ["{$table}.{$colName}"=>$uids] );
@@ -248,6 +243,63 @@ class Db implements SingletonInterface {
 		return $rows;
 	}
 
+
+	/**
+	 * Findet ALLE Einträge, die in der Spalte `$column` einen Wert aus dem Array `$values` enthält.	 
+	 * Funktioniert auch, wenn das Frontend noch nicht initialisiert wurden.
+	 * Alias zu `\nn\t3::Db()->findByValues()`
+	 * 
+	 * ``` 
+	 * // SELECT * FROM fe_users WHERE uid IN (1,2,3)
+	 * \nn\t3::Db()->findIn('fe_users', 'uid', [1,2,3]);
+	 * ```
+	 * @param string $table
+	 * @param string $column
+	 * @param array $values
+	 * @param boolean $ignoreEnableFields
+	 */
+	public function findIn( $table = '', $column = '', $values = [], $ignoreEnableFields = false ) {
+		return $this->findByValues( $table, [$column=>$values], false, $ignoreEnableFields );
+	}
+
+	/**
+	 * Umkehrung zu `\nn\t3::Db()->findIn()`:
+	 * 
+	 * Findet ALLE Einträge, die in der Spalte `$column` NICHT einen Wert aus dem Array `$values` enthält.	 
+	 * Funktioniert auch, wenn das Frontend noch nicht initialisiert wurden.
+	 * 
+	 * ``` 
+	 * // SELECT * FROM fe_users WHERE uid NOT IN (1,2,3)
+	 * \nn\t3::Db()->findNotIn('fe_users', 'uid', [1,2,3]);
+	 * ```
+	 * @param string $table
+	 * @param string $colName
+	 * @param array $values
+	 * @param boolean $ignoreEnableFields
+	 */
+	public function findNotIn( $table = '', $colName = '', $values = [], $ignoreEnableFields = false ) {
+
+		$queryBuilder = $this->getQueryBuilder( $table );
+		$queryBuilder->select('*')->from( $table );
+
+		// Alle Einschränkungen z.B. hidden oder starttime / endtime entfernen?
+		if ($ignoreEnableFields) {
+			$queryBuilder->getRestrictions()->removeAll();
+		}
+
+		// "deleted" IMMER berücksichtigen!
+		if ($deleteCol = $this->getDeleteColumn( $table )) {
+			$queryBuilder->andWhere( $queryBuilder->expr()->eq($deleteCol, 0) );	
+		}
+		
+		$values = $this->quote( $values );
+
+		$expr = $queryBuilder->expr()->notIn( $colName, $values );
+		$queryBuilder->andWhere( $expr );
+
+		$rows = $queryBuilder->execute()->fetchAll();
+		return $rows;
+	}
 
 	/**
 	 * Sortierung für ein Repository oder einen Query setzen.
@@ -583,18 +635,30 @@ class Db implements SingletonInterface {
 
 	/**
 	 * Ein Ersatz für die `mysqli_real_escape_string()` Methode.
+	 * 
 	 * Sollte nur im Notfall bei Low-Level Queries verwendet werden. Besser ist es,
 	 * preparedStatements zu verwenden.
 	 * 
 	 * Funktioniert nur bei SQL, nicht bei DQL.
 	 * ```
-	 * $sword = \nn\t3::Db()->quote($sword);
+	 * $sword = \nn\t3::Db()->quote('test');			// => 'test'
+	 * $sword = \nn\t3::Db()->quote("test';SET");		// => 'test\';SET'
+	 * $sword = \nn\t3::Db()->quote([1, 'test', '2']);  // => [1, "'test'", '2']
 	 * $sword = \nn\t3::Db()->quote('"; DROP TABLE fe_user;#');
 	 * ```
-	 * @return string
+	 * @param string|array $value
+	 * @return string|array
 	 */
-	public function quote( $str = '') {
-		return $this->getConnection()->quote( $str );
+	public function quote( $value = '' ) {
+		if (is_array($value)) {
+			foreach ($value as &$val) {
+				if (!is_numeric($val)) {
+					$val = $this->quote($val);
+				}
+			}
+			return $value;
+		}
+		return $this->getConnection()->quote( $value );
 	}
 
 	/**
