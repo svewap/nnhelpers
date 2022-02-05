@@ -213,14 +213,27 @@ class Registry implements SingletonInterface {
 	 * Daten in dieser Tabelle bleiben über die Session hinaus erhalten.
 	 * Ein Scheduler-Job kann z.B. speichern, wann er das letzte Mal
 	 * ausgeführt wurde.
+	 * 
+	 * Arrays werden per default rekursiv zusammengeführt / gemerged:
 	 * ```
-	 * \nn\t3::Registry()->set( 'nnsite', 'lastRun', ['test'=>'ok'] );
+	 * \nn\t3::Registry()->set( 'nnsite', 'lastRun', ['eins'=>'1'] );
+	 * \nn\t3::Registry()->set( 'nnsite', 'lastRun', ['zwei'=>'2'] );
+	 * 
+	 * \nn\t3::Registry()->get( 'nnsite', 'lastRun' ); // => ['eins'=>1, 'zwei'=>2]
+	 * ```
+	 *  
+	 * Mit `true` am Ende werden die vorherigen Werte gelöscht:
+	 * ```
+	 * \nn\t3::Registry()->set( 'nnsite', 'lastRun', ['eins'=>'1'] );
+	 * \nn\t3::Registry()->set( 'nnsite', 'lastRun', ['zwei'=>'2'], true );
+	 *
+	 * \nn\t3::Registry()->get( 'nnsite', 'lastRun' ); // => ['zwei'=>2]
 	 * ```
 	 * @return void
 	 */
-	public function set ( $extName = '', $path = '', $settings = [] ) {
+	public function set ( $extName = '', $path = '', $settings = [], $clear = false ) {
 		$registry = GeneralUtility::makeInstance( CoreRegistry::class );
-		if (is_array($settings)) {
+		if (!$clear && is_array($settings)) {
 			$curSettings = $this->get( $extName, $path ) ?: [];
 			$settings = \nn\t3::Arrays( $curSettings )->merge( $settings, true, true );
 		}
