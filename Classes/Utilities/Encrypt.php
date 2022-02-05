@@ -138,7 +138,7 @@ class Encrypt implements SingletonInterface {
 	 * Session-Hash für `fe_sessions.ses_id` holen.
 	 * Enspricht dem Wert, der für den Cookie `fe_typo_user` in der Datenbank gespeichert wird.
 	 * 
-	 * In TYPO3 < v11 wird hier ein unveränderter Wert zurückgegeben. Ab TYPO3 v11 wird die Session-ID im 
+	 * In TYPO3 < v10 wird hier ein unveränderter Wert zurückgegeben. Ab TYPO3 v10 wird die Session-ID im 
 	 * Cookie `fe_typo_user` nicht mehr direkt in der Datenbank gespeichert, sondern gehashed.
 	 * Siehe: `TYPO3\CMS\Core\Session\Backend\DatabaseSessionBackend->hash()`.
 	 * ```
@@ -155,7 +155,13 @@ class Encrypt implements SingletonInterface {
 	 * @return string
 	 */
 	public function hashSessionId( $sessionId = null ) {
-		if (\nn\t3::t3Version() < 11) return $sessionId;
+		if (\nn\t3::t3Version() < 10) {
+			return $sessionId;
+		}
+		if (\nn\t3::t3Version() == 10) {
+			$key = sha1($GLOBALS['TYPO3_CONF_VARS']['SYS']['encryptionKey'] . 'core-session-backend');
+            return hash_hmac('md5', $sessionId, $key);
+		}
 		$key = sha1($GLOBALS['TYPO3_CONF_VARS']['SYS']['encryptionKey'] . 'core-session-backend');
 		return hash_hmac('sha256', $sessionId, $key);
 	}
