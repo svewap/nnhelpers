@@ -229,7 +229,7 @@ class Registry implements SingletonInterface {
 	 *
 	 * \nn\t3::Registry()->get( 'nnsite', 'lastRun' ); // => ['zwei'=>2]
 	 * ```
-	 * @return void
+	 * @return array
 	 */
 	public function set ( $extName = '', $path = '', $settings = [], $clear = false ) {
 		$registry = GeneralUtility::makeInstance( CoreRegistry::class );
@@ -238,6 +238,7 @@ class Registry implements SingletonInterface {
 			$settings = \nn\t3::Arrays( $curSettings )->merge( $settings, true, true );
 		}
 		$registry->set( $extName,  $path, $settings );
+		return $settings;
 	}
 
 	/**

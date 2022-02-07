@@ -52,7 +52,7 @@ class Log implements SingletonInterface {
 			'log_data'		=> serialize($data),
 			'error'			=> $severity == 'ERROR' ? 1 : 0,
 			'tstamp'		=> time(),
-			'IP'			=> $_SERVER['REMOTE_ADDR'],
+			'IP'			=> $_SERVER['REMOTE_ADDR'] ?? '',
 		]);
 	}
 

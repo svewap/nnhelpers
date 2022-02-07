@@ -290,6 +290,7 @@ class Db implements SingletonInterface
 	 */
 	public function findIn( $table = '', $column = '', $values = [], $ignoreEnableFields = false ) 
 	{
+		if (!$values) return [];
 		return $this->findByValues( $table, [$column=>$values], false, $ignoreEnableFields );
 	}
 
@@ -632,8 +633,15 @@ class Db implements SingletonInterface
 	 * 
 	 * Löschen eines Datensatzes per Tabellenname und uid oder einem beliebigen Constraint:
 	 * ```
+	 * // Löschen anhand der uid
 	 * \nn\t3::Db()->delete('table', $uid);
+	 * 
+	 * // Löschen anhand eines eigenen Feldes
 	 * \nn\t3::Db()->delete('table', ['uid_local'=>$uid]);
+	 * 
+	 * // Eintrag komplett und unwiderruflich löschen (nicht nur per Flag deleted = 1 entfernen)
+	 * \nn\t3::Db()->delete('table', $uid, true);
+	 * 
 	 * ```
 	 * 
 	 * Löschen eines Datensatzes per Model:
