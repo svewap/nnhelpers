@@ -34,6 +34,8 @@ class Log implements SingletonInterface {
 		$severity = strtoupper( $severity );
 		$logLevel = constant( "\TYPO3\CMS\Core\Log\LogLevel::$severity" );
 
+		$type = $severity == 'ERROR' ? 5 : 4;	// 4 = type: EXTENSION
+
 		// Die Core-Methode ist schön, allerdings nur, wenn man wirklich diese Flexibiltät braucht.
 		// Leider sind die Log-Einträge mit dem Core DatabaseWriter nicht im Backend sichtbar.
 		// Wir wollen nur einen einfach Eintrag in sys_log haben und nutzen einen simplen INSERT
@@ -46,7 +48,7 @@ class Log implements SingletonInterface {
 			'details' 		=> "[{$extName}] {$message} " . print_r( $data, true ),
 			'action' 		=> $data['action'] ?? '',
 			'level'			=> $logLevel,
-			'type'			=> 4,	// 4 = type: EXTENSION
+			'type'			=> $type,
 			'log_data'		=> serialize($data),
 			'error'			=> $severity == 'ERROR' ? 1 : 0,
 			'tstamp'		=> time(),
