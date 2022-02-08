@@ -651,11 +651,14 @@ class Fal implements SingletonInterface {
 	 * Falls nicht, wird ein neuer Storage angelegt.
 	 * ```
 	 * \nn\t3::Fal()->createSysFile( 'fileadmin/bild.jpg' );
+	 * \nn\t3::Fal()->createSysFile( '/var/www/mysite/fileadmin/bild.jpg' );
 	 * ```
 	 * @return false|\TYPO3\CMS\Core\Resource\File
 	 */
 	public function createSysFile ( $file, $autoCreateStorage = true ) {
 	
+		$file = \nn\t3::File()->stripPathSite( $file );
+
 		$storage = \nn\t3::File()->getStorage( $file, $autoCreateStorage );
 		if (!$storage) return false;
 
