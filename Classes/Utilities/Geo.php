@@ -3,7 +3,6 @@
 namespace Nng\Nnhelpers\Utilities;
 
 use TYPO3\CMS\Core\SingletonInterface;
-use TYPO3\CMS\Core\Resource\ResourceStorage;
 
 /**
  * Berechnungen und Konvertieren von Geopositionen und Daten
@@ -11,14 +10,76 @@ use TYPO3\CMS\Core\Resource\ResourceStorage;
 class Geo implements SingletonInterface {
    
 	/**
-	 * Adressdaten in Geo-Koordinaten umwandeln.
-	 * Erfordert zur Zeit (noch) die Extension `nnaddress`.
+	 * 	@var mixed
+	 */
+	protected $config;
+
+	/**
+	 * Konfiguration für spätere Requests festlegen.
+	 * 
 	 * ```
-	 * \nn\t3::Geo()->getCoordinates( $address );
+	 * \nn\t3::Geo( $myApiKey )->getCoordinates('...');
+	 * \nn\t3::Geo(['apiKey'=>$myApiKey])->getCoordinates('...');
 	 * ```
+	 * @param string|array $config
+	 * @return self
+	 */
+	public function __construct( $config = [] )
+	{
+		if ($config && is_string($config)) {
+			$config = ['apiKey' => $config];
+		}
+		$this->config = $config ?: [];
+		return $this;	
+	}
+
+	/**
+	 * Api-Key für Methoden in dieser Klasse holen.
+	 * Der Api-Key kann entweder beim Initialisieren von `\nn\t3::Geo()` angegeben werden
+	 * oder im Extension Manager für `nnhelpers`.
+	 * ```
+	 * \nn\t3::Geo(['apiKey'=>'...'])->getCoordinates('Blumenstrasse 2, 65189 Wiesbaden');
+	 * ```
+	 * @return string 
+	 */
+	public function getApiKey() {
+		$apiKey = $this->config['apiKey'] ?? \nn\t3::Environment()->getExtConf('nnhelpers')['googleGeoApiKey'] ?? false;
+		return $apiKey;
+	}
+
+	/**
+	 * Adressdaten in Geo-Koordinaten umwandeln (Geo Coding)
+	 * Falls die Extension `nnaddress` installiert ist, wird diese für die Auflösung verwenden.
+	 * 
+	 * ```
+	 * // Abfrage per String, erstes Ergebnis zurückgeben
+	 * \nn\t3::Geo()->getCoordinates( 'Blumenstrasse 2, 65189 Wiesbaden' );
+	 * 
+	 * // Abfrage per Array
+	 * \nn\t3::Geo()->getCoordinates( ['street'=>'Blumenstrasse 2', 'zip'=>'65189', 'city'=>'Wiesbaden', 'country'=>'DE'] );
+	 * 
+	 * // Alle Ergebnisse zurückgeben
+	 * \nn\t3::Geo()->getCoordinates( 'Blumenstrasse 2, 65189 Wiesbaden', true );
+	 * 
+	 * // Eingenen Api-Key verwenden
+	 * \nn\t3::Geo( $apiKey )->getCoordinates( 'Blumenstrasse 2, 65189 Wiesbaden' );
+	 * 
+	 * ```
+	 * 
+	 * Beispiel für Rückgabe:
+	 * ```
+	 * [
+	 * 	'lat' => 50.0805069,
+	 * 	'lng' => 8.2508677,
+	 * 	'street' => 'Blumenstrass 2',
+	 * 	'zip' => '65189',
+	 * 	'city' => 'Wiesbaden',
+	 * ]
+	 * ```
+	 * @param array|string $address
 	 * @return array
 	 */
-	public function getCoordinates ( $address ) {
+	public function getCoordinates ( $address = '', $returnAll = false ) {
 
 		// EXT:nnaddress verwenden, falls vorhanden
 		if (\nn\t3::Environment()->extLoaded('nnaddress')) {
@@ -27,19 +88,63 @@ class Geo implements SingletonInterface {
 				return $coordinates;
 			}
 		}
-		return [];
+
+		if (is_array($address)) {
+			$address = [
+				'street' 	=> $address['street'] ?? '',
+				'zip' 		=> $address['zip'] ?? '',
+				'city' 		=> $address['city'] ?? '',
+				'country' 	=> $address['country'] ?? '',
+			];
+			$address = "{$address['street']}, {$address['zip']} {$address['city']}, {$address['country']}";
+		}
+			
+		$apiKey = $this->getApiKey();
+		if (!$apiKey) return [];
+
+		$result = \nn\t3::Request()->GET( 
+			'https://maps.googleapis.com/maps/api/geocode/json', [
+				'address' 	=> $address, 
+				'key'		=> $apiKey,
+			]);
+
+		$data = json_decode( $result['content'], true );
+		
+		foreach ($data['results'] as &$result) {
+			$result = $this->parseAddressCompontent( $result );
+		}
+
+		return $returnAll ? $data['results'] : array_shift( $data['results'] );
 	}
 
-	 /**
-	 * Geo-Koordinaten in Adress-Daten umwandeln
+	/**
+	 * Geo-Koordinaten in Adress-Daten umwandeln (Reverse Geo Coding)
+	 * Falls die Extension `nnaddress` installiert ist, wird diese für die Auflösung verwenden.
+	 *
 	 * ```
-	 * \nn\t3::Geo()->getAddress( 50.0804734, 8.2487459 );
+	 * // Erstes Ergebnis zurückgeben
+	 * \nn\t3::Geo()->getAddress( 8.250693320181336, 50.08060702093021 );
+	 * 
+	 * // ALLE Ergebnisse zurückgeben
+	 * \nn\t3::Geo()->getAddress( 8.250693320181336, 50.08060702093021, true );
+	 * 
+	 * // $lng und $lat kann auch als Array übergeben werden 
+	 * \nn\t3::Geo()->getAddress( ['lat'=>50.08060702093021, 'lng'=>8.250693320181336] );
+	 * 
+	 * // Eigenen API-Key verwenden?
+	 * \nn\t3::Geo( $apiKey )->getAddress( 8.250693320181336, 50.08060702093021 );
 	 * ```	
 	 * @return array
 	 */
-	public function getAddress ( $lng = 50.0804734, $lat = 8.2487459, $returnAll = false ) {
+	public function getAddress ( $lng = 8.250693320181336, $lat = 50.08060702093021, $returnAll = false ) {
 
 		$results = [];
+
+		if (is_array($lng)) {
+			$returnAll = $lat;
+			$lat = $lng['lat'] ?? 0;
+			$lng = $lng['lng'] ?? 0;
+		}
 
 		// EXT:nnaddress verwenden, falls vorhanden
 		if (\nn\t3::Environment()->extLoaded('nnaddress')) {
@@ -54,6 +159,23 @@ class Geo implements SingletonInterface {
 					];
 				}
 			}
+
+		} else {
+
+			$apiKey = $this->getApiKey();
+			if (!$apiKey) return [];
+	
+			$result = \nn\t3::Request()->GET( 
+				'https://maps.googleapis.com/maps/api/geocode/json', [
+					'latlng' 	=> $lat . ',' . $lng, 
+					'key'		=> $apiKey,
+				]);
+	
+			$data = json_decode( $result['content'], true );
+			foreach ($data['results'] as &$result) {
+				$result = $this->parseAddressCompontent( $result );
+			}
+			$results = $data['results'];
 		}
 
 		if (!$results) return [];
@@ -61,6 +183,36 @@ class Geo implements SingletonInterface {
 	}
 	
 	
+	/**
+	 * Normalisiert die Angaben aus dem GeoCoding
+	 * 
+	 * @return array
+	 */
+	public function parseAddressCompontent( $row = [] ) {
+ 		
+		if (!$row) $row = [];
+
+		$address = [];
+		foreach ($row['address_components'] as $r) {
+			foreach ($r['types'] as $n) {
+				$address[$n] = $r['long_name'];
+			}
+		}
+		
+		$address['street'] = trim(($address['route'] ?? '') . ' ' . ($address['street_number'] ?? '') );
+		$address['zip'] = $address['postal_code'] ?? '';
+		$address['city'] = $address['locality'] ?? '';
+		$address['formatted_phone_number'] = $address['phone'] = $row['formatted_phone_number'] ?? '';
+		$address['international_phone_number'] = $row['international_phone_number'] ?? '';
+		$address['lat'] = $row['geometry']['location']['lat'] ?? null;
+		$address['lng'] = $row['geometry']['location']['lng'] ?? null;
+		
+		$address['google_id'] = $row['id'] ?? '';
+		$address['google_place_id'] = $row['place_id'] ?? '';
+		
+		return $address;
+	}
+
 	/**
 	 * GPS-Koordinaten in lesbare Latitude/Longitude-Koordinaten umrechnen
 	 * ```

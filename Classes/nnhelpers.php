@@ -161,8 +161,8 @@ class t3 {
 	/**
 	 * @return Geo
 	 */
-	public static function Geo() {
-		return self::injectClass(Geo::class);
+	public static function Geo( $config = [] ) {
+		return new Geo( $config );
 	}
 	
 	/**

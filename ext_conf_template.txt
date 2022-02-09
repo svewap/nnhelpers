@@ -8,6 +8,9 @@ deeplApiKey =
 # cat=Basic; type=string; label=Deep-L API Endpoint
 deeplApiUrl = https://api-free.deepl.com/v2/translate
 
+# cat=Basic; type=string; label=Google Maps / Geocoding API Key
+googleGeoApiKey = 
+
 # cat=Basic; type=boolean; label=DEV-Mode aktivieren
 devModeEnabled = 0
 

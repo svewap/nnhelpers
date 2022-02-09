@@ -160,7 +160,11 @@ class Request implements SingletonInterface {
 	 * Sendet einen POST Request (per CURL) an einen Server.
 	 * ```
 	 * \nn\t3::Request()->POST( 'https://...', ['a'=>'123'] );
+	 * \nn\t3::Request()->POST( 'https://...', ['a'=>'123'], ['Accept-Encoding'=>'gzip, deflate'] );
 	 * ```
+	 * @param string $url
+	 * @param array $postData
+	 * @param array $headers
 	 * @return array
 	 */
 	public function POST( $url = '', $postData = [], $headers = [] ) {
@@ -176,22 +180,91 @@ class Request implements SingletonInterface {
 		
 		$headers[] = 'Content-Type: application/x-www-form-urlencoded';
 		curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-		
+
 		$result = curl_exec($ch);
-		if (curl_errno($ch)) {
+		$httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+		$error = curl_error($ch);
+
+		curl_close($ch);
+
+		if ($httpcode >= 300) {
 			return [
-				'status' 	=> '-1',
-				'error'		=> curl_error($ch),
+				'error'		=> true,
+				'status' 	=> $httpcode,
+				'content'	=> $error,
 			];
 		}
-		curl_close($ch);
 		
 		return [
-			'status' => 200, 
-			'content' => $result
+			'error'		=> false,
+			'status' 	=> 200, 
+			'content' 	=> $result
 		];
 	}
 
+	/**
+	 * Sendet einen GET Request (per curl) an einen Server
+	 * ```
+	 * \nn\t3::Request()->GET( 'https://...', ['a'=>'123'] );
+	 * \nn\t3::Request()->GET( 'https://...', ['a'=>'123'], ['Accept-Encoding'=>'gzip, deflate'] );
+	 * ```
+	 * @param string $url
+	 * @param array $queryParams
+	 * @param array $headers
+	 * @return array
+	 */
+	public function GET( $url = '', $queryParams = [], $headers = [] ) {
+
+		// ['Accept-Encoding'=>'gzip'] --> ['Accept-Encoding: gzip']
+		array_walk( $headers, function (&$v, $k) {
+			if (!is_numeric($k)) $v = $k . ': ' . $v;
+		});
+
+		$url = $this->mergeGetParams($url, $queryParams);
+		$ch = curl_init();
+
+		curl_setopt($ch, CURLOPT_URL, $url );
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
+		curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+		$result = curl_exec($ch);
+		$httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+		$error = curl_error($ch);
+
+		curl_close($ch);
+
+		if ($httpcode >= 300) {
+			return [
+				'error'		=> true,
+				'status' 	=> $httpcode,
+				'content'	=> $error,
+			];
+		}
+		
+		return [
+			'error'		=> false,
+			'status' 	=> 200, 
+			'content' 	=> $result,
+		];
+	}
+
+	/**
+	 * 
+	 */
+	public function mergeGetParams( $url = '', $getParams = [] ) {
+		$parts = parse_url($url);
+		$getP = [];
+		if ($parts['query']) {
+			parse_str($parts['query'], $getP);
+		}
+		$getP = \nn\t3::Arrays()->merge($getP, $getParams);
+		$uP = explode('?', $url);
+		$params = GeneralUtility::implodeArrayForUrl('', $getP);
+		$outurl = $uP[0] . ($params ? '?' . substr($params, 1) : '');
+		return $outurl;
+	}
 
 	/** 
 	 * Den Authorization-Header aus dem Request auslesen.
