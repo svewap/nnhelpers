@@ -98,7 +98,9 @@ class TranslateViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\FlashMessagesView
 		$allowTranslation = $enableApi && $translationsLeft > 0;
 
 		$translationHelper->setEnableApi( $allowTranslation );
-		$GLOBALS['_nnhelpers_numTranslations']++;
+
+		$cachedNumTranslations++;
+		$GLOBALS['_nnhelpers_numTranslations'] = $cachedNumTranslations;
 
 		if ($maxTranslations) {
 			$translationHelper->setMaxTranslations( $maxTranslations );

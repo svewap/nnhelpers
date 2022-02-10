@@ -5,7 +5,16 @@ namespace Nng\Nnhelpers\Utilities;
 use TYPO3\CMS\Core\SingletonInterface;
 
 /**
- * Berechnungen und Konvertieren von Geopositionen und Daten
+ * Berechnungen und Konvertieren von Geopositionen und Daten.
+ * 
+ * Zum Umwandeln von Geo-Koordinaten in Adressdaten und umgekehrt, muss ein Google Maps ApiKey
+ * erstellt werden und im Extension Manager für nnhelpers hinterlegt werden. Alternativ kann
+ * beim Initialisieren ein eigener Api-Key angegeben werden:
+ * 
+ * ```
+ * nn\t3::Geo( $myApiKey )->getCoordinates('...');
+ * ```
+ * 
  */
 class Geo implements SingletonInterface {
    
@@ -38,7 +47,8 @@ class Geo implements SingletonInterface {
 	 * Der Api-Key kann entweder beim Initialisieren von `\nn\t3::Geo()` angegeben werden
 	 * oder im Extension Manager für `nnhelpers`.
 	 * ```
-	 * \nn\t3::Geo(['apiKey'=>'...'])->getCoordinates('Blumenstrasse 2, 65189 Wiesbaden');
+	 * \nn\t3::Geo( $myApiKey )->getCoordinates('Blumenstrasse 2, 65189 Wiesbaden');
+	 * \nn\t3::Geo(['apiKey'=>$myApiKey])->getCoordinates('Blumenstrasse 2, 65189 Wiesbaden');
 	 * ```
 	 * @return string 
 	 */
@@ -74,6 +84,7 @@ class Geo implements SingletonInterface {
 	 * 	'street' => 'Blumenstrass 2',
 	 * 	'zip' => '65189',
 	 * 	'city' => 'Wiesbaden',
+	 * 	...
 	 * ]
 	 * ```
 	 * @param array|string $address

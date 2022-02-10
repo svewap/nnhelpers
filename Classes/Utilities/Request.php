@@ -169,6 +169,12 @@ class Request implements SingletonInterface {
 	 */
 	public function POST( $url = '', $postData = [], $headers = [] ) {
 
+		// ['Accept-Encoding'=>'gzip'] --> ['Accept-Encoding: gzip']
+		array_walk( $headers, function (&$v, $k) {
+			if (!is_numeric($k)) $v = $k . ': ' . $v;
+		});
+		
+		$headers = array_values($headers);
 		$ch = curl_init();
 		
 		curl_setopt($ch, CURLOPT_URL, $url);
@@ -220,6 +226,7 @@ class Request implements SingletonInterface {
 			if (!is_numeric($k)) $v = $k . ': ' . $v;
 		});
 
+		$headers = array_values($headers);
 		$url = $this->mergeGetParams($url, $queryParams);
 		$ch = curl_init();
 
@@ -227,7 +234,7 @@ class Request implements SingletonInterface {
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-		curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+		curl_setopt($ch, CURLOPT_HTTPHEADER, $headers );
 
 		$result = curl_exec($ch);
 		$httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
