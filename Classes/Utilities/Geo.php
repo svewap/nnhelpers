@@ -71,6 +71,9 @@ class Geo implements SingletonInterface {
 	 * // Alle Ergebnisse zurückgeben
 	 * \nn\t3::Geo()->getCoordinates( 'Blumenstrasse 2, 65189 Wiesbaden', true );
 	 * 
+	 * // Alle Ergebnisse in English zurückgeben
+	 * \nn\t3::Geo()->getCoordinates( 'Blumenstrasse 2, 65189 Wiesbaden', true, 'en' );
+	 * 
 	 * // Eingenen Api-Key verwenden
 	 * \nn\t3::Geo( $apiKey )->getCoordinates( 'Blumenstrasse 2, 65189 Wiesbaden' );
 	 * 
@@ -90,7 +93,7 @@ class Geo implements SingletonInterface {
 	 * @param array|string $address
 	 * @return array
 	 */
-	public function getCoordinates ( $address = '', $returnAll = false ) {
+	public function getCoordinates ( $address = '', $returnAll = false, $language = 'de' ) {
 
 		// EXT:nnaddress verwenden, falls vorhanden
 		if (\nn\t3::Environment()->extLoaded('nnaddress')) {
@@ -117,10 +120,14 @@ class Geo implements SingletonInterface {
 			'https://maps.googleapis.com/maps/api/geocode/json', [
 				'address' 	=> $address, 
 				'key'		=> $apiKey,
+				'language'	=> $language,
 			]);
 
 		$data = json_decode( $result['content'], true );
-		
+		if ($error = $data['error_message'] ?? false) {
+			\nn\t3::Exception( '\nn\t3::Geo()->getCoordinates() : ' . $error );
+		}
+
 		foreach ($data['results'] as &$result) {
 			$result = $this->parseAddressCompontent( $result );
 		}
@@ -139,15 +146,33 @@ class Geo implements SingletonInterface {
 	 * // ALLE Ergebnisse zurückgeben
 	 * \nn\t3::Geo()->getAddress( 8.250693320181336, 50.08060702093021, true );
 	 * 
+	 * // ALLE Ergebnisse in Englisch zurückgeben
+	 * \nn\t3::Geo()->getAddress( 8.250693320181336, 50.08060702093021, true, 'en' );
+	 * 
 	 * // $lng und $lat kann auch als Array übergeben werden 
 	 * \nn\t3::Geo()->getAddress( ['lat'=>50.08060702093021, 'lng'=>8.250693320181336] );
 	 * 
 	 * // Eigenen API-Key verwenden?
 	 * \nn\t3::Geo( $apiKey )->getAddress( 8.250693320181336, 50.08060702093021 );
-	 * ```	
+	 * ```
+	 * 
+	 * Beispiel für Rückgabe:
+	 * ```
+	 * [
+	 * 	'lat' => 50.0805069,
+	 * 	'lng' => 8.2508677,
+	 * 	'street' => 'Blumenstrass 2',
+	 * 	'zip' => '65189',
+	 * 	'city' => 'Wiesbaden',
+	 * 	...
+	 * ]
+	 * ```
+	 * @param array|float $lng
+	 * @param float|bool $lat
+	 * @param bool $returnAll
 	 * @return array
 	 */
-	public function getAddress ( $lng = 8.250693320181336, $lat = 50.08060702093021, $returnAll = false ) {
+	public function getAddress ( $lng = 8.250693320181336, $lat = 50.08060702093021, $returnAll = false, $language = 'de' ) {
 
 		$results = [];
 
@@ -180,6 +205,7 @@ class Geo implements SingletonInterface {
 				'https://maps.googleapis.com/maps/api/geocode/json', [
 					'latlng' 	=> $lat . ',' . $lng, 
 					'key'		=> $apiKey,
+					'language'	=> $language,
 				]);
 	
 			$data = json_decode( $result['content'], true );
@@ -195,8 +221,9 @@ class Geo implements SingletonInterface {
 	
 	
 	/**
-	 * Normalisiert die Angaben aus dem GeoCoding
+	 * Normalisiert ein Ergebnis aus dem GeoCoding
 	 * 
+	 * @param array $row
 	 * @return array
 	 */
 	public function parseAddressCompontent( $row = [] ) {
@@ -204,12 +231,16 @@ class Geo implements SingletonInterface {
 		if (!$row) $row = [];
 
 		$address = [];
+		$addressShort = [];
+
 		foreach ($row['address_components'] as $r) {
 			foreach ($r['types'] as $n) {
 				$address[$n] = $r['long_name'];
+				$addressShort[$n] = $r['short_name'];
 			}
 		}
-		
+
+		$address['country_short'] = $addressShort['country'] ?? '';
 		$address['street'] = trim(($address['route'] ?? '') . ' ' . ($address['street_number'] ?? '') );
 		$address['zip'] = $address['postal_code'] ?? '';
 		$address['city'] = $address['locality'] ?? '';

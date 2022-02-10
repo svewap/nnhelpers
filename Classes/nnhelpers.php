@@ -442,7 +442,10 @@ class t3 {
 	public static function call ( $funcStr, &$params = [], &$params2 = null, &$params3 = null, &$params4 = null ) {
 		if (!trim($funcStr)) self::Exception("\\nn\\t3::call() - Keine Klasse angegeben.");
 		
-		list($class, $method) = explode( '->', $funcStr );
+		$useStaticCall =strpos($funcStr, '::') !== false;
+		$delimiter = $useStaticCall ? '::' : '->';
+
+		list($class, $method) = explode( $delimiter, $funcStr );
 		if (!class_exists($class)) self::Exception("\\nn\\t3::call({$class}) - Klasse {$class} existiert nicht.");
 		
 		$classRef = self::injectClass($class);
@@ -450,6 +453,10 @@ class t3 {
 
 		// $allParams = [&$params, &$params2, &$params3, &$params4];
 		// return $classRef->$method( ...$allParams );
+
+		if ($useStaticCall) {
+			return call_user_func_array([$class, $method], [$params, $params2, $params3, $params4]);
+		}
 
 		if ($params4 != null) return $classRef->$method($params, $params2, $params3, $params4);		
 		if ($params3 != null) return $classRef->$method($params, $params2, $params3);		
