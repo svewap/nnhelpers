@@ -342,6 +342,11 @@ class Db implements SingletonInterface
 	 * ```
 	 * $ordering = ['title' => \TYPO3\CMS\Extbase\Persistence\QueryInterface::ORDER_DESCENDING];
 	 * \nn\t3::Db()->orderBy( $queryOrRepository, $ordering );
+	 *
+	 * // asc und desc können als synonym verwendet werden 
+	 * $ordering = ['title' => 'asc'];
+	 * $ordering = ['title' => 'desc'];
+	 * \nn\t3::Db()->orderBy( $queryOrRepository, $ordering );
 	 * ```
 	 * Kann auch zum Sortieren nach einer Liste von Werten (z.B. `uids`) verwendet werden.
 	 * Dazu wird ein Array für den Wert des einzelnen orderings übergeben:
@@ -368,6 +373,15 @@ class Db implements SingletonInterface
 					}
 					$queryOrRepository->add('orderBy', "FIELD({$colName}," . implode(',', $ascDesc) . ')', true );
 				} else {
+
+					// 'asc' und 'desc' können als Synonym verwendet werden
+					if (strtolower($ascDesc) == 'asc') {
+						$ascDesc = \TYPO3\CMS\Extbase\Persistence\QueryInterface::ORDER_ASCENDING;
+					}
+					if (strtolower($ascDesc) == 'desc') {
+						$ascDesc = \TYPO3\CMS\Extbase\Persistence\QueryInterface::ORDER_DESCENDING;
+					}
+
 					$queryOrRepository->addOrderBy( $colName, $ascDesc );
 				}
 			}
