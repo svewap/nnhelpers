@@ -14,9 +14,6 @@ call_user_func(
 		// Icon registrieren
 		\nn\t3::Registry()->icon('[ext-lower]-plugin', 'EXT:[ext-lower]/Resources/Public/Icons/wizicon.svg');
 
-		// PageTsConfig registrieren
-		\nn\t3::Registry()->addPageConfig('@import "EXT:[ext-lower]/Configuration/TypoScript/page.ts"');
-
 		// Backend-Module registrieren
 		\TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerModule(
 			\nn\t3::Registry()->getVendorExtensionName($extKey),
