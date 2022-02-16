@@ -1140,9 +1140,13 @@ class Db implements SingletonInterface
 		$dcValuesFull = [];
 		foreach ($dcValues as $k=>$v) {
 			if (is_array($v)) {
+				foreach ($v as &$n) {
+					if (!is_numeric($n)) {
+						$n = "'" . addslashes($n) . "'";
+					}
+				}
 				$v = join(',', $v);
-			}
-			if (!is_numeric($v)) {
+			} else if (!is_numeric($v)) {
 				$v = "'" . addslashes($v) . "'";
 			}
 			$dcValuesFull[":{$k}"] = $v;
