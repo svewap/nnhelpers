@@ -1139,6 +1139,9 @@ class Db implements SingletonInterface
 		$dcValues = $query->getParameters();
 		$dcValuesFull = [];
 		foreach ($dcValues as $k=>$v) {
+			if (is_array($v)) {
+				$v = join(',', $v);
+			}
 			if (!is_numeric($v)) {
 				$v = "'" . addslashes($v) . "'";
 			}
