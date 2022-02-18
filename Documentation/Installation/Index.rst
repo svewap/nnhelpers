@@ -50,7 +50,7 @@ This goes in the `ext_emconf.php` of your extension:
       ...
       'constraints' => [
          'depends' => [
-            'nnhelpers' => '1.5.0-0.0.0',
+            'nnhelpers' => '1.6.0-0.0.0',
          ],
       ],
    ];
@@ -62,6 +62,6 @@ And this is the part for the `composer.json` of your extension:
    {
       ...
       "require": {
-         "nng/nnhelpers": "^1.5"
+         "nng/nnhelpers": "^1.6"
       },
    }
