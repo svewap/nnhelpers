@@ -46,8 +46,15 @@ Delete a record by table name and uid or any constraint:
 
 .. code-block:: php
 
+	// Delete by uid.
 	\nn\t3::Db()->delete('table', $uid);
+	
+	// Delete using a custom field
 	\nn\t3::Db()->delete('table', ['uid_local'=>$uid]);
+	
+	// delete the entry completely and irrevocably (not only by flag deleted = 1)
+	\nn\t3::Db()->delete('table', $uid, true);
+	
 
 Deleting a record by model:
 
@@ -429,6 +436,11 @@ Set sorting for a repository or a query.
 .. code-block:: php
 
 	$ordering = ['title' => \TYPO3\CMS\Extbase\Persistence\QueryInterface::ORDER_DESCENDING];
+	\nn\t3::Db()->orderBy( $queryOrRepository, $ordering );
+	
+	// asc and desc can be used as synonyms
+	$ordering = ['title' => 'asc'];
+	$ordering = ['title' => 'desc'];
 	\nn\t3::Db()->orderBy( $queryOrRepository, $ordering );
 
 Can also be used to sort by a list of values (e.g. ``uids``).

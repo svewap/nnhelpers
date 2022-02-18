@@ -63,46 +63,46 @@ Inserts options from TypoScript into a FlexForm or TCA for selection.
 \\nn\\t3::Flexform()->insertOptions(``$config, $a = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Inserts options from TypoScript into a FlexForm or TCA for selection.
+Inserts options from TypoScript into a FlexForm or TCA for selection
 
 .. code-block:: php
 
-	<config>
-	    <type>select</type>
-	    <items type="array"></items>
-	    <itemsProcFunc>nn\t3\Flexform->insertOptions</itemsProcFunc>
-	    <typoscriptPath>plugin.tx_extname.settings.templates</typoscriptPath>
-	    <!-- Alternatively: Load settings from PageTSConfig: -->
-	    <pageconfigPath>tx_extname.colors</pageconfigPath>
-	    <insertEmpty>1</insertEmpty>
-	    <hideKey>1</hideKey>
-	</config>
+	
+	    select
+	    
+	    nn\t3\Flexform->insertOptions
+	    plugin.tx_extname.settings.templates
+	    
+	    tx_extname.colors
+	    1
+	    1
+	
 
-With typoscript, several types of construction are allowed:
+With typoscript, different types of structure are allowed:
 
 .. code-block:: php
 
 	plugin.tx_extname.settings.templates {
-	    # direct key => label pairs.
+	    # direct key => label pairs
 	    small = small design
 	    # ... or: label set in subarray.
 	    mid {
 	        label = Mid Design
 	    }
-	    # ... or: Key set in subarray, practical e.g. for CSS classes
+	    # ... or: key set in subarray, practical e.g. for CSS classes
 	    10 {
-	        label = Big Design
+	        label = big design
 	        classes = big big-thing
 	    }
 	    # ... or a userFunc. Returns one of the variants above as an array
-	    20 {
+	    30 {
 	        userFunc = nn\t3\Flexform->getOptions
 	    }
 	}
 
 The selection can be limited to specific controller actions in the TypoScript.
-In this example, the "Yellow" option is only displayed if in the ``switchableControllerAction``
-| ``Category->list`` has been selected.
+In this example, the "Yellow" option will only be displayed if in the ``switchableControllerAction``
+| ``Category->list`` was selected.
 
 .. code-block:: php
 

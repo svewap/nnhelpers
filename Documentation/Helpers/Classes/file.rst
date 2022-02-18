@@ -84,6 +84,19 @@ Example:
 
 | ``@return string``
 
+\\nn\\t3::File()->addSuffix(``$filename = NULL, $newSuffix = ''``);
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+Replaces the suffix for a file name.
+
+.. code-block:: php
+
+	\nn\t3::File()->suffix('image', 'jpg'); // => image.jpg
+	\nn\t3::File()->suffix('image.png', 'jpg'); // => image.jpg
+	\nn\t3::File()->suffix('path/to/image.png', 'jpg'); // => path/to/image.jpg
+
+| ``@return string``
+
 \\nn\\t3::File()->cleanFilename(``$filename = ''``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
@@ -562,6 +575,19 @@ Returns the suffix of the file
 .. code-block:: php
 
 	\nn\t3::File()->suffix('image.jpg'); => returns 'jpg'
+
+| ``@return string``
+
+\\nn\\t3::File()->suffixForMimeType(``$mime = ''``);
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+Returns the suffix for a specific mime type / content type.
+Very reduced version Ã¢ only a few types covered.
+Extensive version: https://bit.ly/3B9KrNA
+
+.. code-block:: php
+
+	\nn\t3::File()->suffixForMimeType('image/jpeg'); => returns 'jpg'
 
 | ``@return string``
 

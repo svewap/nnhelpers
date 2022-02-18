@@ -159,8 +159,7 @@ An automatic password update could look like this in a manual FE user authentica
 Get session hash for ``fe_sessions.ses_id``
 Corresponds to the value stored in the database for the cookie ``fe_typo_user``
 
-In TYPO3 v11, an unchanged value is returned here. As of TYPO3 v11, the session ID is stored in the
-Cookie ``fe_typo_user`` is no longer stored directly in the database, but hashed.
+In TYPO3 fe_typo_user is no longer stored directly in the database, but hashed.
 See: ``TYPO3\CMS\Core\Session\Backend\DatabaseSessionBackend->hash()``.
 
 .. code-block:: php

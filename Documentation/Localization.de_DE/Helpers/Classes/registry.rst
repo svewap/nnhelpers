@@ -133,7 +133,7 @@ als Key verwendet wird.
 
 | ``@return array``
 
-\\nn\\t3::Registry()->plugin(``$vendorName = '', $pluginName = '', $title = '', $icon = ''``);
+\\nn\\t3::Registry()->plugin(``$vendorName = '', $pluginName = '', $title = '', $icon = '', $tcaGroup = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
 Ein Plugin registrieren zur Auswahl über das Dropdown ``CType`` im Backend.
@@ -143,6 +143,35 @@ In ``Configuration/TCA/Overrides/tt_content.php`` nutzen – oder ``ext_tables.p
 
 	\nn\t3::Registry()->plugin( 'nncalendar', 'nncalendar', 'Kalender', 'EXT:pfad/zum/icon.svg' );
 	\nn\t3::Registry()->plugin( 'Nng\Nncalendar', 'nncalendar', 'Kalender', 'EXT:pfad/zum/icon.svg' );
+
+| ``@return void``
+
+\\nn\\t3::Registry()->pluginGroup(``$vendorName = '', $groupLabel = '', $plugins = []``);
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+Vereinfacht das Registrieren einer Liste von Plugins, die im ``list_type`` Dropdown zu einer
+Gruppe zusammengefasst werden.
+
+In ``Configuration/TCA/Overrides/tt_content.php`` nutzen:
+
+.. code-block:: php
+
+	\nn\t3::Registry()->pluginGroup(
+	    'Nng\Myextname',
+	    'LLL:EXT:myextname/Resources/Private/Language/locallang_db.xlf:pi_group_name',
+	    [
+	        'list' => [
+	            'title'     => 'LLL:EXT:myextname/Resources/Private/Language/locallang_db.xlf:pi_list.name',
+	            'icon'      => 'EXT:myextname/Resources/Public/Icons/Extension.svg',
+	            'flexform'  => 'FILE:EXT:myextname/Configuration/FlexForm/list.xml',
+	        ],
+	        'show' => [
+	            'title'     => 'LLL:EXT:myextname/Resources/Private/Language/locallang_db.xlf:pi_show.name',
+	            'icon'      => 'EXT:myextname/Resources/Public/Icons/Extension.svg',
+	            'flexform'  => 'FILE:EXT:myextname/Configuration/FlexForm/show.xml'
+	        ],
+	    ]
+	);
 
 | ``@return void``
 
@@ -197,5 +226,5 @@ Mit ``true`` am Ende werden die vorherigen Werte gelöscht:
 	
 	\nn\t3::Registry()->get( 'nnsite', 'lastRun' ); // => ['zwei'=>2]
 
-| ``@return void``
+| ``@return array``
 

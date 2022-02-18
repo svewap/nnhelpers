@@ -36,8 +36,10 @@ Login eines FE-Users anhand der Usernamens und Passwortes
 Login eines FE-Users anhand einer Session-ID.
 
 Die Session-ID entspricht dem TYPO3 Cookie ``fe_typo_user``. In der Regel gibt es für
-jede Fe-User-Session einen Eintrag in der Tabelle ``fe_sessions``. Bis zu Typo3 v11 entsprach
-die Spalte ``ses_id`` exakt dem Cookie-Wert. Ab Typo3 v11 wird der Wert zusätzlich gehashed.
+jede Fe-User-Session einen Eintrag in der Tabelle ``fe_sessions``. Bis zu Typo3 v10 entsprach
+die Spalte ``ses_id`` exakt dem Cookie-Wert.
+
+Ab Typo3 v10 wird der Wert zusätzlich gehashed.
 
 Siehe auch ``\nn\t3::Encrypt()->hashSessionId( $sessionId );``
 

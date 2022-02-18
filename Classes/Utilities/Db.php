@@ -912,7 +912,7 @@ class Db implements SingletonInterface
 	public function getDeleteColumn ( $table = '' ) 
 	{
 		$ctrl = $GLOBALS['TCA'][$table]['ctrl'] ?? [];
-		return $ctrl['delete'] ?: false;
+		return $ctrl['delete'] ?? false;
 	}
 	
 	/**

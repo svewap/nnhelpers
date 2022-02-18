@@ -133,7 +133,7 @@ is used as the key.
 
 | ``@return array``
 
-\\nn\\t3::Registry()->plugin(``$vendorName = '', $pluginName = '', $title = '', $icon = ''``);
+\\nn\\t3::Registry()->plugin(``$vendorName = '', $pluginName = '', $title = '', $icon = '', $tcaGroup = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
 Register a plugin to select – using the ``CType`` dropdown in the backend.
@@ -143,6 +143,35 @@ In ``Configuration/TCA/Overrides/tt_content.php`` use – or ``ext_tables.php`` 
 
 	\nn\t3::Registry()->plugin( 'nncalendar', 'nncalendar', 'Calendar', 'EXT:path/to/icon.svg' );
 	\nn\t3::Registry()->plugin( 'Nng\Nncalendar', 'nncalendar', 'Calendar', 'EXT:path/to/icon.svg' );
+
+| ``@return void``
+
+\\nn\\t3::Registry()->pluginGroup(``$vendorName = '', $groupLabel = '', $plugins = []``);
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+Simplifies the process of registering a list of plugins, which are combined into a
+Group.
+
+Use in ``Configuration/TCA/Overrides/tt_content.php``:
+
+.. code-block:: php
+
+	\nn\t3::Registry()->pluginGroup(
+	    'Nng\Myextname',
+	    'LLL:EXT:myextname/Resources/Private/Language/locallang_db.xlf:pi_group_name',
+	    [
+	        'list' => [
+	            'title' => 'LLL:EXT:myextname/Resources/Private/Language/locallang_db.xlf:pi_list.name',
+	            'icon' => 'EXT:myextname/Resources/Public/Icons/Extension.svg',
+	            'flexform' => 'FILE:EXT:myextname/Configuration/FlexForm/list.xml'
+	        ],
+	        'show' => [
+	            'title' => 'LLL:EXT:myextname/Resources/Private/Language/locallang_db.xlf:pi_show.name',
+	            'icon' => 'EXT:myextname/Resources/Public/Icons/Extension.svg',
+	            'flexform' => 'FILE:EXT:myextname/Configuration/FlexForm/show.xml'
+	        ],
+	    ]
+	);
 
 | ``@return void``
 
@@ -197,5 +226,5 @@ With ``true`` at the end, the previous values will be deleted:
 	
 	\nn\t3::Registry()->get( 'nnsite', 'lastRun' ); // => ['two'=>2]
 
-| ``@return void``
+| ``@return array``
 

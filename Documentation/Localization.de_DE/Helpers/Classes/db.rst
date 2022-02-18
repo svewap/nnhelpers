@@ -45,8 +45,15 @@ Löschen eines Datensatzes per Tabellenname und uid oder einem beliebigen Constr
 
 .. code-block:: php
 
+	// Löschen anhand der uid
 	\nn\t3::Db()->delete('table', $uid);
+	
+	// Löschen anhand eines eigenen Feldes
 	\nn\t3::Db()->delete('table', ['uid_local'=>$uid]);
+	
+	// Eintrag komplett und unwiderruflich löschen (nicht nur per Flag deleted = 1 entfernen)
+	\nn\t3::Db()->delete('table', $uid, true);
+	
 
 Löschen eines Datensatzes per Model:
 
@@ -425,6 +432,11 @@ Sortierung für ein Repository oder einen Query setzen.
 .. code-block:: php
 
 	$ordering = ['title' => \TYPO3\CMS\Extbase\Persistence\QueryInterface::ORDER_DESCENDING];
+	\nn\t3::Db()->orderBy( $queryOrRepository, $ordering );
+	
+	// asc und desc können als synonym verwendet werden
+	$ordering = ['title' => 'asc'];
+	$ordering = ['title' => 'desc'];
 	\nn\t3::Db()->orderBy( $queryOrRepository, $ordering );
 
 Kann auch zum Sortieren nach einer Liste von Werten (z.B. ``uids``) verwendet werden.

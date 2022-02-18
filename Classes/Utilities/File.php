@@ -53,8 +53,9 @@ class File implements SingletonInterface {
 		} else if (is_array($obj) && $url = ($obj['publicUrl'] ?? false)) {
 			// $url kann genutzt werden!
 		} else if (is_a($obj, \TYPO3\CMS\Core\Resource\Folder::class, true)) {
-			$url = ltrim($obj->getPublicUrl(), '/');
+			$url = $obj->getPublicUrl();
 		}
+		$url = ltrim($url, '/');
 		return !$absolute ? $url : $this->absUrl( $url );
 	}
 
@@ -1009,7 +1010,7 @@ class File implements SingletonInterface {
 		if ($fileObj instanceof \TYPO3\CMS\Core\Resource\File) {
 
 			// sys_file-Object
-			$filename = $file->getPublicUrl();
+			$filename = $fileObj->getPublicUrl();
 
 		} else if (is_a($fileObj, \TYPO3\CMS\Extbase\Domain\Model\FileReference::class)) {
 
