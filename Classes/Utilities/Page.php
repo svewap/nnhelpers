@@ -196,6 +196,21 @@ class Page implements SingletonInterface {
 	 * \nn\t3::Page()->getLink( $pid, $params, true );
 	 * \nn\t3::Page()->getLink( 'david@99grad.de' )
 	 * ```
+	 * 
+	 * Beispiel zum Generieren eines Links an einen Controller:
+	 * ```
+	 * $newsDetailPid = 123;
+	 * $newsArticleUid = 45;
+	 *  
+	 * $link = \nn\t3::Page()->getLink($newsDetailPid, [
+     * 	'tx_news_pi1' => [
+	 * 		'action'        => 'detail',
+	 * 		'controller'    => 'News',
+	 * 		'news'          => $newsArticleUid,
+	 * 	]
+	 * ]);
+	 * ```
+	 * 
 	 * @return string
 	 */
     public function getLink ( $pidOrParams = null, $params = [], $absolute = false ) {
@@ -207,23 +222,57 @@ class Page implements SingletonInterface {
 			$absolute = true;
 		}
 
-		/*
-			// ToDo: Check this for v9+ - might make things easier
-		 	$site = GeneralUtility::makeInstance(SiteFinder::class)->getSiteByPageId( $pid );
-			$url = $site->getRouter()->generateUri( 2, $params );
-		 */
-
 		if (!\nn\t3::Environment()->isFrontend()) {
-			\nn\t3::Tsfe()->get();
+			$tsfe = \nn\t3::Tsfe()->get( $pid );
+
+			// Im Scheduler-context vom CLI aus kann es ein Problem geben, das TSFE zu initialisieren
+			// ToDo: Prüfen, ob diese Methode global für alle TYPO3-Versionen funktioniert
+			if (!$tsfe) {
+				if (\nn\t3::t3Version() > 9) {
+					$site = GeneralUtility::makeInstance(\TYPO3\CMS\Core\Site\SiteFinder::class)->getSiteByPageId( $pid );
+					$uri = $site->getRouter()->generateUri( $pid, $params );
+					return $uri;
+				}
+			}
 		}
 
 		$cObj = \nn\t3::injectClass( \TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer::class );
+
 		$uri = $cObj->typolink_URL([
 			'parameter' => $pid,
 			'forceAbsoluteUrl' => ($absolute == true),
 			'additionalParams' => GeneralUtility::implodeArrayForUrl(NULL, $params),
 		]);
+
 		return $uri;
+	}
+
+	/**
+	 * Link zu einer Action / Controller holen
+	 * ```
+	 * \nn\t3::Page()->getActionLink( $pid, $extName, $pluginName, $controllerName, $actionName, $args );
+	 * ```
+	 * Beispiel für die News-Extension:
+	 * ```
+	 * $newsArticleUid = 45;
+	 * $newsDetailPid = 123;
+	 * \nn\t3::Page()->getActionLink( $newsDetailPid, 'news', 'pi1', 'News', 'detail', ['news'=>$newsArticleUid]);
+	 * ```
+	 * @return string
+	 */
+	public function getActionLink( $pid = null, $extensionName = '', $pluginName = '', $controllerName = '', $actionName = '', $params = [], $absolute = false ) {
+		if (\nn\t3::t3Version() > 9) {
+			$extensionService = \nn\t3::injectClass(\TYPO3\CMS\Extbase\Service\ExtensionService::class);
+			$argumentsPrefix = $extensionService->getPluginNamespace($extensionName, $pluginName);
+			$arguments = [
+				$argumentsPrefix => [
+				  'action' => $actionName,
+				  'controller' => $controllerName,
+				],
+			];
+			$arguments[$argumentsPrefix] = array_merge($arguments[$argumentsPrefix], $params);
+			return $this->getLink( $pid, $arguments, $absolute );
+		}
 	}
 
 	/**
