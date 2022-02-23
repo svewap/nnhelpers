@@ -198,6 +198,8 @@ class Page implements SingletonInterface {
 	 * ```
 	 * 
 	 * Beispiel zum Generieren eines Links an einen Controller:
+	 * 
+	 * __Tipp:__ siehe auch `\nn\t3::Page()->getActionLink()` für eine Kurzversion!
 	 * ```
 	 * $newsDetailPid = 123;
 	 * $newsArticleUid = 45;
@@ -437,7 +439,7 @@ class Page implements SingletonInterface {
 	}
 
 	/**
-	 * HTML-Code in <head> einschleusen
+	 * HTML-Code in `<head>` einschleusen
 	 * Siehe `\nn\t3::Page()->addHeader()` für einfachere Version.
 	 * ```
 	 * \nn\t3::Page()->addHeaderData( '<script src="..."></script>' );
@@ -449,7 +451,7 @@ class Page implements SingletonInterface {
 	}
 	
 	/**
-	 * HTML-Code vor Ende der <body> einschleusen
+	 * HTML-Code vor Ende der `<body>` einschleusen
 	 * Siehe `\nn\t3::Page()->addFooter()` für einfachere Version.
 	 * ```
 	 * \nn\t3::Page()->addFooterData( '<script src="..."></script>' );
@@ -461,7 +463,7 @@ class Page implements SingletonInterface {
 	}
 
 	/**
-	 * JS-Library in <head> einschleusen.
+	 * JS-Library in `<head>` einschleusen.
 	 * ```
 	 * \nn\t3::Page()->addJsLibrary( 'path/to/file.js' );
 	 * ```
@@ -473,7 +475,7 @@ class Page implements SingletonInterface {
 	}
 	
 	/**
-	 * JS-Library am Ende der <body> einschleusen
+	 * JS-Library am Ende der `<body>` einschleusen
 	 * ```
 	 * \nn\t3::Page()->addJsFooterLibrary( 'path/to/file.js' );
 	 * ```
@@ -484,7 +486,7 @@ class Page implements SingletonInterface {
 	}
 
 	/**
-	 * JS-Datei in <head> einschleusen
+	 * JS-Datei in `<head>` einschleusen
 	 * Siehe `\nn\t3::Page()->addHeader()` für einfachere Version.
 	 * ```
 	 * \nn\t3::Page()->addJsFile( 'path/to/file.js' );
@@ -497,7 +499,7 @@ class Page implements SingletonInterface {
 	}
 	
 	/**
-	 * JS-Datei am Ende der <body> einschleusen
+	 * JS-Datei am Ende der ``<body>`` einschleusen
 	 * Siehe `\nn\t3::Page()->addJsFooterFile()` für einfachere Version.
 	 * ```
 	 * \nn\t3::Page()->addJsFooterFile( 'path/to/file.js' );
@@ -509,7 +511,7 @@ class Page implements SingletonInterface {
 	}
 	
 	/**
-	 * CSS-Library in <head> einschleusen
+	 * CSS-Library in `<head>` einschleusen
 	 * ```
 	 * \nn\t3::Page()->addCssLibrary( 'path/to/style.css' );
 	 * ```
@@ -520,7 +522,7 @@ class Page implements SingletonInterface {
 	}
 
 	/**
-	 * CSS-Datei in <head> einschleusen
+	 * CSS-Datei in `<head>` einschleusen
 	 * Siehe `\nn\t3::Page()->addHeader()` für einfachere Version.
 	 * ```
 	 * \nn\t3::Page()->addCss( 'path/to/style.css' );
