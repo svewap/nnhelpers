@@ -230,7 +230,7 @@ class Page implements SingletonInterface {
 			if (!$tsfe) {
 				if (\nn\t3::t3Version() > 9) {
 					$site = GeneralUtility::makeInstance(\TYPO3\CMS\Core\Site\SiteFinder::class)->getSiteByPageId( $pid );
-					$uri = $site->getRouter()->generateUri( $pid, $params );
+					$uri = (string) $site->getRouter()->generateUri( $pid, $params );
 					return $uri;
 				}
 			}
