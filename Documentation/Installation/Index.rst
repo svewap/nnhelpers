@@ -50,7 +50,7 @@ This goes in the `ext_emconf.php` of your extension:
       ...
       'constraints' => [
          'depends' => [
-            'nnhelpers' => '1.6.0-0.0.0',
+            'nnhelpers' => '1.7.0-0.0.0',
          ],
       ],
    ];
