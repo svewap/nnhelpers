@@ -399,7 +399,8 @@ class t3 {
 	public static function debug( $obj = null, $title = null ) {
 
 		// Ermittelt, wo der Aufruf von debug() stattgefunden hat
-		$backtrace = array_shift(debug_backtrace());
+		$backtrace = debug_backtrace();
+		$backtrace = array_shift($backtrace);
 
 		// Absoluten Pfad zum Extension-Ordner in Schreibweise mit 'EXT:'-Prefix kürzen 
 		$filename = str_replace( \nn\t3::Environment()->getPathSite() . 'typo3conf/ext/', 'EXT:', $backtrace['file']);
