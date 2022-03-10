@@ -94,8 +94,9 @@ has to parse the individual rows.
 	// Also fetch records which are "hidden".
 	\nn\t3::Db()->findAll('fe_users', true);
 
+| ``@param string $table``
+| ``@param boolean $ignoreEnableFields``
 | ``@return array``
-.
 
 \\nn\\t3::Db()->findByUid(``$table = '', $uid = NULL, $ignoreEnableFields = false``);
 """""""""""""""""""""""""""""""""""""""""""""""

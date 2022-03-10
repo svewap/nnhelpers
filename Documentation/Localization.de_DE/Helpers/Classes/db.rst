@@ -93,6 +93,8 @@ die einzelnen Zeilen parsen muss.
 	// Auch Datensätze holen, die "hidden" sind
 	\nn\t3::Db()->findAll('fe_users', true);
 
+| ``@param string $table``
+| ``@param boolean $ignoreEnableFields``
 | ``@return array``
 
 \\nn\\t3::Db()->findByUid(``$table = '', $uid = NULL, $ignoreEnableFields = false``);

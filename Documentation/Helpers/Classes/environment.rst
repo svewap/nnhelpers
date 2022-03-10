@@ -95,6 +95,26 @@ by its country code (e.g. ``DE``)
 
 | ``@return array``
 
+\\nn\\t3::Environment()->getDefaultLanguage(``$returnKey = 'typo3Language'``);
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+Returns the default language. In TYPO3 this is always the language with ID ``0``
+The languages must be set in the YAML site configuration.
+
+.. code-block:: php
+
+	// 'en'
+	\nn\t3::Environment()->getDefaultLanguage();
+	
+	// 'de-DE'
+	\nn\t3::Environment()->getDefaultLanguage('hreflang');
+	
+	// ['title'=>'German', 'typo3Language'=>'de', ...]
+	\nn\t3::Environment()->getDefaultLanguage( true );
+
+| ``@param string|boolean $returnKey``
+| ``@return string|array``
+
 \\nn\\t3::Environment()->getDomain();
 """""""""""""""""""""""""""""""""""""""""""""""
 
@@ -146,6 +166,30 @@ Get the current language (as an abbreviation like "de") in the frontend
 	\nn\t3::Environment()->getLanguageKey();
 
 | ``@return string``
+
+\\nn\\t3::Environment()->getLanguages(``$key = 'languageId', $value = NULL``);
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+Returns a list of all defined languages.
+The languages must be defined in the YAML site configuration.
+
+.. code-block:: php
+
+	// [['title'=>'German', 'typo3Language'=>'de', ....], ['title'=>'English', 'typo3Language'=>'en', ...]]
+	\nn\t3::Environment()->getLanguages();
+	
+	// ['de'=>['title'=>'German', 'typo3Language'=>'de'], 'en'=>['title'=>'English', 'typo3Language'=>'en', ...]]
+	\nn\t3::Environment()->getLanguages('iso-639-1');
+	
+	// ['de'=>0, 'en'=>1]
+	\nn\t3::Environment()->getLanguages('typo3Language', 'languageId');
+	
+	// [0=>'de', 1=>'en']
+	\nn\t3::Environment()->getLanguages('languageId', 'typo3Language');
+
+| ``@param string $key``
+| ``@param string $value``
+| ``@return string|array``
 
 \\nn\\t3::Environment()->getLocalConf(``$path = ''``);
 """""""""""""""""""""""""""""""""""""""""""""""

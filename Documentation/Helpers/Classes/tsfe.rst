@@ -60,7 +60,7 @@ Früher: ``$GLOBALS['TSFE']->cObj->cObjGetSingle()``
 
 	\nn\t3::Tsfe()->cObjGetSingle('IMG_RESOURCE', ['file'=>'image.jpg', 'file.'=>['maxWidth'=>200]] )
 
-\\nn\\t3::Tsfe()->get();
+\\nn\\t3::Tsfe()->get(``$pid = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
 Get$GLOBALS['TSFE'].
@@ -69,6 +69,7 @@ Initialize if not present (because in BE).
 .. code-block:: php
 
 	\nn\t3::Tsfe()->get()
+	\nn\t3::Tsfe()->get( $pid )
 
 | ``@return \TYPO3\CMS\FrontendController\TypoScriptFrontendController``
 
