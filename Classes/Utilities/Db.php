@@ -145,6 +145,8 @@ class Db implements SingletonInterface
 	 * // Auch Datensätze holen, die "hidden" sind
 	 * \nn\t3::Db()->findAll('fe_users', true);
 	 * ```
+	 * @param string $table
+	 * @param boolean $ignoreEnableFields
 	 * @return array
 	 */
 	public function findAll( $table = '', $ignoreEnableFields = false ) 
