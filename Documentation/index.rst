@@ -100,5 +100,6 @@ The architecture of this extension and its methods and classes is maximally insp
    ViewHelpers/Index
    AdditionalClasses/Index
    KnownProblems/Index
+   WpHelpers/Index
    Changelog/Index
    Sitemap
