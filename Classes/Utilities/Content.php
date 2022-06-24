@@ -7,6 +7,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Frontend\ContentObject\RecordsContentObject;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
+use TYPO3\CMS\Frontend\Page\PageRepository;
 
 /**
  * Inhaltselemente und Inhalte einer Backend-Spalten (`colPos`) lesen und rendern
@@ -14,18 +15,35 @@ use TYPO3\CMS\Extbase\Object\ObjectManager;
 class Content implements SingletonInterface {
   
 	/**
-	 * 	Lädt ein tt_content-Element als Array
-	 *	```
-	 *	\nn\t3::Content()->get( 1201 );
-	 *	```
-	 *	Laden von Relationen (`media`, `assets`, ...)
-	 *	```
-	 *	\nn\t3::Content()->get( 1201, true );
-	 *	```
-	 * 	@return array
+	 * Lädt ein tt_content-Element als Array
+	 * ```
+	 * \nn\t3::Content()->get( 1201 );
+	 * ```
+	 * Laden von Relationen (`media`, `assets`, ...)
+	 * ```
+	 * \nn\t3::Content()->get( 1201, true );
+	 * ```
+	 * Element NICHT automatisch übersetzen, falls eine andere Sprache eingestellt wurde
+	 * ```
+	 * \nn\t3::Content()->get( 1201, false, false );
+	 * ```
+	 * Element in einer ANDEREN Sprache holen, als im Frontend eingestellt wurde.
+	 * Berücksichtigt die Fallback-Chain der Sprache, die in der Site-Config eingestellt wurde
+	 * ```
+	 * \nn\t3::Content()->get( 1201, false, 2 );
+	 * ```
+	 * Element mit eigener Fallback-Chain holen. Ignoriert dabei vollständig die Chain, 
+	 * die in der Site-Config definiert wurde.
+	 * ```
+	 * \nn\t3::Content()->get( 1201, false, [2,3,0] );
+	 * ```
+	 * @return array
 	 */
-    public function get( $ttContentUid = null, $getRelations = false ) {
+    public function get( $ttContentUid = null, $getRelations = false, $localize = true ) 
+	{
 		if (!$ttContentUid) return [];
+
+		// Datensatz in der Standard-Sprache holen
 		$queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable('tt_content');
 		$data = $queryBuilder
 			->select('*')
@@ -35,8 +53,81 @@ class Content implements SingletonInterface {
 			->fetch();
 		if (!$data) return [];
 
+		// Prüfen, ob der Datensatz übersetzt werden soll
+		if ($localize !== false && $localize !== 0) {
+
+			$currentLanguageUid = \nn\t3::Environment()->getLanguage();
+			$fallbackChain = $localize === true ? $currentLanguageUid : $localize;
+			$overlayMode = $localize === true ? '' : 'hideNonTranslated';
+			
+			if (is_numeric($fallbackChain)) {
+				$fallbackChain = [$fallbackChain];
+			}
+			
+			if ($pageRepository = \nn\t3::injectClass( PageRepository::class )) {
+				foreach ($fallbackChain as $langUid) {
+					if ($overlay = $pageRepository->getRecordOverlay('tt_content', $data, $langUid, $overlayMode)) {
+						$data = $overlay;
+						break;
+					}
+				}
+			}
+		}
+
+		$data = $this->localize( 'tt_content', $data, $localize );
+
 		if ($getRelations) {
 			$data = $this->addRelations( $data );
+		}
+
+		return $data;
+	}
+
+	/**
+	 * Daten lokalisieren / übersetzen.
+	 * 
+	 * Beispiele:
+	 * 
+	 * Daten übersetzen, dabei die aktuelle Sprache des Frontends verwenden.
+	 * ```
+	 * \nn\t3::Content()->localize( 'tt_content', $data );
+	 * ```
+	 * 
+	 * Daten in einer ANDEREN Sprache holen, als im Frontend eingestellt wurde.
+	 * Berücksichtigt die Fallback-Chain der Sprache, die in der Site-Config eingestellt wurde
+	 * ```
+	 * \nn\t3::Content()->localize( 'tt_content', $data, 2 );
+	 * ```
+	 * 
+	 * Daten mit eigener Fallback-Chain holen. Ignoriert dabei vollständig die Chain, 
+	 * die in der Site-Config definiert wurde.
+	 * ```
+	 * \nn\t3::Content()->localize( 'tt_content', $data, [3, 2, 0] );
+	 * ```
+	 * @param string $table 	Datenbank-Tabelle
+	 * @param array $data 		Array mit den Daten der Standard-Sprache (languageUid = 0)
+	 * @param mixed $localize	Angabe, wie übersetzt werden soll. Boolean, uid oder Array mit uids
+	 * @return array
+	 */
+	public function localize( $table = 'tt_content', $data = [], $localize = true ) 
+	{
+		// `false` angegeben - oder Zielsprache ist Standardsprache? Dann nichts tun. 
+		if ($localize === false || $localize === 0) {
+			return $data;
+		}
+
+		$fallbackChain = \nn\t3::Environment()->getLanguageFallbackChain( $localize );
+				
+		if ($pageRepository = \nn\t3::injectClass( PageRepository::class )) {
+			foreach ($fallbackChain as $langUid) {
+				if ($overlay = $pageRepository->getRecordOverlay( $table, $data, $langUid, 'hideNonTranslated')) {
+					$data = $overlay;
+					break;
+				}
+			}
+			if (count($fallbackChain) == 1 && !$overlay) {
+				return [];
+			}
 		}
 
 		return $data;
