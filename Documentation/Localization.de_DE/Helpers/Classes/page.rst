@@ -194,7 +194,7 @@ Beispiel für die News-Extension:
 
 | ``@return string``
 
-\\nn\\t3::Page()->getChildPids(``$parentPid = 0, $recursive = 999``);
+\\nn\\t3::Page()->getChildPids(``$parentPid = [], $recursive = 999``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
 Liste der Child-Uids einer oder mehrerer Seiten holen.

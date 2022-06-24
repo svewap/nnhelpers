@@ -156,6 +156,29 @@ Get the current language (as a number) of the frontend.
 
 | ``@return int``
 
+\\nn\\t3::Environment()->getLanguageFallbackChain(``$langUid = true``);
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+Returns a list of languages to be used if, for example, a page or an element
+e.g. a page or element does not exist in the desired language.
+
+Important: The fallback chain will contain the current language or the language passed in $langUid
+in the first position.
+ Important: The fallback chain contains the current language in the first position.
+
+.. code-block:: php
+
+	// Use settings for current language (see Site-Config YAML).
+	\nn\t3::Environment()->getLanguageFallbackChain(); // --> e.g. [0] or [1,0]
+	
+	// get settings for a specific language
+	\nn\t3::Environment()->getLanguageFallbackChain( 1 );
+	// --> [1,0] - if fallback is defined in site config and fallbackMode is set to "fallback".
+	// --> [1] - if there is no fallback or the fallbackMode is set to "strict"
+
+| ``@param string|boolean $returnKey``
+| ``@return string|array``
+
 \\nn\\t3::Environment()->getLanguageKey();
 """""""""""""""""""""""""""""""""""""""""""""""
 

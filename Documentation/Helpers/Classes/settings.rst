@@ -215,7 +215,7 @@ only happens if ``$extName`` is left blank.
 
 | ``@return string``
 
-\\nn\\t3::Settings()->getStoragePids(``$extName = NULL, $recursive = 0``);
+\\nn\\t3::Settings()->getStoragePids(``$extName = NULL, $recursive = []``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
 Get ALL storagePids for the current plugin.

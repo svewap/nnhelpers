@@ -17,19 +17,26 @@ Uses Typo3's caching framework, see ``EXT:nnhelpers/ext_localconf.php`` for deta
 Overview of Methods
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-\\nn\\t3::Cache()->clear();
+\\nn\\t3::Cache()->clear(``$identifier = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Lödeletes all ``nnhelpers`` caches:
+Deletes caches.
+If a ``identifier`` is specified, then only the caches of the specific
+identifier will be deleted Ã¢ otherwise ALL caches of all extensions and pages.
 
 RAM caches
-CachingFramework caches set via ``nn\t3::Cache()->set()``
+CachingFramework caches set via ``\nn\t3::Cache()->set()``
 File caches set by ``\nn\t3::Cache()->write()``
 
 .. code-block:: php
 
+	// Clear ALL caches Ã¢ including the caches of other extensions, the pages etc.
 	\nn\t3::Cache()->clear();
+	
+	// Delete only the caches with a given identifier.
+	\nn\t3::Cache()->clear('nnhelpers');
 
+| ``@param string $identifier``
 | ``@return void``
 
 \\nn\\t3::Cache()->clearPageCache(``$pid = NULL``);

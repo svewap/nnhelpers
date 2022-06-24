@@ -15,9 +15,7 @@ use TYPO3\CMS\Frontend\Page\PageRepository;
 class Content implements SingletonInterface {
   
 	/**
-	 * ## Ein Content-Element anhand seiner uid holen
-	 * 
- 	 * Lädt ein tt_content-Element als Array
+ 	 * Lädt die Daten eines tt_content-Element als einfaches Array:
 	 * ```
 	 * \nn\t3::Content()->get( 1201 );
 	 * ```
@@ -26,7 +24,7 @@ class Content implements SingletonInterface {
 	 * \nn\t3::Content()->get( 1201, true );
 	 * ```
 	 * 
-	 * ## Übersetzungen / Localization:
+	 * Übersetzungen / Localization:
 	 * 
 	 * Element NICHT automatisch übersetzen, falls eine andere Sprache eingestellt wurde
 	 * ```
@@ -83,7 +81,7 @@ class Content implements SingletonInterface {
 	 * \nn\t3::Content()->getAll( [1, 2, 7] );
 	 * ```
 	 * 
-	 * Anhand von Filter-Kriterien. 
+	 * Anhand von Filter-Kriterien: 
 	 * ```
 	 * \nn\t3::Content()->getAll( ['pid'=>1] );
 	 * \nn\t3::Content()->getAll( ['pid'=>1, 'colPos'=>1] );

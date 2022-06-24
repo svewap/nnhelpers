@@ -194,7 +194,7 @@ Example for the news extension:
 
 | ``@return string``
 
-\\nn\\t3::Page()->getChildPids(``$parentPid = 0, $recursive = 999``);
+\\nn\\t3::Page()->getChildPids(``$parentPid = [], $recursive = 999``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
 Get list of child uids of one or more pages.
