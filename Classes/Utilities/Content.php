@@ -15,7 +15,9 @@ use TYPO3\CMS\Frontend\Page\PageRepository;
 class Content implements SingletonInterface {
   
 	/**
-	 * Lädt ein tt_content-Element als Array
+	 * ## Ein Content-Element anhand seiner uid holen
+	 * 
+ 	 * Lädt ein tt_content-Element als Array
 	 * ```
 	 * \nn\t3::Content()->get( 1201 );
 	 * ```
@@ -23,6 +25,9 @@ class Content implements SingletonInterface {
 	 * ```
 	 * \nn\t3::Content()->get( 1201, true );
 	 * ```
+	 * 
+	 * ## Übersetzungen / Localization:
+	 * 
 	 * Element NICHT automatisch übersetzen, falls eine andere Sprache eingestellt wurde
 	 * ```
 	 * \nn\t3::Content()->get( 1201, false, false );
@@ -37,9 +42,13 @@ class Content implements SingletonInterface {
 	 * ```
 	 * \nn\t3::Content()->get( 1201, false, [2,3,0] );
 	 * ```
+	 * 
+	 * @param int $ttContentUid		Content-Uid in der Tabelle tt_content
+	 * @param bool $getRelations	Auch Relationen / FAL holen?
+	 * @param bool $localize		Übersetzen des Eintrages?
 	 * @return array
 	 */
-    public function get( $ttContentUid = null, $getRelations = false, $localize = true ) 
+	public function get( $ttContentUid = null, $getRelations = false, $localize = true ) 
 	{
 		if (!$ttContentUid) return [];
 
@@ -53,27 +62,6 @@ class Content implements SingletonInterface {
 			->fetch();
 		if (!$data) return [];
 
-		// Prüfen, ob der Datensatz übersetzt werden soll
-		if ($localize !== false && $localize !== 0) {
-
-			$currentLanguageUid = \nn\t3::Environment()->getLanguage();
-			$fallbackChain = $localize === true ? $currentLanguageUid : $localize;
-			$overlayMode = $localize === true ? '' : 'hideNonTranslated';
-			
-			if (is_numeric($fallbackChain)) {
-				$fallbackChain = [$fallbackChain];
-			}
-			
-			if ($pageRepository = \nn\t3::injectClass( PageRepository::class )) {
-				foreach ($fallbackChain as $langUid) {
-					if ($overlay = $pageRepository->getRecordOverlay('tt_content', $data, $langUid, $overlayMode)) {
-						$data = $overlay;
-						break;
-					}
-				}
-			}
-		}
-
 		$data = $this->localize( 'tt_content', $data, $localize );
 
 		if ($getRelations) {
@@ -82,6 +70,87 @@ class Content implements SingletonInterface {
 
 		return $data;
 	}
+
+	/**
+	 * Mehrere Content-Elemente (aus `tt_content`) holen.
+	 * 
+	 * Die Datensätze werden automatisch lokalisiert – außer `$localize` wird auf `false`
+	 * gesetzt. Siehe `\nn\t3::Content()->get()` für weitere `$localize` Optionen.
+	 * 
+	 * Anhand einer Liste von UIDs:
+	 * ```
+	 * \nn\t3::Content()->getAll( 1 );
+	 * \nn\t3::Content()->getAll( [1, 2, 7] );
+	 * ```
+	 * 
+	 * Anhand von Filter-Kriterien. 
+	 * ```
+	 * \nn\t3::Content()->getAll( ['pid'=>1] );
+	 * \nn\t3::Content()->getAll( ['pid'=>1, 'colPos'=>1] );
+	 * \nn\t3::Content()->getAll( ['pid'=>1, 'CType'=>'mask_section_cards', 'colPos'=>1] );
+	 * ```
+	 * 
+	 * @param mixed $ttContentUid	Content-Uids oder Constraints für Abfrage der Daten
+	 * @param bool $getRelations	Auch Relationen / FAL holen?
+	 * @param bool $localize		Übersetzen des Eintrages?
+	 * @return array
+	 */
+   public function getAll( $constraints = [], $getRelations = false, $localize = true ) 
+   {
+		if (!$constraints) return [];
+
+		// ist es eine uid-Liste, z.B. [1, 2, 3]?
+		$isUidList = count(array_filter( array_flip($constraints), function ($v) {
+			return !is_numeric($v);
+		})) == 0;
+
+		$results = [];
+
+		// ... dann einfach \nn\t3::Content()->get() verwenden
+		if ($isUidList) {
+			foreach ($constraints as $uid) {
+				if ($element = $this->get( $uid, $getRelations, $localize)) {
+					$results[] = $element;
+				}
+			}
+			return $results;
+		}
+
+		// und sonst: eine Query bauen
+
+		// Datensatz in der Standard-Sprache holen
+		$queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable('tt_content');
+		$query = $queryBuilder
+			->select('*')
+			->from('tt_content')
+			->andWhere($queryBuilder->expr()->eq('sys_language_uid', 0));
+
+		if (isset($constraints['pid'])) {
+			$pid = $constraints['pid'];
+			$query->andWhere($queryBuilder->expr()->eq('pid', $queryBuilder->createNamedParameter($pid)));
+		}
+		if (isset($constraints['colPos'])) {
+			$colPos = $constraints['colPos'];
+			$query->andWhere($queryBuilder->expr()->eq('colPos', $queryBuilder->createNamedParameter($colPos)));
+		}
+		if ($cType = $constraints['CType'] ?? false) {
+			$query->andWhere($queryBuilder->expr()->eq('CType', $queryBuilder->createNamedParameter($cType)));
+		}
+
+		$data =	$query->execute()->fetchAll();
+		if (!$data) return [];
+
+		foreach ($data as $row) {
+			if ($row = $this->localize( 'tt_content', $row, $localize )) {
+				if ($getRelations) {
+					$data = $this->addRelations( $data );
+				}
+				$results[] = $row;
+			}
+		}
+
+		return $results;
+   }
 
 	/**
 	 * Daten lokalisieren / übersetzen.
