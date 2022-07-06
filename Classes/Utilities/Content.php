@@ -121,6 +121,7 @@ class Content implements SingletonInterface {
 		$query = $queryBuilder
 			->select('*')
 			->from('tt_content')
+			->addOrderBy('sorting', \TYPO3\CMS\Extbase\Persistence\QueryInterface::ORDER_ASCENDING)
 			->andWhere($queryBuilder->expr()->eq('sys_language_uid', 0));
 
 		if (isset($constraints['pid'])) {
