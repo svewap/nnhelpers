@@ -35,9 +35,11 @@ Login of a FE user based on username and password
 
 Login of a FE user using a session ID.
 
-The session ID corresponds to the TYPO3 cookie ``fe_typo_user``. As a rule, there is an entry for every
-each fe-user session an entry in the ``fe_sessions`` table. Up to Typo3 v11, this corresponded to
-the ``ses_id`` column was exactly the cookie value. As of Typo3 v11, the value is additionally hashed.
+The session ID corresponds to the TYPO3 cookie ``fe_typo_user``. Usually there is one entry for each
+each fe-user session there is an entry in the ``fe_sessions`` table. Up to Typo3 v10, the
+the ``ses_id`` column corresponded exactly to the cookie value.
+
+As of Typo3 v10, the value is hashed additionally.
 
 See also ``\nn\t3::Encrypt()->hashSessionId( $sessionId );``
 

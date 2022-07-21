@@ -120,8 +120,8 @@ class TCA implements SingletonInterface {
 	 * Wird im TCA so eingesetzt:
 	 * ```
 	 * 'falprofileimage' => [
-     * 	'config' => \nn\t3::TCA()->getFileFieldTCAConfig('falprofileimage', ['maxitems'=>1]),
-     * ],
+	 * 	'config' => \nn\t3::TCA()->getFileFieldTCAConfig('falprofileimage', ['maxitems'=>1]),
+	 * ],
 	 * ```
 	 * @return array	
 	 */
@@ -140,19 +140,19 @@ class TCA implements SingletonInterface {
 				--palette--;LLL:EXT:lang/locallang_tca.xlf:sys_file_reference.imageoverlayPalette;imageoverlayPalette,
 				--palette--;;filePalette';
 			$config = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::getFileFieldTCAConfig( $fieldName,
-                [
-                    'appearance' => [
-                        'createNewRelationLinkTitle' => 'LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:media.addFileReference'
-                    ],
-                    'foreign_types' => [
-                        '0' => ['showitem' => $showItem],
-                        \TYPO3\CMS\Core\Resource\File::FILETYPE_TEXT => ['showitem' => $showItem],
-                        \TYPO3\CMS\Core\Resource\File::FILETYPE_IMAGE => ['showitem' => $showItem],
-                        \TYPO3\CMS\Core\Resource\File::FILETYPE_AUDIO => ['showitem' => $showItem],
-                        \TYPO3\CMS\Core\Resource\File::FILETYPE_VIDEO => ['showitem' => $showItem],
-                        \TYPO3\CMS\Core\Resource\File::FILETYPE_APPLICATION => ['showitem' => $showItem]
-                    ],
-                    'maxitems' => $options['maxitems']
+				[
+					'appearance' => [
+						'createNewRelationLinkTitle' => 'LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:media.addFileReference'
+					],
+					'foreign_types' => [
+						'0' => ['showitem' => $showItem],
+						\TYPO3\CMS\Core\Resource\File::FILETYPE_TEXT => ['showitem' => $showItem],
+						\TYPO3\CMS\Core\Resource\File::FILETYPE_IMAGE => ['showitem' => $showItem],
+						\TYPO3\CMS\Core\Resource\File::FILETYPE_AUDIO => ['showitem' => $showItem],
+						\TYPO3\CMS\Core\Resource\File::FILETYPE_VIDEO => ['showitem' => $showItem],
+						\TYPO3\CMS\Core\Resource\File::FILETYPE_APPLICATION => ['showitem' => $showItem]
+					],
+					'maxitems' => $options['maxitems']
 				], $options['fileExtensions']);
 				
 		}
@@ -221,6 +221,35 @@ class TCA implements SingletonInterface {
 		return [
 			'type' => 'text',
 			'enableRichtext' => true,
+		];
+	}
+	
+	/**
+	 * Standard-Slug Konfiguration für das TCA holen.
+	 * 
+	 * ```
+	 * 'config' => \nn\t3::TCA()->getSlugTCAConfig( 'title' )
+	 * 'config' => \nn\t3::TCA()->getSlugTCAConfig( ['title', 'header'] )
+	 * ```
+	 * @param array|string $fields
+	 * @return array
+	 */
+	public function getSlugTCAConfig( $fields = [] ) {
+		if (is_string($fields)) {
+			$fields = [$fields];
+		}
+		return [
+			'type' => 'slug',
+			'size' => 50,
+			'generatorOptions' => [
+				'fields' => $fields,
+				'replacements' => [
+					'/' => '-'
+				],
+			],
+			'fallbackCharacter' => '-',
+			'eval' => 'unique',
+			'default' => ''
 		];
 	}
  

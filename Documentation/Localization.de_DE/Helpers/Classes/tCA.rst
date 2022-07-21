@@ -186,6 +186,19 @@ RTE Konfiguration für das TCA holen.
 
 | ``@return array``
 
+\\nn\\t3::TCA()->getSlugTCAConfig(``$fields = []``);
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+Standard-Slug Konfiguration für das TCA holen.
+
+.. code-block:: php
+
+	'config' => \nn\t3::TCA()->getSlugTCAConfig( 'title' )
+	'config' => \nn\t3::TCA()->getSlugTCAConfig( ['title', 'header'] )
+
+| ``@param array|string $fields``
+| ``@return array``
+
 \\nn\\t3::TCA()->insertCountries(``$config, $a = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 

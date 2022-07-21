@@ -34,11 +34,12 @@ class Tsfe implements SingletonInterface {
 	 * 	Falls nicht vorhanden (weil im BE) initialisieren.
 	 *	```
 	 *	\nn\t3::Tsfe()->get()
+	 *	\nn\t3::Tsfe()->get( $pid )
 	 *	```
 	 *	@return \TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController
 	 */
-	public function get() {
-		if (!isset($GLOBALS['TSFE'])) $this->init();
+	public function get( $pid = null ) {
+		if (!isset($GLOBALS['TSFE'])) $this->init( $pid );
 		return $GLOBALS['TSFE'];
 	}
 	

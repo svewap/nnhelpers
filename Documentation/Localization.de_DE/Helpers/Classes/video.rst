@@ -38,7 +38,7 @@ Existiert auch als ViewHelper:
 \\nn\\t3::Video()->getExternalType(``$url = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Gibt Infos über die Streaming-Platform und Code zum Einbetten eines Videos zurück
+Gibt ein Array mit Infos über die Streaming-Platform und Code zum Einbetten eines Videos zurück.
 
 .. code-block:: php
 
@@ -65,7 +65,7 @@ z.B. um einen externen Link zum Video darzustellen
 \\nn\\t3::Video()->isExternal(``$url = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Prüft, ob es sich bei der URL um ein Video auf YouTube oder Vimeo handelt.
+Prüft, ob es sich bei der URL um ein externes Video auf YouTube oder Vimeo handelt.
 Gibt ein Array mit Daten zum Einbetten zurück.
 
 .. code-block:: php

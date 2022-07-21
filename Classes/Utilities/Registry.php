@@ -23,9 +23,55 @@ class Registry implements SingletonInterface {
 	 *	
 	 * 	@return void
 	 */
-	public function plugin ( $vendorName = '', $pluginName = '', $title = '', $icon = '' ) {
-		//\nn\t3::debug($this->getVendorExtensionName($this->getVendorExtensionName($vendorName). ' - '. $pluginName . ' - '. $title. ' - '. $icon));die();
-		\TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerPlugin( $this->getVendorExtensionName($vendorName), $pluginName, $title, $icon );
+	public function plugin ( $vendorName = '', $pluginName = '', $title = '', $icon = '', $tcaGroup = null ) {
+		if (\nn\t3::t3Version() < 10) {
+			\TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerPlugin( $this->getVendorExtensionName($vendorName), $pluginName, $title, $icon );
+		} else {
+			\TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerPlugin( $this->getVendorExtensionName($vendorName), $pluginName, $title, $icon, $tcaGroup );
+		}
+	}
+	
+	/**
+	 * Vereinfacht das Registrieren einer Liste von Plugins, die im `list_type` Dropdown zu einer 
+	 * Gruppe zusammengefasst werden.
+	 * 
+	 * In `Configuration/TCA/Overrides/tt_content.php` nutzen:
+	 * ```
+	 * \nn\t3::Registry()->pluginGroup(
+	 * 	'Nng\Myextname',
+	 * 	'LLL:EXT:myextname/Resources/Private/Language/locallang_db.xlf:pi_group_name',
+	 * 	[
+	 * 		'list' => [
+	 * 			'title'		=> 'LLL:EXT:myextname/Resources/Private/Language/locallang_db.xlf:pi_list.name', 
+	 * 			'icon'		=> 'EXT:myextname/Resources/Public/Icons/Extension.svg',
+	 * 			'flexform'	=> 'FILE:EXT:myextname/Configuration/FlexForm/list.xml',
+	 * 		],
+	 * 		'show' => [
+	 * 			'title'		=> 'LLL:EXT:myextname/Resources/Private/Language/locallang_db.xlf:pi_show.name', 
+	 * 			'icon'		=> 'EXT:myextname/Resources/Public/Icons/Extension.svg',
+	 * 			'flexform'	=> 'FILE:EXT:myextname/Configuration/FlexForm/show.xml'
+	 * 		],
+	 * 	]
+	 * );
+	 * ```
+	 * @return void
+	 */
+	public function pluginGroup ( $vendorName = '', $groupLabel = '', $plugins = [] ) {
+
+		// My\ExtName => ext_name
+		$extName = GeneralUtility::camelCaseToLowerCaseUnderscored(array_pop(explode('\\', $vendorName)));
+		$groupName = $extName . '_group';
+
+		// ab TYPO3 10 können im Plugin-Dropdown optgroups gebildet werden
+		if (\nn\t3::t3Version() >= 10) {
+			\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addTcaSelectItemGroup( 'tt_content', 'list_type', $groupName, $groupLabel, 'before:default' );
+		}
+		foreach ($plugins as $listType=>$config) {
+			$this->plugin( $vendorName, $listType, $config['title'] ?? '', $config['icon'] ?? '', $groupName );
+			if ($flexform = $config['flexform'] ?? false) {
+				$this->flexform( $vendorName, $listType, $flexform );
+			}
+		}
 	}
 	
 	/**
@@ -213,18 +259,32 @@ class Registry implements SingletonInterface {
 	 * Daten in dieser Tabelle bleiben über die Session hinaus erhalten.
 	 * Ein Scheduler-Job kann z.B. speichern, wann er das letzte Mal
 	 * ausgeführt wurde.
+	 * 
+	 * Arrays werden per default rekursiv zusammengeführt / gemerged:
 	 * ```
-	 * \nn\t3::Registry()->set( 'nnsite', 'lastRun', ['test'=>'ok'] );
+	 * \nn\t3::Registry()->set( 'nnsite', 'lastRun', ['eins'=>'1'] );
+	 * \nn\t3::Registry()->set( 'nnsite', 'lastRun', ['zwei'=>'2'] );
+	 * 
+	 * \nn\t3::Registry()->get( 'nnsite', 'lastRun' ); // => ['eins'=>1, 'zwei'=>2]
 	 * ```
-	 * @return void
+	 *  
+	 * Mit `true` am Ende werden die vorherigen Werte gelöscht:
+	 * ```
+	 * \nn\t3::Registry()->set( 'nnsite', 'lastRun', ['eins'=>'1'] );
+	 * \nn\t3::Registry()->set( 'nnsite', 'lastRun', ['zwei'=>'2'], true );
+	 *
+	 * \nn\t3::Registry()->get( 'nnsite', 'lastRun' ); // => ['zwei'=>2]
+	 * ```
+	 * @return array
 	 */
-	public function set ( $extName = '', $path = '', $settings = [] ) {
+	public function set ( $extName = '', $path = '', $settings = [], $clear = false ) {
 		$registry = GeneralUtility::makeInstance( CoreRegistry::class );
-		if (is_array($settings)) {
+		if (!$clear && is_array($settings)) {
 			$curSettings = $this->get( $extName, $path ) ?: [];
 			$settings = \nn\t3::Arrays( $curSettings )->merge( $settings, true, true );
 		}
 		$registry->set( $extName,  $path, $settings );
+		return $settings;
 	}
 
 	/**

@@ -19,27 +19,42 @@ Overview of Methods
 \\nn\\t3::Db()->debug(``$query = NULL, $return = false``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Debug MySQL Query
+Debug the ``QueryBuilder`` statement.
+
+Puts out the complete compiled query as a readable string, as it will be executed later in the database.
+e.g. ``SELECT FROM fe_users WHERE ...``
 
 .. code-block:: php
 
+	// Output statement directly to the browser.
 	\nn\t3::Db()->debug( $query );
+	
+	// Return statement as string, do not output automatically
 	echo \nn\t3::Db()->debug( $query, true );
 
+| ``@param mixed $query``
+| ``@param boolean $return``
 | ``@return string``
 
 \\nn\\t3::Db()->delete(``$table = '', $constraint = [], $reallyDelete = false``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Database entry löschen. Small and Fine.
-Either a table name and uid ücan be passed - or a model.
+Delete database entry. Small and fine.
+Either a table name and the UID can be passed - or a model.
 
-Loading a record by table name and uid, or any constraint:
+Delete a record by table name and uid or any constraint:
 
 .. code-block:: php
 
+	// Delete by uid.
 	\nn\t3::Db()->delete('table', $uid);
+	
+	// Delete using a custom field
 	\nn\t3::Db()->delete('table', ['uid_local'=>$uid]);
+	
+	// delete the entry completely and irrevocably (not only by flag deleted = 1)
+	\nn\t3::Db()->delete('table', $uid, true);
+	
 
 Deleting a record by model:
 
@@ -47,33 +62,47 @@ Deleting a record by model:
 
 	\nn\t3::Db()->delete( $model );
 
-| ``@return boolean``
+| ``@param mixed $table``
+| ``@param array $constraint``
+| ``@param boolean $reallyDelete``
+| ``@return mixed``
 
 \\nn\\t3::Db()->filterDataForTable(``$data = [], $table = ''``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Keep in key/val array only elements whose keys also
-exist in TCA for particular table.
+Keep in key/val array only elements whose keys also exist in
+exist in TCA for specific table
+
+| ``@param array $data``
+| ``@param string $table``
 | ``@return array``
 
 \\nn\\t3::Db()->findAll(``$table = '', $ignoreEnableFields = false``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-action findAll
-Finds ALL entry
+Get ALL entry from a database table.
+
+The data is returned as an array Ã¢ this is (unfortunately) still the absolute most
+most performant way to fetch many records from a table, since no ``DataMapper``
+has to parse the individual rows.
 
 .. code-block:: php
 
+	// Get all records. "hidden" will be taken into account.
 	\nn\t3::Db()->findAll('fe_users');
+	
+	// Also fetch records which are "hidden".
 	\nn\t3::Db()->findAll('fe_users', true);
 
+| ``@param string $table``
+| ``@param boolean $ignoreEnableFields``
 | ``@return array``
 
 \\nn\\t3::Db()->findByUid(``$table = '', $uid = NULL, $ignoreEnableFields = false``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
 Finds an entry based on the UID.
-Works even if frontends have not been initialized yet,
+Works even if frontend has not been initialized yet,
 e.g. while AuthentificationService is running or in the scheduler.
 
 .. code-block:: php
@@ -81,28 +110,31 @@ e.g. while AuthentificationService is running or in the scheduler.
 	\nn\t3::Db()->findByUid('fe_user', 12);
 	\nn\t3::Db()->findByUid('fe_user', 12, true);
 
+| ``@param string $table``
 | ``@param int $uid``
+| ``@param boolean $ignoreEnableFields``
 | ``@return array``
 
 \\nn\\t3::Db()->findByUids(``$table = '', $uids = NULL, $ignoreEnableFields = false``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Finds entries based on multiple UIDs.
+Finds records by multiple UIDs
 
 .. code-block:: php
 
 	\nn\t3::Db()->findByUids('fe_user', [12,13]);
 	\nn\t3::Db()->findByUids('fe_user', [12,13], true);
 
-| ``@param int $uid``
+| ``@param string $table``
+| ``@param int|array $uids``
+| ``@param boolean $ignoreEnableFields``
 | ``@return array``
 
 \\nn\\t3::Db()->findByValues(``$table = NULL, $whereArr = [], $useLogicalOr = false, $ignoreEnableFields = false``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-action findByCustomField.
 Finds ALL entries based on a desired field value.
-Works even if frontends have not been initialized yet.
+Works even if frontend has not been initialized yet
 
 .. code-block:: php
 
@@ -118,6 +150,49 @@ Works even if frontends have not been initialized yet.
 | ``@param boolean $ignoreEnableFields``
 | ``@return array``
 
+\\nn\\t3::Db()->findIn(``$table = '', $column = '', $values = [], $ignoreEnableFields = false``);
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+Finds ALL entries that contain a value from the ``$values`` array in the ``$column`` column.
+Works even if the frontend has not been initialized yet.
+Alias to ``\nn\t3::Db()->findByValues()``
+
+.. code-block:: php
+
+	// SELECT FROM fe_users WHERE uid IN (1,2,3)
+	\nn\t3::Db()->findIn('fe_users', 'uid', [1,2,3]);
+	
+	// SELECT FROM fe_users WHERE username IN ('david', 'martin')
+	\nn\t3::Db()->findIn('fe_users', 'username', ['david', 'martin']);
+
+| ``@param string $table``
+| ``@param string $column``
+| ``@param array $values``
+| ``@param boolean $ignoreEnableFields``
+| ``@return array``
+
+\\nn\\t3::Db()->findNotIn(``$table = '', $colName = '', $values = [], $ignoreEnableFields = false``);
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+Inversion to ``\nn\t3::Db()->findIn()``:
+
+Finds ALL entries that do NOT contain a value from the ``$values`` array in the ``$column`` column.
+Works even if the frontend has not been initialized yet.
+
+.. code-block:: php
+
+	// SELECT FROM fe_users WHERE uid NOT IN (1,2,3)
+	\nn\t3::Db()->findNotIn('fe_users', 'uid', [1,2,3]);
+	
+	// SELECT FROM fe_users WHERE username NOT IN ('david', 'martin')
+	\nn\t3::Db()->findNotIn('fe_users', 'username', ['david', 'martin']);
+
+| ``@param string $table``
+| ``@param string $colName``
+| ``@param array $values``
+| ``@param boolean $ignoreEnableFields``
+| ``@return array``
+
 \\nn\\t3::Db()->findOneByValues(``$table = NULL, $whereArr = [], $useLogicalOr = false, $ignoreEnableFields = false``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
@@ -125,7 +200,14 @@ Finds ONE entry based on desired field values.
 
 .. code-block:: php
 
+	// SELECT FROM fe_users WHERE email = 'david@99grad.de'
 	\nn\t3::Db()->findOneByValues('fe_users', ['email'=>'david@99grad.de']);
+	
+	// SELECT FROM fe_users WHERE firstname = 'david' AND username = 'john'.
+	\nn\t3::Db()->findOneByValues('fe_users', ['firstname'=>'david', 'username'=>'john']);
+	
+	// SELECT FROM fe_users WHERE firstname = 'david' OR username = 'john'.
+	\nn\t3::Db()->findOneByValues('fe_users', ['firstname'=>'david', 'username'=>'john'], true);
 
 | ``@param string $table``
 | ``@param array $whereArr``
@@ -136,8 +218,8 @@ Finds ONE entry based on desired field values.
 \\nn\\t3::Db()->get(``$uid, $modelType = '', $ignoreEnableFields = false``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Get one or more domain models/entities based on a ``uid``
-A single ``$uid`` or a list of ``$uids`` ücan be passed.
+Get one or more domain models/entities by ``uid``
+A single ``$uid`` or a list of ``$uids`` can be passed.
 
 Returns the "real" model/object including all relations,
 analogous to a query about the repository.
@@ -150,11 +232,13 @@ analogous to a query about the repository.
 	// Get an array of models by their uids
 	$modelArray = \nn\t3::Db()->get( [1,2,3], \Nng\MyExt\Domain\Model\Name::class );
 	
-	// Returns hidden models as well
+	// Returns also hidden models
 	$modelArrayWithHidden = \nn\t3::Db()->get( [1,2,3], \Nng\MyExt\Domain\Model\Name::class, true );
 
-| ``@return Object``
-.
+| ``@param int $uid``
+| ``@param string $modelType``
+| ``@param boolean $ignoreEnableFields``
+| ``@return object``
 
 \\nn\\t3::Db()->getColumn(``$table = '', $colName = '', $useSchemaManager = false``);
 """""""""""""""""""""""""""""""""""""""""""""""
@@ -165,12 +249,18 @@ Get a table column (TCA) for specific table
 
 	\nn\t3::Db()->getColumn( 'tablename', 'fieldname' );
 
+| ``@param string $table``
+| ``@param string $colName``
+| ``@param boolean $useSchemaManager``
 | ``@return array``
 
 \\nn\\t3::Db()->getColumnLabel(``$column = '', $table = ''``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Get localized label of a specific TCA field.
+Get localized label of a specific TCA field
+
+| ``@param string $column``
+| ``@param string $table``
 | ``@return string``
 
 \\nn\\t3::Db()->getColumns(``$table = '', $useSchemaManager = false``);
@@ -180,8 +270,14 @@ Get all table columns (TCA) for specific table
 
 .. code-block:: php
 
+	// Get fields based on the TCA array.
 	\nn\t3::Db()->getColumns( 'tablename' );
+	
+	// get fields from the SchemaManager
+	\nn\t3::Db()->getColumns( 'tablename', true );
 
+| ``@param string $table``
+| ``@param boolean $useSchemaManager``
 | ``@return array``
 
 \\nn\\t3::Db()->getColumnsByType(``$table = '', $colType = '', $useSchemaManager = false``);
@@ -193,13 +289,16 @@ Get fields of a table by a specific type
 
 	\nn\t3::Db()->getColumnsByType( 'tx_news_domain_model_news', 'slug' );
 
+| ``@param string $table``
+| ``@param string $colType``
+| ``@param boolean $useSchemaManager``
 | ``@return array``
 
 \\nn\\t3::Db()->getConnection();
 """""""""""""""""""""""""""""""""""""""""""""""
 
 Get a "raw" connection to the database.
-Only useful in real emergencies.
+Only useful in real exceptional cases.
 
 .. code-block:: php
 
@@ -207,14 +306,17 @@ Only useful in real emergencies.
 	$connection->fetchAll( 'SELECT FROM tt_news WHERE 1;' );
 
 | ``@return \TYPO3\CMS\Core\Database\Connection``
+.
 
 \\nn\\t3::Db()->getDeleteColumn(``$table = ''``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Get delete column for specific table.
-This column is used as a flag for deleted records.
-Normally: deleted = 1
+Get delete column for specific table
 
+This column is used as a flag for deleted records.
+Normally: ``deleted`` = 1
+
+| ``@param string $table``
 | ``@return string``
 
 \\nn\\t3::Db()->getQueryBuilder(``$table = ''``);
@@ -241,30 +343,38 @@ Example:
 \\nn\\t3::Db()->getRepositoryForModel(``$className = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Get repository for a model.
+Get the repository instance for a model (or model class name)
 
 .. code-block:: php
 
-	\nn\t3::Db()->getRepositoryForModel( \My\Domain\Model\Name );
+	\nn\t3::Db()->getRepositoryForModel( \My\Domain\Model\Name::class );
+	\nn\t3::Db()->getRepositoryForModel( $myModel );
 
+| ``@param mixed $className``
 | ``@return \TYPO3\CMS\Extbase\Persistence\Repository``
+.
 
 \\nn\\t3::Db()->getTableNameForModel(``$className = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Get table name for a model.
+Get table name for a model (or a model class name).
 Alias to ``\nn\t3::Obj()->getTableName()``
 
 .. code-block:: php
 
-	\nn\t3::Db()->getTableNameForModel( \My\Domain\Model\Name );
+	// tx_myext_domain_model_entry
+	\nn\t3::Db()->getTableNameForModel( $myModel );
+	
+	// tx_myext_domain_model_entry
+	\nn\t3::Db()->getTableNameForModel( $myModel );
 
+| ``@param mixed $className``
 | ``@return string``
 
 \\nn\\t3::Db()->ignoreEnableFields(``$queryOrRepository, $ignoreStoragePid = true, $ignoreHidden = false, $ignoreDeleted = false, $ignoreStartEnd = false``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Removes default constraints on the StoragePID, hidden and/or deleted
+Removes default constraints to the StoragePID, hidden and/or deleted
 to a query or repository.
 
 .. code-block:: php
@@ -272,7 +382,7 @@ to a query or repository.
 	\nn\t3::Db()->ignoreEnableFields( $entryRepository );
 	\nn\t3::Db()->ignoreEnableFields( $query );
 
-Example für a Custom Query:
+Example of a custom query:
 
 .. code-block:: php
 
@@ -288,7 +398,12 @@ If that doesn't do the trick or gets too complicated, see:
 
 	\nn\t3::Db()->statement();
 
-| ``@return boolean``
+| ``@param mixed $queryOrRepository``
+| ``@param boolean $ignoreStoragePid``
+| ``@param boolean $ignoreHidden``
+| ``@param boolean $ignoreDeleted``
+| ``@param boolean $ignoreStartEnd``
+| ``@return mixed``
 
 \\nn\\t3::Db()->insert(``$tableNameOrModel = '', $data = []``);
 """""""""""""""""""""""""""""""""""""""""""""""
@@ -303,39 +418,48 @@ Inserting a new record by table name and data array:
 	$insertArr = \nn\t3::Db()->insert('table', ['bodytext'=>'...']);
 
 Insert a new model. The repository is determined automatically.
-The model is persisted directly.
+The model will be persisted directly.
 
 .. code-block:: php
 
 	$model = new \My\Nice\Model();
 	$persistedModel = \nn\t3::Db()->insert( $model );
 
-| ``@return int``
+| ``@param mixed $tableNameOrModel``
+| ``@param array $data``
+| ``@return mixed``
 
 \\nn\\t3::Db()->orderBy(``$queryOrRepository, $ordering = []``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Set sorting for a repository or query.
+Set sorting for a repository or a query.
 
 .. code-block:: php
 
 	$ordering = ['title' => \TYPO3\CMS\Extbase\Persistence\QueryInterface::ORDER_DESCENDING];
 	\nn\t3::Db()->orderBy( $queryOrRepository, $ordering );
+	
+	// asc and desc can be used as synonyms
+	$ordering = ['title' => 'asc'];
+	$ordering = ['title' => 'desc'];
+	\nn\t3::Db()->orderBy( $queryOrRepository, $ordering );
 
 Can also be used to sort by a list of values (e.g. ``uids``).
-This is done by passing an array für the value of the single ordering:
+This is done by passing an array for the value of the single ordering:
 
 .. code-block:: php
 
 	$ordering = ['uid' => [3,7,2,1]];
 	\nn\t3::Db()->orderBy( $queryOrRepository, $ordering );
 
-| ``@return $queryOrRepository``
+| ``@param mixed $queryOrRepository``
+| ``@param array $ordering``
+| ``@return mixed``
 
 \\nn\\t3::Db()->persistAll();
 """""""""""""""""""""""""""""""""""""""""""""""
 
-PersistAll...
+PersistAll.
 
 .. code-block:: php
 
@@ -343,36 +467,77 @@ PersistAll...
 
 | ``@return void``
 
-\\nn\\t3::Db()->quote(``$str = ''``);
+\\nn\\t3::Db()->quote(``$value = ''``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
 A replacement for the ``mysqli_real_escape_string()`` method.
-Should only be used in an emergency for low-level queries. Better to use,
-preparedStatements.
 
-Will only work with SQL, not DQL.
+Should be used only in case of emergency for low-level queries.
+It is better to use ``preparedStatements``.
+
+Works only for SQL, not for DQL.
 
 .. code-block:: php
 
-	$sword = \nn\t3::Db()->quote($sword);
+	$sword = \nn\t3::Db()->quote('test'); // => 'test'
+	$sword = \nn\t3::Db()->quote('test';SET"); // => 'test\';SET'
+	$sword = \nn\t3::Db()->quote([1, 'test', '2']); // => [1, "'test'", '2']
 	$sword = \nn\t3::Db()->quote('"; DROP TABLE fe_user;#');
 
-| ``@return string``
+| ``@param string|array $value``
+| ``@return string|array``
+
+\\nn\\t3::Db()->save(``$tableNameOrModel = '', $data = []``);
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+Create database record OR update an existing record.
+
+Decides independently whether the entry must be inserted into the database via ``UPDATE`` or ``INSERT``
+or an existing record must be updated. The data will be
+persisted directly!
+
+Example for passing a table name and an array:
+
+.. code-block:: php
+
+	// no uid passed? Then INSERT a new record
+	\nn\t3::Db()->save('table', ['bodytext'=>'...']);
+	
+	// pass uid? Then UPDATE existing data
+	\nn\t3::Db()->save('table', ['uid'=>123, 'bodytext'=>'...']);
+
+Example for passing a domain model:
+
+.. code-block:: php
+
+	// new model? Will be added by $repo->add()
+	$model = new \My\Nice\Model();
+	$model->setBodytext('...');
+	$persistedModel = \nn\t3::Db()->save( $model );
+	
+	// existing model? Will be updated by $repo->update()
+	$model = $myRepo->findByUid(123);
+	$model->setBodytext('...');
+	$persistedModel = \nn\t3::Db()->save( $model );
+
+| ``@param mixed $tableNameOrModel``
+| ``@param array $data``
+| ``@return mixed``
 
 \\nn\\t3::Db()->setFalConstraint(``$queryBuilder = NULL, $tableName = '', $falFieldName = '', $numFal = true, $operator = false``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Add constraint for sys_file_reference to a QueryBuilder.
-Constrains the results to see if there is a FAL relation.
+Add a constraint for sys_file_reference to a QueryBuilder.
+Restricts the results to whether there is a FAL relation.
 
 .. code-block:: php
 
 	$queryBuilder = \nn\t3::Db()->getQueryBuilder( $table );
 	
-	// Only get records that have at least one SysFileReference for falfield
+	// Get only records that have at least one SysFileReference for falfield.
 	\nn\t3::Db()->setFalConstraint( $queryBuilder, 'tx_myext_tablename', 'falfield' );
 	
-	// ... that do NOT have a SysFileReference für falfield
+	// ... which do NOT have a SysFileReference for falfield
 	\nn\t3::Db()->setFalConstraint( $queryBuilder, 'tx_myext_tablename', 'falfield', false );
 	
 	// ... which have EXACTLY 2 SysFileReferences
@@ -381,12 +546,17 @@ Constrains the results to see if there is a FAL relation.
 	// ... which have 2 or less (less than or equal) SysFileReferences
 	\nn\t3::Db()->setFalConstraint( $queryBuilder, 'tx_myext_tablename', 'falfield', 2, 'lte' );
 
-| ``@return $queryBuilder``
+| ``@param \TYPO3\CMS\Core\Database\Query\QueryBuilder $queryBuilder``
+| ``@param string $tableName``
+| ``@param string $falFieldName``
+| ``@param boolean $numFal``
+| ``@param boolean $operator``
+| ``@return \TYPO3\CMS\Core\Database\Query\QueryBuilder``
 
 \\nn\\t3::Db()->setNotInSysCategoryConstraint(``$queryBuilder = NULL, $sysCategoryUids = [], $tableName = '', $categoryFieldName = 'categories'``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Constrain contraint to records that are NOT in one of the specified categories.
+Constrain the constraint to records that are NOT in one of the specified categories.
 Opposite and alias to ``\nn\t3::Db()->setSysCategoryConstraint()``
 
 .. code-block:: php
@@ -394,58 +564,72 @@ Opposite and alias to ``\nn\t3::Db()->setSysCategoryConstraint()``
 	$queryBuilder = \nn\t3::Db()->getQueryBuilder( $table );
 	\nn\t3::Db()->setNotInSysCategoryConstraint( $queryBuilder, [1,3,4], 'tx_myext_tablename', 'categories' );
 
-| ``@return $queryBuilder``
+| ``@param \TYPO3\CMS\Core\Database\Query\QueryBuilder $queryBuilder``
+| ``@param array $sysCategoryUids``
+| ``@param string $tableName``
+| ``@param string $categoryFieldName``
+| ``@return \TYPO3\CMS\Core\Database\Query\QueryBuilder``
 
 \\nn\\t3::Db()->setSysCategoryConstraint(``$queryBuilder = NULL, $sysCategoryUids = [], $tableName = '', $categoryFieldName = 'categories', $useNotIn = false``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
 Add constraint for sys_category / sys_category_record_mm to a QueryBuilder.
-Constrains the results to the specified sys-categories UIDs.
+Restricts the results to the specified sys-categories UIDs.
 
 .. code-block:: php
 
 	$queryBuilder = \nn\t3::Db()->getQueryBuilder( $table );
 	\nn\t3::Db()->setSysCategoryConstraint( $queryBuilder, [1,3,4], 'tx_myext_tablename', 'categories' );
 
-| ``@return $queryBuilder``
+| ``@param \TYPO3\CMS\Core\Database\Query\QueryBuilder $querybuilder``
+| ``@param array $sysCategoryUids``
+| ``@param string $tableName``
+| ``@param string $categoryFieldName``
+| ``@param boolean $useNotIn``
+| ``@return \TYPO3\CMS\Core\Database\Query\QueryBuilder``
 
 \\nn\\t3::Db()->sortBy(``$objectArray, $fieldName = 'uid', $uidList = []``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
 Sorts results of a query by an array and specific field.
-Solves the problem that a ``->in()`` query does not return the results
-in the order of the IDs passed. Example:
-| ``$query->matching($query->in('uid', [3,1,2]));`` does not necessarily come up
-in the order ``[3,1,2]`` comes back.
+Resolves the problem that a ``->in()`` query does not return results
+in the order of the given IDs. Example:
+| ``$query->matching($query->in('uid', [3,1,2]));`` does not necessarily return
+returned in the order ``[3,1,2]``.
 
 .. code-block:: php
 
 	$insertArr = \nn\t3::Db()->sortBy( $storageOrArray, 'uid', [2,1,5]);
 
+| ``@param mixed $objectArray``
+| ``@param string $fieldName``
+| ``@param array $uidList``
 | ``@return array``
 
 \\nn\\t3::Db()->statement(``$statement = '', $params = []``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
 Submit a "raw" query to the database.
-You can't get any closer to the database. You are responsible for everything yourself.
+Closer to the database is not possible. You are responsible for everything yourself.
 Injections are only opposed by your (hopefully sufficient :) intelligence.
 
-Helps e.g. with queries of tables, which are not part of the Typo3 installation and are therefore
+Helps e.g. with queries of tables, which are not part of the Typo3 installation and therefore
 therefore could not be reached via the normal QueryBuilder.
 
 .. code-block:: php
 
-	// ALWAYS escape variables über!
+	// ALWAYS escape variables!
 	$keyword = \nn\t3::Db()->quote('search term');
 	$rows = \nn\t3::Db()->statement( "SELECT FROM tt_news WHERE bodytext LIKE '%${keyword}%'");
 	
 	// or better use prepared statements:
 	$rows = \nn\t3::Db()->statement( 'SELECT FROM tt_news WHERE bodytext LIKE :str', ['str'=>"%${keyword}%"] );
 
-For a ``SELECT`` statement, the rows are returned from the database as an array.
-For all other statements (e.g., ``UPDATE`` or ``DELETE``), the number of rows involved is returned.
+For a ``SELECT`` statement, the rows from the database are returned as an array.
+For all other statements (e.g. ``UPDATE`` or ``DELETE``) the number of rows involved is returned.
 
+| ``@param string $statement``
+| ``@param array $params``
 | ``@return mixed``
 
 \\nn\\t3::Db()->tableExists(``$table = ''``);
@@ -462,22 +646,29 @@ Exists a specific DB table?
 \\nn\\t3::Db()->truncate(``$table = ''``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Empty database;
+Clear database table.
+Deletes all entries in the specified table and resets the auto-increment value to ``0``
 
 .. code-block:: php
 
 	\nn\t3::Db()->truncate('table');
 
+| ``@param string $table``
 | ``@return boolean``
 
 \\nn\\t3::Db()->undelete(``$table = '', $constraint = []``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Restore database entry
+Restore deleted database entry.
+This is done by setting the flag for "deleted" (``deleted``) back to ``0``.
 
-\nn\t3::Db()->undelete('table', $uid);
-\nn\t3::Db()->undelete('table', ['uid_local'=>$uid]);
+.. code-block:: php
 
+	\nn\t3::Db()->undelete('table', $uid);
+	\nn\t3::Db()->undelete('table', ['uid_local'=>$uid]);
+
+| ``@param string $table``
+| ``@param array $constraint``
 | ``@return boolean``
 
 \\nn\\t3::Db()->update(``$tableNameOrModel = '', $data = [], $uid = NULL``);
@@ -485,7 +676,7 @@ Restore database entry
 
 Update database entry. Quick and easy.
 The update can happen either by table name and data array.
-Or you can üpass a model.
+Or you can pass a model.
 
 Examples:
 
@@ -497,20 +688,23 @@ Examples:
 	// UPDATE table SET title='new' WHERE email='david@99grad.de' AND pid=12
 	\nn\t3::Db()->update('table', ['title'=>'new'], ['email'=>'david@99grad.de', 'pid'=>12, ...]);
 
-Using ``true`` instead of a ``$uid`` will update ALL records in the table.
+With ``true`` instead of a ``$uid`` ALL records of the table will be updated.
 
 .. code-block:: php
 
 	// UPDATE table SET test='1' WHERE 1
 	\nn\t3::Db()->update('table', ['test'=>1], true);
 
-Instead of a table name, a simple model ücan also be passed.
-The repository will be determined automatically and the model persisted directly.
+Instead of a table name, a simple model can also be passed.
+The repository will be determined automatically and the model will be persisted directly.
 
 .. code-block:: php
 
 	$model = $myRepo->findByUid(1);
 	\nn\t3::Db()->update( $model );
 
+| ``@param mixed $tableNameOrModel``
+| ``@param array $data``
+| ``@param int $uid``
 | ``@return mixed``
 

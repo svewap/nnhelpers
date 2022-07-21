@@ -133,30 +133,46 @@ class Cache implements SingletonInterface {
 	}
 	
 	/**
-	 * Löscht alle `nnhelpers`-Caches:
+	 * Löscht Caches.
+	 * Wird ein `identifier` angegeben, dann werden nur die Caches des spezifischen
+	 * identifiers gelöscht – sonst ALLE Caches aller Extensions und Seiten.
 	 * 
 	 * - RAM-Caches
 	 * - CachingFramework-Caches, die per `\nn\t3::Cache()->set()` gesetzt wurde
 	 * - Datei-Caches, die per `\nn\t3::Cache()->write()` gesetzt wurde
 	 * 
 	 * ```
+	 * // ALLE Caches löschen – auch die Caches anderer Extensions, der Seiten etc.
 	 * \nn\t3::Cache()->clear();
+	 * 
+	 * // Nur die Caches mit einem bestimmten Identifier löschen
+	 * \nn\t3::Cache()->clear('nnhelpers');
 	 * ```
-	 *
+	 * 
+	 * @param string $identifier
 	 * @return void
 	 */
-	public function clear() {
+	public function clear( $identifier = null ) {
+		
+		if (!$identifier) {
+			// ALLE TYPO3 Caches löschen, der über das CachingFramework registriert wurde
+			$this->cacheManager->flushCaches();
+		} else {
+			// Spezifischen Cache löschen
+			if ($cacheUtility = $this->cacheManager->getCache( $identifier )) {
+				$cacheUtility->flush();
+			}
+		}
 
-		// Typo3 Cache löschen, der über das CachingFramework registriert wurde
-		$this->cacheManager->flushCaches();
-
-		// RAM Cache löschen
-		$GLOBALS['nnhelpers_cache'] = [];
-
-		// File-Cache löschen
-		$files = \nn\t3::Environment()->getVarPath() . "/cache/code/nnhelpers/*.php";
-		foreach (glob($files) as $file) {
-			unlink( $file );
+		if (!$identifier || $identifier == 'nnhelpers') {
+			// RAM Cache löschen
+			$GLOBALS['nnhelpers_cache'] = [];
+	
+			// File-Cache löschen
+			$files = \nn\t3::Environment()->getVarPath() . "/cache/code/nnhelpers/*.php";
+			foreach (glob($files) as $file) {
+				unlink( $file );
+			}
 		}
 	}
 	

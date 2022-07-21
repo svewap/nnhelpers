@@ -175,7 +175,26 @@ Generate an absolute link to a page
 
 | ``@return string``
 
-\\nn\\t3::Page()->getChildPids(``$parentPid = 0, $recursive = 999``);
+\\nn\\t3::Page()->getActionLink(``$pid = NULL, $extensionName = '', $pluginName = '', $controllerName = '', $actionName = '', $params = [], $absolute = false``);
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+Get link to an action/controller
+
+.. code-block:: php
+
+	\nn\t3::Page()->getActionLink( $pid, $extName, $pluginName, $controllerName, $actionName, $args );
+
+Example for the news extension:
+
+.. code-block:: php
+
+	$newsArticleUid = 45;
+	$newsDetailPid = 123;
+	\nn\t3::Page()->getActionLink( $newsDetailPid, 'news', 'pi1', 'News', 'detail', ['news'=>$newsArticleUid]);
+
+| ``@return string``
+
+\\nn\\t3::Page()->getChildPids(``$parentPid = [], $recursive = 999``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
 Get list of child uids of one or more pages.
@@ -246,6 +265,23 @@ Absolute URLs are generated from the backend context into the frontend. The URLs
 	\nn\t3::Page()->getLink( $pid, true );
 	\nn\t3::Page()->getLink( $pid, $params, true );
 	\nn\t3::Page()->getLink( 'david@99grad.de' )
+
+Example of generating a link to a controller:
+
+Tip: see also ``getActionLink()`` for a short version!
+
+.. code-block:: php
+
+	$newsDetailPid = 123;
+	$newsArticleUid = 45;
+	
+	$link = \nn\t3::Page()->getLink($newsDetailPid, [
+	    'tx_news_pi1' => [
+	        'action' => 'detail',
+	        'controller' => 'news',
+	        'news' => $newsArticleUid,
+	    ]
+	]);
 
 | ``@return string``
 

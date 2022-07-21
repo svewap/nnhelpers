@@ -15,6 +15,21 @@ Zugriff auf GET / POST Variablen, Filecontainer etc.
 Overview of Methods
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+\\nn\\t3::Request()->GET(``$url = '', $queryParams = [], $headers = []``);
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+Sendet einen GET Request (per curl) an einen Server
+
+.. code-block:: php
+
+	\nn\t3::Request()->GET( 'https://...', ['a'=>'123'] );
+	\nn\t3::Request()->GET( 'https://...', ['a'=>'123'], ['Accept-Encoding'=>'gzip, deflate'] );
+
+| ``@param string $url``
+| ``@param array $queryParams``
+| ``@param array $headers``
+| ``@return array``
+
 \\nn\\t3::Request()->GP(``$varName = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
@@ -34,7 +49,11 @@ Sendet einen POST Request (per CURL) an einen Server.
 .. code-block:: php
 
 	\nn\t3::Request()->POST( 'https://...', ['a'=>'123'] );
+	\nn\t3::Request()->POST( 'https://...', ['a'=>'123'], ['Accept-Encoding'=>'gzip, deflate'] );
 
+| ``@param string $url``
+| ``@param array $postData``
+| ``@param array $headers``
 | ``@return array``
 
 \\nn\\t3::Request()->files(``$path = NULL, $forceArray = false``);
@@ -149,4 +168,7 @@ gespeichert wird.
 	\nn\t3::Request()->getUri();
 
 | ``@return string``
+
+\\nn\\t3::Request()->mergeGetParams(``$url = '', $getParams = []``);
+"""""""""""""""""""""""""""""""""""""""""""""""
 

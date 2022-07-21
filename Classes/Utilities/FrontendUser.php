@@ -262,7 +262,7 @@ class FrontendUser implements SingletonInterface {
 		if ($sessionId = $GLOBALS['TSFE']->fe_user ? $GLOBALS['TSFE']->fe_user->id : null) {
 			return $sessionId;
 		}
-		return $_COOKIE['fe_typo_user'] ?? null;
+		return $_COOKIE[$this->getCookieName()] ?? null;
 	}
 
 	/**

@@ -75,5 +75,6 @@ Klicken Sie einfach auf "Edit me on GitHub" oben rechts, um Ihre Änderungswüns
    ViewHelpers/Index
    AdditionalClasses/Index
    KnownProblems/Index
+   WpHelpers/Index
    Changelog/Index
    Sitemap

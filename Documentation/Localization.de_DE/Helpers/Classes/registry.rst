@@ -133,7 +133,7 @@ als Key verwendet wird.
 
 | ``@return array``
 
-\\nn\\t3::Registry()->plugin(``$vendorName = '', $pluginName = '', $title = '', $icon = ''``);
+\\nn\\t3::Registry()->plugin(``$vendorName = '', $pluginName = '', $title = '', $icon = '', $tcaGroup = NULL``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
 Ein Plugin registrieren zur Auswahl über das Dropdown ``CType`` im Backend.
@@ -143,6 +143,35 @@ In ``Configuration/TCA/Overrides/tt_content.php`` nutzen – oder ``ext_tables.p
 
 	\nn\t3::Registry()->plugin( 'nncalendar', 'nncalendar', 'Kalender', 'EXT:pfad/zum/icon.svg' );
 	\nn\t3::Registry()->plugin( 'Nng\Nncalendar', 'nncalendar', 'Kalender', 'EXT:pfad/zum/icon.svg' );
+
+| ``@return void``
+
+\\nn\\t3::Registry()->pluginGroup(``$vendorName = '', $groupLabel = '', $plugins = []``);
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+Vereinfacht das Registrieren einer Liste von Plugins, die im ``list_type`` Dropdown zu einer
+Gruppe zusammengefasst werden.
+
+In ``Configuration/TCA/Overrides/tt_content.php`` nutzen:
+
+.. code-block:: php
+
+	\nn\t3::Registry()->pluginGroup(
+	    'Nng\Myextname',
+	    'LLL:EXT:myextname/Resources/Private/Language/locallang_db.xlf:pi_group_name',
+	    [
+	        'list' => [
+	            'title'     => 'LLL:EXT:myextname/Resources/Private/Language/locallang_db.xlf:pi_list.name',
+	            'icon'      => 'EXT:myextname/Resources/Public/Icons/Extension.svg',
+	            'flexform'  => 'FILE:EXT:myextname/Configuration/FlexForm/list.xml',
+	        ],
+	        'show' => [
+	            'title'     => 'LLL:EXT:myextname/Resources/Private/Language/locallang_db.xlf:pi_show.name',
+	            'icon'      => 'EXT:myextname/Resources/Public/Icons/Extension.svg',
+	            'flexform'  => 'FILE:EXT:myextname/Configuration/FlexForm/show.xml'
+	        ],
+	    ]
+	);
 
 | ``@return void``
 
@@ -171,7 +200,7 @@ Typoscript-Setup:
 
 | ``@return void``
 
-\\nn\\t3::Registry()->set(``$extName = '', $path = '', $settings = []``);
+\\nn\\t3::Registry()->set(``$extName = '', $path = '', $settings = [], $clear = false``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
 Einen Wert in der Tabelle sys_registry speichern.
@@ -179,9 +208,23 @@ Daten in dieser Tabelle bleiben über die Session hinaus erhalten.
 Ein Scheduler-Job kann z.B. speichern, wann er das letzte Mal
 ausgeführt wurde.
 
+Arrays werden per default rekursiv zusammengeführt / gemerged:
+
 .. code-block:: php
 
-	\nn\t3::Registry()->set( 'nnsite', 'lastRun', ['test'=>'ok'] );
+	\nn\t3::Registry()->set( 'nnsite', 'lastRun', ['eins'=>'1'] );
+	\nn\t3::Registry()->set( 'nnsite', 'lastRun', ['zwei'=>'2'] );
+	
+	\nn\t3::Registry()->get( 'nnsite', 'lastRun' ); // => ['eins'=>1, 'zwei'=>2]
 
-| ``@return void``
+Mit ``true`` am Ende werden die vorherigen Werte gelöscht:
+
+.. code-block:: php
+
+	\nn\t3::Registry()->set( 'nnsite', 'lastRun', ['eins'=>'1'] );
+	\nn\t3::Registry()->set( 'nnsite', 'lastRun', ['zwei'=>'2'], true );
+	
+	\nn\t3::Registry()->get( 'nnsite', 'lastRun' ); // => ['zwei'=>2]
+
+| ``@return array``
 

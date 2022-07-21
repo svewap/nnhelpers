@@ -18,10 +18,16 @@ class ClearCacheHook {
 	 * Wird vom Core beim Klick auf den Blitz im Backend aufgerufen.
 	 * Registriert in der `ext_localconf.php` von nnhelpers.
 	 * 
+	 * Abhängig von den Einstellungen im Extension-Manager werden:
+	 * - nur die nnhelpers-Caches gelöscht
+	 * - oder ALLE Caches aller Extensions gelöscht
+	 * 
 	 * @return void
 	 */
 	public function postProcessClearCache() {
-		\nn\t3::Cache()->clear();
+		$extConf = \nn\t3::Settings()->getExtConf('nnhelpers');
+		$clearAllCaches = $extConf['clearAllCaches'] ?? false;
+		\nn\t3::Cache()->clear( $clearAllCaches ? null : 'nnhelpers' );
 	}
 
 }

@@ -95,6 +95,26 @@ anhand seines Ländercodes (z.B. ``DE``) holen
 
 | ``@return array``
 
+\\nn\\t3::Environment()->getDefaultLanguage(``$returnKey = 'typo3Language'``);
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+Gibt die Standard-Sprache (Default Language) zurück. Bei TYPO3 ist das immer die Sprache mit der ID ``0``.
+Die Sprachen müssen in der YAML site configuration festgelegt sein.
+
+.. code-block:: php
+
+	// 'de'
+	\nn\t3::Environment()->getDefaultLanguage();
+	
+	// 'de-DE'
+	\nn\t3::Environment()->getDefaultLanguage('hreflang');
+	
+	// ['title'=>'German', 'typo3Language'=>'de', ...]
+	\nn\t3::Environment()->getDefaultLanguage( true );
+
+| ``@param string|boolean $returnKey``
+| ``@return string|array``
+
 \\nn\\t3::Environment()->getDomain();
 """""""""""""""""""""""""""""""""""""""""""""""
 
@@ -136,6 +156,28 @@ Die aktuelle Sprache (als Zahl) des Frontends holen.
 
 | ``@return int``
 
+\\nn\\t3::Environment()->getLanguageFallbackChain(``$langUid = true``);
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+Gibt eine Liste der Sprachen zurück, die verwendet werden sollen, falls
+z.B. eine Seite oder ein Element nicht in der gewünschten Sprache existiert.
+
+Wichtig: Die Fallback-Chain enthält an erster Stelle die aktuelle bzw. in $langUid
+übergebene Sprache.
+
+.. code-block:: php
+
+	// Einstellungen für aktuelle Sprache verwenden (s. Site-Config YAML)
+	\nn\t3::Environment()->getLanguageFallbackChain();   // --> z.B. [0] oder [1,0]
+	
+	// Einstellungen für eine bestimmte Sprache holen
+	\nn\t3::Environment()->getLanguageFallbackChain( 1 );
+	// --> [1,0] - falls Fallback in Site-Config definiert wurde und der fallbackMode auf "fallback" steht
+	// --> [1] - falls es keinen Fallback gibt oder der fallbackMode auf "strict" steht
+
+| ``@param string|boolean $returnKey``
+| ``@return string|array``
+
 \\nn\\t3::Environment()->getLanguageKey();
 """""""""""""""""""""""""""""""""""""""""""""""
 
@@ -146,6 +188,30 @@ Die aktuelle Sprache (als Kürzel wie "de") im Frontend holen
 	\nn\t3::Environment()->getLanguageKey();
 
 | ``@return string``
+
+\\nn\\t3::Environment()->getLanguages(``$key = 'languageId', $value = NULL``);
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+Gibt eine Liste aller definierten Sprachen zurück.
+Die Sprachen müssen in der YAML site configuration festgelegt sein.
+
+.. code-block:: php
+
+	// [['title'=>'German', 'typo3Language'=>'de', ....], ['title'=>'English', 'typo3Language'=>'en', ...]]
+	\nn\t3::Environment()->getLanguages();
+	
+	// ['de'=>['title'=>'German', 'typo3Language'=>'de'], 'en'=>['title'=>'English', 'typo3Language'=>'en', ...]]
+	\nn\t3::Environment()->getLanguages('iso-639-1');
+	
+	// ['de'=>0, 'en'=>1]
+	\nn\t3::Environment()->getLanguages('typo3Language', 'languageId');
+	
+	// [0=>'de', 1=>'en']
+	\nn\t3::Environment()->getLanguages('languageId', 'typo3Language');
+
+| ``@param string $key``
+| ``@param string $value``
+| ``@return string|array``
 
 \\nn\\t3::Environment()->getLocalConf(``$path = ''``);
 """""""""""""""""""""""""""""""""""""""""""""""
@@ -181,6 +247,34 @@ Diese Angabe ist der Wert, der in der php.ini festgelegt wurde und ggf.
 	\nn\t3::Environment()->getPostMaxSize();  // z.B. '1048576' bei 1MB
 
 | ``@return integer``
+
+\\nn\\t3::Environment()->getPsr4Prefixes();
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+Liste der PSR4 Prefixes zurückgeben.
+
+Das ist ein Array mit allen Ordnern, die beim autoloading / Bootstrap von TYPO3 nach Klassen
+geparsed werden müssen. In einer TYPO3 Extension ist das per default der Ordern ``Classes``.
+Die Liste wird von Composer/TYPO3 generiert.
+
+Zurückgegeben wird ein array. Key ist ``Vendor\Namespace\``, Wert ist ein Array mit Pfaden zu den Ordnern,
+die rekursiv nach Klassen durchsucht werden. Es spielt dabei keine Rolle, ob TYPO3 im composer
+mode läuft oder nicht.
+
+.. code-block:: php
+
+	\nn\t3::Environment()->getPsr4Prefixes();
+
+Beispiel für Rückgabe:
+
+.. code-block:: php
+
+	[
+	    'Nng\Nnhelpers\' => ['/pfad/zu/composer/../../public/typo3conf/ext/nnhelpers/Classes', ...],
+	    'Nng\Nnrestapi\' => ['/pfad/zu/composer/../../public/typo3conf/ext/nnrestapi/Classes', ...]
+	]
+
+| ``@return array``
 
 \\nn\\t3::Environment()->getRelPathSite();
 """""""""""""""""""""""""""""""""""""""""""""""

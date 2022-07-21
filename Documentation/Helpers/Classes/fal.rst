@@ -99,12 +99,13 @@ automatically attached to the model. To set the FAL directly in the model, you c
 """""""""""""""""""""""""""""""""""""""""""""""
 
 Creates new entry in ``sys_file``
-Searches all ``sys_file_storage`` entries to see if the path to the $file already exists as a storage.
-If not, a new storage is created.
+Searches all ``sys_file_storage`` entries to see if the path to the $file already exists as storage.
+If not, a new storage will be created.
 
 .. code-block:: php
 
 	\nn\t3::Fal()->createSysFile( 'fileadmin/image.jpg' );
+	\nn\t3::Fal()->createSysFile( '/var/www/mysite/fileadmin/image.jpg' );
 
 | ``@return false|\TYPO3\CMS\Core\Resource\File``
 

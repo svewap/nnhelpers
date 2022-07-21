@@ -53,8 +53,9 @@ class File implements SingletonInterface {
 		} else if (is_array($obj) && $url = ($obj['publicUrl'] ?? false)) {
 			// $url kann genutzt werden!
 		} else if (is_a($obj, \TYPO3\CMS\Core\Resource\Folder::class, true)) {
-			$url = ltrim($obj->getPublicUrl(), '/');
+			$url = $obj->getPublicUrl();
 		}
+		$url = ltrim($url, '/');
 		return !$absolute ? $url : $this->absUrl( $url );
 	}
 
@@ -523,7 +524,6 @@ class File implements SingletonInterface {
 	 * ```
 	 * @return boolean
 	 */
-	// isConvertableToImage
 	public function isConvertableToImage ( $filename = null ) {
 		if (!$filename) return false;
 		$suffix = $this->suffix($filename);
@@ -538,12 +538,55 @@ class File implements SingletonInterface {
 	 * ```
 	 * @return string
 	 */
-	// suffix
 	public function suffix ( $filename = null ) {
 		if (!$filename) return false;
 		$suffix = strtolower(pathinfo( $filename, PATHINFO_EXTENSION ));
 		if ($suffix == 'jpeg') $suffix = 'jpg';
 		return $suffix;
+	}
+
+	/**
+	 * Ersetzt den suffix für einen Dateinamen.
+	 * ```
+	 * \nn\t3::File()->suffix('bild', 'jpg');				//	=> bild.jpg
+	 * \nn\t3::File()->suffix('bild.png', 'jpg');			//	=> bild.jpg
+	 * \nn\t3::File()->suffix('pfad/zu/bild.png', 'jpg');	//	=> pfad/zu/bild.jpg
+	 * ```
+	 * @return string
+	 */
+	public function addSuffix ( $filename = null, $newSuffix = '' ) {
+		$suffix = strtolower(pathinfo( $filename, PATHINFO_EXTENSION ));
+		if ($suffix) {
+			$filename = substr($filename, 0, -strlen($suffix)-1);
+		}
+		return $filename . '.' . $newSuffix;
+	}
+	
+	/**
+	 * Gibt den Suffix für einen bestimmten Mime-Type / Content-Type zurück.
+	 * Sehr reduzierte Variante – nur wenige Typen abgedeckt.
+	 * Umfangreiche Version: https://bit.ly/3B9KrNA
+	 * ```
+	 * \nn\t3::File()->suffixForMimeType('image/jpeg');	=> gibt 'jpg' zurück
+	 * ```
+	 * @return string
+	 */
+	public function suffixForMimeType ( $mime = '' ) {
+		$mime = array_pop(explode('/', strtolower($mime)));
+		$map = [
+			'jpeg' 	=> 'jpg',
+			'jpg' 	=> 'jpg',
+			'gif' 	=> 'gif',
+			'png' 	=> 'png',
+			'pdf' 	=> 'pdf',
+			'tiff' 	=> 'tif',
+		];
+		foreach ($map as $sword=>$suffix) {
+			if (strpos($mime, $sword) !== false) {
+				return $suffix;
+			}
+		}
+		return $mime;
 	}
 
 	/**
@@ -967,7 +1010,7 @@ class File implements SingletonInterface {
 		if ($fileObj instanceof \TYPO3\CMS\Core\Resource\File) {
 
 			// sys_file-Object
-			$filename = $file->getPublicUrl();
+			$filename = $fileObj->getPublicUrl();
 
 		} else if (is_a($fileObj, \TYPO3\CMS\Extbase\Domain\Model\FileReference::class)) {
 

@@ -18,7 +18,7 @@ Overview of Methods
 \\nn\\t3::Page()->addCssFile(``$path, $compress = false, $atTop = false, $wrap = false, $concat = false``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-CSS-Datei in <head> einschleusen
+CSS-Datei in ``<head>`` einschleusen
 Siehe ``\nn\t3::Page()->addHeader()`` für einfachere Version.
 
 .. code-block:: php
@@ -30,7 +30,7 @@ Siehe ``\nn\t3::Page()->addHeader()`` für einfachere Version.
 \\nn\\t3::Page()->addCssLibrary(``$path, $compress = false, $atTop = false, $wrap = false, $concat = false``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-CSS-Library in <head> einschleusen
+CSS-Library in ``<head>`` einschleusen
 
 .. code-block:: php
 
@@ -56,7 +56,7 @@ Entscheidet selbst, welche Methode des PageRenderes zu verwenden ist.
 \\nn\\t3::Page()->addFooterData(``$html = ''``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-HTML-Code vor Ende der <body> einschleusen
+HTML-Code vor Ende der ``<body>`` einschleusen
 Siehe ``\nn\t3::Page()->addFooter()`` für einfachere Version.
 
 .. code-block:: php
@@ -83,7 +83,7 @@ Entscheidet selbst, welche Methode des PageRenderes zu verwenden ist.
 \\nn\\t3::Page()->addHeaderData(``$html = ''``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-HTML-Code in <head> einschleusen
+HTML-Code in ``<head>`` einschleusen
 Siehe ``\nn\t3::Page()->addHeader()`` für einfachere Version.
 
 .. code-block:: php
@@ -95,7 +95,7 @@ Siehe ``\nn\t3::Page()->addHeader()`` für einfachere Version.
 \\nn\\t3::Page()->addJsFile(``$path, $compress = false, $atTop = false, $wrap = false, $concat = false``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-JS-Datei in <head> einschleusen
+JS-Datei in ``<head>`` einschleusen
 Siehe ``\nn\t3::Page()->addHeader()`` für einfachere Version.
 
 .. code-block:: php
@@ -107,7 +107,7 @@ Siehe ``\nn\t3::Page()->addHeader()`` für einfachere Version.
 \\nn\\t3::Page()->addJsFooterFile(``$path, $compress = false, $atTop = false, $wrap = false, $concat = false``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-JS-Datei am Ende der <body> einschleusen
+JS-Datei am Ende der ``<body>`` einschleusen
 Siehe ``\nn\t3::Page()->addJsFooterFile()`` für einfachere Version.
 
 .. code-block:: php
@@ -119,7 +119,7 @@ Siehe ``\nn\t3::Page()->addJsFooterFile()`` für einfachere Version.
 \\nn\\t3::Page()->addJsFooterLibrary(``$path, $compress = false, $atTop = false, $wrap = false, $concat = false``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-JS-Library am Ende der <body> einschleusen
+JS-Library am Ende der ``<body>`` einschleusen
 
 .. code-block:: php
 
@@ -130,7 +130,7 @@ JS-Library am Ende der <body> einschleusen
 \\nn\\t3::Page()->addJsLibrary(``$path, $compress = false, $atTop = false, $wrap = false, $concat = false``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-JS-Library in <head> einschleusen.
+JS-Library in ``<head>`` einschleusen.
 
 .. code-block:: php
 
@@ -175,7 +175,26 @@ Einen absoluten Link zu einer Seite generieren
 
 | ``@return string``
 
-\\nn\\t3::Page()->getChildPids(``$parentPid = 0, $recursive = 999``);
+\\nn\\t3::Page()->getActionLink(``$pid = NULL, $extensionName = '', $pluginName = '', $controllerName = '', $actionName = '', $params = [], $absolute = false``);
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+Link zu einer Action / Controller holen
+
+.. code-block:: php
+
+	\nn\t3::Page()->getActionLink( $pid, $extName, $pluginName, $controllerName, $actionName, $args );
+
+Beispiel für die News-Extension:
+
+.. code-block:: php
+
+	$newsArticleUid = 45;
+	$newsDetailPid = 123;
+	\nn\t3::Page()->getActionLink( $newsDetailPid, 'news', 'pi1', 'News', 'detail', ['news'=>$newsArticleUid]);
+
+| ``@return string``
+
+\\nn\\t3::Page()->getChildPids(``$parentPid = [], $recursive = 999``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
 Liste der Child-Uids einer oder mehrerer Seiten holen.
@@ -246,6 +265,23 @@ Aus dem Backend-Kontext werden absolute URLs ins Frontend generiert. Die URLs we
 	\nn\t3::Page()->getLink( $pid, true );
 	\nn\t3::Page()->getLink( $pid, $params, true );
 	\nn\t3::Page()->getLink( 'david@99grad.de' )
+
+Beispiel zum Generieren eines Links an einen Controller:
+
+Tipp: siehe auch ``\nn\t3::Page()->getActionLink()`` für eine Kurzversion!
+
+.. code-block:: php
+
+	$newsDetailPid = 123;
+	$newsArticleUid = 45;
+	
+	$link = \nn\t3::Page()->getLink($newsDetailPid, [
+	    'tx_news_pi1' => [
+	        'action'        => 'detail',
+	        'controller'    => 'News',
+	        'news'          => $newsArticleUid,
+	    ]
+	]);
 
 | ``@return string``
 

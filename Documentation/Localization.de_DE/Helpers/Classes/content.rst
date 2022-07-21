@@ -90,10 +90,10 @@ Auch als ViewHelper vorhanden.
 
 | ``@return array``
 
-\\nn\\t3::Content()->get(``$ttContentUid = NULL, $getRelations = false``);
+\\nn\\t3::Content()->get(``$ttContentUid = NULL, $getRelations = false, $localize = true``);
 """""""""""""""""""""""""""""""""""""""""""""""
 
-Lädt ein tt_content-Element als Array
+Lädt die Daten eines tt_content-Element als einfaches Array:
 
 .. code-block:: php
 
@@ -105,6 +105,91 @@ Laden von Relationen (``media``, ``assets``, ...)
 
 	\nn\t3::Content()->get( 1201, true );
 
+Übersetzungen / Localization:
+
+Element NICHT automatisch übersetzen, falls eine andere Sprache eingestellt wurde
+
+.. code-block:: php
+
+	\nn\t3::Content()->get( 1201, false, false );
+
+Element in einer ANDEREN Sprache holen, als im Frontend eingestellt wurde.
+Berücksichtigt die Fallback-Chain der Sprache, die in der Site-Config eingestellt wurde
+
+.. code-block:: php
+
+	\nn\t3::Content()->get( 1201, false, 2 );
+
+Element mit eigener Fallback-Chain holen. Ignoriert dabei vollständig die Chain,
+die in der Site-Config definiert wurde.
+
+.. code-block:: php
+
+	\nn\t3::Content()->get( 1201, false, [2,3,0] );
+
+| ``@param int $ttContentUid``      Content-Uid in der Tabelle tt_content
+| ``@param bool $getRelations`` Auch Relationen / FAL holen?
+| ``@param bool $localize``     Übersetzen des Eintrages?
+| ``@return array``
+
+\\nn\\t3::Content()->getAll(``$constraints = [], $getRelations = false, $localize = true``);
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+Mehrere Content-Elemente (aus ``tt_content``) holen.
+
+Die Datensätze werden automatisch lokalisiert – außer ``$localize`` wird auf ``false``
+gesetzt. Siehe ``\nn\t3::Content()->get()`` für weitere ``$localize`` Optionen.
+
+Anhand einer Liste von UIDs:
+
+.. code-block:: php
+
+	\nn\t3::Content()->getAll( 1 );
+	\nn\t3::Content()->getAll( [1, 2, 7] );
+
+Anhand von Filter-Kriterien:
+
+.. code-block:: php
+
+	\nn\t3::Content()->getAll( ['pid'=>1] );
+	\nn\t3::Content()->getAll( ['pid'=>1, 'colPos'=>1] );
+	\nn\t3::Content()->getAll( ['pid'=>1, 'CType'=>'mask_section_cards', 'colPos'=>1] );
+
+| ``@param mixed $ttContentUid``    Content-Uids oder Constraints für Abfrage der Daten
+| ``@param bool $getRelations`` Auch Relationen / FAL holen?
+| ``@param bool $localize``     Übersetzen des Eintrages?
+| ``@return array``
+
+\\nn\\t3::Content()->localize(``$table = 'tt_content', $data = [], $localize = true``);
+"""""""""""""""""""""""""""""""""""""""""""""""
+
+Daten lokalisieren / übersetzen.
+
+Beispiele:
+
+Daten übersetzen, dabei die aktuelle Sprache des Frontends verwenden.
+
+.. code-block:: php
+
+	\nn\t3::Content()->localize( 'tt_content', $data );
+
+Daten in einer ANDEREN Sprache holen, als im Frontend eingestellt wurde.
+Berücksichtigt die Fallback-Chain der Sprache, die in der Site-Config eingestellt wurde
+
+.. code-block:: php
+
+	\nn\t3::Content()->localize( 'tt_content', $data, 2 );
+
+Daten mit eigener Fallback-Chain holen. Ignoriert dabei vollständig die Chain,
+die in der Site-Config definiert wurde.
+
+.. code-block:: php
+
+	\nn\t3::Content()->localize( 'tt_content', $data, [3, 2, 0] );
+
+| ``@param string $table``  Datenbank-Tabelle
+| ``@param array $data``        Array mit den Daten der Standard-Sprache (languageUid = 0)
+| ``@param mixed $localize``    Angabe, wie übersetzt werden soll. Boolean, uid oder Array mit uids
 | ``@return array``
 
 \\nn\\t3::Content()->render(``$ttContentUid = NULL, $data = []``);

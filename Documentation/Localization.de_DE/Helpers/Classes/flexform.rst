@@ -95,7 +95,7 @@ Beim Typoscript sind verschiedene Arten des Aufbaus erlaubt:
 	        classes = big big-thing
 	    }
 	    # ... oder eine userFunc. Gibt eine der Varianten oben als Array zurück
-	    20 {
+	    30 {
 	        userFunc = nn\t3\Flexform->getOptions
 	    }
 	}

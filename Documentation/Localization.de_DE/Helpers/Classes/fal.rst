@@ -105,6 +105,7 @@ Falls nicht, wird ein neuer Storage angelegt.
 .. code-block:: php
 
 	\nn\t3::Fal()->createSysFile( 'fileadmin/bild.jpg' );
+	\nn\t3::Fal()->createSysFile( '/var/www/mysite/fileadmin/bild.jpg' );
 
 | ``@return false|\TYPO3\CMS\Core\Resource\File``
 
