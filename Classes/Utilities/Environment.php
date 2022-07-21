@@ -389,7 +389,7 @@ class Environment implements SingletonInterface {
 	 * 	@return bool
 	 */
 	public function isFrontend () {
-		return TYPO3_MODE == 'FE' && $GLOBALS['TSFE'] && $GLOBALS['TSFE']->id;
+		return TYPO3_MODE == 'FE' && isset($GLOBALS['TSFE']) && $GLOBALS['TSFE']->id;
 	}
 	
 	/**
