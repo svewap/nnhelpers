@@ -202,6 +202,11 @@ class Settings implements SingletonInterface {
 	 * @return array
 	 */
 	public function getFromPath( $tsPath = '', $setup = null ) {
+		
+		if (is_object($setup)) {
+			$setup = (array) $setup;
+		}
+
 		$parts = \nn\t3::Arrays($tsPath)->trimExplode('.');
 		$setup = $setup ?: $this->getFullTyposcript();
 
