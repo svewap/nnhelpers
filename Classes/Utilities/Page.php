@@ -7,7 +7,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Utility\RootlineUtility;
 use TYPO3\CMS\Core\Page\PageRenderer;
-use TYPO3\CMS\Frontend\Page\PageRepository;
+use TYPO3\CMS\Core\Domain\Repository\PageRepository;
 use TYPO3\CMS\Core\DataHandling\DataHandler;
 use TYPO3\CMS\Extbase\Service\CacheService;
 use TYPO3\CMS\Core\Cache\CacheManager;
@@ -18,9 +18,8 @@ use Nng\Nnhelpers\Provider\PageTitleProvider;
 /**
  * Alles rund um die `pages` Tabelle.
  */
-class Page implements SingletonInterface {
-   
-
+class Page implements SingletonInterface 
+{
 	/**
 	 * Daten einer Seiten holen (aus Tabelle "pages")
 	 * ```
@@ -29,12 +28,10 @@ class Page implements SingletonInterface {
 	 * @return array
 	 */
     public function get ( $uid = null ) {
+		$pageRepository = \nn\t3::injectClass( PageRepository::class );
 		if (\nn\t3::t3Version() < 10) {
-			$page = \nn\t3::injectClass( PageRepository::class );
-			$page->init( false );
-			return $page->getPage( $uid );	
+			$pageRepository->init( false );
 		}
-		$pageRepository = \nn\t3::injectClass( \TYPO3\CMS\Core\Domain\Repository\PageRepository::class );
 		return $pageRepository->getPage( $uid );
 	}
 	
@@ -359,10 +356,10 @@ class Page implements SingletonInterface {
 		$page = \nn\t3::injectClass( PageRepository::class );
 
 		$hideTypes = [
-			PageRepository::DOKTYPE_SPACER, 
-			PageRepository::DOKTYPE_BE_USER_SECTION,
-			PageRepository::DOKTYPE_RECYCLER,
-			PageRepository::DOKTYPE_SYSFOLDER
+			$page::DOKTYPE_SPACER, 
+			$page::DOKTYPE_BE_USER_SECTION,
+			$page::DOKTYPE_RECYCLER,
+			$page::DOKTYPE_SYSFOLDER
 		];
 
 		$constraints = [];

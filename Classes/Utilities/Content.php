@@ -7,7 +7,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Frontend\ContentObject\RecordsContentObject;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
-use TYPO3\CMS\Frontend\Page\PageRepository;
+use TYPO3\CMS\Core\Domain\Repository\PageRepository;
 
 /**
  * Inhaltselemente und Inhalte einer Backend-Spalten (`colPos`) lesen und rendern
@@ -185,17 +185,18 @@ class Content implements SingletonInterface {
 		}
 
 		$fallbackChain = \nn\t3::Environment()->getLanguageFallbackChain( $localize );
-				
-		if ($pageRepository = \nn\t3::injectClass( PageRepository::class )) {
-			foreach ($fallbackChain as $langUid) {
-				if ($overlay = $pageRepository->getRecordOverlay( $table, $data, $langUid, 'hideNonTranslated')) {
-					$data = $overlay;
-					break;
-				}
+		
+		$pageRepository = \nn\t3::injectClass( PageRepository::class );
+		if (!$pageRepository) return $data;
+
+		foreach ($fallbackChain as $langUid) {
+			if ($overlay = $pageRepository->getRecordOverlay( $table, $data, $langUid, 'hideNonTranslated')) {
+				$data = $overlay;
+				break;
 			}
-			if (count($fallbackChain) == 1 && !$overlay) {
-				return [];
-			}
+		}
+		if (count($fallbackChain) == 1 && !$overlay) {
+			return [];
 		}
 
 		return $data;

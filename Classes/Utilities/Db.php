@@ -12,6 +12,7 @@ use TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager;
 use TYPO3\CMS\Extbase\Persistence\Generic\Query;
 use TYPO3\CMS\Extbase\Persistence\Generic\Mapper\DataMapper;
 use TYPO3\CMS\Core\Utility\ClassNamingUtility;
+use TYPO3\CMS\Core\Domain\Repository\PageRepository;
 
 /**
  * Zugriff auf die meist genutzten Datenbank-Operationen für Schreiben, Lesen, Löschen vereinfachen.
@@ -225,7 +226,7 @@ class Db implements SingletonInterface
 			}
 			$where = '(' . ($useLogicalOr ? join(' OR ', $where) : join(' AND ', $where )) . ')';
 			if (!$ignoreEnableFields) {
-				$sysPage = \nn\t3::injectClass( \TYPO3\CMS\Frontend\Page\PageRepository::class );
+				$sysPage = \nn\t3::injectClass( PageRepository::class );
 				$where .= $sysPage->enableFields($table);
 			}
 			$rows = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows( '*', $table, $where );

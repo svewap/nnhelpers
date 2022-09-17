@@ -321,6 +321,15 @@ class t3 {
 	 * @return mixed  
 	 */
 	public static function injectClass($class) {
+
+		// Legacy classNames?
+		if (!class_exists($class)) {
+			// t3Version() <= 10
+			if ($class == \TYPO3\CMS\Core\Domain\Repository\PageRepository::class) {
+				$class = \TYPO3\CMS\Frontend\Page\PageRepository::class;
+			}
+		}
+
 		if (!class_exists($class)) return false;
 		$class = ltrim( $class, '\\');
 
