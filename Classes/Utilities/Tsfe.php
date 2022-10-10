@@ -40,7 +40,7 @@ class Tsfe implements SingletonInterface {
 	 */
 	public function get( $pid = null ) {
 		if (!isset($GLOBALS['TSFE'])) $this->init( $pid );
-		return $GLOBALS['TSFE'];
+		return $GLOBALS['TSFE'] ?? '';
 	}
 	
 	/**
@@ -94,7 +94,7 @@ class Tsfe implements SingletonInterface {
 	public function init($pid = 0, $typeNum = 0) {
 
 		if (!$pid) $pid = \nn\t3::Page()->getPid();
-
+		
 		try {
 			if (\nn\t3::t3Version() < 8) {
 
@@ -182,7 +182,7 @@ class Tsfe implements SingletonInterface {
 				$this->bootstrap();
 
 			} else if (\nn\t3::t3Version() < 11){
-
+				
 				$request = $GLOBALS['TYPO3_REQUEST'] ?? ServerRequestFactory::fromGlobals();
 				$site = $request->getAttribute('site');
 				if (!$site instanceof Site) {
@@ -223,9 +223,15 @@ class Tsfe implements SingletonInterface {
 				$GLOBALS['TSFE']->settingLocale();
 
 			} else if (\nn\t3::t3Version() < 12) {
+				
+				$isCli = \TYPO3\CMS\Core\Core\Environment::isCli();
+				$request = null;
 
-				$request = $GLOBALS['TYPO3_REQUEST'] ?? ServerRequestFactory::fromGlobals();
-				$site = $request->getAttribute('site');
+				if (!$isCli) {
+					$request = $GLOBALS['TYPO3_REQUEST'] ?? ServerRequestFactory::fromGlobals();
+				}
+
+				$site = $request ? $request->getAttribute('site') : null;
 				if (!$site instanceof Site) {
 					$sites = GeneralUtility::makeInstance(SiteFinder::class)->getAllSites();
 					$site = reset($sites);
@@ -233,6 +239,11 @@ class Tsfe implements SingletonInterface {
 						$site = new NullSite();
 					}
 				}
+
+				if (!$request) {
+					$request = \nn\t3::injectClass(ServerRequestFactory::class)->createServerRequest('GET', $site->getBase(), [] );
+				}
+
 				$language = $request->getAttribute('language');
 				if (!$language instanceof SiteLanguage) {
 					$language = $site->getDefaultLanguage();
@@ -240,9 +251,9 @@ class Tsfe implements SingletonInterface {
 
 				$id = $request->getQueryParams()['id'] ?? $request->getParsedBody()['id'] ?? $site->getRootPageId();
 				$type = $request->getQueryParams()['type'] ?? $request->getParsedBody()['type'] ?? '0';
-		
+				
 				$feUserAuth = GeneralUtility::makeInstance(\TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication::class);
-
+				
 				$GLOBALS['TSFE'] = GeneralUtility::makeInstance(
 					TypoScriptFrontendController::class,
 					GeneralUtility::makeInstance(Context::class),
