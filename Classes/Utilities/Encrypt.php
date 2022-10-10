@@ -333,7 +333,10 @@ class Encrypt implements SingletonInterface {
 	 * @return array|false
 	 */
 	public function parseJwt( $token = '' ) {
-		$parts = explode('.', $token);
+
+		if (!$token) return false;
+		
+		$parts = explode('.', $token ?? '');
 		$header = json_decode(base64_decode( array_shift($parts)), true);
 		$payload = json_decode(base64_decode( array_shift($parts)), true);
 		$signature = base64_decode(array_shift($parts));
