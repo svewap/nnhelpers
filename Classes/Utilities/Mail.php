@@ -52,22 +52,22 @@ class Mail implements SingletonInterface {
 		
 		$mail = GeneralUtility::makeInstance(MailMessage::class);
 
-		$html = $params['html'];
+		$html = $params['html'] ?? '';
 		$pathSite = \nn\t3::Environment()->getPathSite();
 
-		$recipients = \nn\t3::Arrays($params['toEmail'])->trimExplode();
-		$fromEmail = array_shift(\nn\t3::Arrays($params['fromEmail'])->trimExplode());
+		$recipients = \nn\t3::Arrays($params['toEmail'] ?? '')->trimExplode();
+		$fromEmail = array_shift(\nn\t3::Arrays($params['fromEmail'] ?? '')->trimExplode());
 
 		if ($useSwiftMailer) {
 			$mail->setFrom([
-				$fromEmail => $params['fromName']
+				$fromEmail => ($params['fromName'] ?? '')
 			]);	
 			$mail->setTo($recipients);		
-			$mail->setSubject($params['subject']);
+			$mail->setSubject($params['subject'] ?? '');
 		} else {
 			$mail->from( new \Symfony\Component\Mime\Address($fromEmail, $params['fromName'] ?? '') );
 			$mail->to(...$recipients);		
-			$mail->subject($params['subject']);
+			$mail->subject($params['subject'] ?? '');
 		}
 
 		// Inline-Media im HTML-Code finden (<img data-embed="1" src="..." />)
@@ -107,7 +107,7 @@ class Mail implements SingletonInterface {
 		}
 	
 		// Zusätzlich Anhänge?
-		$attachments = \nn\t3::Arrays($params['attachments'])->trimExplode();
+		$attachments = \nn\t3::Arrays($params['attachments'] ?? '')->trimExplode();
 		foreach ($attachments as $path) {
 			if (!isset($attachedFiles[$pathSite . $path])) {
 				$absPath = \nn\t3::File()->absPath( $path );
@@ -124,16 +124,16 @@ class Mail implements SingletonInterface {
 		$html = $dom->saveHTML();
 
 		// Relative Pfade im Quelltext mit absoluten Pfaden ersetzen
-		if ($params['absPrefix']) {
+		if ($params['absPrefix'] ?? false) {
 			$html = \nn\t3::Dom()->absPrefix( $html );
 		}
 
 		// CSS in Inline-Styles umwandeln
-		if ($params['emogrify']) {
+		if ($params['emogrify'] ?? false) {
 			$html = CssInliner::fromHtml($html)->inlineCss()->render();
 		}
 
-		$plaintext = $params['plaintext'] ?: strip_tags($html);
+		$plaintext = $params['plaintext'] ?? strip_tags($html);
 
 		if ($html) {
 			if ($useSwiftMailer) {
@@ -152,9 +152,9 @@ class Mail implements SingletonInterface {
 		}
 	
 		if ($useSwiftMailer) {
-			$mail->setReturnPath( $params['returnPath_email'] );
+			$mail->setReturnPath( $params['returnPath_email'] ?? '' );
 		} else {
-			$returnPath = $params['returnPath_email'] ?: \TYPO3\CMS\Core\Utility\MailUtility::getSystemFromAddress();
+			$returnPath = $params['returnPath_email'] ?? \TYPO3\CMS\Core\Utility\MailUtility::getSystemFromAddress();
 			if (strpos($returnPath, 'no-reply') === false) {
 				$mail->setReturnPath( $returnPath );
 			}
