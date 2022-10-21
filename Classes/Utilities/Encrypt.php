@@ -335,14 +335,17 @@ class Encrypt implements SingletonInterface {
 	public function parseJwt( $token = '' ) {
 
 		if (!$token) return false;
+		if (substr($token, 0, 1) == '[') return false;
 		
-		$parts = explode('.', $token ?? '');
-		$header = json_decode(base64_decode( array_shift($parts)), true);
+		$parts = explode('.', $token);
+		if (count($parts) < 3) return false;
+		
+		$header = json_decode(base64_decode( array_shift($parts)), true);		
 		$payload = json_decode(base64_decode( array_shift($parts)), true);
 		$signature = base64_decode(array_shift($parts));
 		
 		$checkSignature = $this->createJwtSignature($header, $payload);
-		if ($signature !== $checkSignature) return FALSE;
+		if ($signature !== $checkSignature) return false;
 		$payload['token'] = $token;
 		
 		return $payload;
