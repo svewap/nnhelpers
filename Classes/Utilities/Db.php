@@ -842,7 +842,7 @@ class Db implements SingletonInterface
 	 */
 	public function getColumns ( $table = '', $useSchemaManager = false ) 
 	{
-		$cols = $GLOBALS['TCA'][$table]['columns'];
+		$cols = isset($GLOBALS['TCA'][$table]) ? $GLOBALS['TCA'][$table]['columns'] : [];
 		
 		// Diese Felder sind nicht ausdrücklich im TCA, aber für Abfrage legitim
 		if ($cols) {
