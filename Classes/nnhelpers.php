@@ -337,6 +337,11 @@ class t3 {
 			return call_user_func($class . '::makeInstance');
 		}
 
+		// @toDo: v12 will probably need this:
+		/*
+		return GeneralUtility::makeInstance( $class );
+		*/
+		
 		$objectManager = GeneralUtility::makeInstance(ObjectManager::class);
 		return $objectManager->get($class);
 	}
