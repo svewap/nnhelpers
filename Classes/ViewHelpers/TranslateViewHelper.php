@@ -3,6 +3,7 @@ namespace Nng\Nnhelpers\ViewHelpers;
 
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3Fluid\Fluid\Core\ViewHelper\Traits\CompileWithRenderStatic;
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 /**
  * Einen Text übersetzen, inkl. optionaler Übersetzung über Deep-L.
@@ -27,7 +28,7 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\Traits\CompileWithRenderStatic;
  * </nnt3:translate>
  * ```
  */
-class TranslateViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\FlashMessagesViewHelper {
+class TranslateViewHelper extends AbstractViewHelper {
 
 	use CompileWithRenderStatic;
 

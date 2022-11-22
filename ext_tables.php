@@ -1,11 +1,12 @@
 <?php
-defined('TYPO3_MODE') or die();
+defined('TYPO3') or die();
 
 call_user_func(
     function( $extKey )
     {
         
         // Backend-Modul registrieren (falls im Ext-Config aktiviert)
+        /*
 
         if (\nn\t3::Environment()->getExtConf('nnhelpers', 'showMod')) {
             \TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerModule(
@@ -24,6 +25,7 @@ call_user_func(
                 ]
             );
         }
+        */
 
     },
 'nnhelpers');

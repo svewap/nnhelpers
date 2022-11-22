@@ -5,6 +5,7 @@ namespace Nng\Nnhelpers\Utilities;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Context\Context;
+use TYPO3\CMS\Core\Http\ApplicationType;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\PathUtility;
 use Psr\Http\Message\ServerRequestInterface;
@@ -20,6 +21,11 @@ use TYPO3\CMS\Core\Core\ClassLoadingInformation;
  */
 class Environment implements SingletonInterface {
    
+	/**
+	 * @var boolean
+	 */
+	public $_isFrontend = null;
+
 	/**
 	 * Das aktuelle `Site` Object holen.
 	 * Über dieses Object kann z.B. ab TYPO3 9 auf die Konfiguration aus der site YAML-Datei zugegriffen werden.
@@ -389,7 +395,13 @@ class Environment implements SingletonInterface {
 	 * 	@return bool
 	 */
 	public function isFrontend () {
-		return TYPO3_MODE == 'FE' && isset($GLOBALS['TSFE']) && $GLOBALS['TSFE']->id;
+		if ($this->_isFrontend !== null) return $this->_isFrontend;
+		if (($GLOBALS['TYPO3_REQUEST'] ?? null) instanceof ServerRequestInterface
+    		&& ApplicationType::fromRequest($GLOBALS['TYPO3_REQUEST'])->isFrontend()
+		) {
+			return $this->_isFrontend = true;
+		}
+		return $this->_isFrontend = false;
 	}
 	
 	/**
@@ -400,7 +412,7 @@ class Environment implements SingletonInterface {
 	 * 	@return bool
 	 */
 	public function isBackend () {
-		return TYPO3_MODE == 'BE';
+		return !$this->isFrontend();
 	}
 	
 	/**

@@ -2,15 +2,18 @@
 
 namespace Nng\Nnhelpers\Controller;
 
-use TYPO3\CMS\Extbase\Mvc\View\ViewInterface;
+use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
+use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 
-abstract class AbstractController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController {
+abstract class AbstractController extends ActionController 
+{
+	protected ModuleTemplateFactory $moduleTemplateFactory;
 
-	/**
-	 * Backend Template Container
-	 * @var string
-	 */
-	protected $defaultViewObjectName = \TYPO3\CMS\Backend\View\BackendTemplateView::class;
+	public function __construct(
+        ModuleTemplateFactory $moduleTemplateFactory,
+    ) {
+        $this->moduleTemplateFactory = $moduleTemplateFactory;
+    }
 
 	/** 
 	 * 	Cache des Source-Codes für die Doku
@@ -22,7 +25,9 @@ abstract class AbstractController extends \TYPO3\CMS\Extbase\Mvc\Controller\Acti
 	/**
 	 * 	Initialize View
 	 */
-	public function initializeView ( ViewInterface $view ) {
+	public function initializeView () 
+	{
+		/*
 		parent::initializeView($view);
 
 		if (!$view->getModuleTemplate()) return;
@@ -41,6 +46,7 @@ abstract class AbstractController extends \TYPO3\CMS\Extbase\Mvc\Controller\Acti
 			$template->setFlashMessageQueue($this->controllerContext->getFlashMessageQueue());
 			$template->getDocHeaderComponent()->disable();
 		}
+		*/
 	}
 
 }

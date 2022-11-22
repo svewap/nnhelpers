@@ -3,6 +3,7 @@ namespace Nng\Nnhelpers\ViewHelpers;
 
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3Fluid\Fluid\Core\ViewHelper\Traits\CompileWithRenderStatic;
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 /**
  * Gibt eine Flash-Message aus.
@@ -24,7 +25,7 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\Traits\CompileWithRenderStatic;
  * ```
  * @return string
  */
-class FlashMessagesViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\FlashMessagesViewHelper {
+class FlashMessagesViewHelper extends AbstractViewHelper {
 
 	use CompileWithRenderStatic;
 
@@ -36,6 +37,7 @@ class FlashMessagesViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\FlashMessages
     }
 
 	public static function renderStatic( array $arguments, \Closure $renderChildrenClosure, RenderingContextInterface $renderingContext ) {
+		return 'Needs to be fixed for TYPO3 v12';
 		$arguments['queueIdentifier'] = $arguments['id'];
 		$html = parent::renderStatic( $arguments, $renderChildrenClosure, $renderingContext );
 		return html_entity_decode( $html );

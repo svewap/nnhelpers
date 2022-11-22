@@ -337,14 +337,7 @@ class t3 {
 			return call_user_func($class . '::makeInstance');
 		}
 
-		// ab v12
-		if (!class_exists(\TYPO3\CMS\Extbase\Object\ObjectManager::class)) {
-			return GeneralUtility::makeInstance( $class );
-		}
-
-		// bis v <= 11
-		$objectManager = GeneralUtility::makeInstance(ObjectManager::class);
-		return $objectManager->get($class);
+		return GeneralUtility::makeInstance( $class );
 	}
 	
 	/**

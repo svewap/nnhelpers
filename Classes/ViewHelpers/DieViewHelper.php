@@ -3,6 +3,7 @@ namespace Nng\Nnhelpers\ViewHelpers;
 
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3Fluid\Fluid\Core\ViewHelper\Traits\CompileWithRenderStatic;
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 /**
  * Macht nichts, außer das Script zu beenden.
@@ -14,7 +15,7 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\Traits\CompileWithRenderStatic;
  * ```
  * @return death
  */
-class DieViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\FlashMessagesViewHelper {
+class DieViewHelper extends AbstractViewHelper {
 
 	use CompileWithRenderStatic;
 

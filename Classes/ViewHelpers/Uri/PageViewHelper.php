@@ -2,6 +2,7 @@
 namespace Nng\Nnhelpers\ViewHelpers\Uri;
 
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 /**
  * Erzeugt ein URL zu einer Seite im Frontend.
@@ -12,7 +13,7 @@ use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
  * {nnt3:uri.page(pageUid:1, additionalParams:'...')}
  * ```
  */
-class PageViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\Uri\PageViewHelper {
+class PageViewHelper extends AbstractViewHelper {
 	
 	public function initializeArguments() {
 		parent::initializeArguments();

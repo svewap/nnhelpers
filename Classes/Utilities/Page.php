@@ -29,9 +29,6 @@ class Page implements SingletonInterface
 	 */
     public function get ( $uid = null ) {
 		$pageRepository = \nn\t3::injectClass( PageRepository::class );
-		if (\nn\t3::t3Version() < 10) {
-			$pageRepository->init( false );
-		}
 		return $pageRepository->getPage( $uid );
 	}
 	
@@ -142,7 +139,9 @@ class Page implements SingletonInterface
     public function getPid ( $fallback = null ) {
 
 		// Normaler Frontend-Content: Alles beim alten
-		if (TYPO3_MODE == 'FE' && ($pid = $GLOBALS['TSFE']->id)) return $pid;
+		if (\nn\t3::Environment()->isFrontend()) {
+			return $GLOBALS['TSFE']->id;
+		}
 
 		// Versuch, PID über den Request zu bekommen
 		if ($pid = $this->getPidFromRequest()) return $pid;
@@ -227,11 +226,9 @@ class Page implements SingletonInterface
 			// Im Scheduler-context vom CLI aus kann es ein Problem geben, das TSFE zu initialisieren
 			// ToDo: Prüfen, ob diese Methode global für alle TYPO3-Versionen funktioniert
 			if (!$tsfe) {
-				if (\nn\t3::t3Version() > 9) {
-					$site = GeneralUtility::makeInstance(\TYPO3\CMS\Core\Site\SiteFinder::class)->getSiteByPageId( $pid );
-					$uri = (string) $site->getRouter()->generateUri( $pid, $params );
-					return $uri;
-				}
+				$site = GeneralUtility::makeInstance(\TYPO3\CMS\Core\Site\SiteFinder::class)->getSiteByPageId( $pid );
+				$uri = (string) $site->getRouter()->generateUri( $pid, $params );
+				return $uri;
 			}
 		}
 
@@ -260,18 +257,16 @@ class Page implements SingletonInterface
 	 * @return string
 	 */
 	public function getActionLink( $pid = null, $extensionName = '', $pluginName = '', $controllerName = '', $actionName = '', $params = [], $absolute = false ) {
-		if (\nn\t3::t3Version() > 9) {
-			$extensionService = \nn\t3::injectClass(\TYPO3\CMS\Extbase\Service\ExtensionService::class);
-			$argumentsPrefix = $extensionService->getPluginNamespace($extensionName, $pluginName);
-			$arguments = [
-				$argumentsPrefix => [
-				  'action' => $actionName,
-				  'controller' => $controllerName,
-				],
-			];
-			$arguments[$argumentsPrefix] = array_merge($arguments[$argumentsPrefix], $params);
-			return $this->getLink( $pid, $arguments, $absolute );
-		}
+		$extensionService = \nn\t3::injectClass(\TYPO3\CMS\Extbase\Service\ExtensionService::class);
+		$argumentsPrefix = $extensionService->getPluginNamespace($extensionName, $pluginName);
+		$arguments = [
+			$argumentsPrefix => [
+				'action' => $actionName,
+				'controller' => $controllerName,
+			],
+		];
+		$arguments[$argumentsPrefix] = array_merge($arguments[$argumentsPrefix], $params);
+		return $this->getLink( $pid, $arguments, $absolute );
 	}
 
 	/**
@@ -426,13 +421,7 @@ class Page implements SingletonInterface
 		if (\nn\t3::Environment()->isFrontend()) {
 			return \nn\t3::injectClass( PageRenderer::class );
 		}
-
-		if (\nn\t3::t3Version() >= 9) {
-			return \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Page\PageRenderer::class);
-		}
-		
-		$doc = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance( DocumentTemplate::class );
-		return $doc->getPageRenderer();
+		return \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Page\PageRenderer::class);
 	}
 
 	/**

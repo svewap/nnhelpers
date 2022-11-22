@@ -20,7 +20,7 @@ use TYPO3\CMS\Fluid\ViewHelpers\Link\TypolinkViewHelper;
  * <be:link.editRecord uid="42" table="a_table" returnUrl="foo/bar" />
  * ```
  */
-class EditRecordViewHelper extends TypolinkViewHelper {
+class EditRecordViewHelper extends AbstractViewHelper {
 	
 	public function initializeArguments() {
 		parent::initializeArguments();
@@ -31,6 +31,7 @@ class EditRecordViewHelper extends TypolinkViewHelper {
    }
 
 	public static function renderStatic( array $arguments, \Closure $renderChildrenClosure, RenderingContextInterface $renderingContext ) {
+		return "NEED FIX FOR v12";
 		$args = ['table', 'uid', 'returnUrl'];
 	   
 		foreach ($args as $arg) {

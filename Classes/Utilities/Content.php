@@ -252,8 +252,7 @@ class Content implements SingletonInterface {
 			'source' => $ttContentUid,
 			'dontCheckPid' => 1
 		];
-		$objectManager = GeneralUtility::makeInstance(ObjectManager::class);
-		$html = $objectManager->get(RecordsContentObject::class)->render($conf);
+		$html = GeneralUtility::makeInstance( RecordsContentObject::class )->render($conf);
 
 		// Wenn data-Array übergeben wurde, Ergebnis erneut über Fluid Standalone-View parsen.
 		if ($data) {

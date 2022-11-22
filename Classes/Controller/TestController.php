@@ -419,6 +419,7 @@ class TestController extends \Nng\Nnhelpers\Controller\AbstractController {
 				case 'Convert':
 
 					$model = \nn\t3::Convert(['data'=>'insert'])->toModel(\Nng\Nnhelpers\Domain\Model\Entry::class);
+
 					if (!$model || !$model->getData()) {
 						$errors[] = "toModel(): Model konnte nicht aus Array erzeugt werden.";
 					} else {
@@ -450,13 +451,14 @@ class TestController extends \Nng\Nnhelpers\Controller\AbstractController {
 			}
 
 			$result = ['errors'=>$errors, 'success'=>$success];
-			return json_encode($result);
+			return $this->htmlResponse(json_encode($result));
 		}
 
 		$this->view->assignMultiple([
 			'baseURL' => \nn\t3::Environment()->getBaseUrl()
 		]);
 
+		return $this->htmlResponse($this->view->render());
 	}
 
 	/**
@@ -476,7 +478,7 @@ class TestController extends \Nng\Nnhelpers\Controller\AbstractController {
 	 */
 	public function createTestImage ( $usePHP = false ) {
 		$pathSite = \nn\t3::Environment()->getPathSite();
-		$testImgSrc 	= $pathSite . 'typo3conf/ext/nnhelpers/Resources/Public/Images/exif-test.jpg';
+		$testImgSrc 	= \nn\t3::File()->absPath('EXT:nnhelpers/Resources/Public/Images/exif-test.jpg');
 		$testImgDest 	= $pathSite . 'fileadmin/_tests/'.uniqid().'.jpg';
 		if (!$usePHP) {
 			$result = \nn\t3::File()->copy( $testImgSrc, $testImgDest );

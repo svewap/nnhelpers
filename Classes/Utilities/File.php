@@ -332,14 +332,7 @@ class File implements SingletonInterface {
 		$file = $this->resolvePathPrefixes( $file );
 		$file = $this->normalizePath( $file );
 
-		$file = str_replace( $pathSite, '', $file );
-		$file = ltrim( $file, '/' );
-
-		if (\nn\t3::t3Version() > 9) {
-			return GeneralUtility::getFileAbsFileName($file);
-		}
-
-		return $pathSite . $file;
+		return GeneralUtility::getFileAbsFileName($file);
 	}
 	
 	/**

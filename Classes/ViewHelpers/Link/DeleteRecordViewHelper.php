@@ -15,7 +15,7 @@ use TYPO3\CMS\Fluid\ViewHelpers\Link\TypolinkViewHelper;
  * </nnt3:link.deleteRecord>
  * ```
  */
-class DeleteRecordViewHelper extends TypolinkViewHelper {
+class DeleteRecordViewHelper extends AbstractViewHelper {
 	
 	public function initializeArguments() {
 		parent::initializeArguments();
@@ -26,7 +26,7 @@ class DeleteRecordViewHelper extends TypolinkViewHelper {
    }
 
 	public static function renderStatic( array $arguments, \Closure $renderChildrenClosure, RenderingContextInterface $renderingContext ) {
-
+		return "NEED FIX FOR v12";
 		$args = ['table', 'uid', 'data'];
 		foreach ($args as $arg) {
 			$$arg = $arguments[$arg] ?? '';

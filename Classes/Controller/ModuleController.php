@@ -6,17 +6,30 @@ use Nng\Nnhelpers\Domain\Repository\EntryRepository;
 use Nng\Nnhelpers\Helpers\DocumentationHelper;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 
-use TYPO3\CMS\Extbase\Mvc\View\ViewInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Utility\DebuggerUtility;
+use TYPO3\CMS\Core\Page\PageRenderer;
+use TYPO3\CMS\Fluid\View\StandaloneView;
+use TYPO3\CMS\Backend\Routing\UriBuilder;
+use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
 
-class ModuleController extends \Nng\Nnhelpers\Controller\AbstractController {
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 
-	/**
-	 * Backend Template Container
-	 * @var string
-	 */
-	protected $defaultViewObjectName = \TYPO3\CMS\Backend\View\BackendTemplateView::class;
+class ModuleController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController {
+
+	protected ModuleTemplateFactory $moduleTemplateFactory;
+    protected PageRenderer $pageRenderer;
+
+	public function __construct(
+		ModuleTemplateFactory $moduleTemplateFactory,
+        UriBuilder $uriBuilder,
+        PageRenderer $pageRenderer
+    ) {
+        $this->moduleTemplateFactory = $moduleTemplateFactory;
+        $this->uriBuilder = $uriBuilder;
+        $this->pageRenderer = $pageRenderer;
+    }
 
 	/** 
 	 * 	Cache des Source-Codes für die Doku
@@ -38,8 +51,13 @@ class ModuleController extends \Nng\Nnhelpers\Controller\AbstractController {
 	/**
 	 * @return void
 	 */
-	public function indexAction () 
+	public function indexAction (): ResponseInterface
 	{	
+		// \nn\t3::debug( \nn\t3::Content()->get( 1 ) );
+		// GeneralUtility::makeInstance(\TYPO3\CMS\Core\Page\AssetCollector::class)
+   		// ->addStyleSheet('my_ext_foo', 'EXT:nnhelpers/Resources/Public/Css/styles.css');
+		\nn\t3::Page()->getPageRenderer()->addCssFile('EXT:nnhelpers/Resources/Public/Css/styles.css');
+/*
 		$args = $this->request->getArguments();
 		$isDevMode = \nn\t3::Environment()->getExtConf('nnhelpers', 'devModeEnabled');
 		$updateTranslation = $args['updateTranslation'] ?? false;
@@ -47,7 +65,9 @@ class ModuleController extends \Nng\Nnhelpers\Controller\AbstractController {
 		$beUserLang = $GLOBALS['BE_USER']->uc['lang'] ?: 'en';
 		if ($beUserLang == 'default') $beUserLang = 'en';
 		
-		if ($enableCache && $cache = \nn\t3::Cache()->get([__METHOD__=>$beUserLang])) return $cache;
+		if ($enableCache && $cache = \nn\t3::Cache()->get([__METHOD__=>$beUserLang])) {
+			//return $this->htmlResponse($cache);
+		}
 
 		// Composer libraries laden (z.B. Markdown)
 		$autoload = \nn\t3::Environment()->extPath('nnhelpers') . 'Resources/Libraries/vendor/autoload.php';
@@ -70,9 +90,9 @@ class ModuleController extends \Nng\Nnhelpers\Controller\AbstractController {
 			'docSrcLang' 		=> $this->sourceLang,
 			'updateTranslation' => $updateTranslation,
 		]);
-
+*/
 		$html = $this->view->render();
-		return \nn\t3::Cache()->set([__METHOD__=>$beUserLang], $html);
+		return $this->htmlResponse(\nn\t3::Cache()->set([__METHOD__=>$beUserLang], $html));
 	}
 	
 	/**

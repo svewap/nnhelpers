@@ -20,7 +20,7 @@ use TYPO3\CMS\Fluid\ViewHelpers\Link\TypolinkViewHelper;
  * <be:link.newRecord uid="42" table="a_table" returnUrl="foo/bar" />
  * ```
  */
-class NewRecordViewHelper extends TypolinkViewHelper {
+class NewRecordViewHelper extends AbstractViewHelper {
 	
 	public function initializeArguments() {
 		parent::initializeArguments();
@@ -33,6 +33,9 @@ class NewRecordViewHelper extends TypolinkViewHelper {
    // https://tetronik-web2print.99grad.dev/typo3/record/edit?token=293233e1863f8eb271a3695939771986dd4be2ef&edit%5Btx_nntetronik_domain_model_product%5D%5B7%5D=new&returnUrl=%2Ftypo3%2Fmodule%2Fweb%2Flist%3Ftoken%3D149dcf8145cc38c0ecaa3952952695388e6203b9%26id%3D7%26table%3D%26pointer%3D1
 
 	public static function renderStatic( array $arguments, \Closure $renderChildrenClosure, RenderingContextInterface $renderingContext ) {
+		
+		return "NEED FIX FOR v12";
+		
 		$args = ['table', 'uid', 'returnUrl', 'pid'];
 
 		foreach ($args as $arg) {

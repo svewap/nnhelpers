@@ -24,7 +24,7 @@ use TYPO3\CMS\Fluid\ViewHelpers\Link\TypolinkViewHelper;
  * </nnt3:link.cloneRecord>
  * ```
  */
-class CloneRecordViewHelper extends TypolinkViewHelper {
+class CloneRecordViewHelper extends AbstractViewHelper {
 	
 	public function initializeArguments() {
 		parent::initializeArguments();
@@ -39,6 +39,7 @@ class CloneRecordViewHelper extends TypolinkViewHelper {
 
 	public static function renderStatic( array $arguments, \Closure $renderChildrenClosure, RenderingContextInterface $renderingContext ) {
 
+		return 'NEEDS FIX FOR v12';
 		$args = ['table', 'uid', 'data', 'pid', 'override', 'after'];
 		foreach ($args as $arg) {
 			$$arg = $arguments[$arg] ?? '';

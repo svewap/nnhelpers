@@ -17,7 +17,7 @@ use TYPO3\CMS\Fluid\ViewHelpers\Link\TypolinkViewHelper;
  * </nnt3:link.modifyRecord>
  * ```
  */
-class ModifyRecordViewHelper extends TypolinkViewHelper {
+class ModifyRecordViewHelper extends AbstractViewHelper {
 	
 	public function initializeArguments() {
 		parent::initializeArguments();
@@ -29,7 +29,7 @@ class ModifyRecordViewHelper extends TypolinkViewHelper {
    }
 
 	public static function renderStatic( array $arguments, \Closure $renderChildrenClosure, RenderingContextInterface $renderingContext ) {
-
+		return "NEED FIX FOR v12";
 		$args = ['table', 'uid', 'data', 'update'];
 		foreach ($args as $arg) {
 			$$arg = $arguments[$arg] ?? '';

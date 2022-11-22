@@ -3,6 +3,7 @@ namespace Nng\Nnhelpers\ViewHelpers;
 
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3Fluid\Fluid\Core\ViewHelper\Traits\CompileWithRenderStatic;
+use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 /**
  * Gibt eine eindeutige, einmalige ID zurück.
@@ -16,7 +17,7 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\Traits\CompileWithRenderStatic;
  * ```
  * @return string
  */
-class UniqidViewHelper extends \TYPO3\CMS\Fluid\ViewHelpers\FlashMessagesViewHelper {
+class UniqidViewHelper extends AbstractViewHelper {
 
 	use CompileWithRenderStatic;
 

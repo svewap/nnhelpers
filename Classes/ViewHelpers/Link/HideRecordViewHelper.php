@@ -23,7 +23,7 @@ use TYPO3\CMS\Fluid\ViewHelpers\Link\TypolinkViewHelper;
  * </nnt3:link.hideRecord>
  * ```
  */
-class HideRecordViewHelper extends TypolinkViewHelper {
+class HideRecordViewHelper extends AbstractViewHelper {
 	
 	public function initializeArguments() {
 		parent::initializeArguments();
@@ -36,7 +36,7 @@ class HideRecordViewHelper extends TypolinkViewHelper {
    }
 
 	public static function renderStatic( array $arguments, \Closure $renderChildrenClosure, RenderingContextInterface $renderingContext ) {
-
+		return "NEED FIX FOR v12";
 		$args = ['table', 'uid', 'hidden', 'visible', 'data'];
 		foreach ($args as $arg) {
 			$$arg = $arguments[$arg] ?? '';
