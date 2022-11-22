@@ -337,11 +337,12 @@ class t3 {
 			return call_user_func($class . '::makeInstance');
 		}
 
-		// @toDo: v12 will probably need this:
-		/*
-		return GeneralUtility::makeInstance( $class );
-		*/
-		
+		// ab v12
+		if (!class_exists(\TYPO3\CMS\Extbase\Object\ObjectManager::class)) {
+			return GeneralUtility::makeInstance( $class );
+		}
+
+		// bis v <= 11
 		$objectManager = GeneralUtility::makeInstance(ObjectManager::class);
 		return $objectManager->get($class);
 	}
@@ -365,6 +366,11 @@ class t3 {
 	 *	@return float
 	 */
 	public static function t3Version() {
+		// ab >= 12
+		if (class_exists(\TYPO3\CMS\Core\Information\Typo3Version::class)) {
+			return (new \TYPO3\CMS\Core\Information\Typo3Version())->getMajorVersion();
+		}
+		// bis <= 11
 		return floor(VersionNumberUtility::convertVersionNumberToInteger(TYPO3_version)/1000000);
 	}
 	

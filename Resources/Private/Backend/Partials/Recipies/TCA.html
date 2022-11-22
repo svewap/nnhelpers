@@ -2,7 +2,7 @@
 	<nnt3:format.code lang="php" download="tx_[ext-lower]_domain_model_[model-lower].php">
 	<?php
 
-	defined('TYPO3_MODE') || die('Access denied.');
+	defined('TYPO3') or die();
 
 	return [
 		'ctrl' => [
