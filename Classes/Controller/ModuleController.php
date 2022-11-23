@@ -53,46 +53,49 @@ class ModuleController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControlle
 	 */
 	public function indexAction (): ResponseInterface
 	{	
-		// \nn\t3::debug( \nn\t3::Content()->get( 1 ) );
-		// GeneralUtility::makeInstance(\TYPO3\CMS\Core\Page\AssetCollector::class)
-   		// ->addStyleSheet('my_ext_foo', 'EXT:nnhelpers/Resources/Public/Css/styles.css');
-		\nn\t3::Page()->getPageRenderer()->addCssFile('EXT:nnhelpers/Resources/Public/Css/styles.css');
-/*
 		$args = $this->request->getArguments();
 		$isDevMode = \nn\t3::Environment()->getExtConf('nnhelpers', 'devModeEnabled');
 		$updateTranslation = $args['updateTranslation'] ?? false;
 		$enableCache = !$updateTranslation && !$isDevMode;
-		$beUserLang = $GLOBALS['BE_USER']->uc['lang'] ?: 'en';
+
+		$beUserLang = $GLOBALS['BE_USER']->user['lang'] ?: 'en';
+
 		if ($beUserLang == 'default') $beUserLang = 'en';
 		
-		if ($enableCache && $cache = \nn\t3::Cache()->get([__METHOD__=>$beUserLang])) {
-			//return $this->htmlResponse($cache);
+		if ($enableCache && $html = \nn\t3::Cache()->get([__METHOD__=>$beUserLang])) {
+			
+		} else {
+
+			// Composer libraries laden (z.B. Markdown)
+			$autoload = \nn\t3::Environment()->extPath('nnhelpers') . 'Resources/Libraries/vendor/autoload.php';
+			require_once( $autoload );
+
+			$doc = $this->generateDocumentation();
+			$docViewhelper = $this->generateViewhelperDocumentation();
+			$docAdditional = $this->generateAdditionalClassesDocumentation();
+
+			$this->localizeDocumentation( $doc, $beUserLang );
+			$this->localizeDocumentation( $docViewhelper, $beUserLang );
+			$this->localizeDocumentation( $docAdditional, $beUserLang );
+
+			$this->view->assignMultiple([
+				'version'			=> ExtensionManagementUtility::getExtensionVersion('nnhelpers'),
+				'documentation' 	=> $doc,
+				'viewhelpers'		=> $docViewhelper,
+				'additional'		=> $docAdditional,
+				'docLang' 			=> $beUserLang,
+				'docSrcLang' 		=> $this->sourceLang,
+				'updateTranslation' => $updateTranslation,
+			]);
+
+			$html = $this->view->render();
+			\nn\t3::Cache()->set([__METHOD__=>$beUserLang], $html);
 		}
 
-		// Composer libraries laden (z.B. Markdown)
-		$autoload = \nn\t3::Environment()->extPath('nnhelpers') . 'Resources/Libraries/vendor/autoload.php';
-		require_once( $autoload );
-
-		$doc = $this->generateDocumentation();
-		$docViewhelper = $this->generateViewhelperDocumentation();
-		$docAdditional = $this->generateAdditionalClassesDocumentation();
-
-		$this->localizeDocumentation( $doc, $beUserLang );
-		$this->localizeDocumentation( $docViewhelper, $beUserLang );
-		$this->localizeDocumentation( $docAdditional, $beUserLang );
-
-		$this->view->assignMultiple([
-			'version'			=> ExtensionManagementUtility::getExtensionVersion('nnhelpers'),
-			'documentation' 	=> $doc,
-			'viewhelpers'		=> $docViewhelper,
-			'additional'		=> $docAdditional,
-			'docLang' 			=> $beUserLang,
-			'docSrcLang' 		=> $this->sourceLang,
-			'updateTranslation' => $updateTranslation,
-		]);
-*/
-		$html = $this->view->render();
-		return $this->htmlResponse(\nn\t3::Cache()->set([__METHOD__=>$beUserLang], $html));
+		$moduleTemplate = $this->moduleTemplateFactory->create($this->request);
+		$moduleTemplate->getDocHeaderComponent()->disable();
+		$moduleTemplate->setContent($html);
+		return $this->htmlResponse($moduleTemplate->renderContent());
 	}
 	
 	/**
