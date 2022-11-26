@@ -151,7 +151,7 @@ class TestController extends \Nng\Nnhelpers\Controller\AbstractController {
 				case 'File::paths';
 
 					// Abhängig davon, ob Test im BE oder FE läuft ist Ergebnis unterschiedlich
-					$prefix = TYPO3_MODE == 'BE' ? '../' : '';
+					$prefix = \nn\t3::Environment()->isBackend() ? '../' : '';
 
 					// Relativer Pfad zu einem Ordner, von typo3/index.php aus gesehen
 					$result = \nn\t3::File()->relPath( 'fileadmin' );
@@ -451,7 +451,11 @@ class TestController extends \Nng\Nnhelpers\Controller\AbstractController {
 			}
 
 			$result = ['errors'=>$errors, 'success'=>$success];
-			return $this->htmlResponse(json_encode($result));
+
+			if (\nn\t3::Environment()->isBackend()) {
+				return $this->htmlResponse(json_encode($result));
+			}
+			return json_encode($result);
 		}
 
 		$this->view->assignMultiple([

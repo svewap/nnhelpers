@@ -10,7 +10,7 @@ services:
   _defaults:
     autowire: true
     autoconfigure: true
-    public: false
+    public: true
 
   Nng\Nnhelpers\:
     resource: '../Classes/*'

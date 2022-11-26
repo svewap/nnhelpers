@@ -3,12 +3,25 @@
 namespace Nng\Nnhelpers\Utilities;
 
 use TYPO3\CMS\Core\Resource\Folder;
+use Psr\EventDispatcher\EventDispatcherInterface;
+use TYPO3\CMS\Core\Resource\Driver\DriverRegistry;
+
 
 /**
  * Alles rund um Storages
  */
 class Storage extends \TYPO3\CMS\Core\Resource\StorageRepository {
-
+/*
+	public function __construct(
+		private readonly StorageRepository $storageRepository
+		EventDispatcherInterface $eventDispatcher, 
+		DriverRegistry $driverRegistry)
+    {
+		\nn\t3::debug($storageRepository->);
+		parent::__construct($eventDispatcher, $driverRegistry);
+//		$storage = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance( \TYPO3\CMS\Core\Resource\StorageRepository::class );
+    }
+*/
 	/**
 	 * 	Löscht den StorageRowCache
 	 *	```

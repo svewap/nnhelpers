@@ -3,7 +3,7 @@
 namespace Nng\Nnhelpers\Utilities;
 
 use TYPO3\CMS\Core\SingletonInterface;
-use TYPO3\CMS\Extbase\Domain\Repository\CategoryRepository;
+use Nng\Nnhelpers\Domain\Repository\CategoryRepository;
 
 /**
  * Vereinfacht die Arbeit und den Zugriff auf die `sys_category` von Typo3
