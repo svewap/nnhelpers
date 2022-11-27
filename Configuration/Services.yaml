@@ -14,7 +14,10 @@ services:
 
   Nng\Nnhelpers\:
     resource: '../Classes/*'
-    exclude: '../Classes/Domain/Model/*'
+    exclude: 
+      - '../Classes/Domain/Model/*'
+      - '../Classes/aliases.php'
+      - '../Classes/nnhelpers.php'
 
   Nng\Nnhelpers\Controller\ModuleController:
     tags: ['backend.controller']

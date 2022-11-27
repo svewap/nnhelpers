@@ -8,7 +8,7 @@ call_user_func(
 
 		$extPath = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath($extKey);
 		
-		require_once($extPath . 'nnhelpers.php');
+		require_once($extPath . 'Classes/nnhelpers.php');
 /*
 		require_once($extPath . 'aliases.php');
 		

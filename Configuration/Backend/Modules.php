@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'admin_examples' => [
+    'nnhelpers' => [
         'parent' => 'tools',
         'position' => ['top'],
         'access' => 'admin',
