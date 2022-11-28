@@ -317,7 +317,7 @@ class File implements SingletonInterface {
 	 * ```
 	 * @return boolean
 	 */
-	public function absPath ( $file = null ) {
+	public function absPath ( $file = null, $resolveSymLinks = false ) {
 
 		if (!is_string($file)) {
 			$file = $this->getPublicUrl( $file );
@@ -327,8 +327,12 @@ class File implements SingletonInterface {
 			return $file;
 		}
 		
-		$pathSite = \nn\t3::Environment()->getPathSite();
-
+		// Prüfen, ob ein Symlink im Spiel ist
+		if ($resolveSymLinks && is_link(dirname($file))) {
+			$link = readlink(dirname($file));
+			$file = realpath(dirname($file) . '/' . $link) . '/' . basename($file);
+		}
+		
 		$file = $this->resolvePathPrefixes( $file );
 		$file = $this->normalizePath( $file );
 
