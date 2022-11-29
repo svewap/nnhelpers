@@ -452,6 +452,9 @@ class Db implements SingletonInterface
 
 		$querySettings = $query->getQuerySettings();
 
+		$ignoreHidden = $ignoreHidden === true ? true : $querySettings->getIgnoreEnableFields();
+		$ignoreDeleted = $ignoreDeleted === true ? true : $querySettings->getIncludeDeleted();
+
 		$querySettings->setRespectStoragePage( !$ignoreStoragePid );
 		$querySettings->setIgnoreEnableFields( $ignoreHidden );
 		$querySettings->setIncludeDeleted( $ignoreDeleted );

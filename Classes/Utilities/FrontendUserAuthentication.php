@@ -37,6 +37,7 @@ class FrontendUserAuthentication extends \TYPO3\CMS\Frontend\Authentication\Fron
 		if (!trim($password) || !trim($username)) return [];
 
 		$user = \nn\t3::Db()->findByValues( 'fe_users', ['username'=>$username] );
+
 		if (!$user) return [];
 		if (count($user) > 1) return [];
 
@@ -236,21 +237,14 @@ class FrontendUserAuthentication extends \TYPO3\CMS\Frontend\Authentication\Fron
 		$GLOBALS['TSFE']->fe_user->createUserSession($user_db);
 		$GLOBALS['TSFE']->fe_user->user = $user_db;
 		$GLOBALS['TSFE']->fe_user->setKey('ses', $cookieName, $user_db);
-		$GLOBALS['TSFE']->fe_user->fetchGroupData();
-		
-		$session_data = $GLOBALS['TSFE']->fe_user->fetchUserSession();
-		$sessionId = $session_data['ses_id'] ?? '';
+		$GLOBALS['TSFE']->fe_user->fetchGroupData( $GLOBALS['TYPO3_REQUEST'] ?? null );
 
-		if (\nn\t3::t3Version() > 8) {
-			$context = \nn\t3::injectClass(Context::class);
-			$alternativeGroups = [];
-			$userAspect = GeneralUtility::makeInstance(UserAspect::class, $GLOBALS['TSFE']->fe_user, $alternativeGroups);
-			$context->setAspect('frontend.user', $userAspect);
-		}
+		$context = \nn\t3::injectClass(Context::class);
+		$alternativeGroups = [];
+		$userAspect = GeneralUtility::makeInstance(UserAspect::class, $GLOBALS['TSFE']->fe_user, $alternativeGroups);
+		$context->setAspect('frontend.user', $userAspect);
 
-		if (\nn\t3::t3Version() >= 11) {
-			$sessionId = $GLOBALS['TSFE']->fe_user->userSession->getIdentifier();
-		}
+		$sessionId = $GLOBALS['TSFE']->fe_user->userSession->getIdentifier();
 
 		\nn\t3::FrontendUser()->setCookie( $sessionId );
 

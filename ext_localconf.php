@@ -9,12 +9,12 @@ call_user_func(
 		$extPath = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath($extKey);
 		
 		require_once($extPath . 'Classes/nnhelpers.php');
-/*
-		require_once($extPath . 'aliases.php');
+
+		require_once($extPath . 'Classes/aliases.php');
 		
 		// Diese Felder in der RootlineUtility::get() auch holen
 		\nn\t3::Registry()->rootLineFields(['backend_layout']);
-*/
+
 		// Globalen Namespace {nh:...} registrieren für ViewHelper
 		$GLOBALS['TYPO3_CONF_VARS']['SYS']['fluid']['namespaces']['nnt3'] = ['Nng\\Nnhelpers\\ViewHelpers'];
 
@@ -27,7 +27,7 @@ call_user_func(
 			'options'   => ['defaultLifeTime'=>3600*24],
 			'groups'    => ['pages'],
 		];
-/*
+
 		// Hook, der beim Löschen des Cache im Backend aufgerufen wird
 		\nn\t3::Registry()->clearCacheHook( \Nng\Nnhelpers\Hooks\ClearCacheHook::class . '->postProcessClearCache' );
 
@@ -39,7 +39,7 @@ call_user_func(
 
 		$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS'][\TYPO3\CMS\Core\Configuration\FlexForm\FlexFormTools::class]['flexParsing'][] 
 			= \Nng\Nnhelpers\Hooks\FlexFormHook::class;
-*/
+
 	},
 'nnhelpers' );
 
