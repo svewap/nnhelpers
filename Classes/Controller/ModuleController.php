@@ -16,6 +16,9 @@ use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
+use TYPO3\CMS\Extbase\Utility\FrontendSimulatorUtility;
+use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
+
 class ModuleController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController {
 
 	protected ModuleTemplateFactory $moduleTemplateFactory;

@@ -1,9 +1,9 @@
 <?php
 namespace Nng\Nnhelpers\ViewHelpers\Link;
 
+use Nng\Nnhelpers\ViewHelpers\AbstractViewHelper;
 use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
 use TYPO3Fluid\Fluid\Core\ViewHelper\Traits\CompileWithRenderStatic;
-use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Fluid\ViewHelpers\Link\TypolinkViewHelper;
 
@@ -21,15 +21,15 @@ class ModifyRecordViewHelper extends AbstractViewHelper {
 	
 	public function initializeArguments() {
 		parent::initializeArguments();
-		$this->overrideArgument('parameter', 'string', 'Parameter für Typolink', false);
+		$this->registerArgument('parameter', 'string', 'Parameter für Typolink', false);
 		$this->registerArgument('table', 'string', 'DB Tabellen-Name', true);
 		$this->registerArgument('uid', 'string', 'UID in Tabelle', true);
 		$this->registerArgument('update', 'array', 'Felder und Werte, die geupdated werden sollen', false, []);
 		$this->registerArgument('data', 'array', 'Data-Attribut', false, []);
    }
 
-	public static function renderStatic( array $arguments, \Closure $renderChildrenClosure, RenderingContextInterface $renderingContext ) {
-		return "NEED FIX FOR v12";
+	public static function renderStatic( array $arguments, \Closure $renderChildrenClosure, RenderingContextInterface $renderingContext ) 
+	{
 		$args = ['table', 'uid', 'data', 'update'];
 		foreach ($args as $arg) {
 			$$arg = $arguments[$arg] ?? '';
@@ -48,13 +48,13 @@ class ModifyRecordViewHelper extends AbstractViewHelper {
 		// data="{ajax:1}" in additionalAttributes für TypolinkViewHelper konvertieren.
 		$dataAttr = [];
 		foreach ($data as $k=>$v) {
-			$dataAttr["data-{$k}"] = $v;
+			$dataAttr["data-{$k}"] = (string) $v;
 		}
 
 		$arguments['parameter'] = $uri . '&' . urldecode(http_build_query( $req ));
 		$arguments['additionalAttributes'] = array_merge( $arguments['additionalAttributes'] ?? [], $dataAttr );
 		
-		return parent::renderStatic( $arguments, $renderChildrenClosure, $renderingContext );
+		return TypolinkViewHelper::renderStatic( $arguments, $renderChildrenClosure, $renderingContext );
 	}
 	
 }

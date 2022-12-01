@@ -241,10 +241,9 @@ class Content implements SingletonInterface {
 	 * ```
 	 * @return string
 	 */
-	public function render( $ttContentUid = null, $data = [] ) {
-
+	public function render( $ttContentUid = null, $data = [] ) 
+	{
 		if (!$ttContentUid) return '';
-		
 		\nn\t3::Tsfe()->get();
 
 		$conf = [
@@ -292,7 +291,8 @@ class Content implements SingletonInterface {
 	 * ```
 	 * @return string
 	 */
-	public function column( $colPos, $pageUid = null, $slide = null ) {
+	public function column( $colPos, $pageUid = null, $slide = null ) 
+	{
 		if ($slide === null && $pageUid === true) {
 			$pageUid = null;
 			$slide = true;
@@ -311,7 +311,7 @@ class Content implements SingletonInterface {
 		if ($slide) {
 			$conf['slide'] = -1;
 		}
-		$html = \nn\t3::Tsfe()->cObj()->cObjGetSingle('CONTENT', $conf);
+		$html = \nn\t3::Tsfe()->cObjGetSingle('CONTENT', $conf);
 		return $html;
 	}
 

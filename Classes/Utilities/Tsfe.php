@@ -50,7 +50,7 @@ class Tsfe implements SingletonInterface {
 	 *	@return \TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer
 	 */
 	public function cObj() {
-		if (!$GLOBALS['TSFE']) $this->init();
+		if (!isset($GLOBALS['TSFE'])) $this->init();
 		$configurationManager = \nn\t3::injectClass(ConfigurationManager::class);
 		if ($cObj = $configurationManager->getContentObject()) return $cObj;
 		if ($cObj = $GLOBALS['TSFE']->cObj) return $cObj;
@@ -90,10 +90,10 @@ class Tsfe implements SingletonInterface {
 	 *	\nn\t3::Tsfe()->init();
 	 *	```
 	 */
-	public function init($pid = 0, $typeNum = 0) {
-
+	public function init($pid = 0, $typeNum = 0) 
+	{
 		if (!$pid) $pid = \nn\t3::Page()->getPid();
-		
+
 		try {
 				
 			$isCli = \TYPO3\CMS\Core\Core\Environment::isCli();
@@ -140,21 +140,20 @@ class Tsfe implements SingletonInterface {
 
 			$configurationManager = GeneralUtility::makeInstance(ConfigurationManagerInterface::class);
 			$GLOBALS['TSFE']->tmpl->setup = $configurationManager->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_FULL_TYPOSCRIPT);
-			
+
 			$contentObject = GeneralUtility::makeInstance(ContentObjectRenderer::class);
 			$contentObject->start([]);
+
 			//$contentObject->cObjectDepthCounter = 100;
 
 			$GLOBALS['TSFE']->cObj = $contentObject;
 
-			// Typo3 v11 -> v11.5 LTS: `settingLanguage()` ist private geworden
-			if (is_callable([$GLOBALS['TSFE'], 'settingLanguage'])) {
-				$GLOBALS['TSFE']->settingLanguage();
-			}
-
 			$userSessionManager = \TYPO3\CMS\Core\Session\UserSessionManager::create('FE');
 			$userSession = $userSessionManager->createAnonymousSession();
 			$GLOBALS['TSFE']->fe_user = $userSession;
+
+			// Fixes `Invoked ContentObjectRenderer::parseFunc without any configuration`
+			$GLOBALS['TYPO3_REQUEST'] = $GLOBALS['TYPO3_REQUEST']->withAttribute('applicationType', 1);
 
 		} catch ( \Exception $e ) {
 

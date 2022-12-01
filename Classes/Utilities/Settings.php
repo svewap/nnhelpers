@@ -141,7 +141,6 @@ class Settings implements SingletonInterface {
 		return $pluginSettings;
 	}
 
-
 	/**
 	 * Das komplette TypoScript Setup holen, als einfaches Array - ohne "."-Syntax
 	 * Funktioniert sowohl im Frontend als auch Backend, mit und ohne übergebener pid

@@ -34,12 +34,13 @@ class FlashMessagesViewHelper extends AbstractViewHelper {
 	public function initializeArguments() {
 		parent::initializeArguments();	
 		$this->registerArgument('id', 'string', 'queueIdentifier der Messages', false, 'core.template.flashMessages');
+		$this->registerArgument('queueIdentifier', 'string', 'Flash-message queue to use');
+        $this->registerArgument('as', 'string', 'The name of the current flashMessage variable for rendering inside');
     }
 
 	public static function renderStatic( array $arguments, \Closure $renderChildrenClosure, RenderingContextInterface $renderingContext ) {
-		return 'Needs to be fixed for TYPO3 v12';
 		$arguments['queueIdentifier'] = $arguments['id'];
-		$html = parent::renderStatic( $arguments, $renderChildrenClosure, $renderingContext );
+		$html = \TYPO3\CMS\Fluid\ViewHelpers\FlashMessagesViewHelper::renderStatic( $arguments, $renderChildrenClosure, $renderingContext );
 		return html_entity_decode( $html );
 	}
     
