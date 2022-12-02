@@ -71,10 +71,10 @@ class Convert implements SingletonInterface {
     public function toObjectStorage( $obj = null, $childType = null ) {
 
 		$childType = $this->initialArgument !== null ? $obj : $childType;
-		$persistenceManager = \nn\t3::injectClass(\TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager::class);
+		$persistenceManager = GeneralUtility::makeInstance(\TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager::class);
 		$obj = $this->initialArgument !== null ? $this->initialArgument : $obj;
 
-		$objectStorage = \nn\t3::injectClass( ObjectStorage::class );
+		$objectStorage = GeneralUtility::makeInstance( ObjectStorage::class );
 		if ($childRepository = ($childType ? \nn\t3::Db()->getRepositoryForModel($childType) : false)) {
 			\nn\t3::Db()->ignoreEnableFields($childRepository);
 		}
@@ -94,7 +94,7 @@ class Convert implements SingletonInterface {
 						$child = $persistenceManager->getObjectByIdentifier($uid, $childType, false);
 						$objectStorage->attach( $child );
 					} else {
-						$child = \nn\t3::injectClass( $childType );
+						$child = GeneralUtility::makeInstance( $childType );
 						$objectStorage->attach( $child );
 					}
 				}
@@ -153,11 +153,11 @@ class Convert implements SingletonInterface {
 
 		$arr = $this->initialArgument;
 
-		$model = \nn\t3::injectClass( $className );
+		$model = GeneralUtility::makeInstance( $className );
 		return \nn\t3::Obj($model)->merge( $arr );
 
 		# ToDo: Prüfen, warum das nicht funktioniert. Model wird nicht persistiert!
-		# $dataMapper = \nn\t3::injectClass(DataMapper::class);
+		# $dataMapper = GeneralUtility::makeInstance(DataMapper::class);
 		# return $dataMapper->map($model, [$arr]);
 	}
 	
@@ -187,11 +187,11 @@ class Convert implements SingletonInterface {
 		if (is_a( $input, \TYPO3\CMS\Core\Resource\FileReference::class )) {
 			$falFileReference = $input;
 		} else if (is_numeric($input)) {
-			$falFileRepository = \nn\t3::injectClass( \TYPO3\CMS\Core\Resource\FileRepository::class ); 
+			$falFileRepository = GeneralUtility::makeInstance( \TYPO3\CMS\Core\Resource\FileRepository::class ); 
 			$falFileReference = $falFileRepository->findFileReferenceByUid( $input );
 		}
 		
-		$sysFileReference = \nn\t3::injectClass( \TYPO3\CMS\Extbase\Domain\Model\FileReference::class );
+		$sysFileReference = GeneralUtility::makeInstance( \TYPO3\CMS\Extbase\Domain\Model\FileReference::class );
 		$sysFileReference->setOriginalResource($falFileReference);
 
 		return $sysFileReference;

@@ -86,7 +86,7 @@ class Http implements SingletonInterface {
 
 			// Typo3 v9 und v8
 
-			$uriBuilder = \nn\t3::injectClass(UriBuilder::class);
+			$uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
 			$uri = $uriBuilder->reset()
 				->setTargetPageUid( $pageUid )
 				->setArguments( $vars )

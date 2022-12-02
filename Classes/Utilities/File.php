@@ -998,7 +998,7 @@ class File implements SingletonInterface {
 
 		$filename = '';
 		$cropString = '';
-		$imageService = \nn\t3::injectClass(\TYPO3\CMS\Extbase\Service\ImageService::class);
+		$imageService = GeneralUtility::makeInstance(\TYPO3\CMS\Extbase\Service\ImageService::class);
 
 		if ($fileObj instanceof \TYPO3\CMS\Core\Resource\FileReference) {
 			$fileObj = \nn\t3::Convert( $fileObj )->toFileReference();

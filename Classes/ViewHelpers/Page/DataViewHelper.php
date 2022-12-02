@@ -8,6 +8,7 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 /**
  * Vereinfacht den Zugriff auf Daten aus der Tabelle `pages`.
  * ```
+ * {nnt3:page.data()}
  * {nnt3:page.data(key:'nnp_contact', slide:1)}
  * {nnt3:page.data(key:'backend_layout_next_level', slide:1, override:'backend_layout')}
  * ```
@@ -29,6 +30,9 @@ class DataViewHelper extends AbstractViewHelper {
 	}
 
 	public static function renderStatic( array $arguments, \Closure $renderChildrenClosure, RenderingContextInterface $renderingContext ) {
+		if (!$arguments['key']) {
+			return \nn\t3::Page()->getData();
+		}
 		return \nn\t3::Page()->getField( $arguments['key'], $arguments['slide'], $arguments['override'] );
 	}
     

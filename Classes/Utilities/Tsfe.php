@@ -11,6 +11,7 @@ use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 use TYPO3\CMS\Core\TypoScript\TemplateService;
 use TYPO3\CMS\Core\Context\Context;
 use TYPO3\CMS\Core\Core\Environment;
+use TYPO3\CMS\Core\Core\SystemEnvironmentBuilder;
 
 use TYPO3\CMS\Core\Http\ServerRequestFactory;
 use TYPO3\CMS\Core\Site\Entity\NullSite;
@@ -51,9 +52,9 @@ class Tsfe implements SingletonInterface {
 	 */
 	public function cObj() {
 		if (!isset($GLOBALS['TSFE'])) $this->init();
-		$configurationManager = \nn\t3::injectClass(ConfigurationManager::class);
-		if ($cObj = $configurationManager->getContentObject()) return $cObj;
+		$configurationManager = GeneralUtility::makeInstance(ConfigurationManager::class);
 		if ($cObj = $GLOBALS['TSFE']->cObj) return $cObj;
+		if ($cObj = $configurationManager->getContentObject()) return $cObj;
 		return GeneralUtility::makeInstance(ContentObjectRenderer::class);
 	}
 	
@@ -92,6 +93,10 @@ class Tsfe implements SingletonInterface {
 	 */
 	public function init($pid = 0, $typeNum = 0) 
 	{
+		if (isset($GLOBALS['TSFE'])) {
+			return;
+		}
+
 		if (!$pid) $pid = \nn\t3::Page()->getPid();
 
 		try {
@@ -113,7 +118,7 @@ class Tsfe implements SingletonInterface {
 			}
 
 			if (!$request) {
-				$request = \nn\t3::injectClass(ServerRequestFactory::class)->createServerRequest('GET', $site->getBase(), [] );
+				$request = GeneralUtility::makeInstance(ServerRequestFactory::class)->createServerRequest('GET', $site->getBase(), [] );
 			}
 
 			$language = $request->getAttribute('language');
@@ -138,8 +143,10 @@ class Tsfe implements SingletonInterface {
 			$GLOBALS['TSFE']->sys_page = GeneralUtility::makeInstance(PageRepository::class);
 			$GLOBALS['TSFE']->tmpl = GeneralUtility::makeInstance(TemplateService::class);
 
-			$configurationManager = GeneralUtility::makeInstance(ConfigurationManagerInterface::class);
-			$GLOBALS['TSFE']->tmpl->setup = $configurationManager->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_FULL_TYPOSCRIPT);
+			$configurationManager = GeneralUtility::makeInstance(ConfigurationManager::class);
+			$setup = $configurationManager->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_FULL_TYPOSCRIPT);
+	
+			$GLOBALS['TSFE']->tmpl->setup = $setup;
 
 			$contentObject = GeneralUtility::makeInstance(ContentObjectRenderer::class);
 			$contentObject->start([]);
@@ -151,9 +158,12 @@ class Tsfe implements SingletonInterface {
 			$userSessionManager = \TYPO3\CMS\Core\Session\UserSessionManager::create('FE');
 			$userSession = $userSessionManager->createAnonymousSession();
 			$GLOBALS['TSFE']->fe_user = $userSession;
-
-			// Fixes `Invoked ContentObjectRenderer::parseFunc without any configuration`
-			$GLOBALS['TYPO3_REQUEST'] = $GLOBALS['TYPO3_REQUEST']->withAttribute('applicationType', 1);
+			
+			$GLOBALS['TSFE']->register['SYS_LASTCHANGED'] = 0;
+			
+			// Fixes `Invoked ContentObjectRenderer::parseFunc without any configuration` when rendering Content Elements in a Backend context
+			// by disabling the IF condition for `$tsfeBackup = self::simulateFrontendEnvironment()` in the `TYPO3\CMS\Fluid\ViewHelpers\Format\HtmlViewHelper`
+			$GLOBALS['TYPO3_REQUEST'] = $GLOBALS['TYPO3_REQUEST']->withAttribute('applicationType', SystemEnvironmentBuilder::REQUESTTYPE_FE);
 
 		} catch ( \Exception $e ) {
 

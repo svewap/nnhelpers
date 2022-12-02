@@ -112,7 +112,7 @@ class Obj implements SingletonInterface {
 
 						// Neue URL. Falls bereits ein FAL am Model: Entfernen
 						if ($this->isFileReference($curPropValue)) {
-							$persistenceManager = \nn\t3::injectClass( PersistenceManager::class );
+							$persistenceManager = GeneralUtility::makeInstance( PersistenceManager::class );
 							$persistenceManager->remove( $curPropValue );
 						}
 
@@ -343,7 +343,7 @@ class Obj implements SingletonInterface {
 			$modelClassName = get_class( $modelClassName );
 		}
 		$tableName = '';
-		$dataMapper = \nn\t3::injectClass( DataMapper::class );
+		$dataMapper = GeneralUtility::makeInstance( DataMapper::class );
 		try {
 			$tableName = $dataMapper->getDataMap($modelClassName)->getTableName();
 		} catch ( \Exception $e ) {
@@ -369,7 +369,7 @@ class Obj implements SingletonInterface {
 		if ($cache = \nn\t3::Cache()->get($modelClassName, true)) {
 			return $cache;
 		}
-		$reflectionService = \nn\t3::injectClass( ReflectionService::class);
+		$reflectionService = GeneralUtility::makeInstance( ReflectionService::class);
 		$schema = $reflectionService->getClassSchema($modelClassName);
 
 		return \nn\t3::Cache()->set( $modelClassName, $schema, true );

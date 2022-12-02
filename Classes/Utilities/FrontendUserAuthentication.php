@@ -154,7 +154,7 @@ class FrontendUserAuthentication extends \TYPO3\CMS\Frontend\Authentication\Fron
 
 		if (!$existingSession) {
 			$this->id = $hashedSessionId;
-			$record = $this->getNewSessionRecord($user);
+			$record = $this->elevateToFixatedUserSession($unhashedSessionId, $user['uid']);
 			\nn\t3::Db()->insert('fe_sessions', $record);
 		} else {
 			\nn\t3::Db()->update('fe_sessions', ['ses_tstamp'=>$GLOBALS['EXEC_TIME']], ['ses_id'=>$hashedSessionId]);
@@ -225,7 +225,7 @@ class FrontendUserAuthentication extends \TYPO3\CMS\Frontend\Authentication\Fron
 
 		$cookieName = \nn\t3::Environment()->getLocalConf('FE.cookieName') ?: 'fe_typo_user';
 		
-		if (!$GLOBALS['TSFE'] && \nn\t3::t3Version() >= 9) {
+		if (!isset($GLOBALS['TSFE'])) {
 			$frontendUser = GeneralUtility::makeInstance(\TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication::class);
 			$frontendUser->start();
 			$session = $frontendUser->createUserSession( $user_db );
@@ -234,19 +234,21 @@ class FrontendUserAuthentication extends \TYPO3\CMS\Frontend\Authentication\Fron
 			return $user_db;
 		}
 
-		$GLOBALS['TSFE']->fe_user->createUserSession($user_db);
+		$userSession = $GLOBALS['TSFE']->fe_user->createUserSession($user_db);
+
+		$userSessionManager = \TYPO3\CMS\Core\Session\UserSessionManager::create('FE');
+		$fixatedUserSession = $userSessionManager->elevateToFixatedUserSession( $userSession, $user_db['uid'], true );
+		$sessionId = $fixatedUserSession->getIdentifier();
+		\nn\t3::FrontendUser()->setCookie( $sessionId );
+		
 		$GLOBALS['TSFE']->fe_user->user = $user_db;
-		$GLOBALS['TSFE']->fe_user->setKey('ses', $cookieName, $user_db);
+		//$GLOBALS['TSFE']->fe_user->setKey('ses', $cookieName, $user_db);
 		$GLOBALS['TSFE']->fe_user->fetchGroupData( $GLOBALS['TYPO3_REQUEST'] ?? null );
 
-		$context = \nn\t3::injectClass(Context::class);
+		$context = GeneralUtility::makeInstance(Context::class);
 		$alternativeGroups = [];
 		$userAspect = GeneralUtility::makeInstance(UserAspect::class, $GLOBALS['TSFE']->fe_user, $alternativeGroups);
 		$context->setAspect('frontend.user', $userAspect);
-
-		$sessionId = $GLOBALS['TSFE']->fe_user->userSession->getIdentifier();
-
-		\nn\t3::FrontendUser()->setCookie( $sessionId );
 
 		return $GLOBALS['TSFE']->fe_user->user;
 	}

@@ -155,13 +155,6 @@ class Encrypt implements SingletonInterface {
 	 * @return string
 	 */
 	public function hashSessionId( $sessionId = null ) {
-		if (\nn\t3::t3Version() < 10) {
-			return $sessionId;
-		}
-		if (\nn\t3::t3Version() == 10) {
-			$key = sha1($GLOBALS['TYPO3_CONF_VARS']['SYS']['encryptionKey'] . 'core-session-backend');
-            return hash_hmac('md5', $sessionId, $key);
-		}
 		$key = sha1($GLOBALS['TYPO3_CONF_VARS']['SYS']['encryptionKey'] . 'core-session-backend');
 		return hash_hmac('sha256', $sessionId, $key);
 	}

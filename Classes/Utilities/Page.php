@@ -28,7 +28,7 @@ class Page implements SingletonInterface
 	 * @return array
 	 */
     public function get ( $uid = null ) {
-		$pageRepository = \nn\t3::injectClass( PageRepository::class );
+		$pageRepository = GeneralUtility::makeInstance( PageRepository::class );
 		return $pageRepository->getPage( $uid );
 	}
 	
@@ -114,7 +114,7 @@ class Page implements SingletonInterface
 				// evtl. bei \TYPO3\CMS\Core\Utility\RootlineUtility->enrichWithRelationFields() schauen.
 
 				if ($tcaColumn['type'] == 'inline' && $tcaColumn['foreign_table'] == 'sys_file_reference') {
-					$fileRepository = \nn\t3::injectClass( \TYPO3\CMS\Core\Resource\FileRepository::class );
+					$fileRepository = GeneralUtility::makeInstance( \TYPO3\CMS\Core\Resource\FileRepository::class );
 					$fileObjects = $fileRepository->findByRelation('pages', $key, $page['uid']);
 					return $fileObjects;
 				}
@@ -232,7 +232,7 @@ class Page implements SingletonInterface
 			}
 		}
 
-		$cObj = \nn\t3::injectClass( \TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer::class );
+		$cObj = GeneralUtility::makeInstance( \TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer::class );
 
 		$uri = $cObj->typolink_URL([
 			'parameter' => $pid,
@@ -257,7 +257,7 @@ class Page implements SingletonInterface
 	 * @return string
 	 */
 	public function getActionLink( $pid = null, $extensionName = '', $pluginName = '', $controllerName = '', $actionName = '', $params = [], $absolute = false ) {
-		$extensionService = \nn\t3::injectClass(\TYPO3\CMS\Extbase\Service\ExtensionService::class);
+		$extensionService = GeneralUtility::makeInstance(\TYPO3\CMS\Extbase\Service\ExtensionService::class);
 		$argumentsPrefix = $extensionService->getPluginNamespace($extensionName, $pluginName);
 		$arguments = [
 			$argumentsPrefix => [
@@ -348,7 +348,7 @@ class Page implements SingletonInterface
 
 		if (!$pid) $pid = $this->getPid();
 		if (!$pid) return [];
-		$page = \nn\t3::injectClass( PageRepository::class );
+		$page = GeneralUtility::makeInstance( PageRepository::class );
 
 		$hideTypes = [
 			$page::DOKTYPE_SPACER, 
@@ -394,7 +394,7 @@ class Page implements SingletonInterface
 	 * @return void
 	 */
 	public function setTitle ( $title = '' ) {
-		$titleProvider = \nn\t3::injectClass( PageTitleProvider::class );
+		$titleProvider = GeneralUtility::makeInstance( PageTitleProvider::class );
 		$titleProvider->setTitle( htmlspecialchars(strip_tags($title)) );
 	}
 	
@@ -406,7 +406,7 @@ class Page implements SingletonInterface
 	 * @return string
 	 */
 	public function getTitle () {
-		$titleProvider = \nn\t3::injectClass( PageTitleProvider::class );
+		$titleProvider = GeneralUtility::makeInstance( PageTitleProvider::class );
 		return $titleProvider->getRawTitle();
 	}
 
@@ -419,7 +419,7 @@ class Page implements SingletonInterface
 	 */
 	public function getPageRenderer() {
 		if (\nn\t3::Environment()->isFrontend()) {
-			return \nn\t3::injectClass( PageRenderer::class );
+			return GeneralUtility::makeInstance( PageRenderer::class );
 		}
 		return \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\TYPO3\CMS\Core\Page\PageRenderer::class);
 	}
@@ -592,8 +592,8 @@ class Page implements SingletonInterface
 		if (\nn\t3::Environment()->isFrontend()) {
 
 			// Im Frontend-Context
-			$cacheService = \nn\t3::injectClass( CacheService::class );
-			$cacheManager = \nn\t3::injectClass( CacheManager::class );
+			$cacheService = GeneralUtility::makeInstance( CacheService::class );
+			$cacheManager = GeneralUtility::makeInstance( CacheManager::class );
 			foreach ($pidList as $pid) {
 				if ($pid == 'all') {
 					$cacheService->clearCachesOfRegisteredPageIds();
@@ -609,7 +609,7 @@ class Page implements SingletonInterface
 		} else {
 
 			// Im Backend-Context kann der DataHandler verwendet werden
-			$dataHandler = \nn\t3::injectClass( DataHandler::class );
+			$dataHandler = GeneralUtility::makeInstance( DataHandler::class );
 			$dataHandler->admin = 1;
 			$dataHandler->start([], []);
 

@@ -2,7 +2,6 @@
 
 namespace Nng\Nnhelpers\Utilities;
 
-use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\ArrayUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManager;
@@ -14,12 +13,17 @@ use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
  * Methoden, um den Zugriff auf TypoScript Setup, Constanten und PageTsConfig
  * zu vereinfachen.
  */
-class Settings implements SingletonInterface {
+class Settings extends \Nng\Nnhelpers\Singleton {
 	
 	/**
 	 * @var array
 	 */
 	protected $typoscriptSetupCache;
+	
+	/**
+	 * @var array
+	 */
+	protected $typoscriptFullCache;
 
 	/**
      * @var \TYPO3\CMS\Core\TypoScript\ExtendedTemplateService
@@ -56,7 +60,7 @@ class Settings implements SingletonInterface {
 	public function getPlugin($extName = null) {
 
 		if (!$extName) {
-			$configurationManager = \nn\t3::injectClass(ConfigurationManager::class);
+			$configurationManager = GeneralUtility::makeInstance(ConfigurationManager::class);
 			$setup = $configurationManager->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_FRAMEWORK) ?: [];
 			return $setup;
 		}
@@ -112,7 +116,7 @@ class Settings implements SingletonInterface {
 	public function getMergedSettings( $extensionName = null, $ttContentUidOrSetupArray = [] ) {
 
 		// Setup für das aktuelle Plugin holen, inkl. Felder aus dem FlexForm
-		$configurationManager = \nn\t3::injectClass(ConfigurationManager::class);
+		$configurationManager = GeneralUtility::makeInstance(ConfigurationManager::class);
 		$pluginSettings = $configurationManager->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_SETTINGS, $extensionName) ?: [];
 
 		// Fallback: Setup für das Plugin aus globaler TS-Konfiguration holen
@@ -153,7 +157,7 @@ class Settings implements SingletonInterface {
 	public function getFullTyposcript( $pid = null ) {
 		if ($this->typoscriptSetupCache) return $this->typoscriptSetupCache;
 		
-		$configurationManager = \nn\t3::injectClass(ConfigurationManager::class);
+		$configurationManager = GeneralUtility::makeInstance(ConfigurationManager::class);
 		$setup = $configurationManager->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_FULL_TYPOSCRIPT);
 
 		// Setup konnte nicht geladen werden? Dann manuell erstellen
@@ -162,6 +166,28 @@ class Settings implements SingletonInterface {
 		}
 
 		return $this->typoscriptSetupCache = \nn\t3::TypoScript()->convertToPlainArray($setup);
+	}
+
+	/**
+	 * High-Peformance-Version für das Initialisieren des TSFE im Backend. 
+	 * Das komplette TypoScript Setup holen, inkl. '.'-Syntax.
+	 * 
+	 * Wird über Filecache gespeichert.
+	 * ```
+	 * \nn\t3::Settings()->getCachedTyposcript();
+	 * ```
+	 * @return array
+	 */
+	public function getCachedTyposcript() 
+	{
+		if ($cache = \nn\t3::Cache()->read('nnhelpers_fullTsCache')) {
+			return $cache;
+		}
+		$configurationManager = GeneralUtility::makeInstance(ConfigurationManager::class);
+		$setup = $configurationManager->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_FULL_TYPOSCRIPT);
+
+		\nn\t3::Cache()->write('nnhelpers_fullTsCache', $setup);
+		return $this->typoscriptFullCache = $setup;
 	}
 
 	/**

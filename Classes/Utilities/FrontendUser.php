@@ -6,14 +6,45 @@ use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Context\Context;
 use TYPO3\CMS\Core\Utility\ArrayUtility;
+use TYPO3\CMS\Core\Session\UserSession;
 
-class FrontendUser implements SingletonInterface {
+use Firebase\JWT\JWT;
+use TYPO3\CMS\Core\Security\JwtTrait;
+use TYPO3\CMS\Core\Session\UserSessionManager;
+
+class FrontendUser implements SingletonInterface 
+{
+	use JwtTrait;
 
 	/**
 	 * lokaler Cache
 	 */
 	protected $cache = [];
+	
+	/**
+	 * @var \TYPO3\CMS\Core\Session\UserSession
+	 */
+	protected $userSession = null;
 
+ 	/**
+	 * Die aktuelle User-Session holen.
+	 * ```
+	 * \nn\t3::FrontendUser()->getSession(); 
+	 * ```
+	 * @return \TYPO3\CMS\Core\Session\UserSession
+	 */
+	public function getSession() 
+	{
+		if ($session = $this->userSession) return $session;
+		if (isset($GLOBALS['TSFE']) && ($user = $GLOBALS['TSFE']->fe_user)) {
+			return $user->getSession();
+		}
+		$userSessionManager = UserSessionManager::create('FE');
+		$session = $userSessionManager->createFromRequestOrAnonymous($GLOBALS['TYPO3_REQUEST'], $this->getCookieName());
+
+		return $this->userSession = $session;
+	}
+ 	
  	/**
 	 * Den aktuellen FE-User holen.
 	 * Alias zu `\nn\t3::FrontendUser()->getCurrentUser();`
@@ -330,7 +361,6 @@ class FrontendUser implements SingletonInterface {
 			$setSessionCookieMethod->setAccessible(TRUE);
 			$setSessionCookieMethod->invoke($GLOBALS['TSFE']->fe_user);
 
-//			$GLOBALS['TSFE']->fe_user->user = $GLOBALS['TSFE']->fe_user->fetchUserSession();
 			$session_data = $GLOBALS['TSFE']->fe_user->fetchUserSession();
 			$loginSuccess = $GLOBALS['TSFE']->fe_user->compareUident($user, $loginData);
 
@@ -338,9 +368,7 @@ class FrontendUser implements SingletonInterface {
 			$this->setCookie( $session_data['ses_id'] );
 
 			setcookie('nc_staticfilecache', 'fe_typo_user_logged_in', time() + (86400 * 30), "/");
-			
-			// $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['t3lib/class.t3lib_userauth.php']['postUserLookUp'][]
-			
+						
 			$GLOBALS['TSFE']->fe_user->setKey('ses', $cookieName, $user);
 			$GLOBALS['TSFE']->fe_user->fetchGroupData();
 	
@@ -447,24 +475,35 @@ class FrontendUser implements SingletonInterface {
 	 * ```
 	 * @return void
 	 */
-	public function setCookie( $sessionId = null, &$request = null ) {
-		if (!$sessionId) $sessionId = $this->getSessionId();
-		
+	public function setCookie( $sessionId = null, &$request = null ) 
+	{
+		if (!$sessionId) {
+			$sessionId = $this->getSessionId();
+		}
+
+		$jwt = self::encodeHashSignedJwt(
+            [
+                'identifier' => $sessionId,
+                'time' => (new \DateTimeImmutable())->format(\DateTimeImmutable::RFC3339),
+            ],
+            self::createSigningKeyFromEncryptionKey(UserSession::class)
+        );
+
 		$cookieName = \nn\t3::Environment()->getLocalConf('FE.cookieName');
 		$cookieDomain = \nn\t3::Environment()->getCookieDomain();
 		$cookiePath = $cookieDomain ? '/' : GeneralUtility::getIndpEnv('TYPO3_SITE_PATH');
 
-		$_COOKIE[$cookieName] = $sessionId;
-		setcookie($cookieName, $sessionId, time() + (86400 * 30), $cookiePath, $cookieDomain);
+		$_COOKIE[$cookieName] = $jwt;
+		$payload = self::decodeJwt($jwt, self::createSigningKeyFromEncryptionKey(UserSession::class));
 
-		if (\nn\t3::t3Version() < 9) return;
+		setcookie($cookieName, $jwt, time() + (86400 * 30), $cookiePath, $cookieDomain);
 
 		if (!$request) {
 			$request = $GLOBALS['TYPO3_REQUEST'] ?? false;
 		}
 		if ($request) {
 			$cookies = $request->getCookieParams();
-			$cookies[$cookieName] = $sessionId;
+			$cookies[$cookieName] = $jwt;
 			$request = $request->withCookieParams( $cookies );	
 		}		
 	}
@@ -476,33 +515,35 @@ class FrontendUser implements SingletonInterface {
 	 * ```
 	 * @return mixed
 	 */
-	public function getSessionData( $key = null ) {
-		if (!$GLOBALS['TSFE'] || !$GLOBALS['TSFE']->fe_user) {
-			return $key ? '' : [];
-		}
-		return $GLOBALS['TSFE']->fe_user->getKey( 'ses', $key ) ?: [];
+	public function getSessionData( $key = null ) 
+	{	
+		$session = $this->getSession();
+		if (!$session) return $key ? '' : [];
+		return $session->get( $key ) ?: [];
 	}
 
 	/**
 	 * Session-Data für FE-User setzen
 	 * ```
 	 * // Session-data für `shop` mit neuen Daten mergen (bereits existierende keys in `shop` werden nicht gelöscht)
-	 * \nn\t3::FrontendUser()->setSessionData('shop', ['a'=>1]));
+	 * \nn\t3::FrontendUser()->setSessionData('shop', ['a'=>1]);
 	 * 
 	 * // Session-data für `shop` überschreiben (`a` aus dem Beispiel oben wird gelöscht)
-	 * \nn\t3::FrontendUser()->setSessionData('shop', ['b'=>1], false));
+	 * \nn\t3::FrontendUser()->setSessionData('shop', ['b'=>1], false);
 	 * ```
 	 * @return mixed
 	 */
-	public function setSessionData( $key = null, $val = null, $merge = true ) {
+	public function setSessionData( $key = null, $val = null, $merge = true ) 
+	{
+		$session = $this->getSession();
 		$sessionData = $merge ? $this->getSessionData( $key ) : [];
+
 		if (is_array($val)) {
 			ArrayUtility::mergeRecursiveWithOverrule( $sessionData, $val );
 		} else {
 			$sessionData = $val;
 		}
-		//\nn\t3::debug( $GLOBALS['TSFE']->fe_user );
-		$GLOBALS['TSFE']->fe_user->setKey( 'ses', $key, $sessionData );
+		$session->set( $key, $sessionData );
 		$GLOBALS['TSFE']->fe_user->storeSessionData();
 		return $sessionData;
 	}

@@ -2,13 +2,13 @@
 
 namespace Nng\Nnhelpers\Utilities;
 
-use TYPO3\CMS\Core\SingletonInterface;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
  * 	Methoden, zum Lesen und Schreiben in den Typo3 Cache.
  * 	Nutzt das Caching-Framework von Typo3, siehe `EXT:nnhelpers/ext_localconf.php` für Details
  */
-class Cache implements SingletonInterface {
+class Cache extends \Nng\Nnhelpers\Singleton {
 	
 	/**
 	 * @var \TYPO3\CMS\Core\Cache\CacheManager
@@ -19,8 +19,8 @@ class Cache implements SingletonInterface {
 	 * Injections
 	 * 
 	 */
-	public function __construct( \TYPO3\CMS\Core\Cache\CacheManager $cacheManager ) {
-		$this->cacheManager = $cacheManager;
+	public function __construct() {
+		$this->cacheManager = GeneralUtility::makeInstance( \TYPO3\CMS\Core\Cache\CacheManager::class );
 	}
 
 	/**
@@ -201,7 +201,8 @@ class Cache implements SingletonInterface {
 	 *
 	 * @return string|array
 	 */
-	public function write( $identifier, $cache ) {
+	public function write( $identifier, $cache ) 
+	{
 		$this->set( $identifier, $cache, true );
 
 		$identifier = self::getIdentifier( $identifier );
@@ -233,6 +234,7 @@ class Cache implements SingletonInterface {
 
 		if ($cache = $this->get( $identifier, true )) return $cache;
 		$identifier = self::getIdentifier( $identifier );
+		
 		$path = \nn\t3::Environment()->getVarPath() . "/cache/code/nnhelpers/{$identifier}.php";
 		
 		if (!file_exists($path)) {

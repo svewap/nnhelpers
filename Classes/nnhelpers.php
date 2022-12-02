@@ -44,8 +44,8 @@ use TYPO3\CMS\Extbase\Utility\DebuggerUtility;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Extbase\Persistence\Generic\Query;
 
-class t3 {
-
+class t3 
+{
 	/**
 	 * @return Arrays
 	 */
@@ -322,19 +322,15 @@ class t3 {
 	 */
 	public static function injectClass($class) {
 
-		// Legacy classNames?
-		if (!class_exists($class)) {
-			// t3Version() <= 10
-			if ($class == \TYPO3\CMS\Core\Domain\Repository\PageRepository::class) {
-				$class = \TYPO3\CMS\Frontend\Page\PageRepository::class;
-			}
+		if ($cache = $GLOBALS['__nnt3_cachedSingletons_' . $class] ?? false) {
+			return $cache;
 		}
 
 		if (!class_exists($class)) return false;
 		$class = ltrim( $class, '\\');
 
 		if (is_a($class, \Nng\Nnhelpers\Singleton::class, true)) {
-			return call_user_func($class . '::makeInstance');
+			return $GLOBALS['__nnt3_cachedSingletons_' . $class] = call_user_func($class . '::makeInstance');
 		}
 
 		return GeneralUtility::makeInstance( $class );

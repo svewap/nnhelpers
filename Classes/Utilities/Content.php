@@ -244,14 +244,19 @@ class Content implements SingletonInterface {
 	public function render( $ttContentUid = null, $data = [] ) 
 	{
 		if (!$ttContentUid) return '';
-		\nn\t3::Tsfe()->get();
 
 		$conf = [
 			'tables' => 'tt_content',
 			'source' => $ttContentUid,
 			'dontCheckPid' => 1
 		];
-		$html = GeneralUtility::makeInstance( RecordsContentObject::class )->render($conf);
+
+		$cObj = \nn\t3::Tsfe()->cObj();
+
+		$recordsContentObject = GeneralUtility::makeInstance( RecordsContentObject::class );
+		$recordsContentObject->setRequest( $GLOBALS['TYPO3_REQUEST'] );
+		$recordsContentObject->setContentObjectRenderer( $cObj );
+		$html = $recordsContentObject->render($conf);
 
 		// Wenn data-Array übergeben wurde, Ergebnis erneut über Fluid Standalone-View parsen.
 		if ($data) {

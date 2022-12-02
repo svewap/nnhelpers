@@ -97,7 +97,7 @@ class Geo implements SingletonInterface {
 
 		// EXT:nnaddress verwenden, falls vorhanden
 		if (\nn\t3::Environment()->extLoaded('nnaddress')) {
-			$addressService = \nn\t3::injectClass( \Nng\Nnaddress\Services\AddressService::class );
+			$addressService = GeneralUtility::makeInstance( \Nng\Nnaddress\Services\AddressService::class );
 			if ($coordinates = $addressService->getGeoCoordinatesForAddress( $address )) {
 				return $coordinates;
 			}
@@ -184,7 +184,7 @@ class Geo implements SingletonInterface {
 
 		// EXT:nnaddress verwenden, falls vorhanden
 		if (\nn\t3::Environment()->extLoaded('nnaddress')) {
-			$addressService = \nn\t3::injectClass( \Nng\Nnaddress\Services\AddressService::class );
+			$addressService = GeneralUtility::makeInstance( \Nng\Nnaddress\Services\AddressService::class );
 			if ($addresses = $addressService->getAddressForGeoCoordinates( ['lng'=>$lng, 'lat'=>$lat] )) {
 				foreach ($addresses as $address) {
 					$results[] = [

@@ -57,6 +57,7 @@ class JsonEncodeViewHelper extends AbstractViewHelper {
 		// JavaScript Object (z.B. aus TypoScript-Setup) in JSON konvertieren
 		$json = new JsonHelper();
 		$data = $json->decode( trim($str) );
+		if ($data === null) return $str;
 
 		return json_encode($data);
 	}
