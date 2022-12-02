@@ -52,6 +52,24 @@ class ModuleController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControlle
 	protected $sourceLang = 'de';
 
 	/**
+	 * 	Initialize View
+	 * 
+	 */
+	public function initializeView () 
+	{
+		$this->pageRenderer->loadJavaScriptModule('@vendor/nnhelpers/NnhelpersBackendModule.js');
+		
+		$this->pageRenderer->addCssFile('EXT:nnhelpers/Resources/Public/Vendor/fontawesome/css/all.css');
+		$this->pageRenderer->addCssFile('EXT:nnhelpers/Resources/Public/Vendor/bootstrap/bootstrap.min.css');
+		$this->pageRenderer->addCssFile('EXT:nnhelpers/Resources/Public/Vendor/prism/prism.css');
+		$this->pageRenderer->addCssFile('EXT:nnhelpers/Resources/Public/Css/styles.css');
+		$this->pageRenderer->addJsFile('EXT:nnhelpers/Resources/Public/Vendor/prism/prism.js');
+
+		$this->moduleTemplate = $this->moduleTemplateFactory->create($this->request);
+		$this->moduleTemplate->getDocHeaderComponent()->disable();
+	}
+
+	/**
 	 * @return void
 	 */
 	public function indexAction (): ResponseInterface
@@ -67,6 +85,8 @@ class ModuleController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControlle
 		
 		if ($enableCache && $html = \nn\t3::Cache()->get([__METHOD__=>$beUserLang])) {
 			
+			// nothing to do. Page generated from cache.
+
 		} else {
 
 			// Composer libraries laden (z.B. Markdown)

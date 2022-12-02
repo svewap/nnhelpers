@@ -196,7 +196,7 @@ class DocumentationHelper {
 						$paramInfo[$param->getName()] = $defaultValue;
 						$paramString[] = "\${$param->getName()}" . ($param->isOptional() ? " = {$defaultValue}" : '');
 					}
-		
+
 					$classInfo['methods'][$method->name] = [
 						'comment' 		=> $comment,
 						'paramInfo'		=> $paramInfo,

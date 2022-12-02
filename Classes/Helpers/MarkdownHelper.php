@@ -42,7 +42,7 @@ class MarkdownHelper {
 		$parsedown = new \Parsedown();
 		$result = $parsedown->text( $str );
 		
-		$result = str_replace(['&amp;amp;', '&amp;gt;', '&amp;quot;', '&amp;apos;', '&amp;lt;'], ['&amp;', '&gt;', '&quot;', "&apos;", '&lt;'], $result);
+		$result = str_replace(['&amp;amp;', '&amp;gt;', '&amp;#039;', '&amp;quot;', '&amp;apos;', '&amp;lt;'], ['&amp;', '&gt;', '&apos;', '&quot;', "&apos;", '&lt;'], $result);
 		$result = trim($result);
 
 		if (!$result) return '';

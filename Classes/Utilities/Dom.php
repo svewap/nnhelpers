@@ -34,7 +34,7 @@ class Dom implements SingletonInterface {
 		if (!$attributes) $attributes = ['href', 'src'];
 
 		$dom = new \DOMDocument();
-		$dom->loadHTML($html);
+		@$dom->loadHTML($html);
 		$xpath = new \DOMXPath($dom);
 		
 		foreach ($attributes as $attr) {
