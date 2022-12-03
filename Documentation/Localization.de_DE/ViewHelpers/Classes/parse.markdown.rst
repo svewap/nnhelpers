@@ -13,11 +13,3 @@ Description
 <nnt3:parse.markdown />
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Wandelt einen String mit Markdown in HTML um.
-
-.. code-block:: php
-
-	{myMarkdownCode->nnt3:parse.markdown()}
-
-| ``@return mixed``
-

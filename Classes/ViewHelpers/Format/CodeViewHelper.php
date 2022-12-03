@@ -31,7 +31,7 @@ use TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface;
  */
 class CodeViewHelper extends AbstractViewHelper {
 
-	protected $escapingInterceptorEnabled = false;
+	protected $escapeOutput = false;
 
 	public function initializeArguments() {
 		$this->registerArgument('str', 'string', 'Code', false);
@@ -51,6 +51,8 @@ class CodeViewHelper extends AbstractViewHelper {
 
 		$lang = $lang !== 'none' ? "language-{$lang}" : '';
 
-        return '<pre ' . $download . '><code class="' . $lang . '">'.trim(htmlspecialchars($str, ENT_QUOTES, 'UTF-8')).'</code></pre>';
+		$str = trim(htmlspecialchars($str, ENT_QUOTES, 'UTF-8'));
+
+        return '<pre ' . $download . '><code class="' . $lang . '">'.$str.'</code></pre>';
 	}
 }

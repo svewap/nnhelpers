@@ -52,7 +52,7 @@ class TranslateViewHelper extends AbstractViewHelper {
 		foreach ($args as $arg) {
 			${$arg} = $arguments[$arg];
 		}
-		//\nn\t3::debug($id);
+
 		if (!$translate) {
 			return \nn\t3::LL()->get( $id, $extensionName );
 		}

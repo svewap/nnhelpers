@@ -13,12 +13,3 @@ Description
 <nnt3:ts.extConf />
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Konfiguration für eine Extension aus dem Extension-Manager holen.
-
-.. code-block:: php
-
-	{nnt3:ts.extConf(path:'nnfiletransfer.pathLogo')}
-	{nnt3:ts.extConf(path:'nnfiletransfer', key:'pathLogo')}
-
-| ``@return mixed``
-

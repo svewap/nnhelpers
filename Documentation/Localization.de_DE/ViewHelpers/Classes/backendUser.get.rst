@@ -1,15 +1,15 @@
 
 .. include:: ../../Includes.txt
 
-.. _Nng\Nnhelpers\ViewHelpers\Link\EditRecordViewHelper:
+.. _Nng\Nnhelpers\ViewHelpers\BackendUser\GetViewHelper:
 
 =======================================
-link.editRecord
+backendUser.get
 =======================================
 
 Description
 ---------------------------------------
 
-<nnt3:link.editRecord />
+<nnt3:backendUser.get />
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

@@ -64,7 +64,10 @@ class HtmlToSphinxViewHelper extends AbstractViewHelper {
 			$el->nodeValue = '``' . $el->nodeValue . '``';
 		}
 
-		$html = $dom->saveHTML( $dom->getElementsByTagName('t')->nodeValue );
+		$html = '';
+		if (isset($dom->getElementsByTagName('t')->nodeValue)) {
+			$html = $dom->saveHTML( $dom->getElementsByTagName('t')->nodeValue );
+		}
 		$html = str_replace(['</p>'], ["</p>\n"], $html);
 		$html = html_entity_decode( strip_tags( $html ));
 		$html = str_replace(['&#039;'], ["'"], $html);

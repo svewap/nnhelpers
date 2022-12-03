@@ -221,6 +221,7 @@ class ModuleController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControlle
 	function exportDocumentationAction() {
 		$this->exportDocumentationActionForLanguage('en');
 		$this->exportDocumentationActionForLanguage('de', 'Localization.de_DE/');
+		return $this->htmlResponse('');
 	}
 
 	/**
@@ -232,7 +233,7 @@ class ModuleController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControlle
 		$autoload = \nn\t3::Environment()->extPath('nnhelpers') . 'Resources/Libraries/vendor/autoload.php';
 		require_once( $autoload );
 
-		echo "<pre>
+		echo "<pre style='max-height:100vh; overflow: scroll;'>
 			<h1>Doku für `{$language}` generieren:</h1>
 		\n\n";
 
