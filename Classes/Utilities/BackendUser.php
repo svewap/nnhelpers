@@ -24,7 +24,6 @@ class BackendUser implements SingletonInterface {
 	 * 	@return bool
 	 */
 	public function isLoggedIn() {
-		if (\nn\t3::t3Version() < 9) return $GLOBALS['TSFE']->beUserLogin;
 		$context = GeneralUtility::makeInstance(Context::class);
 		return $context->getPropertyFromAspect('backend.user', 'isLoggedIn');
 	}
@@ -39,7 +38,6 @@ class BackendUser implements SingletonInterface {
 	 * 	@return bool
 	 */
 	public function isAdmin() {
-		if (\nn\t3::t3Version() < 9) return $GLOBALS['BE_USER']->user['admin'];
 		$context = GeneralUtility::makeInstance(Context::class);
 		return $context->getPropertyFromAspect('backend.user', 'isAdmin');
 	}
@@ -52,12 +50,22 @@ class BackendUser implements SingletonInterface {
 	 *	```
 	 *	\nn\t3::BackendUser()->start();
 	 * 	```
-	 * 	@return \TYPO3\CMS\Backend\FrontendBackendUserAuthentication
+	 * 	@return \TYPO3\CMS\Core\Authentication\BackendUserAuthentication
 	 */		
 	public function start() {
 		if (!$GLOBALS['BE_USER']) {
-			$GLOBALS['BE_USER'] = GeneralUtility::makeInstance( \TYPO3\CMS\Core\Authentication\BackendUserAuthentication::class );
-			$GLOBALS['BE_USER']->start();
+			\TYPO3\CMS\Core\Core\Bootstrap::initializeBackendUser(
+				\TYPO3\CMS\Core\Authentication\BackendUserAuthentication::class,
+				$GLOBALS['TYPO3_REQUEST']
+			);
+			// Sketch, in case upper version makes trouble
+			/*
+			$admin = \nn\t3::Db()->findOneByValues('be_users', ['admin'=>1]);
+			$userSessionManager = \TYPO3\CMS\Core\Session\UserSessionManager::create('BE');
+			$userSession = $userSessionManager->createAnonymousSession();
+			$fixedUserSession = $userSessionManager->elevateToFixatedUserSession( $userSession, $admin['uid'] );
+			$GLOBALS['BE_USER'] = 'need BackendUserAuthentication here'; // todo: solve this
+			*/
 		}
 		return $GLOBALS['BE_USER'];
 	}

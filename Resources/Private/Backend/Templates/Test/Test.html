@@ -23,12 +23,15 @@
 		.unit {
 			background-color: #eee;
 			border: 1px solid #ddd;
-			padding: 5px 10px;
+			padding: 10px 10px 5px 20px;
 			color: #666;
 		}
 		.unit p {
 			margin: 0 0 5px 0; 
 			padding: 0;
+		}
+		.result-scope {
+			background-color: #555;
 		}
 		.result-scope.error {
 			background-color: #de2609;
@@ -66,8 +69,8 @@
 			align-items: center;
 			justify-content: center;
 			text-decoration: none;
-			font-size: 1.5rem;
-			margin: 10px 5px 0 0;
+			font-size: 0.7rem;
+			margin: -5px 5px 0 0;
 		}
 
 	</style>
@@ -76,12 +79,10 @@
 	   $(function () {
 
 			var allTests = [];
-
 			$('.test-units .unit').each( function () {
 				allTests.push( $(this) );
 			});
 
-			run_next_test();
 
 			function run_next_test() {
 				if (!allTests.length) return false;
@@ -94,6 +95,31 @@
 				});
 
 			}
+			
+			$('.run-test').click(() => {
+				$('.test-units .unit .result-scope').remove();
+				allTests = [];
+				$('.test-units .unit').each( function () {
+					allTests.push( $(this) );
+				});
+				run_next_test();
+				return false;
+			})
+
+			function build_scope_links() {
+
+				$.each(allTests, function ( cnt, $test ) {
+					['FE', 'BE'].forEach((scope) => {
+						var isBackend = scope == 'BE';
+						var baseUrl = $('.test-units').data( isBackend ? 'backendUrl' : 'frontendUrl');
+						var testUrl = baseUrl + '&testID=' + encodeURIComponent($test.data().id);
+						var $resultFlag = $('<a href="'+testUrl+'" class="result-scope"><span>'+scope+'</span></a>');
+						$test.prepend($resultFlag);
+					})
+				})
+			}
+
+			build_scope_links();
 
 			function run_test_scope ( $test, scope, func ) {
 
@@ -130,6 +156,10 @@
 	</script>
 	
 	<div class="actions mb-5 text-right">
+		<a href="#" class="run-test float-left btn btn-secondary">
+			<i class="fas fa-play"></i>
+			Test starten
+		</a>
 		<f:link.action action="index" class="btn btn-primary mr-3">Dokumentation</f:link.action>
 		<f:link.action action="test" class="btn btn-primary">Funktionen testen</f:link.action>
 	</div>
@@ -137,6 +167,11 @@
 	<div class="test-units" data-backend-url="{f:uri.action(action:'test')}" data-frontend-url="{baseURL}?type=20190825">
 
 
+		<h2>Various methods</h2>
+		<div class="unit" data-id="Methods::basicTests">
+			<h4>Basic Tests</h4>
+		</div>
+<!--
 		<h2>Environment</h2>
 		<div class="unit" data-id="Environment::getBaseURL">
 			<h4>\nn\t3::Environment()->getBaseURL()</h4>
@@ -195,12 +230,11 @@
 		<div class="unit" data-id="Settings">
 			<h4>\nn\t3::Settings()</h4>
 		</div>
-
+	-->
 		<h2>Content</h2>
 		<div class="unit" data-id="Content">
 			<h4>\nn\t3::Content()</h4>
 		</div>
-
 
 	</div>
 

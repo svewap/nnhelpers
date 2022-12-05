@@ -184,7 +184,7 @@ class Content implements SingletonInterface {
 			return $data;
 		}
 
-		$fallbackChain = \nn\t3::Environment()->getLanguageFallbackChain( $localize );
+		$fallbackChain = is_array($localize) ? $localize : \nn\t3::Environment()->getLanguageFallbackChain( $localize );
 		
 		$pageRepository = \nn\t3::injectClass( PageRepository::class );
 		if (!$pageRepository) return $data;

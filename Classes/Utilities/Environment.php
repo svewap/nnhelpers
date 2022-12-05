@@ -295,19 +295,8 @@ class Environment implements SingletonInterface {
 	 * @return array
 	 */
 	public function getPsr4Prefixes() {
-		if (\nn\t3::t3Version() >= 11) {
-			$composerClassLoader = ClassLoadingInformation::getClassLoader();
-			$psr4prefixes = $composerClassLoader->getPrefixesPsr4();
-		} else {
-			if (\TYPO3\CMS\Core\Core\Environment::isComposerMode()){
-				$psr4path = \TYPO3\CMS\Core\Core\Environment::getProjectPath() . '/vendor/composer/' . ClassLoadingInformation::AUTOLOAD_PSR4_FILENAME;
-			} else {
-				$psr4path = \TYPO3\CMS\Core\Core\Environment::getLegacyConfigPath() . '/' .
-							ClassLoadingInformation::AUTOLOAD_INFO_DIR .
-							ClassLoadingInformation::AUTOLOAD_PSR4_FILENAME;
-			}
-			$psr4prefixes = require( $psr4path );
-		}
+		$composerClassLoader = ClassLoadingInformation::getClassLoader();
+		$psr4prefixes = $composerClassLoader->getPrefixesPsr4();
 		return $psr4prefixes;
 	}
 
@@ -324,10 +313,7 @@ class Environment implements SingletonInterface {
 	 * ```
 	 */
 	public function getVarPath() {
-		if (\nn\t3::t3Version() >= 9) {
-			return rtrim(\TYPO3\CMS\Core\Core\Environment::getVarPath(), '/').'/';
-		}
-		return \nn\t3::File()->absPath('typo3temp/var/');
+		return rtrim(\TYPO3\CMS\Core\Core\Environment::getVarPath(), '/').'/';
 	}
 
 	/**
@@ -338,7 +324,6 @@ class Environment implements SingletonInterface {
 	 * 	früher: `PATH_site`
 	 */
 	public function getPathSite () {
-		if (\nn\t3::t3Version() < 9) return PATH_site;
 		return \TYPO3\CMS\Core\Core\Environment::getPublicPath().'/';
 	}
 	

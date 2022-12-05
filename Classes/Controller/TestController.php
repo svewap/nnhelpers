@@ -4,8 +4,44 @@ namespace Nng\Nnhelpers\Controller;
 
 use Nng\Nnhelpers\Domain\Repository\EntryRepository;
 
+use TYPO3\CMS\Core\Page\PageRenderer;
+use TYPO3\CMS\Fluid\View\StandaloneView;
+use TYPO3\CMS\Backend\Routing\UriBuilder;
+use TYPO3\CMS\Backend\Template\ModuleTemplateFactory;
+
+
 class TestController extends \Nng\Nnhelpers\Controller\AbstractController {
 
+	protected ModuleTemplateFactory $moduleTemplateFactory;
+    protected PageRenderer $pageRenderer;
+
+	public function __construct(
+		ModuleTemplateFactory $moduleTemplateFactory,
+        UriBuilder $uriBuilder,
+        PageRenderer $pageRenderer
+    ) {
+        $this->moduleTemplateFactory = $moduleTemplateFactory;
+        $this->uriBuilder = $uriBuilder;
+        $this->pageRenderer = $pageRenderer;
+    }
+
+	/**
+	 * 	Initialize View
+	 * 
+	 */
+	public function initializeView () 
+	{
+		$this->pageRenderer->loadJavaScriptModule('@vendor/nnhelpers/NnhelpersBackendModule.js');
+		
+		$this->pageRenderer->addCssFile('EXT:nnhelpers/Resources/Public/Vendor/fontawesome/css/all.css');
+		$this->pageRenderer->addCssFile('EXT:nnhelpers/Resources/Public/Vendor/bootstrap/bootstrap.min.css');
+		$this->pageRenderer->addCssFile('EXT:nnhelpers/Resources/Public/Vendor/prism/prism.css');
+		$this->pageRenderer->addCssFile('EXT:nnhelpers/Resources/Public/Css/styles.css');
+		$this->pageRenderer->addJsFile('EXT:nnhelpers/Resources/Public/Vendor/prism/prism.js');
+
+		$this->moduleTemplate = $this->moduleTemplateFactory->create($this->request);
+		$this->moduleTemplate->getDocHeaderComponent()->disable();
+	}
 
 	/**
 	 * 	Tests vieler Funktionen.
@@ -21,7 +57,7 @@ class TestController extends \Nng\Nnhelpers\Controller\AbstractController {
 			die('Zum Testen als Admin ins Backend einloggen.');
 		}
 		
-		if ($testID = $_GET['testID']) {
+		if ($testID = $_GET['testID'] ?? false) {
 			
 			$errors = [];
 			$success = [];
@@ -34,7 +70,88 @@ class TestController extends \Nng\Nnhelpers\Controller\AbstractController {
 
 			switch ($testID) {
 
-				case 'Environment::getBaseURL';
+				case 'Methods::basicTests':
+
+					try {
+						
+						// -----------------------------
+						// \nn\t3::BackendUser()
+
+						// ->isLoggedIn()
+						if (!\nn\t3::BackendUser()->isLoggedIn()) {
+							$errors[] = '\nn\t3::BackendUser()->isLoggedIn()';
+						}
+						// ->start()
+						unset($GLOBALS['BE_USER']);
+						$beUser = \nn\t3::BackendUser()->start();
+						if (!$beUser) {
+							$errors[] = '\nn\t3::BackendUser()->start()';
+						}
+						// ->updateSettings() / ->getSettings()
+						\nn\t3::BackendUser()->updateSettings('nnt3test', ['test'=>'ok']);
+						if (\nn\t3::BackendUser()->getSettings('nnt3test', 'test') !== 'ok') {
+							$errors[] = '\nn\t3::BackendUser()->getSettings()';
+						}
+
+						// -----------------------------
+						// \nn\t3::Cache()
+
+						// ->set() / ->get()
+						\nn\t3::Cache()->set('nnt3test', ['test'=>'ok']);
+						if (\nn\t3::Cache()->get('nnt3test')['test'] != 'ok') {
+							$errors[] = '\nn\t3::Cache()->get()';
+						}
+
+						// ->read() / ->write()
+						\nn\t3::Cache()->write('nnt3test', ['test'=>'ok']);
+						if (\nn\t3::Cache()->read('nnt3test')['test'] != 'ok') {
+							$errors[] = '\nn\t3::Cache()->get()';
+						}
+
+						// clearPageCache();
+						\nn\t3::Cache()->clearPageCache();
+						\nn\t3::Cache()->clear('nnhelpers');
+						\nn\t3::Cache()->clear();
+
+						// -----------------------------
+						// \nn\t3::Environment()
+
+						$data = \nn\t3::Environment()->getLanguages();
+
+						if (count($data) > 1) {
+							$data = \nn\t3::Environment()->getLanguageFallbackChain(1);
+							$data = \nn\t3::Environment()->getLanguageFallbackChain(1);
+						} else {
+							$errors[] = '\nn\t3::Environment->getLanguages() - nur 1 Sprache angelegt. Test konnte nicht durchgeführt werden.';
+						}
+						if (!\nn\t3::Environment()->getExtConf('nnhelpers')['showMod']) {
+							$errors[] = '\nn\t3::Environment()->getExtConf()';
+						}
+						if (!\nn\t3::Environment()->getLocalConf()['FE']) {
+							$errors[] = '\nn\t3::Environment()->getLocalConf()';
+						}
+						if (!\nn\t3::Environment()->getPsr4Prefixes()) {
+							$errors[] = '\nn\t3::Environment()->getPsr4Prefixes()';
+						}
+						if (!\nn\t3::Environment()->getVarPath()) {
+							$errors[] = '\nn\t3::Environment()->getVarPath()';
+						}
+						if (!\nn\t3::Environment()->getPathSite()) {
+							$errors[] = '\nn\t3::Environment()->getPathSite()';
+						}
+						if (!\nn\t3::Environment()->extPath('nnhelpers')) {
+							$errors[] = '\nn\t3::Environment()->extPath()';
+						}
+
+						\nn\t3::Environment()->isFrontend();
+
+						$success[] = "Basics tests waren erfolgreich";
+					} catch ( \Error $e ) {
+						$errors[] = $e->getMessage();
+					}
+					break;
+
+				case 'Environment::getBaseURL':
 
 					// Sollte URL der Webseite zurückgeben, z.B. https://www.projekt.de/
 					$result = \nn\t3::Environment()->getBaseURL();
@@ -42,7 +159,7 @@ class TestController extends \Nng\Nnhelpers\Controller\AbstractController {
 					$success[] = $result;
 					break;
 				
-				case 'Environment::getPathSite';
+				case 'Environment::getPathSite':
 
 					// Sollte absoluten Pfad zu Typo3 zurückgeben, z.B. /var/www/.../projekt/
 					$result = \nn\t3::Environment()->getPathSite();
@@ -50,7 +167,7 @@ class TestController extends \Nng\Nnhelpers\Controller\AbstractController {
 					$success[] = $result;
 					break;
 
-				case 'Db::insert';
+				case 'Db::insert':
 
 					// Einen Datensatz in DB einfügen
 					$result = \nn\t3::Db()->insert('tx_nnhelpers_domain_model_entry', ['data'=>'insert']);
@@ -148,7 +265,7 @@ class TestController extends \Nng\Nnhelpers\Controller\AbstractController {
 
 					break;
 
-				case 'File::paths';
+				case 'File::paths':
 
 					// Abhängig davon, ob Test im BE oder FE läuft ist Ergebnis unterschiedlich
 					$prefix = \nn\t3::Environment()->isBackend() ? '../' : '';
@@ -239,7 +356,7 @@ class TestController extends \Nng\Nnhelpers\Controller\AbstractController {
 					if (!$errors) $success[] = 'Alle Pfad-Tests erfolgreich';
 					break;
 
-				case 'File::getStorage';
+				case 'File::getStorage':
 
 					// Storage für fileadmin/ sollte zurückgegeben werden
 					$result = \nn\t3::File()->getStorage('fileadmin');
@@ -385,15 +502,28 @@ class TestController extends \Nng\Nnhelpers\Controller\AbstractController {
 				
 				case 'Content':
 					
-					$row = \nn\t3::Db()->findOneByValues('tt_content', ['CType'=>'text']);
-					$uid = $row['uid'];
+					$row = \nn\t3::Db()->findOneByValues('tt_content', ['CType'=>'textmedia']);
+					$uid = $row['uid'] ?? false;
 					if ($uid) {
 						$html = \nn\t3::Content()->render( $uid );
 						if (!$html) {
-							$errors[] = "render(): Fehler beim Rendern.";
+							$errors[] = "\\nn\\t3::Content()->render()";
 						} else {
 							$success[] = "render(): Erfolgreich.";
 						}
+						$ceData = \nn\t3::Content()->get( $uid, true );
+						if (!$ceData || !count($ceData['assets'])) {
+							$errors[] = "\\nn\\t3::Content()->get()";
+						}
+						$data = \nn\t3::Content()->localize( 'tt_content', $ceData, [2, 1, 0] );
+						if ($ceData['header'] == $data['header']) {
+							$errors[] = "\\nn\\t3::Content()->localize() - Text in DE und EN ist identisch.";
+						}
+						if (!$data) {
+							$errors[] = "\\nn\\t3::Content()->localize()";
+						}
+					} else {
+						$errors[] = "render(): Kein Content-Element vom Typ TEXTMEDIA zum Testen gefunden. Bitte anlegen!";
 					}
 
 					break;
@@ -462,7 +592,11 @@ class TestController extends \Nng\Nnhelpers\Controller\AbstractController {
 			'baseURL' => \nn\t3::Environment()->getBaseUrl()
 		]);
 
-		return $this->htmlResponse($this->view->render());
+		$moduleTemplate = $this->moduleTemplateFactory->create($this->request);
+		$moduleTemplate->getDocHeaderComponent()->disable();
+		$moduleTemplate->setContent($this->view->render());
+
+		return $this->htmlResponse($moduleTemplate->renderContent());
 	}
 
 	/**

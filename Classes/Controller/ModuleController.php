@@ -74,6 +74,13 @@ class ModuleController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControlle
 	 */
 	public function indexAction (): ResponseInterface
 	{	
+		/*
+		$start = hrtime(true);
+		for ($i = 0; $i < 1000; $i++) {
+			//$a = \nn\t3::Settings();
+		}
+		die( (hrtime(true)- $start)/1e+6 . 'ms');
+		*/
 		$args = $this->request->getArguments();
 		$isDevMode = \nn\t3::Environment()->getExtConf('nnhelpers', 'devModeEnabled');
 		$updateTranslation = $args['updateTranslation'] ?? false;
