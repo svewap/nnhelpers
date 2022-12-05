@@ -24,11 +24,7 @@ class Registry implements SingletonInterface {
 	 * 	@return void
 	 */
 	public function plugin ( $vendorName = '', $pluginName = '', $title = '', $icon = '', $tcaGroup = null ) {
-		if (\nn\t3::t3Version() < 10) {
-			\TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerPlugin( $this->getVendorExtensionName($vendorName), $pluginName, $title, $icon );
-		} else {
-			\TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerPlugin( $this->getVendorExtensionName($vendorName), $pluginName, $title, $icon, $tcaGroup );
-		}
+		\TYPO3\CMS\Extbase\Utility\ExtensionUtility::registerPlugin( $this->getVendorExtensionName($vendorName), $pluginName, $title, $icon, $tcaGroup );
 	}
 	
 	/**
@@ -63,9 +59,8 @@ class Registry implements SingletonInterface {
 		$groupName = $extName . '_group';
 
 		// ab TYPO3 10 können im Plugin-Dropdown optgroups gebildet werden
-		if (\nn\t3::t3Version() >= 10) {
-			\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addTcaSelectItemGroup( 'tt_content', 'list_type', $groupName, $groupLabel, 'before:default' );
-		}
+		\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addTcaSelectItemGroup( 'tt_content', 'list_type', $groupName, $groupLabel, 'before:default' );
+
 		foreach ($plugins as $listType=>$config) {
 			$this->plugin( $vendorName, $listType, $config['title'] ?? '', $config['icon'] ?? '', $groupName );
 			if ($flexform = $config['flexform'] ?? false) {
@@ -111,12 +106,7 @@ class Registry implements SingletonInterface {
 		$vendorName = GeneralUtility::underscoredToUpperCamelCase( $parts[0] );
 		$pluginName = GeneralUtility::underscoredToUpperCamelCase( $parts[1] );
 
-		// Seit Typo3 10 ist die Angabe des Vendors bei der PlugIn-Registrierung deprecated.
-		if (\nn\t3::t3Version() < 10) {
-			$registrationName = "{$vendorName}.{$pluginName}";
-		} else {
-			$registrationName = "{$pluginName}";
-		}
+		$registrationName = "{$pluginName}";
 		return $registrationName;
 	}
 
@@ -134,13 +124,7 @@ class Registry implements SingletonInterface {
 	 *	@return array
 	 */
 	public function parseControllerActions( $controllerActionList = [] ) {
-		if (\nn\t3::t3Version() > 9) return $controllerActionList;
-		$parsedList = [];
-		foreach ($controllerActionList as $controller=>$actionList) {
-			$controller = preg_replace('/(.*)\\\(.*)Controller/i', '\\2', $controller);
-			$parsedList[$controller] = $actionList;
-		}
-		return $parsedList;
+		return $controllerActionList;
 	}
 
 	/**
@@ -226,8 +210,6 @@ class Registry implements SingletonInterface {
 	 * @return void
 	 */
 	public function icon ( $identifier = '', $path = '' ) {
-
-		if (\nn\t3::t3Version() < 8) return false;
 
 		$iconRegistry = GeneralUtility::makeInstance( \TYPO3\CMS\Core\Imaging\IconRegistry::class );
 		$suffix = strtolower(pathinfo( $path, PATHINFO_EXTENSION ));

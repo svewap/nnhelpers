@@ -133,56 +133,29 @@ class TCA implements SingletonInterface {
 			'fileExtensions' => $GLOBALS['TYPO3_CONF_VARS']['SYS']['mediafile_ext']
 		], $override);
 
-		// Für Typo3 7 und 8 wird das Feld 'foreign_types' verwendet
-		if (\nn\t3::t3Version() < 9) {
 
-			$showItem = '
-				--palette--;LLL:EXT:lang/locallang_tca.xlf:sys_file_reference.imageoverlayPalette;imageoverlayPalette,
-				--palette--;;filePalette';
-			$config = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::getFileFieldTCAConfig( $fieldName,
-				[
-					'appearance' => [
-						'createNewRelationLinkTitle' => 'LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:media.addFileReference'
-					],
-					'foreign_types' => [
-						'0' => ['showitem' => $showItem],
-						\TYPO3\CMS\Core\Resource\File::FILETYPE_TEXT => ['showitem' => $showItem],
-						\TYPO3\CMS\Core\Resource\File::FILETYPE_IMAGE => ['showitem' => $showItem],
-						\TYPO3\CMS\Core\Resource\File::FILETYPE_AUDIO => ['showitem' => $showItem],
-						\TYPO3\CMS\Core\Resource\File::FILETYPE_VIDEO => ['showitem' => $showItem],
-						\TYPO3\CMS\Core\Resource\File::FILETYPE_APPLICATION => ['showitem' => $showItem]
-					],
-					'maxitems' => $options['maxitems']
-				], $options['fileExtensions']);
-				
-		}
-
-		// Für Typo3 9+ verwendet nur noch das Feld 'overrideChildTca'	
-		if (\nn\t3::t3Version() >= 9) {
-
-			$showItem = '
-				--palette--;;imageoverlayPalette,
-				--palette--;;filePalette';
-			$config = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::getFileFieldTCAConfig( $fieldName, [
-				'appearance' => [
-					'createNewRelationLinkTitle' => 'LLL:EXT:frontend/Resources/Private/Language/Database.xlf:tt_content.asset_references.addFileReference'
+		$showItem = '
+			--palette--;;imageoverlayPalette,
+			--palette--;;filePalette';
+		$config = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::getFileFieldTCAConfig( $fieldName, [
+			'appearance' => [
+				'createNewRelationLinkTitle' => 'LLL:EXT:frontend/Resources/Private/Language/Database.xlf:tt_content.asset_references.addFileReference'
+			],
+			'overrideChildTca' => [
+				'types' => [
+					'0' => ['showitem' => $showItem],
+					\TYPO3\CMS\Core\Resource\File::FILETYPE_TEXT => ['showitem' => $showItem],
+					\TYPO3\CMS\Core\Resource\File::FILETYPE_IMAGE => ['showitem' => $showItem],
+					\TYPO3\CMS\Core\Resource\File::FILETYPE_AUDIO => ['showitem' => $showItem],
+					\TYPO3\CMS\Core\Resource\File::FILETYPE_VIDEO => ['showitem' => $showItem],
+					\TYPO3\CMS\Core\Resource\File::FILETYPE_APPLICATION => ['showitem' => $showItem]
 				],
-				'overrideChildTca' => [
-					'types' => [
-						'0' => ['showitem' => $showItem],
-						\TYPO3\CMS\Core\Resource\File::FILETYPE_TEXT => ['showitem' => $showItem],
-						\TYPO3\CMS\Core\Resource\File::FILETYPE_IMAGE => ['showitem' => $showItem],
-						\TYPO3\CMS\Core\Resource\File::FILETYPE_AUDIO => ['showitem' => $showItem],
-						\TYPO3\CMS\Core\Resource\File::FILETYPE_VIDEO => ['showitem' => $showItem],
-						\TYPO3\CMS\Core\Resource\File::FILETYPE_APPLICATION => ['showitem' => $showItem]
-					],
-				],
-				'maxitems' => $options['maxitems'],
-				'behaviour' => [
-					'allowLanguageSynchronization' => true
-				],
-			], $options['fileExtensions']);
-		}
+			],
+			'maxitems' => $options['maxitems'],
+			'behaviour' => [
+				'allowLanguageSynchronization' => true
+			],
+		], $options['fileExtensions']);
 
 		return $config;
 
@@ -197,27 +170,6 @@ class TCA implements SingletonInterface {
 	 * @return array
 	 */
 	public function getRteTCAConfig() {
-		if (\nn\t3::t3Version() < 8) {
-			return [
-				'type' => 'text',
-				'cols' => 40,
-				'rows' => 15,
-				'eval' => 'trim',
-				'enableRichtext' => true,
-				'wizards' => [
-					'RTE' => [
-						'notNewRecords' => 1,
-						'RTEonly' => 1,
-						'type' => 'script',
-						'title' => 'Full screen Rich Text Editing',
-						'icon' => 'actions-wizard-rte',
-						'module' => [
-							'name' => 'wizard_rte',
-						],
-					],
-				],
-			];
-		}
 		return [
 			'type' => 'text',
 			'enableRichtext' => true,
@@ -261,23 +213,6 @@ class TCA implements SingletonInterface {
 	 * @return array
 	 */
 	public function getColorPickerTCAConfig() {
-		if (\nn\t3::t3Version() < 8) {
-			return [
-				'type' => 'input',
-				'eval' => 'trim',
-				'wizards' => [
-				'colorChoice' => [
-						'type' => 'colorbox',
-						'title' => 'LLL:EXT:examples/Resources/Private/Language/locallang_db.xlf:tx_examples_haiku.colorPick',
-						'module' => [
-							'name' => 'wizard_colorpicker',
-						],
-						'JSopenParams' => 'height=600,width=380,status=0,menubar=0,scrollbars=1',
-						//'exampleImg' => 'EXT:examples/res/images/japanese_garden.jpg',
-					]
-				]
-			];
-		}
 		return [
 			'type' => 'input',
 			'renderType' => 'colorpicker',

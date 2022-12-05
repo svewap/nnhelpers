@@ -168,17 +168,8 @@ class Encrypt implements SingletonInterface {
 	 * 	@return string
 	 */
     public function password ( $clearTextPassword = '', $context = 'FE' ) {
-		if (\nn\t3::t3Version() < 9) {
-			if (\TYPO3\CMS\Saltedpasswords\Utility\SaltedPasswordsUtility::isUsageEnabled('FE')) {
-				$objSalt = \TYPO3\CMS\Saltedpasswords\Salt\SaltFactory::getSaltingInstance(NULL);
-				if (is_object($objSalt)) {
-					$saltedPassword = $objSalt->getHashedPassword($clearTextPassword);
-				}
-			}
-		} else {
-			$hashInstance = GeneralUtility::makeInstance(PasswordHashFactory::class)->getDefaultHashInstance( $context );
-			$saltedPassword = $hashInstance->getHashedPassword( $clearTextPassword );
-		}
+		$hashInstance = GeneralUtility::makeInstance(PasswordHashFactory::class)->getDefaultHashInstance( $context );
+		$saltedPassword = $hashInstance->getHashedPassword( $clearTextPassword );
 		return $saltedPassword;
 	}
 
@@ -193,30 +184,18 @@ class Encrypt implements SingletonInterface {
 	 */
 	public function checkPassword ( $password = '', $passwordHash = null ) {
 
-		if (\nn\t3::t3Version() < 9) {
-			$saltingObject = \TYPO3\CMS\Saltedpasswords\Salt\SaltFactory::getSaltingInstance($passwordHash, 'FE');
-			if (is_object($saltingObject)) {
-				return $saltingObject->checkPassword($password, $passwordHash) ? true : false;
-			} elseif ($passwordHash == md5($password)) {
-				return true;
-			}
-			return false;
+		// siehe localConfiguration.php [FE][passwordHashing][className], default für Typo3 9 ist \TYPO3\CMS\Core\Crypto\PasswordHashing\BcryptPasswordHash
+		$hashInstance = GeneralUtility::makeInstance(PasswordHashFactory::class)->getDefaultHashInstance('FE');
+		$result = $hashInstance->checkPassword($password, $passwordHash);
+		if ($result) return true;
 
-		} else {
-
-			// siehe localConfiguration.php [FE][passwordHashing][className], default für Typo3 9 ist \TYPO3\CMS\Core\Crypto\PasswordHashing\BcryptPasswordHash
-			$hashInstance = GeneralUtility::makeInstance(PasswordHashFactory::class)->getDefaultHashInstance('FE');
+		// Fallback für Passworte, die nach Update auf Typo3 9 noch den md5-Hash oder andere verwenden
+		if ($hashInstance = $this->getHashInstance( $passwordHash )) {
 			$result = $hashInstance->checkPassword($password, $passwordHash);
-			if ($result) return true;
-
-			// Fallback für Passworte, die nach Update auf Typo3 9 noch den md5-Hash oder andere verwenden
-			if ($hashInstance = $this->getHashInstance( $passwordHash )) {
-				$result = $hashInstance->checkPassword($password, $passwordHash);
-				return $result;
-			}
-
-			return false;
+			return $result;
 		}
+
+		return false;
 	}
 
 	/**

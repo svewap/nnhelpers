@@ -17,7 +17,6 @@ class Storage extends \TYPO3\CMS\Core\Resource\StorageRepository {
 		EventDispatcherInterface $eventDispatcher, 
 		DriverRegistry $driverRegistry)
     {
-		\nn\t3::debug($storageRepository->);
 		parent::__construct($eventDispatcher, $driverRegistry);
 //		$storage = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance( \TYPO3\CMS\Core\Resource\StorageRepository::class );
     }
@@ -31,11 +30,7 @@ class Storage extends \TYPO3\CMS\Core\Resource\StorageRepository {
 	 */
 	// clearStorageRowCache
 	public function clearStorageRowCache () {
-		if (\nn\t3::t3Version() < 9) {
-			static::$storageRowCache = NULL;
-		} else {
-			$this->storageRowCache = NULL;
-		}
+		$this->storageRowCache = NULL;
 		$this->initializeLocalCache();
 	}
 	

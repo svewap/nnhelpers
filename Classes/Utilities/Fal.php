@@ -217,27 +217,6 @@ class Fal implements SingletonInterface {
 
 		$fieldname = GeneralUtility::camelCaseToLowerCaseUnderscored($params['field']);
 
-		if (\nn\t3::t3Version() < 9) {
-			$newFileReference = \nn\t3::injectClass( FileReference::class );
-
-			$newFileReference->setFile($newFile);
-			$newFileReference->setPid($params['pid']);
-			$newFileReference->setTitle($params['title'] ?? null);
-			$newFileReference->setDescription($params['description'] ?? null);
-			$newFileReference->setLink($params['link'] ?? '');
-			$newFileReference->setCrop($params['crop'] ?? '');
-			$newFileReference->setCruserId($params['cruser_id']);
-			$newFileReference->setUidForeign($params['uid']);
-			$newFileReference->setTablenames($params['table']);
-			$newFileReference->setFieldname($fieldname);
-		
-			$fileReferenceRepository->add($newFileReference);
-			\nn\t3::Db()->persistAll();
-			
-			// @returns \Nng\Nnhelpers\Domain\Model\FileReference
-			return $this->getFileReferenceByUid( $newFileReference->getUid() );
-		}
-
 		$entry = [
 			'fieldname' 		=> $fieldname,
 			'tablenames' 		=> $params['table'],
@@ -309,10 +288,6 @@ class Fal implements SingletonInterface {
 		if (!$forceCreateNew && $storage->hasFileInFolder( $srcFileBaseName, $subfolderInStorage )) {
 			$existingFile = $storage->getFileInFolder( $srcFileBaseName, $subfolderInStorage );
 
-			if (\nn\t3::t3Version() < 10) {
-				// @returns \Nng\Nnhelpers\Domain\Model\File
-				return $fileRepository->findByUid($existingFile->getProperty('uid'));
-			}
 			// @returns \TYPO3\CMS\Core\Resource\File
 			return $existingFile;
 		}
@@ -362,19 +337,6 @@ class Fal implements SingletonInterface {
 		}
 
 		if (!$newFileObject) return false;
-
-		if (\nn\t3::t3Version() < 10) {
-			$newFile = $fileRepository->findByUid($newFileObject->getProperty('uid'));
-			$newFile->setIdentifier( $newFileObject->getIdentifier() );
-			
-			// Exif-Daten für Datei ermitteln
-			if ($exif = \nn\t3::File()->getExifData( $srcFile )) {
-				$newFile->setExif( $exif );
-			}
-
-			// @returns \Nng\Nnhelpers\Domain\Model\File
-			return $newFile;
-		}
 
 		// Exif-Daten für Datei ermitteln
 		if ($exif = \nn\t3::File()->getExifData( $srcFile )) {
@@ -469,13 +431,6 @@ class Fal implements SingletonInterface {
 
 		$ref = \nn\t3::Db()->findByValues( 'sys_file_reference', $where );
 		if (!$ref) return [];
-
-		if (\nn\t3::t3Version() < 10) {
-			$fileReferenceRepository = \nn\t3::injectClass( FileReferenceRepository::class );
-
-			// @return \Nng\Nnhelpers\Domain\Model\FileReference
-			return $this->getFileReferenceByUid( $ref[0]['uid'] );
-		}
 
 		// @returns \TYPO3\CMS\Extbase\Domain\Model\FileReference
 		return $this->persistenceManager->getObjectByIdentifier($ref[0]['uid'], \TYPO3\CMS\Extbase\Domain\Model\FileReference::class, false);
@@ -669,10 +624,6 @@ class Fal implements SingletonInterface {
 		$basename = substr( $file, strlen($storageFolder) );
 		
 		$sysFile = $storage->getFile($basename);
-
-		if (\nn\t3::t3Version() < 10) {
-			return $fileRepository->findByUid($sysFile->getUid());
-		}
 
 		// @return \TYPO3\CMS\Core\Resource\File
 		$file = GeneralUtility::makeInstance(ResourceFactory::class)->getFileObject($sysFile->getUid());

@@ -106,11 +106,8 @@ class File implements SingletonInterface {
 		$suffix = strtolower(pathinfo( $filename, PATHINFO_EXTENSION ));
 		$filename = pathinfo( $filename, PATHINFO_FILENAME );
 
-		if (\nn\t3::t3Version() < 9) {
-			$filename = GeneralUtility::makeInstance(CharsetConverter::class)->utf8_char_mapping($filename, 'ascii');
-		} else {
-			$filename = GeneralUtility::makeInstance(CharsetConverter::class)->utf8_char_mapping($filename);
-		}
+		$filename = GeneralUtility::makeInstance(CharsetConverter::class)->utf8_char_mapping($filename);
+
 		$cleanFilename = utf8_decode( $filename );
 		$cleanFilename = strtolower(preg_replace('/[' . self::UNSAFE_FILENAME_CHARACTER_EXPRESSION . '\\xC0-\\xFF]/', '_', trim($cleanFilename)));
 		$cleanFilename = str_replace(['@', '.'], '_', $cleanFilename);

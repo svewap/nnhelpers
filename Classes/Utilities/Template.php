@@ -21,7 +21,6 @@ class Template implements SingletonInterface {
 	 * 	@return void
 	 */
 	public function removeControllerPath( &$view ) {
-		if (\nn\t3::t3Version() < 9) return;
 		$view->getRenderingContext()->setControllerName('');
 	} 
 	

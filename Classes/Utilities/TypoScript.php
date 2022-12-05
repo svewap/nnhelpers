@@ -22,12 +22,7 @@ class TypoScript implements SingletonInterface {
 	 */
     public function convertToPlainArray ($ts) {
 		if (!$ts || !is_array($ts)) return [];
-
-		if (\nn\t3::t3Version() < 8) {
-			$typoscriptService = \nn\t3::injectClass( \TYPO3\CMS\Extbase\Service\TypoScriptService::class );	
-		} else {
-			$typoscriptService = \nn\t3::injectClass( TypoScriptService::class );
-		}
+		$typoscriptService = \nn\t3::injectClass( TypoScriptService::class );
 		return $typoscriptService->convertTypoScriptArrayToPlainArray($ts);
 	}
 	

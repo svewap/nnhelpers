@@ -46,7 +46,6 @@ class Environment implements SingletonInterface {
 	 */
 	public function getSite ( $request = null ) {
 
-		if (\nn\t3::t3Version() < 9) return [];
 		$request = $request ?: $GLOBALS['TYPO3_REQUEST'] ?? false;
 
 		if (!$request) return [];
@@ -69,9 +68,6 @@ class Environment implements SingletonInterface {
 	 * 	@return int
 	 */
 	public function getLanguage () {
-		if (\nn\t3::t3Version() < 9) {
-			return $GLOBALS['TSFE']->sys_language_uid;
-		}
 		$languageAspect = GeneralUtility::makeInstance(Context::class)->getAspect('language');
 		return $languageAspect->getId();
 	}
@@ -237,11 +233,7 @@ class Environment implements SingletonInterface {
 	 * @return mixed
 	 */
 	public function getExtConf ( $ext = 'nnhelpers', $param = '' ) {
-		if (\nn\t3::t3Version() < 10) {
-			$extConfig = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf'][$ext] ?? '');
-		} else {
-			$extConfig = $GLOBALS['TYPO3_CONF_VARS']['EXTENSIONS'][$ext] ?? [];
-		}
+		$extConfig = $GLOBALS['TYPO3_CONF_VARS']['EXTENSIONS'][$ext] ?? [];
 		return $param ? ($extConfig[$param] ?? '') : $extConfig;
 	}
 

@@ -232,7 +232,7 @@ class TestController extends \Nng\Nnhelpers\Controller\AbstractController {
 						} else {
 							$success[] = "Datensatz erfolgreich gelesen anhand der UID [{$result['uid']}]";
 						}
-						
+
 						// Datensatz lesen anhand von Kriterien
 						$result = \nn\t3::Db()->findByValues( 'tx_nnhelpers_domain_model_entry', ['data'=>'insert'], false, false );
 						if (!$result) {

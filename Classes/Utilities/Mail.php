@@ -41,8 +41,6 @@ class Mail implements SingletonInterface {
 
 		\nn\t3::autoload();
 
-		$useSwiftMailer = \nn\t3::t3Version() < 10;
-
 		// Defaults mergen mit Parametern
 		$params = [
 			'emogrify'	=> true,
@@ -57,18 +55,10 @@ class Mail implements SingletonInterface {
 
 		$recipients = \nn\t3::Arrays($params['toEmail'] ?? '')->trimExplode();
 		$fromEmail = array_shift(\nn\t3::Arrays($params['fromEmail'] ?? '')->trimExplode());
-
-		if ($useSwiftMailer) {
-			$mail->setFrom([
-				$fromEmail => ($params['fromName'] ?? '')
-			]);	
-			$mail->setTo($recipients);		
-			$mail->setSubject($params['subject'] ?? '');
-		} else {
-			$mail->from( new \Symfony\Component\Mime\Address($fromEmail, $params['fromName'] ?? '') );
-			$mail->to(...$recipients);		
-			$mail->subject($params['subject'] ?? '');
-		}
+		
+		$mail->from( new \Symfony\Component\Mime\Address($fromEmail, $params['fromName'] ?? '') );
+		$mail->to(...$recipients);		
+		$mail->subject($params['subject'] ?? '');
 
 		// Inline-Media im HTML-Code finden (<img data-embed="1" src="..." />)
 		$dom = new \DOMDocument();

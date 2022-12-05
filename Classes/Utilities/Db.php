@@ -29,17 +29,15 @@ class Db implements SingletonInterface
 	 * $queryBuilder = \nn\t3::Db()->getQueryBuilder( 'fe_users' );
 	 * $queryBuilder->select('name')->from( 'fe_users' );
 	 * $queryBuilder->andWhere( $queryBuilder->expr()->eq( 'uid', $queryBuilder->createNamedParameter(12) ));
-	 * $rows = $queryBuilder->execute()->fetchAll();
+	 * $rows = $queryBuilder->executeStatement()->fetchAllAssociative();
 	 * ```
 	 * @param string $table
 	 * @return QueryBuilder
 	 */
 	public function getQueryBuilder( $table = '' ) 
 	{
-		if (\nn\t3::t3Version() > 7) {
-			$queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable( $table );
-			return $queryBuilder;
-		}
+		$queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable( $table );
+		return $queryBuilder;
 	}
 
 	/**
@@ -211,28 +209,6 @@ class Db implements SingletonInterface
 	 */
 	public function findByValues( $table = null, $whereArr = [], $useLogicalOr = false, $ignoreEnableFields = false ) 
 	{	
-		// Legacy für Typo3-Versionen < 8
-		if (\nn\t3::t3Version() < 8) {
-			$where = ['1=1'];
-			foreach ($whereArr as $k=>$v) {
-				if (is_array($v)) {
-					foreach ($v as $n=>$vv) {
-						$v[$n] = $GLOBALS['TYPO3_DB']->fullQuoteStr( $vv );
-					}
-					$where[] = "{$k} IN (" . join(',', $vv) . ')';
-				} else {
-					$where[] = "{$k} = " . $GLOBALS['TYPO3_DB']->fullQuoteStr($v, $table);
-				}
-			}
-			$where = '(' . ($useLogicalOr ? join(' OR ', $where) : join(' AND ', $where )) . ')';
-			if (!$ignoreEnableFields) {
-				$sysPage = \nn\t3::injectClass( PageRepository::class );
-				$where .= $sysPage->enableFields($table);
-			}
-			$rows = $GLOBALS['TYPO3_DB']->exec_SELECTgetRows( '*', $table, $where );
-			return $rows;
-		}
-
 		// Nur Felder behalten, die auch in Tabelle (TCA) existieren
 		$whereArr = $this->filterDataForTable( $whereArr, $table );
 
@@ -268,7 +244,7 @@ class Db implements SingletonInterface
 			$queryBuilder->andWhere( $queryBuilder->expr()->eq($deleteCol, 0) );	
 		}
 
-		$rows = $queryBuilder->execute()->fetchAll();
+		$rows = $queryBuilder->executeQuery()->fetchAllAssociative();
 		return $rows;
 	}
 
@@ -336,7 +312,7 @@ class Db implements SingletonInterface
 		$expr = $queryBuilder->expr()->notIn( $colName, $values );
 		$queryBuilder->andWhere( $expr );
 
-		$rows = $queryBuilder->execute()->fetchAll();
+		$rows = $queryBuilder->executeQuery()->fetchAllAssociative();
 		return $rows;
 	}
 
@@ -408,7 +384,7 @@ class Db implements SingletonInterface
 	 * $queryBuilder = \nn\t3::Db()->getQueryBuilder( $table );
 	 * $queryBuilder->select('uid','title','hidden')->from( $table );
 	 * \nn\t3::Db()->ignoreEnableFields( $queryBuilder, true, true );
-	 * $rows = $queryBuilder->execute()->fetchAll();
+	 * $rows = $queryBuilder->executeQuery()->fetchAllAssociative();
 	 * ```
 	 * Sollte das nicht reichen oder zu kompliziert werden, siehe:
 	 * ```
@@ -529,7 +505,7 @@ class Db implements SingletonInterface
 			}	
 		}		
 		
-		return $queryBuilder->execute();
+		return $queryBuilder->executeStatement();
 	}
 	
 	/**
@@ -562,17 +538,11 @@ class Db implements SingletonInterface
 
 		$data = $this->filterDataForTable( $data, $tableNameOrModel );
 		
-		if (\nn\t3::t3Version() < 8) {
-			$GLOBALS['TYPO3_DB']->exec_INSERTquery( $tableNameOrModel, $data );
-			$data['uid'] = $GLOBALS['TYPO3_DB']->sql_insert_id();
-			return $data;
-		} else {
-			$queryBuilder = $this->getQueryBuilder( $tableNameOrModel );
-			$queryBuilder->insert( $tableNameOrModel )
-				->values($data)->execute();
-			$data['uid'] = $queryBuilder->getConnection()->lastInsertId();
-			return $data;
-		}
+		$queryBuilder = $this->getQueryBuilder( $tableNameOrModel );
+		$queryBuilder->insert( $tableNameOrModel )
+			->values($data)->executeStatement();
+		$data['uid'] = $queryBuilder->getConnection()->lastInsertId();
+		return $data;
 	}
 	
 	/**
@@ -693,22 +663,16 @@ class Db implements SingletonInterface
 			return $this->update( $table, [$deleteColumn => 1], $constraint );
 		}
 
-		if (\nn\t3::t3Version() < 8) {
-			if ($uid = intval($constraint['uid'])) {
-				$GLOBALS['TYPO3_DB']->exec_DELETEquery( $table, 'uid='.$uid );
-			}
-		} else {
-			$queryBuilder = $this->getQueryBuilder( $table );
+		$queryBuilder = $this->getQueryBuilder( $table );
 
-			$queryBuilder->delete($table);
-			foreach ($constraint as $k=>$v) {
-				$queryBuilder->andWhere(
-					$queryBuilder->expr()->eq( $k, $queryBuilder->createNamedParameter($v))
-				);
-			}
-
-			return $queryBuilder->execute();
+		$queryBuilder->delete($table);
+		foreach ($constraint as $k=>$v) {
+			$queryBuilder->andWhere(
+				$queryBuilder->expr()->eq( $k, $queryBuilder->createNamedParameter($v))
+			);
 		}
+
+		return $queryBuilder->executeStatement();
 	}
 
 	/**

@@ -121,26 +121,7 @@ class FrontendUser implements SingletonInterface
 		$arr = \nn\t3::Arrays( $arr )->intExplode();
 		if (!$arr) return [];
 
-		if (\nn\t3::t3Version() > 9) {
-			return GeneralUtility::makeInstance(\TYPO3\CMS\Core\Authentication\GroupResolver::class)->resolveGroupsForUser(['usergroup'=>join(',', $arr)], 'fe_groups');
-		}
-		
-		$allGroupsByUid = $this->getAvailableUserGroups( true );
-		$allGroups = array_intersect_key( $allGroupsByUid, array_flip($arr) );
-		
-		$allSubGroups = \nn\t3::Arrays( join(',', array_column( $allGroups, 'subgroup') ) )->intExplode();
-
-		$additionalGroups = array_diff( $allSubGroups, $ignoreUids  );
-		$ignoreUids = array_merge( $ignoreUids, array_keys($allGroups), $additionalGroups );
-
-		if (!$additionalGroups) {
-			return $allGroups;
-		}
-
-		$resolvedSubGroups = $this->resolveUserGroups( $additionalGroups, array_keys($ignoreUids) );
-		$allGroups = array_merge( $resolvedSubGroups, $allGroups );
-
-		return $allGroups;
+		return GeneralUtility::makeInstance(\TYPO3\CMS\Core\Authentication\GroupResolver::class)->resolveGroupsForUser(['usergroup'=>join(',', $arr)], 'fe_groups');
 	}
 
 	/**
@@ -174,18 +155,17 @@ class FrontendUser implements SingletonInterface
 			}
 			return $groupDataByUid;	
 
-		} else if (\nn\t3::t3Version() >= 9) {
+		}
 
-			// ... oder in einem Kontext ohne Frontend sind (z.B. einer Middleware)
-			$context = GeneralUtility::makeInstance(Context::class);
-			$userAspect = $context->getAspect('frontend.user');
-			if (!$userAspect) return [];
-			$userGroups = $this->resolveUserGroups($userAspect->get('groupIds'));
-			if ($returnRowData) {
-				return \nn\t3::Arrays($userGroups)->key('uid')->toArray() ?: [];
-			} else {
-				return \nn\t3::Arrays($userGroups)->key('uid')->pluck(['uid', 'title', 'pid'])->toArray();
-			}
+		// ... oder in einem Kontext ohne Frontend sind (z.B. einer Middleware)
+		$context = GeneralUtility::makeInstance(Context::class);
+		$userAspect = $context->getAspect('frontend.user');
+		if (!$userAspect) return [];
+		$userGroups = $this->resolveUserGroups($userAspect->get('groupIds'));
+		if ($returnRowData) {
+			return \nn\t3::Arrays($userGroups)->key('uid')->toArray() ?: [];
+		} else {
+			return \nn\t3::Arrays($userGroups)->key('uid')->pluck(['uid', 'title', 'pid'])->toArray();
 		}
 
 		return [];
@@ -258,11 +238,6 @@ class FrontendUser implements SingletonInterface
 	 */
 	public function isLoggedIn() {
 
-		if (\nn\t3::t3Version() < 9) {
-			if (!isset($GLOBALS['TSFE'])) return false;
-			return $GLOBALS['TSFE']->loginUser || ($GLOBALS['TSFE']->fe_user && $GLOBALS['TSFE']->fe_user->user['uid']);
-		}
-
 		// Context `frontend.user.isLoggedIn` scheint in Middleware nicht zu gehen. Fallback auf TSFE. 
 		$loginUserFromTsfe = (isset($GLOBALS['TSFE']) && isset($GLOBALS['TSFE']->fe_user) && isset($GLOBALS['TSFE']->fe_user->user['uid']));
 
@@ -326,7 +301,6 @@ class FrontendUser implements SingletonInterface
 	 * ab v10: Alias zu `\nn\t3::FrontendUserAuthentication()->loginByUsername( $username );`
 	 * ```
 	 * \nn\t3::FrontendUser()->login('99grad');
-	 * \nn\t3::FrontendUser()->login('99grad', 'password');
 	 * ```
 	 * @param $username
 	 * @param $password
@@ -334,48 +308,10 @@ class FrontendUser implements SingletonInterface
 	 */
 	public function login( $username, $password = null )
 	{
-		if (\nn\t3::t3Version() < 10) {
-
-			if ($password) {
-				$user = \nn\t3::Db()->findByValues( 'fe_users', ['username'=>$username] );
-
-				if (!$user) return [];
-				if (count($user) > 1) return [];
-				if (!\nn\t3::Encrypt()->checkPassword($password, $user[0]['password'])) {
-					return [];
-				}
-			}
-
-			$GLOBALS['TSFE']->fe_user->checkPid = '';
-			$info = $GLOBALS['TSFE']->fe_user->getAuthInfoArray();
-			$user = $GLOBALS['TSFE']->fe_user->fetchUserRecord($info['db_user'], $username);
-			$loginData = array('uname' => $username, 'uident' => $user['password'], 'status' => 'login');
-			if (!$user) return [];
-
-			$GLOBALS['TSFE']->fe_user->forceSetCookie = TRUE;
-			$GLOBALS['TSFE']->fe_user->createUserSession($user);
-			$GLOBALS['TSFE']->fe_user->user = $user;
-
-			$reflection = new \ReflectionClass($GLOBALS['TSFE']->fe_user);
-			$setSessionCookieMethod = $reflection->getMethod('setSessionCookie');
-			$setSessionCookieMethod->setAccessible(TRUE);
-			$setSessionCookieMethod->invoke($GLOBALS['TSFE']->fe_user);
-
-			$session_data = $GLOBALS['TSFE']->fe_user->fetchUserSession();
-			$loginSuccess = $GLOBALS['TSFE']->fe_user->compareUident($user, $loginData);
-
-			$cookieName = \nn\t3::Environment()->getLocalConf('FE.cookieName');
-			$this->setCookie( $session_data['ses_id'] );
-
-			setcookie('nc_staticfilecache', 'fe_typo_user_logged_in', time() + (86400 * 30), "/");
-						
-			$GLOBALS['TSFE']->fe_user->setKey('ses', $cookieName, $user);
-			$GLOBALS['TSFE']->fe_user->fetchGroupData();
-	
-		} else {
-			$user = \nn\t3::FrontendUserAuthentication()->loginByUsername( $username );
+		if ($password !== null) {
+			die('Please use \nn\t3::FrontendUserAuthentication()->login()');
 		}
-		
+		$user = \nn\t3::FrontendUserAuthentication()->loginByUsername( $username );		
 		return $user ?: [];
 	}
 	

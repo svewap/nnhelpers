@@ -395,7 +395,6 @@ class Settings extends \Nng\Nnhelpers\Singleton {
 	 * @return mixed
 	 */
 	public function getExtConf( $extName = '' ) {
-		if (\nn\t3::t3Version() < 9) return unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf'][$extName]);
 		return GeneralUtility::makeInstance(ExtensionConfiguration::class)->get($extName) ?: [];
 	}
 
@@ -430,8 +429,6 @@ class Settings extends \Nng\Nnhelpers\Singleton {
 	 */
 	public function getSiteConfig( $request = null ) {
 		
-		if (\nn\t3::t3Version() < 9) return [];
-
 		$site = \nn\t3::Environment()->getSite();
 		if (!$site) return [];
 

@@ -399,46 +399,23 @@ class Obj implements SingletonInterface {
 		$result = [];
 		$method = $this->getClassSchema( $className )->getMethod( $methodName );
 
-		if (\nn\t3::t3Version() < 10) {
+		$parameters = $method->getParameters();
+		if (!$parameters) return [];
 
-			$parameters = $method['params'];
-			if (!$parameters) return [];
-
-			foreach ($parameters as $name=>$param) {
-				
-				$paramType = $param['type'];
-				$typeInfo = $this->parseType( $paramType );
-
-				$result[$name] = [
-					'type' 			=> $paramType,
-					'simple' 		=> $typeInfo['simple'],
-					'storageType' 	=> $typeInfo['type'],
-					'elementType' 	=> $typeInfo['elementType'],
-					'optional' 		=> $param['optional'],
-					'defaultValue'	=> $param['defaultValue'],
-				];
-			}
-
-		} else {
-
-			$parameters = $method->getParameters();
-			if (!$parameters) return [];
-
-			foreach ($parameters as $param) {
-				
-				$paramType = $param->getType();
-				$typeInfo = $this->parseType( $paramType );
-				
-				$result[$param->getName()] = [
-					'type' 			=> $paramType,
-					'simple' 		=> $typeInfo['simple'],
-					'storageType' 	=> $typeInfo['type'],
-					'elementType' 	=> $typeInfo['elementType'],
-					'optional' 		=> $param->isOptional(),
-					'defaultValue'	=> $param->getDefaultValue()
-				];
-			}	
-		}
+		foreach ($parameters as $param) {
+			
+			$paramType = $param->getType();
+			$typeInfo = $this->parseType( $paramType );
+			
+			$result[$param->getName()] = [
+				'type' 			=> $paramType,
+				'simple' 		=> $typeInfo['simple'],
+				'storageType' 	=> $typeInfo['type'],
+				'elementType' 	=> $typeInfo['elementType'],
+				'optional' 		=> $param->isOptional(),
+				'defaultValue'	=> $param->getDefaultValue()
+			];
+		}	
 
 		return $result;
 	}
@@ -826,16 +803,11 @@ class Obj implements SingletonInterface {
 			}
 		}
 
-		if (\nn\t3::t3Version() < 10) {
-			if ($key === true) return $properties;
-			return array_combine( array_keys($properties), array_column($properties, $key) );
-		} else {
-			$flatProps = [];
-			foreach ($properties as $name=>$property) {
-				$flatProps[$name] = $this->accessSingleProperty( $property, $key );
-			}
-			return $flatProps;
+		$flatProps = [];
+		foreach ($properties as $name=>$property) {
+			$flatProps[$name] = $this->accessSingleProperty( $property, $key );
 		}
+		return $flatProps;
 	}
 
 

@@ -23,11 +23,8 @@ class Flexform implements SingletonInterface {
 	 * @return array
 	 */
 	public function parse( $xml = '' ) {
-		if (\nn\t3::t3Version() >= 9) {
-			$flexFormService = \nn\t3::injectClass( \TYPO3\CMS\Core\Service\FlexFormService::class );
-		} else {
-			$flexFormService = \nn\t3::injectClass( \TYPO3\CMS\Extbase\Service\FlexFormService::class );
-		}
+		$flexFormService = \nn\t3::injectClass( \TYPO3\CMS\Core\Service\FlexFormService::class );
+
 		if (!$xml) return [];
 		if (is_array($xml)) {
 			$data = [];

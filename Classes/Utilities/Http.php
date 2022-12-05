@@ -78,32 +78,14 @@ class Http implements SingletonInterface {
 			\nn\t3::Tsfe()->get();
 		}
 
-		if (\nn\t3::t3Version() < 8) {
 
-			$uri = \nn\t3::Page()->getLink( $pageUid, $vars, $absolute );
-
-		} else if (\nn\t3::t3Version() < 10) {
-
-			// Typo3 v9 und v8
-
-			$uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
-			$uri = $uriBuilder->reset()
-				->setTargetPageUid( $pageUid )
-				->setArguments( $vars )
-				->buildFrontendUri();
-
-		} else {
-
-			// Typo3 v10 liefert leider im Kontext der RequestMiddleware im $uriBuilder keinen ContentObjectRenderer!
-
-			$cObj = \nn\t3::Tsfe()->cObj();
-			$cObj = GeneralUtility::makeInstance(ContentObjectRenderer::class);
-			$uri = $cObj->typolink_URL([
-				'parameter' => $pageUid,
-				'linkAccessRestrictedPages' => 1,
-				'additionalParams' => GeneralUtility::implodeArrayForUrl(NULL, $vars),
-			]);
-		}
+		$cObj = \nn\t3::Tsfe()->cObj();
+		$cObj = GeneralUtility::makeInstance(ContentObjectRenderer::class);
+		$uri = $cObj->typolink_URL([
+			'parameter' => $pageUid,
+			'linkAccessRestrictedPages' => 1,
+			'additionalParams' => GeneralUtility::implodeArrayForUrl(NULL, $vars),
+		]);
 
 		// setAbsoluteUri( TRUE ) geht nicht immer...
 		if ($absolute) {
