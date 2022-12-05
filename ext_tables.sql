@@ -9,7 +9,8 @@ CREATE TABLE tx_nnhelpers_domain_model_entry (
 	title text DEFAULT '' NOT NULL,
 	data text DEFAULT '' NOT NULL,
 	media int(11) unsigned NOT NULL default '0',
-
+	categories int(11) unsigned NOT NULL default '0',
+	
 	tstamp int(11) unsigned DEFAULT '0' NOT NULL,
 	crdate int(11) unsigned DEFAULT '0' NOT NULL,
 	cruser_id int(11) unsigned DEFAULT '0' NOT NULL,

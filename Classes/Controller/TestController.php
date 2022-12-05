@@ -145,6 +145,51 @@ class TestController extends \Nng\Nnhelpers\Controller\AbstractController {
 
 						\nn\t3::Environment()->isFrontend();
 
+						// -----------------------------
+						// \nn\t3::Message()
+						
+						\nn\t3::Message()->OK('Test FlashMessage', 'Ein Test von nnhelpers.');
+						if (!\nn\t3::Message()->render()) {
+							$errors[] = '\nn\t3::Message()->render()';
+						}
+						\nn\t3::Message()->flush();
+
+						// -----------------------------
+						// \nn\t3::Obj()
+
+						$categories = \nn\t3::SysCategory()->findAll()->toArray();
+
+						if (!count($categories)) {
+							$errors[] = '\nn\t3::SysCategory()->findAll() - keine Kategorien gefunden, Test abgebrochen';
+						} else {
+							$uid = array_shift($categories)->getUid();
+							$model = \nn\t3::Convert(['title'=>'Test', 'categories'=>[$uid]])->toModel( \Nng\Nnhelpers\Domain\Model\Entry::class );
+		
+							if ($firstCat = $model->getCategories()[0]) {
+								if ($firstCat->getUid() != $uid) {
+									$errors[] = '\nn\t3::Convert()->toModel() - Problem mit dem Lesen der SysCategory';
+								}
+								if (!\nn\t3::Obj()->isSysCategory($firstCat)) {
+									$errors[] = '\nn\t3::Obj()->isSysCategory()';
+								}
+							} else {
+								$errors[] = '\nn\t3::Convert()->toModel() - Problem mit dem Erstellen der SysCategory';
+							}
+
+							// toArray()
+							$arr = \nn\t3::Obj()->toArray($model, 4);
+							if (!count($arr['categories'] ?? [])) {
+								$errors[] = '\nn\t3::Convert()->toArray()';
+							}
+						}
+
+						// getClassSchema();
+						$classSchema = \nn\t3::Obj()->getClassSchema( \Nng\Nnhelpers\Domain\Model\Entry::class );
+						if (!$classSchema) {
+							$errors[] = '\nn\t3::Obj()->getClassSchema()';
+						}
+
+
 						$success[] = "Basics tests waren erfolgreich";
 					} catch ( \Error $e ) {
 						$errors[] = $e->getMessage();
@@ -211,7 +256,7 @@ class TestController extends \Nng\Nnhelpers\Controller\AbstractController {
 						$result = \nn\t3::Db()->findByUid('tx_nnhelpers_domain_model_entry', $uid);
 						\nn\t3::Db()->update('tx_nnhelpers_domain_model_entry', ['endtime'=>'0'], $uid);
 
-						if ($result['data']) {
+						if ($result['data'] ?? false) {
 							$errors[] = "Endtime wurde im Constraint nicht berücksichtigt.";
 						} else {
 							$success[] = "Endtime im Constraint erfolgreich berücksichtigt.";

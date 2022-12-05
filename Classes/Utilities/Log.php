@@ -11,9 +11,8 @@ use Psr\Log\LoggerAwareTrait;
 /**
  * Log in die Tabelle `sys_log`
  */
-class Log implements SingletonInterface {
-
-	
+class Log implements SingletonInterface 
+{
 	/**
 	 * 	Schreibt einen Eintrag in die Tabelle `sys_log`.
 	 * 	Der severity-Level kann angegeben werden, z.B. `info`, `warning` oder `error`
@@ -26,10 +25,6 @@ class Log implements SingletonInterface {
 	public function log( $extName = 'nnhelpers', $message = null, $data = [], $severity = 'info' ) {
 
 		if (is_array($message)) $message = join(" · ", $message);
-
-		if (\nn\t3::t3Version() < 9) {
-			return \nn\t3::BackendUser()->start()->simplelog( $message, 'nnhelpers', 1 );
-		}
 
 		$severity = strtoupper( $severity );
 		$logLevel = constant( "\TYPO3\CMS\Core\Log\LogLevel::$severity" );

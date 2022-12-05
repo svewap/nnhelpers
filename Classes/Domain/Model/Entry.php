@@ -2,17 +2,22 @@
 namespace Nng\Nnhelpers\Domain\Model;
 
 
-class Entry extends \TYPO3\CMS\Extbase\Domain\Model\File
+class Entry extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
 {
 
 	/**
      * media
      *
      * @var \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\TYPO3\CMS\Extbase\Domain\Model\FileReference>
-     * @TYPO3\CMS\Extbase\Annotation\ORM\Lazy
-	 * @TYPO3\CMS\Extbase\Annotation\ORM\Cascade
      */
     protected $media;
+	
+	/**
+     * categories
+     *
+     * @var \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\TYPO3\CMS\Extbase\Domain\Model\Category>
+     */
+    protected $categories;
 
 	/**
      * data
@@ -29,6 +34,7 @@ class Entry extends \TYPO3\CMS\Extbase\Domain\Model\File
     public function __construct()
     {
         $this->media = new \TYPO3\CMS\Extbase\Persistence\ObjectStorage();
+        $this->categories = new \TYPO3\CMS\Extbase\Persistence\ObjectStorage();
 	}
 	
 	/**
@@ -96,6 +102,22 @@ class Entry extends \TYPO3\CMS\Extbase\Domain\Model\File
 	 */
 	public function setData(string $data) {
 		$this->data = $data;
+		return $this;
+	}
+
+	/**
+	 * @return  \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\TYPO3\CMS\Extbase\Domain\Model\Category>
+	 */
+	public function getCategories() {
+		return $this->categories;
+	}
+
+	/**
+	 * @param   \TYPO3\CMS\Extbase\Persistence\ObjectStorage<\TYPO3\CMS\Extbase\Domain\Model\Category> 
+	 * @return  self
+	 */
+	public function setCategories($categories) {
+		$this->categories = $categories;
 		return $this;
 	}
 }

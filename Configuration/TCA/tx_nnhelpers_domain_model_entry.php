@@ -31,7 +31,7 @@ return [
     'types' => [
         '1' => ['showitem' => '
         	sys_language_uid, l10n_parent, l10n_diffsource, hidden, 
-        	data, media,
+        	data, media, categories,
         	--div--;LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:tabs.access, starttime, endtime'],
     ],
     'columns' => [
@@ -139,6 +139,12 @@ return [
             'exclude' => false,
             'label' => 'LLL:EXT:nnhelpers/Resources/Private/Language/locallang_db.xlf:tx_nnhelpers_domain_model_entry.media',
             'config' => \nn\t3::TCA()->getFileFieldTCAConfig('media'),
+        ],
+
+        'categories' => [
+            'exclude' => false,
+            'label' => 'LLL:EXT:nnhelpers/Resources/Private/Language/locallang_db.xlf:tx_nnhelpers_domain_model_entry.categories',
+            'config' => ['type' => 'category'],
         ],
     
     ],
