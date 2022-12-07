@@ -105,7 +105,10 @@ class Tsfe implements SingletonInterface {
 			$request = null;
 
 			if (!$isCli) {
-				$request = $GLOBALS['TYPO3_REQUEST'] ?? ServerRequestFactory::fromGlobals();
+				$request = &$GLOBALS['TYPO3_REQUEST'] ?? ServerRequestFactory::fromGlobals();
+				if (!$GLOBALS['TYPO3_REQUEST']) {
+					$GLOBALS['TYPO3_REQUEST'] = &$request;
+				}
 			}
 
 			$site = $request ? $request->getAttribute('site') : null;
@@ -118,11 +121,11 @@ class Tsfe implements SingletonInterface {
 			}
 
 			if (!$request) {
-				$request = GeneralUtility::makeInstance(ServerRequestFactory::class)->createServerRequest('GET', $site->getBase(), [] );
+				$request = &GeneralUtility::makeInstance(ServerRequestFactory::class)->createServerRequest('GET', $site->getBase(), [] );
 			}
 
 			$language = $request->getAttribute('language');
-			if (!$language instanceof SiteLanguage) {
+			if (!($language instanceof SiteLanguage)) {
 				$language = $site->getDefaultLanguage();
 			}
 
@@ -131,30 +134,40 @@ class Tsfe implements SingletonInterface {
 			
 			$feUserAuth = GeneralUtility::makeInstance(\TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication::class);
 			
-			$GLOBALS['TSFE'] = GeneralUtility::makeInstance(
+			$pageArgumentsFromRouting = $request->getAttribute('routing') ?? false;
+			$pageArguments = is_a($pageArgumentsFromRouting, PageArguments::class) 
+				? $pageArgumentsFromRouting : new PageArguments( (int)$id, (string)$type, [] );
+
+			$controller = GeneralUtility::makeInstance(
 				TypoScriptFrontendController::class,
 				GeneralUtility::makeInstance(Context::class),
 				$site,
 				$language,
-				$request->getAttribute('routing', new PageArguments((int)$id, (string)$type, [])),
+				$pageArguments,
 				$feUserAuth
 			);
+			$controller->determineId( $request );
 
-			$GLOBALS['TSFE']->sys_page = GeneralUtility::makeInstance(PageRepository::class);
-			$GLOBALS['TSFE']->tmpl = GeneralUtility::makeInstance(TemplateService::class);
+			$contentObject = GeneralUtility::makeInstance(ContentObjectRenderer::class);
+			$contentObject->setRequest( $request );
+			$contentObject->start([]);
+
+			$request = $request->withAttribute('frontend.controller', $controller);
+			$request = $controller->getFromCache($request);
 
 			$configurationManager = GeneralUtility::makeInstance(ConfigurationManager::class);
 			$setup = $configurationManager->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_FULL_TYPOSCRIPT);
-	
+
+			$GLOBALS['TSFE'] = $controller;
+			$GLOBALS['TSFE']->sys_page = GeneralUtility::makeInstance(PageRepository::class);
+			$GLOBALS['TSFE']->tmpl = GeneralUtility::makeInstance(TemplateService::class);
+
 			$GLOBALS['TSFE']->tmpl->setup = $setup;
 
-			$contentObject = GeneralUtility::makeInstance(ContentObjectRenderer::class);
-			$contentObject->start([]);
-
-			//$contentObject->cObjectDepthCounter = 100;
+			// $contentObject->cObjectDepthCounter = 100;
 
 			$GLOBALS['TSFE']->cObj = $contentObject;
-
+			
 			$userSessionManager = \TYPO3\CMS\Core\Session\UserSessionManager::create('FE');
 			$userSession = $userSessionManager->createAnonymousSession();
 			$GLOBALS['TSFE']->fe_user = $userSession;
@@ -163,7 +176,9 @@ class Tsfe implements SingletonInterface {
 			
 			// Fixes `Invoked ContentObjectRenderer::parseFunc without any configuration` when rendering Content Elements in a Backend context
 			// by disabling the IF condition for `$tsfeBackup = self::simulateFrontendEnvironment()` in the `TYPO3\CMS\Fluid\ViewHelpers\Format\HtmlViewHelper`
-			$GLOBALS['TYPO3_REQUEST'] = $GLOBALS['TYPO3_REQUEST']->withAttribute('applicationType', SystemEnvironmentBuilder::REQUESTTYPE_FE);
+			// $request = $request
+			// 	->withAttribute('applicationType', SystemEnvironmentBuilder::REQUESTTYPE_FE)
+			// 	->withAttribute('frontend.controller', $GLOBALS['TSFE']);
 
 		} catch ( \Exception $e ) {
 

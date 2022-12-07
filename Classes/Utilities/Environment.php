@@ -50,9 +50,9 @@ class Environment implements SingletonInterface {
 
 		if (!$request) return [];
 		$site = $request->getAttribute('site');
-		
+
 		if (!$site || is_a($site, \TYPO3\CMS\Core\Site\Entity\NullSite::class)) {
-			$matcher = GeneralUtility::makeInstance( SiteMatcher::class, GeneralUtility::makeInstance(SiteFinder::class));
+			$matcher = GeneralUtility::makeInstance( SiteMatcher::class );
 			$routeResult = $matcher->matchRequest($request);
 			$site = $routeResult->getSite();	
 		}
