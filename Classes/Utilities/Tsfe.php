@@ -138,6 +138,7 @@ class Tsfe implements SingletonInterface {
 			$pageArguments = is_a($pageArgumentsFromRouting, PageArguments::class) 
 				? $pageArgumentsFromRouting : new PageArguments( (int)$id, (string)$type, [] );
 
+
 			$controller = GeneralUtility::makeInstance(
 				TypoScriptFrontendController::class,
 				GeneralUtility::makeInstance(Context::class),
@@ -147,6 +148,9 @@ class Tsfe implements SingletonInterface {
 				$feUserAuth
 			);
 			$controller->determineId( $request );
+			
+			// @todo: Prüfen, ob weitere Initialisierung erforderlich sind.
+			// Guter Startpunkt: EXT:redirects/Classes/Service/RedirectService-->bootFrontendController() 
 
 			$contentObject = GeneralUtility::makeInstance(ContentObjectRenderer::class);
 			$contentObject->setRequest( $request );

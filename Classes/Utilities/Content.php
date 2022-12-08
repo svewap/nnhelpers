@@ -8,6 +8,7 @@ use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Frontend\ContentObject\RecordsContentObject;
 use TYPO3\CMS\Extbase\Object\ObjectManager;
 use TYPO3\CMS\Core\Domain\Repository\PageRepository;
+use TYPO3\CMS\Core\Context\LanguageAspect;
 
 /**
  * Inhaltselemente und Inhalte einer Backend-Spalten (`colPos`) lesen und rendern
@@ -56,8 +57,8 @@ class Content implements SingletonInterface {
 			->select('*')
 			->from('tt_content')
 			->andWhere($queryBuilder->expr()->eq('uid', $queryBuilder->createNamedParameter($ttContentUid)))
-			->execute()
-			->fetch();
+			->executeQuery()
+			->fetchAssociative();
 		if (!$data) return [];
 
 		$data = $this->localize( 'tt_content', $data, $localize );
@@ -136,7 +137,7 @@ class Content implements SingletonInterface {
 			$query->andWhere($queryBuilder->expr()->eq('CType', $queryBuilder->createNamedParameter($cType)));
 		}
 
-		$data =	$query->execute()->fetchAll();
+		$data =	$query->executeQuery()->fetchAllAssociative();
 		if (!$data) return [];
 
 		foreach ($data as $row) {
@@ -179,24 +180,43 @@ class Content implements SingletonInterface {
 	 */
 	public function localize( $table = 'tt_content', $data = [], $localize = true ) 
 	{
-		// `false` angegeben - oder Zielsprache ist Standardsprache? Dann nichts tun. 
-		if ($localize === false || $localize === 0) {
-			return $data;
-		}
-
-		$fallbackChain = is_array($localize) ? $localize : \nn\t3::Environment()->getLanguageFallbackChain( $localize );
-		
+		// Irgendwas ging schief?
 		$pageRepository = \nn\t3::injectClass( PageRepository::class );
 		if (!$pageRepository) return $data;
 
-		foreach ($fallbackChain as $langUid) {
-			if ($overlay = $pageRepository->getRecordOverlay( $table, $data, $langUid, 'hideNonTranslated')) {
-				$data = $overlay;
-				break;
-			}
+		// Aktuelle Sprache aus dem Frontend-Request
+		$currentLanguageUid = \nn\t3::Environment()->getLanguage();
+
+		// `false` angegeben - oder Zielsprache ist Standardsprache? Dann nichts tun. 
+		if ($localize === false || $localize === $currentLanguageUid) {
+			return $data;
 		}
-		if (count($fallbackChain) == 1 && !$overlay) {
-			return [];
+
+		// `true` angegeben: Dann ist die Zielsprache == die aktuelle Sprache im FE
+		if ($localize === true) {
+			$localize = $currentLanguageUid;
+			$fallbackChain =  \nn\t3::Environment()->getLanguageFallbackChain( $localize );
+			$languageId = $localize;
+		}
+
+		// `uid` der Zielsprache angegeben (z.B. `1`)? Dann Fallback-Chain aus TYPO3-Site-Konfiguration laden
+		if (is_numeric($localize)) {
+			$languageId = (int) $localize;
+			$fallbackChain = \nn\t3::Environment()->getLanguageFallbackChain( $localize );
+		}
+
+		// `[2,1,0]` als Zielsprachen angegeben? Dann als Fallback-Chain verwenden
+		if (is_array($localize)) {
+			$languageId = $localize[0] ?? 0;
+			$fallbackChain = $localize;
+		}
+
+		$overlayType = LanguageAspect::OVERLAYS_ON;
+		foreach ($fallbackChain as $langUid) {
+			$langAspect = GeneralUtility::makeInstance( LanguageAspect::class, $langUid, $langUid, $overlayType, $fallbackChain);
+			if ($overlay = $pageRepository->getLanguageOverlay( $table, $data, $langAspect )) {
+				return $overlay;
+			}
 		}
 
 		return $data;
@@ -346,8 +366,8 @@ class Content implements SingletonInterface {
 			->andWhere($queryBuilder->expr()->eq('colPos', $queryBuilder->createNamedParameter($colPos)))
 			->andWhere($queryBuilder->expr()->eq('pid', $queryBuilder->createNamedParameter($pageUid)))
 			->orderBy('sorting')
-			->execute()
-			->fetchAll();
+			->executeQuery()
+			->fetchAllAssociative();
 		if (!$data) return [];
 
 		if ($addRelations) {

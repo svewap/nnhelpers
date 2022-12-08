@@ -298,8 +298,8 @@ class Page implements SingletonInterface
 			->from('pages')
 			->andWhere($queryBuilder->expr()->eq('is_siteroot', '1'));
 		
-		if ($returnAll) return $queryBuilder->execute()->fetchAll();
-		return $queryBuilder->execute()->fetch();
+		if ($returnAll) return $queryBuilder->executeQuery()->fetchAllAssociative();
+		return $queryBuilder->executeQuery()->fetchAssociative();
 	}
 
 

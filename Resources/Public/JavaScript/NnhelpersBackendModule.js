@@ -5,7 +5,7 @@ let NnhelpersBackendModule = {
 };
 
 NnhelpersBackendModule.init = function() {
-
+	
 	if (this.initialized) return;
 	this.initialized = true;		
 

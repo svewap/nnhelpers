@@ -560,7 +560,7 @@ class TestController extends \Nng\Nnhelpers\Controller\AbstractController {
 						if (!$ceData || !count($ceData['assets'])) {
 							$errors[] = "\\nn\\t3::Content()->get()";
 						}
-						$data = \nn\t3::Content()->localize( 'tt_content', $ceData, [2, 1, 0] );
+						$data = \nn\t3::Content()->localize( 'tt_content', $ceData, [2,1,0] );
 						if ($ceData['header'] == $data['header']) {
 							$errors[] = "\\nn\\t3::Content()->localize() - Text in DE und EN ist identisch.";
 						}
@@ -637,11 +637,11 @@ class TestController extends \Nng\Nnhelpers\Controller\AbstractController {
 			'baseURL' => \nn\t3::Environment()->getBaseUrl()
 		]);
 
-		$moduleTemplate = $this->moduleTemplateFactory->create($this->request);
-		$moduleTemplate->getDocHeaderComponent()->disable();
-		$moduleTemplate->setContent($this->view->render());
+		$moduleView = $this->moduleTemplateFactory->create($this->request);
+		$moduleView->getDocHeaderComponent()->disable();
 
-		return $this->htmlResponse($moduleTemplate->renderContent());
+		$moduleView->assignMultiple(['content'=>$this->view->render()]);
+		return $moduleView->renderResponse( 'Backend/BackendModule' );
 	}
 
 	/**

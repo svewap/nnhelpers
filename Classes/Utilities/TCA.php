@@ -92,7 +92,7 @@ class TCA implements SingletonInterface {
 	 * Holt alle Feldnamen aus dem TCA-Array, die eine SysFileReference-Relation haben.
 	 * Bei der Tabelle `tt_content` wären das z.B. `assets`, `media` etc.
 	 * ```
-	 * \nn\t3::TCA()->getColumns( 'pages' );	// => ['media', 'assets', 'image']
+	 * \nn\t3::TCA()->getFalFields( 'pages' );	// => ['media', 'assets', 'image']
 	 * ```
 	 * @return array
 	 */
@@ -129,35 +129,32 @@ class TCA implements SingletonInterface {
 
 		// Vereinfachte Übergabe der Optionen
 		$options = array_merge([
+			'label' => 'LLL:EXT:frontend/Resources/Private/Language/Database.xlf:tt_content.asset_references',
 			'maxitems' => 999,
-			'fileExtensions' => $GLOBALS['TYPO3_CONF_VARS']['SYS']['mediafile_ext']
+			'fileExtensions' => 'common-media-types',
+			// 'fileUploadAllowed' => true,
+			// 'fileByUrlAllowed' => true,
 		], $override);
 
-
-		$showItem = '
-			--palette--;;imageoverlayPalette,
-			--palette--;;filePalette';
-		$config = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::getFileFieldTCAConfig( $fieldName, [
+		/*
+		$config = [
+			'label' => $options['label'],
 			'appearance' => [
-				'createNewRelationLinkTitle' => 'LLL:EXT:frontend/Resources/Private/Language/Database.xlf:tt_content.asset_references.addFileReference'
+				'fileUploadAllowed' => $options['fileUploadAllowed'],
+				'fileByUrlAllowed' => $options['fileByUrlAllowed'],
 			],
-			'overrideChildTca' => [
-				'types' => [
-					'0' => ['showitem' => $showItem],
-					\TYPO3\CMS\Core\Resource\File::FILETYPE_TEXT => ['showitem' => $showItem],
-					\TYPO3\CMS\Core\Resource\File::FILETYPE_IMAGE => ['showitem' => $showItem],
-					\TYPO3\CMS\Core\Resource\File::FILETYPE_AUDIO => ['showitem' => $showItem],
-					\TYPO3\CMS\Core\Resource\File::FILETYPE_VIDEO => ['showitem' => $showItem],
-					\TYPO3\CMS\Core\Resource\File::FILETYPE_APPLICATION => ['showitem' => $showItem]
-				],
-			],
+			'config' => [
+				'type' => 'file',
+				'maxitems' => $options['maxitems'],
+				'allowed' => $options['fileExtensions'],
+			]
+		];
+		*/
+		return [
+			'type' => 'file',
 			'maxitems' => $options['maxitems'],
-			'behaviour' => [
-				'allowLanguageSynchronization' => true
-			],
-		], $options['fileExtensions']);
-
-		return $config;
+			'allowed' => $options['fileExtensions'],
+		];
 
 	}
 
@@ -430,7 +427,7 @@ class TCA implements SingletonInterface {
 				'exclude' => true,
 				'label' => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.language',
 				'config' => [
-					'type' => 'select',
+					'type' => 'language',
 					'renderType' => 'selectSingle',
 					'special' => 'languages',
 					'items' => [
@@ -448,7 +445,6 @@ class TCA implements SingletonInterface {
 				'label' => 'LLL:EXT:core/Resources/Private/Language/locallang_general.xlf:LGL.l18n_parent',
 				'config' => [
 					'type' => 'group',
-					'internal_type' => 'db',
 					'allowed' => $tablename,
 					'size' => 1,
 					'maxitems' => 1,
@@ -498,16 +494,12 @@ class TCA implements SingletonInterface {
 				'label' => 'crdate',
 				'config' => [
 					'type' => 'input',
-					'renderType' => 'inputDateTime',
-					'eval' => 'datetime',
 				]
 			],
 			'tstamp' => [
 				'label' => 'tstamp',
 				'config' => [
 					'type' => 'input',
-					'renderType' => 'inputDateTime',
-					'eval' => 'datetime',
 				]
 			],
 			'sorting' => [
@@ -520,10 +512,7 @@ class TCA implements SingletonInterface {
 				'exclude' => true,
 				'label' => 'LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:starttime_formlabel',
 				'config' => [
-					'type' => 'input',
-					'renderType' => 'inputDateTime',
-					'size' => 16,
-					'eval' => 'datetime,int',
+					'type' => 'datetime',
 					'default' => 0,
 					'behaviour' => [
 						'allowLanguageSynchronization' => true,
@@ -534,11 +523,11 @@ class TCA implements SingletonInterface {
 				'exclude' => true,
 				'label' => 'LLL:EXT:frontend/Resources/Private/Language/locallang_ttc.xlf:endtime_formlabel',
 				'config' => [
-					'type' => 'input',
-					'renderType' => 'inputDateTime',
-					'size' => 16,
-					'eval' => 'datetime,int',
+					'type' => 'datetime',
 					'default' => 0,
+					'range' => [
+						'upper' => mktime(0, 0, 0, 1, 1, 2038),
+					],
 					'behaviour' => [
 						'allowLanguageSynchronization' => true,
 					],

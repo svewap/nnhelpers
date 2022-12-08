@@ -215,7 +215,7 @@ Retrieving data from a table
          $queryBuilder->andWhere(
             $queryBuilder->expr()->eq( 'uid', $queryBuilder->createNamedParameter( 99 ))
          );
-         $row = $queryBuilder->execute()->fetch();
+         $row = $queryBuilder->executeQuery()->fetchAllAssociative();
 
    .. container:: col-md-6 pl-0 pr-3 py-3 m-0
 
@@ -256,7 +256,7 @@ Retrieving data from a table
          $restrictions->removeByType( EndTimeRestriction::class );
          $restrictions->removeByType( HiddenRestriction::class );
 
-         $rows = $queryBuilder->execute()->fetchAll();
+         $rows = $queryBuilder->executeQuery()->fetchAllAssociative();
 
    .. container:: col-md-6 pl-0 pr-3 py-3 m-0
 

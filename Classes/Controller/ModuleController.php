@@ -57,6 +57,9 @@ class ModuleController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControlle
 	 */
 	public function initializeView () 
 	{
+		$this->moduleView = $this->moduleTemplateFactory->create($this->request);
+		$this->moduleView->getDocHeaderComponent()->disable();
+
 		$this->pageRenderer->loadJavaScriptModule('@vendor/nnhelpers/NnhelpersBackendModule.js');
 		
 		$this->pageRenderer->addCssFile('EXT:nnhelpers/Resources/Public/Vendor/fontawesome/css/all.css');
@@ -64,9 +67,6 @@ class ModuleController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControlle
 		$this->pageRenderer->addCssFile('EXT:nnhelpers/Resources/Public/Vendor/prism/prism.css');
 		$this->pageRenderer->addCssFile('EXT:nnhelpers/Resources/Public/Css/styles.css');
 		$this->pageRenderer->addJsFile('EXT:nnhelpers/Resources/Public/Vendor/prism/prism.js');
-
-		$this->moduleTemplate = $this->moduleTemplateFactory->create($this->request);
-		$this->moduleTemplate->getDocHeaderComponent()->disable();
 	}
 
 	/**
@@ -74,13 +74,6 @@ class ModuleController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControlle
 	 */
 	public function indexAction (): ResponseInterface
 	{	
-		/*
-		$start = hrtime(true);
-		for ($i = 0; $i < 1000; $i++) {
-			//$a = \nn\t3::Settings();
-		}
-		die( (hrtime(true)- $start)/1e+6 . 'ms');
-		*/
 		$args = $this->request->getArguments();
 		$isDevMode = \nn\t3::Environment()->getExtConf('nnhelpers', 'devModeEnabled');
 		$updateTranslation = $args['updateTranslation'] ?? false;
@@ -122,10 +115,8 @@ class ModuleController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionControlle
 			\nn\t3::Cache()->set([__METHOD__=>$beUserLang], $html);
 		}
 
-		$moduleTemplate = $this->moduleTemplateFactory->create($this->request);
-		$moduleTemplate->getDocHeaderComponent()->disable();
-		$moduleTemplate->setContent($html);
-		return $this->htmlResponse($moduleTemplate->renderContent());
+		$this->moduleView->assignMultiple(['content'=>$html]);
+		return $this->moduleView->renderResponse( 'Backend/BackendModule' );
 	}
 	
 	/**

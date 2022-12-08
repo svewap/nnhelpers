@@ -44,7 +44,8 @@ module.tx_nnhelpers {
             10 = EXT:nnhelpers/Resources/Private/Backend/Templates/
         }
         layoutRootPaths {
-           10 = EXT:nnhelpers/Resources/Private/Backend/Layouts/
+			0 = EXT:backend/Resources/Private/Layouts/
+           //10 = EXT:nnhelpers/Resources/Private/Backend/Layouts/
         }
         partialRootPaths {
            10 = EXT:nnhelpers/Resources/Private/Backend/Partials/

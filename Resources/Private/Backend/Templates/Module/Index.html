@@ -1,6 +1,13 @@
 <f:layout name="Module"/>
 
-<f:section name="content">	
+<f:section name="Content">	
+
+	<f:be.pageRenderer
+		includeCssFiles="{
+			0: 'EXT:nnhelpers/Resources/Public/Vendor/fontawesome/css/all.css', 
+			2: 'EXT:nnhelpers/Resources/Public/Css/styles.css'
+		}"
+	/>
 
 	<f:if condition="{nnt3:ts.extConf(path:'nnhelpers.devModeEnabled')}">
 		<div class="actions mb-5 text-right">

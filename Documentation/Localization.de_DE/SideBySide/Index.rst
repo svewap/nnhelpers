@@ -215,7 +215,7 @@ Einen Datensatz aus der Datenbank lesen
          $queryBuilder->andWhere(
             $queryBuilder->expr()->eq( 'uid', $queryBuilder->createNamedParameter( 99 ))
          );
-         $row = $queryBuilder->execute()->fetch();
+         $row = $queryBuilder->executeQuery()->fetchAllAssociative();
 
    .. container:: col-md-6 pl-0 pr-3 py-3 m-0
 
@@ -257,7 +257,7 @@ Diese Anwendung hat man häufig, wenn man extrem viele Datensätze möglichst pe
          $restrictions->removeByType( EndTimeRestriction::class );
          $restrictions->removeByType( HiddenRestriction::class );
 
-         $rows = $queryBuilder->execute()->fetchAll();
+         $rows = $queryBuilder->executeQuery()->fetchAllAssociative();
 
    .. container:: col-md-6 pl-0 pr-3 py-3 m-0
 
