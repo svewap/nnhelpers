@@ -128,7 +128,7 @@ class Obj implements SingletonInterface {
 				}
 
 				else if ($this->isStorage($child)) {
-					
+
 					// -----
 					// Die Property ist eine `ObjectStorage`
 

@@ -222,8 +222,6 @@ class Fal implements SingletonInterface {
 			'tablenames' 		=> $params['table'],
 			'table_local' 		=> 'sys_file',
 			'uid_local' 		=> $newFile->getUid(),
-			'uid_foreign' 		=> $params['uid'] ?? '',
-			'cruser_id' 		=> $params['cruser_id'] ?? '',
 			'sorting_foreign' 	=> $params['sorting_foreign'] ?? $params['sorting'] ?? time(),
 			'pid' 				=> $params['pid'] ?? 0,
 			'description' 		=> $params['description'] ?? null,
@@ -233,6 +231,11 @@ class Fal implements SingletonInterface {
 			'tstamp'			=> time(),
 			'crdate'			=> time(),
 		];
+
+		if ($uid = $params['uid'] ?? null) {
+			$entry['uid_foreign'] = $uid;
+		}
+
 		$entry = \nn\t3::Db()->insert('sys_file_reference', $entry);
 
 		// @returns \TYPO3\CMS\Extbase\Domain\Model\FileReference
