@@ -264,9 +264,12 @@ class FrontendUser implements SingletonInterface
 	 * ```
 	 * @return string
 	 */
-	public function getSessionId(){
-		if ($sessionId = $GLOBALS['TSFE']->fe_user ? $GLOBALS['TSFE']->fe_user->id : null) {
-			return $sessionId;
+	public function getSessionId()
+	{
+		if ($session = $this->getSession()) {
+			if ($sessionId = $session->getIdentifier()) {
+				return $sessionId;
+			}
 		}
 		return $_COOKIE[$this->getCookieName()] ?? null;
 	}
@@ -335,7 +338,9 @@ class FrontendUser implements SingletonInterface
 		// Session-Daten aus Tabelle `fe_sessions` löschen
 		if ($sessionManager = GeneralUtility::makeInstance(\TYPO3\CMS\Core\Session\SessionManager::class)) {
 			$sessionBackend = $sessionManager->getSessionBackend('FE');
-			$sessionBackend->remove( $this->getSessionId() );	
+			if ($sessionId = $this->getSessionId()) {
+				$sessionBackend->remove( $sessionId );	
+			}
 		}
 
 		// ... aber Cookie löschen geht immer!
