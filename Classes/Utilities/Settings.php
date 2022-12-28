@@ -158,6 +158,7 @@ class Settings extends \Nng\Nnhelpers\Singleton {
 
 		if ($this->typoscriptSetupCache) return $this->typoscriptSetupCache;
 
+		$setup = false;
 		\nn\t3::Tsfe()->softDisableCache();
 
 		try {
