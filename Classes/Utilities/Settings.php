@@ -155,17 +155,37 @@ class Settings extends \Nng\Nnhelpers\Singleton {
 	 * @return array
 	 */
 	public function getFullTyposcript( $pid = null ) {
-		if ($this->typoscriptSetupCache) return $this->typoscriptSetupCache;
-		
-		$configurationManager = GeneralUtility::makeInstance(ConfigurationManager::class);
-		$setup = $configurationManager->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_FULL_TYPOSCRIPT);
 
-		// Setup konnte nicht geladen werden? Dann manuell erstellen
+		if ($this->typoscriptSetupCache) return $this->typoscriptSetupCache;
+
+		\nn\t3::Tsfe()->softDisableCache();
+
+		try {
+			if ($request = $GLOBALS['TYPO3_REQUEST'] ?? false) {
+				if ($ts = $request->getAttribute('frontend.typoscript')) {
+					$setup = $ts->getSetupArray();
+				}
+			}
+			if (!$setup) {
+				$configurationManager = GeneralUtility::makeInstance(ConfigurationManager::class);
+				$setup = $configurationManager->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_FULL_TYPOSCRIPT);
+			}	
+		} catch ( \Exception $e ) {
+			// this might be related to https://forge.typo3.org/projects/typo3cms-core/issues
+			$setup = false;
+		}
+
+		// Try to manually instanciate TypoScript setup
 		if (!$setup) {
 			$setup = $this->getTyposcriptObject( $pid )->setup ?: [];
 		}
 
-		return $this->typoscriptSetupCache = \nn\t3::TypoScript()->convertToPlainArray($setup);
+		if (!$setup) {
+			\nn\t3::Exception('TypoScript-Setup could not be loaded. If you are trying to access it from a Middleware or the CLI, try using $request->getAttribute(\'frontend.controller\')->config[\'INTincScript\'][] = []; in your Middleware to disable caching.');
+		}
+
+		$this->typoscriptSetupCache = \nn\t3::TypoScript()->convertToPlainArray($setup);
+		return $this->typoscriptSetupCache;
 	}
 
 	/**
@@ -197,12 +217,15 @@ class Settings extends \Nng\Nnhelpers\Singleton {
 	 * 
 	 * @return object
 	 */
-	public function getTyposcriptObject ( $pid = null ) {
-
+	public function getTyposcriptObject ( $pid = null ) 
+	{
 		if ($this->typoscriptObjectCache) return $this->typoscriptObjectCache;
 
+		// @todo: FIX for TYPO3 v12
+		return [];
+		/*
 		$rootline = \nn\t3::Page()->getRootline( $pid );
-		
+		\nn\t3::debug($rootline); die();
 		$TsObj = GeneralUtility::makeInstance( \TYPO3\CMS\Core\TypoScript\ExtendedTemplateService::class );
 		$TsObj->tt_track = 0;
 		if (method_exists($TsObj, 'init')) $TsObj->init();
@@ -210,6 +233,7 @@ class Settings extends \Nng\Nnhelpers\Singleton {
 		$TsObj->generateConfig();
 
 		return $this->typoscriptObjectCache = $TsObj;
+		*/
 	}
 
 
@@ -340,9 +364,20 @@ class Settings extends \Nng\Nnhelpers\Singleton {
 	 * ```
 	 * @return array 
 	 */
-	public function getConstants ( $tsPath = '' ) {
-		$config = $this->getTyposcriptObject()->setup_constants ?: [];
-		$config = \nn\t3::TypoScript()->convertToPlainArray( $config );
+	public function getConstants ( $tsPath = '' ) 
+	{
+		if ($request = $GLOBALS['TYPO3_REQUEST'] ?? false) {
+			if ($ts = $request->getAttribute('frontend.typoscript')) {
+				try {
+					$constants = $ts->getSettingsTree()->toArray();
+					\nn\t3::Tsfe()->softDisableCache();
+				} catch ( \Exception $e ) {
+					// this might be related to https://forge.typo3.org/projects/typo3cms-core/issues
+					\nn\t3::Exception('TypoScript-Setup could not be loaded. If you are trying to access it from a Middleware or the CLI, try using $request->getAttribute(\'frontend.controller\')->config[\'INTincScript\'][] = []; in your Middleware to disable caching.');
+				}
+			}
+		}
+		$config = \nn\t3::TypoScript()->convertToPlainArray( $constants );
 		return $tsPath ? $this->getFromPath( $tsPath, $config ) : $config;
 	}
 
@@ -359,7 +394,8 @@ class Settings extends \Nng\Nnhelpers\Singleton {
 	 * ```
 	 * @return array
 	 */
-	public function getPageConfig( $tsPath = '', $pid = null ) {
+	public function getPageConfig( $tsPath = '', $pid = null ) 
+	{
 		if (TYPO3_MODE == 'FE') {
 			$config = $GLOBALS['TSFE']->getPagesTSconfig();
 		} else {

@@ -30,6 +30,27 @@ class Tsfe implements SingletonInterface {
 
 
 	/**
+	 * Cache für das Frontend deaktivieren.
+	 * 
+	 * "Softe" Variante: Nutzt ein fake USER_INT-Objekt, damit bereits gerenderte
+	 * Elemente nicht neu gerendert werden müssen. Workaround für TYPO3 v12+, da
+	 * TypoScript Setup & Constants nicht mehr initialisiert werden, wenn Seite
+	 * vollständig aus dem Cache geladen werden.
+	 * 
+	 * ```
+	 * \nn\t3::Tsfe()->softDisableCache()
+	 * ```
+	 * @return void
+	 */
+	public function softDisableCache( $pid = null ) 
+	{
+		$request = $GLOBALS['TYPO3_REQUEST'] ?? false;
+		if ($request && $tsfe = $request->getAttribute('frontend.controller')) {
+			$request->getAttribute('frontend.controller')->config['INTincScript']['_'] = [];
+		}
+	}
+
+	/**
 	 * 	$GLOBALS['TSFE'] holen.
 	 * 	Falls nicht vorhanden (weil im BE) initialisieren.
 	 *	```
