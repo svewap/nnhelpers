@@ -397,7 +397,7 @@ class Settings extends \Nng\Nnhelpers\Singleton {
 	 */
 	public function getPageConfig( $tsPath = '', $pid = null ) 
 	{
-		if (TYPO3_MODE == 'FE') {
+		if (\nn\t3::Environment()->isFrontend()) {
 			$config = $GLOBALS['TSFE']->getPagesTSconfig();
 		} else {
 			$config = \TYPO3\CMS\Backend\Utility\BackendUtility::getPagesTSconfig( $pid ?: \nn\t3::Page()->getPid() );
