@@ -127,16 +127,16 @@ class Template implements SingletonInterface {
 		
 		$mergedPaths = $this->mergeTemplatePaths( $defaultTemplatePaths, $additionalTemplatePaths );
 
-		if ($paths = $mergedPaths['templateRootPaths']) {
+		if ($paths = $mergedPaths['templateRootPaths'] ?? false) {
 			$view->setTemplateRootPaths($paths);
 		}
-		if ($paths = $mergedPaths['partialRootPaths']) {
+		if ($paths = $mergedPaths['partialRootPaths'] ?? false) {
 			$view->setPartialRootPaths($paths);
 		}
-		if ($paths = $mergedPaths['layoutRootPaths']) {
+		if ($paths = $mergedPaths['layoutRootPaths'] ?? false) {
 			$view->setLayoutRootPaths($paths);
 		}
-	   	if ($path = $mergedPaths['template']) {
+	   	if ($path = $mergedPaths['template'] ?? false) {
 			$view->setTemplate($path);
 		}
 
