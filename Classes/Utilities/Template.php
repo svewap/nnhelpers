@@ -176,14 +176,14 @@ class Template implements SingletonInterface {
 
 		$pathsToMerge = ['templateRootPaths', 'partialRootPaths', 'layoutRootPaths'];
 		foreach ($pathsToMerge as $field) {
-			if ($paths = $additionalTemplatePaths[$field]) {
-				if (!$defaultTemplatePaths[$field]) {
+			if ($paths = $additionalTemplatePaths[$field] ?? false) {
+				if (!isset($defaultTemplatePaths[$field])) {
 					$defaultTemplatePaths[$field] = [];
 				}
 				ArrayUtility::mergeRecursiveWithOverrule($defaultTemplatePaths[$field], $paths);
 			}
 		}
-		if ($path = $additionalTemplatePaths['template']) {
+		if ($path = $additionalTemplatePaths['template'] ?? false) {
 			$defaultTemplatePaths['template'] = $path;
 		}
 
