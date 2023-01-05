@@ -183,6 +183,10 @@ class Request implements SingletonInterface {
 		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
 		curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($postData) );
+
+		// follow redirects
+		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
 		
 		$headers[] = 'Content-Type: application/x-www-form-urlencoded';
 		curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
@@ -235,6 +239,9 @@ class Request implements SingletonInterface {
 		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
 		curl_setopt($ch, CURLOPT_HTTPHEADER, $headers );
+
+		// follow redirects
+		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
 
 		$result = curl_exec($ch);
 		$httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
