@@ -786,8 +786,10 @@ class File implements SingletonInterface {
 	 *	@return string|boolean
 	 */
 	public function read ( $src = null ) {
-		if (!$this->exists( $src )) return '';
-		return file_get_contents( $this->absPath( $src ) );
+		if (!$src || !$this->exists( $src )) return '';
+		$absPath = $this->absPath( $src );
+		if (!$absPath) return '';
+		return file_get_contents( $absPath );
 	}
 
 	/**
