@@ -136,6 +136,56 @@ class Geo implements SingletonInterface {
 	}
 
 	/**
+	 * Nearby Suche: Findet POIs in der Nähe eines Punktes
+	 * Siehe https://bit.ly/43CXxjX für mögliche `type`-Angaben.
+	 * 
+	 * ```
+	 * $results = \nn\t3::Geo()->getNearby(['lat'=>'50.08', 'lng'=>'8.25', 'radius'=>2, 'type'=>['university']])
+	 * ```
+	 * 
+	 * @param array $params
+	 * @return array
+	 */
+	public function getNearby( $params = [] ) 
+	{
+		$params = array_merge([
+			'lat' 		=> 50.08060702093021,
+			'lng'		=> 8.250693320181336,
+			'radius' 	=> 5,
+			'language' 	=> 'de',
+			'types'		=> [],
+		], $params);
+
+		if (is_string($params['types'])) {
+			$params['types'] = \nn\t3::Arrays( $params['types'] )->trimExplode();
+		}
+
+		$reqVars = [
+			'location' 		=> "{$params['lat']},{$params['lng']}",
+			'radius' 		=> $params['radius'] * 1000,
+			'type'			=> join('|', $params['types']),
+			'language'		=> $params['language'],
+			'key'			=> $this->getApiKey(),
+		];
+
+		$result = \nn\t3::Request()->GET( 'https://maps.googleapis.com/maps/api/place/nearbysearch/json', $reqVars );
+
+		$data = json_decode( $result['content'] ?? '', true );
+		if ($error = $data['error_message'] ?? false) {
+			\nn\t3::Exception( '\nn\t3::Geo()->getCoordinates() : ' . $error );
+		}
+
+		foreach ($data['results'] as &$result) {
+			$result = $this->parseAddressCompontent( $result );
+		}		
+
+		\nn\t3::debug($data['results']);
+		die();
+		
+		return $data['results'];
+	}
+
+	/**
 	 * Geo-Koordinaten in Adress-Daten umwandeln (Reverse Geo Coding)
 	 * Falls die Extension `nnaddress` installiert ist, wird diese für die Auflösung verwenden.
 	 *
@@ -226,8 +276,8 @@ class Geo implements SingletonInterface {
 	 * @param array $row
 	 * @return array
 	 */
-	public function parseAddressCompontent( $row = [] ) {
- 		
+	public function parseAddressCompontent( $row = [] ) 
+	{	
 		if (!$row) $row = [];
 
 		$address = [];
@@ -239,6 +289,8 @@ class Geo implements SingletonInterface {
 				$addressShort[$n] = $r['short_name'];
 			}
 		}
+		
+		$address['name'] = $row['name'] ?? '';
 
 		$address['country_short'] = $addressShort['country'] ?? '';
 		$address['street'] = trim(($address['route'] ?? '') . ' ' . ($address['street_number'] ?? '') );
@@ -251,7 +303,15 @@ class Geo implements SingletonInterface {
 		
 		$address['google_id'] = $row['id'] ?? '';
 		$address['google_place_id'] = $row['place_id'] ?? '';
+
+		$address['types'] = $row['types'] ?? [];
 		
+		if (!$address['street'] && ($row['vicinity'] ?? false)) {
+			$parts = explode( ',', $row['vicinity'] );
+			$address['street'] = trim($parts[0]);
+			$address['city'] = trim($parts[1]);
+		}
+
 		return $address;
 	}
 
