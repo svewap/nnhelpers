@@ -534,13 +534,18 @@ class Obj implements SingletonInterface {
 
 		} else if (\nn\t3::Obj()->isSysCategory($obj)) {
 
-			// SysCategory in Array konvertieren
-			$parent = $this->toArray($obj->getParent(), $depth, $fields, $addClass);
-
-			$categoryData = ['uid' => $obj->getUid(), 'title'=>$obj->getTitle(), 'parent'=>$parent];
+			//$categoryData = ['uid' => $obj->getUid(), 'title'=>$obj->getTitle(), 'parent'=>$parent];
+			$categoryData = [];
+			foreach ($this->getKeys($obj) as $k) {
+				if ($k == 'parent') {
+					$categoryData[$k] = $this->toArray( $obj->getParent(), $depth, $fields, $addClass );
+					continue;
+				}
+				$categoryData[$k] = ObjectAccess::getProperty($obj, $k);
+			}
 			if ($addClass) $categoryData['__class'] = $type;
 			return $categoryData;
-
+			
 		} else if (\nn\t3::Obj()->isFalFile($obj)) {
 
 			// SysFile in Array konvertieren
