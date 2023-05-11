@@ -59,7 +59,7 @@ class Http implements SingletonInterface {
 			if (strpos($pageUid, 'http') === false) {
 				$pageUid = \nn\t3::Environment()->getBaseURL() . ltrim( $pageUid, '/' );
 			}
-		
+
 			$parsedUrl = parse_url($pageUid);
 
 			parse_str($parsedUrl['query'], $parsedParams);
@@ -69,7 +69,11 @@ class Http implements SingletonInterface {
 			$reqStr = $parsedParams ? http_build_query( $parsedParams ) : false;
 
 			$path = $parsedUrl['path'] ?: '/';
-			return "{$parsedUrl['scheme']}://{$parsedUrl['host']}{$path}" . ($reqStr ? '?'.$reqStr : '');
+			
+			$port = $parsedUrl['port'] ?? false;
+			if ($port) $port = ":{$port}";
+
+			return "{$parsedUrl['scheme']}://{$parsedUrl['host']}{$port}{$path}" . ($reqStr ? '?'.$reqStr : '');
 		}
 
 
