@@ -273,7 +273,7 @@ class Request implements SingletonInterface {
 		if ($parts['query']) {
 			parse_str($parts['query'], $getP);
 		}
-		$getP = \nn\t3::Arrays()->merge($getP, $getParams);
+		ArrayUtility::mergeRecursiveWithOverrule($getP, $getParams, true, true );
 		$uP = explode('?', $url);
 		$params = GeneralUtility::implodeArrayForUrl('', $getP);
 		$outurl = $uP[0] . ($params ? '?' . substr($params, 1) : '');
