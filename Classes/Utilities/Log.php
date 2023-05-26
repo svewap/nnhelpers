@@ -40,7 +40,7 @@ class Log implements SingletonInterface
 		*/
 
 		\nn\t3::Db()->insert('sys_log', [
-			'details' 		=> "[{$extName}] {$message} " . print_r( $data, true ),
+			'details' 		=> "[{$extName}] {$message} " . ($data ? print_r( $data, true ) : ''),
 			'action' 		=> $data['action'] ?? 0,
 			'level'			=> $logLevel,
 			'type'			=> $type,
