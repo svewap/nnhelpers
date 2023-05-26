@@ -174,6 +174,10 @@ class Request implements SingletonInterface {
 			if (!is_numeric($k)) $v = $k . ': ' . $v;
 		});
 		
+		if (is_array($postData)) {
+			$postData = http_build_query($postData);
+		}
+
 		$headers = array_values($headers);
 		$ch = curl_init();
 		
@@ -182,7 +186,7 @@ class Request implements SingletonInterface {
 		curl_setopt($ch, CURLOPT_POST, 1);
 		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 0);
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 0);
-		curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($postData) );
+		curl_setopt($ch, CURLOPT_POSTFIELDS, $postData );
 
 		// follow redirects
 		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
@@ -202,6 +206,7 @@ class Request implements SingletonInterface {
 				'error'		=> true,
 				'status' 	=> $httpcode,
 				'content'	=> $error,
+				'response'	=> @json_decode($result, true) ?: $result,
 			];
 		}
 		
@@ -211,6 +216,23 @@ class Request implements SingletonInterface {
 			'content' 	=> $result
 		];
 	}
+
+	/**
+	 * Sendet ein JSON per POST an einen Server
+	 * 
+	 * ```
+	 * \nn\t3::Request()->JSON( 'https://...', ['a'=>'123'] );
+	 * ```
+	 *  
+	 * @param string $url
+	 * @param array $data
+	 * @param array $headers
+	 * @return array
+	 */
+   	public function JSON( $url = '', $data = [], $headers = [] ) 
+	{
+		return $this->POST( $url, json_encode($data), $headers );
+   	}
 
 	/**
 	 * Sendet einen GET Request (per curl) an einen Server
@@ -254,6 +276,7 @@ class Request implements SingletonInterface {
 				'error'		=> true,
 				'status' 	=> $httpcode,
 				'content'	=> $error,
+				'response'	=> @json_decode($result, true) ?: $result,
 			];
 		}
 		
