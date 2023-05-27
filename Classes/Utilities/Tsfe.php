@@ -76,7 +76,11 @@ class Tsfe implements SingletonInterface {
 		$configurationManager = GeneralUtility::makeInstance(ConfigurationManager::class);
 		if ($cObj = $GLOBALS['TSFE']->cObj) return $cObj;
 		if ($cObj = $configurationManager->getContentObject()) return $cObj;
-		return GeneralUtility::makeInstance(ContentObjectRenderer::class);
+		
+		$cObj = GeneralUtility::makeInstance(ContentObjectRenderer::class);
+		$request = $GLOBALS['TYPO3_REQUEST'] ?? new \TYPO3\CMS\Core\Http\ServerRequest();
+		$cObj->setRequest( $request );
+		return $cObj;
 	}
 	
 	/**
@@ -127,7 +131,7 @@ class Tsfe implements SingletonInterface {
 
 			if (!$isCli) {
 				$request = &$GLOBALS['TYPO3_REQUEST'] ?? ServerRequestFactory::fromGlobals();
-				if (!$GLOBALS['TYPO3_REQUEST']) {
+				if (!isset($GLOBALS['TYPO3_REQUEST'])) {
 					$GLOBALS['TYPO3_REQUEST'] = &$request;
 				}
 			}
@@ -198,7 +202,7 @@ class Tsfe implements SingletonInterface {
 			$GLOBALS['TSFE']->fe_user = $userSession;
 			
 			$GLOBALS['TSFE']->register['SYS_LASTCHANGED'] = 0;
-			
+
 			// Fixes `Invoked ContentObjectRenderer::parseFunc without any configuration` when rendering Content Elements in a Backend context
 			// by disabling the IF condition for `$tsfeBackup = self::simulateFrontendEnvironment()` in the `TYPO3\CMS\Fluid\ViewHelpers\Format\HtmlViewHelper`
 			// $request = $request

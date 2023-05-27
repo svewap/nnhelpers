@@ -232,7 +232,9 @@ class Page implements SingletonInterface
 			}
 		}
 
+		$request = $GLOBALS['TYPO3_REQUEST'] ?? new \TYPO3\CMS\Core\Http\ServerRequest();
 		$cObj = GeneralUtility::makeInstance( \TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer::class );
+		$cObj->setRequest( $request );
 
 		$uri = $cObj->typolink_URL([
 			'parameter' => $pid,

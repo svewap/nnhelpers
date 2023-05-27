@@ -82,9 +82,10 @@ class Http implements SingletonInterface {
 			\nn\t3::Tsfe()->get();
 		}
 
-
-		$cObj = \nn\t3::Tsfe()->cObj();
+		$request = $GLOBALS['TYPO3_REQUEST'] ?? new \TYPO3\CMS\Core\Http\ServerRequest();
 		$cObj = GeneralUtility::makeInstance(ContentObjectRenderer::class);
+		$cObj->setRequest( $request );
+		
 		$uri = $cObj->typolink_URL([
 			'parameter' => $pageUid,
 			'linkAccessRestrictedPages' => 1,

@@ -237,6 +237,9 @@ class Content implements SingletonInterface {
 		if (\nn\t3::Environment()->extLoaded('mask')) {
 			$maskProcessor = GeneralUtility::makeInstance( \MASK\Mask\DataProcessing\MaskProcessor::class );
 			$cObjRenderer = GeneralUtility::makeInstance( \TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer::class );
+			$request = $GLOBALS['TYPO3_REQUEST'] ?? new \TYPO3\CMS\Core\Http\ServerRequest();
+			$cObjRenderer->setRequest( $request );
+
 			$dataWithRelations = $maskProcessor->process( $cObjRenderer, [], [], ['data'=>$data, 'current'=>null] );
 			$data = $dataWithRelations['data'] ?: [];
 		} else {
@@ -272,9 +275,10 @@ class Content implements SingletonInterface {
 		];
 
 		$cObj = \nn\t3::Tsfe()->cObj();
+		$request = $GLOBALS['TYPO3_REQUEST'] ?? new \TYPO3\CMS\Core\Http\ServerRequest();
 
 		$recordsContentObject = GeneralUtility::makeInstance( RecordsContentObject::class );
-		$recordsContentObject->setRequest( $GLOBALS['TYPO3_REQUEST'] );
+		$recordsContentObject->setRequest( $request );
 		$recordsContentObject->setContentObjectRenderer( $cObj );
 		$html = $recordsContentObject->render($conf);
 
