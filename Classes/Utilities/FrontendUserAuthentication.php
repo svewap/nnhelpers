@@ -48,7 +48,8 @@ class FrontendUserAuthentication extends \TYPO3\CMS\Frontend\Authentication\Fron
 
 		if (!$startFeUserSession) return $feUser;
 
-		$info = $this->getAuthInfoArray();
+		$request = $GLOBALS['TYPO3_REQUEST'] ?? new \TYPO3\CMS\Core\Http\ServerRequest();
+		$info = $this->getAuthInfoArray($request);
 		$info['db_user']['username_column'] = 'username';
 
 		$feUser = $this->setSession( $user );
@@ -74,7 +75,8 @@ class FrontendUserAuthentication extends \TYPO3\CMS\Frontend\Authentication\Fron
 		
 		$user = array_pop($user);
 
-		$info = $this->getAuthInfoArray();
+		$request = $GLOBALS['TYPO3_REQUEST'] ?? new \TYPO3\CMS\Core\Http\ServerRequest();
+		$info = $this->getAuthInfoArray($request);
 		$info['db_user']['username_column'] = 'username';
 
 		$feUser = $this->setSession( $user );
@@ -96,7 +98,8 @@ class FrontendUserAuthentication extends \TYPO3\CMS\Frontend\Authentication\Fron
 		$user = \nn\t3::Db()->findByUid( 'fe_users', $uid );
 		if (!$user) return [];
 
-		$info = $this->getAuthInfoArray();
+		$request = $GLOBALS['TYPO3_REQUEST'] ?? new \TYPO3\CMS\Core\Http\ServerRequest();
+		$info = $this->getAuthInfoArray($request);
 		$info['db_user']['username_column'] = 'username';
 
 		$feUser = $this->setSession( $user );
@@ -208,7 +211,8 @@ class FrontendUserAuthentication extends \TYPO3\CMS\Frontend\Authentication\Fron
 		if (count($user) > 1) return [];
 		$user = $user[0];
 
-		$info = $this->getAuthInfoArray();
+		$request = $GLOBALS['TYPO3_REQUEST'] ?? new \TYPO3\CMS\Core\Http\ServerRequest();
+		$info = $this->getAuthInfoArray($request);
 		$info['db_user']['username_column'] = 'username';
 		//$info['db_user']['username_column'] = 'email';
 
