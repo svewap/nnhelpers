@@ -347,7 +347,7 @@ class FrontendUser implements SingletonInterface
 		$this->removeCookie();
 
 		// ToDo: Replace with Signal/Slot when deprecated
-		if ($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['felogin']['logout_confirmed']) {
+		if ($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['felogin']['logout_confirmed'] ?? false) {
 			$_params = array();
 			foreach ($GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['felogin']['logout_confirmed'] as $_funcRef) {
 				if ($_funcRef) GeneralUtility::callUserFunction($_funcRef, $_params, $this);

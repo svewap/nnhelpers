@@ -145,12 +145,15 @@ class Obj implements SingletonInterface {
 
 					// Array der existierende Items in der `ObjectStorage` holen. Key ist `uid` oder `publicUrl`
 					$existingStorageItemsByUid = [];
-					foreach ($curPropValue as $item) {
-						$uid = $isFileReference ? \nn\t3::File()->getPublicUrl( $item ) : $this->get( $item, 'uid' );
-						if (!isset($existingStorageItemsByUid)) {
-							$existingStorageItemsByUid[$uid] = [];
-						}
-						$existingStorageItemsByUid[$uid][] = $item;
+
+					if ($curPropValue) {
+						foreach ($curPropValue as $item) {
+							$uid = $isFileReference ? \nn\t3::File()->getPublicUrl( $item ) : $this->get( $item, 'uid' );
+							if (!isset($existingStorageItemsByUid)) {
+								$existingStorageItemsByUid[$uid] = [];
+							}
+							$existingStorageItemsByUid[$uid][] = $item;
+						}	
 					}
 					
 					$objectStorage =  \nn\t3::newClass( get_class($child) );
@@ -736,7 +739,7 @@ class Obj implements SingletonInterface {
 			$gettable = ObjectAccess::isPropertyGettable($obj, $camelCaseKey);
 			if ($gettable) return ObjectAccess::getProperty($obj, $camelCaseKey);
 
-			return $obj->$key;
+			return $obj->$key ?? null;
 
 		} else {
 			if (is_array($obj)) return $obj[$key];
