@@ -40,7 +40,7 @@ class Mail implements SingletonInterface {
     public function send ( $paramOverrides = [] ) {
 
 		\nn\t3::autoload();
-
+		
 		// Defaults mergen mit Parametern
 		$params = [
 			'emogrify'	=> true,
@@ -72,25 +72,14 @@ class Mail implements SingletonInterface {
 		foreach ($nodes as $node) {
 			if ($img = $node->getAttribute('src')) {
 				$node->removeAttribute('data-embed');	
-				if ($useSwiftMailer) {
-					$cid = $mail->embed(\Swift_Image::fromPath($pathSite . $img));
-					$node->setAttribute('src', $cid);
-				} else {
-					$cid = 'img-' . md5($pathSite . $img);
-					$node->setAttribute('src', 'cid:'.$cid);
-					$mail->embedFromPath( $pathSite . $img, $cid );
-				}
+				$cid = 'img-' . md5($pathSite . $img);
+				$node->setAttribute('src', 'cid:'.$cid);
+				$mail->embedFromPath( $pathSite . $img, $cid );
 			}
 			if ($file = $node->getAttribute('href')) {
 				if (!isset($attachedFiles[$pathSite . $file])) {
 					$absPath = \nn\t3::File()->absPath( $file );
-					if ($useSwiftMailer) {
-						$attachment = \Swift_Attachment::fromPath($absPath);
-						$mail->attach($attachment);
-						$node->parentNode->removeChild($node);
-					} else {
-						$mail->attachFromPath( $absPath );
-					}
+					$mail->attachFromPath( $absPath );
 					$attachedFiles[$absPath] = true;
 				}
 			}
@@ -101,12 +90,7 @@ class Mail implements SingletonInterface {
 		foreach ($attachments as $path) {
 			if (!isset($attachedFiles[$pathSite . $path])) {
 				$absPath = \nn\t3::File()->absPath( $path );
-				if ($useSwiftMailer) {
-					$attachment = \Swift_Attachment::fromPath( $absPath );
-					$mail->attach($attachment);
-				} else {
-					$mail->attachFromPath( $absPath );
-				}
+				$mail->attachFromPath( $absPath );
 				$attachedFiles[ $absPath ] = true;
 			}
 		}
@@ -126,34 +110,22 @@ class Mail implements SingletonInterface {
 		$plaintext = $params['plaintext'] ?? strip_tags($html);
 
 		if ($html) {
-			if ($useSwiftMailer) {
-				$mail->setBody($html, 'text/html');
-				$mail->addPart($plaintext, 'text/plain');
-			} else {
-				$mail->html($html);
-				$mail->text($plaintext);
-			}
+			$mail->html($html);
+			$mail->text($plaintext);
 		} else {
-			if ($useSwiftMailer) {
-				$mail->setBody($plaintext, 'text/plain');
-			} else {
-				$mail->text($plaintext);
-			}
+			$mail->text($plaintext);
 		}
 	
-		if ($useSwiftMailer) {
-			$mail->setReturnPath( $params['returnPath_email'] ?? '' );
-		} else {
-			$returnPath = $params['returnPath_email'] ?? \TYPO3\CMS\Core\Utility\MailUtility::getSystemFromAddress();
-			if (strpos($returnPath, 'no-reply') === false) {
-				$mail->setReturnPath( $returnPath );
-			}
+		$returnPath = $params['returnPath_email'] ?? \TYPO3\CMS\Core\Utility\MailUtility::getSystemFromAddress();
+		if (strpos($returnPath, 'no-reply') === false) {
+			$mail->setReturnPath( $returnPath );
 		}
 
 		$sent = $mail->send();
 
 		if (!$sent) {
 /*			
+			\nn\t3::Log()->error('nnhelpers', 'Mail not sent', $recipients);
 			$fp = fopen('mail_error.log', 'a');
 			$to = join(',', $recipients);
 			fputs($fp, date('d.m.Y H:i:s')." {$to}\n\n\n");

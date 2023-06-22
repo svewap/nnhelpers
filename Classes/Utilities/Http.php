@@ -62,7 +62,7 @@ class Http implements SingletonInterface {
 
 			$parsedUrl = parse_url($pageUid);
 
-			parse_str($parsedUrl['query'], $parsedParams);
+			parse_str($parsedUrl['query'] ?? '', $parsedParams);
 			if (!$parsedParams) $parsedParams = [];
 
 			ArrayUtility::mergeRecursiveWithOverrule( $parsedParams, $vars );
