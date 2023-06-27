@@ -167,7 +167,7 @@ class Request implements SingletonInterface {
 	 * @param array $headers
 	 * @return array
 	 */
-	public function POST( $url = '', $postData = [], $headers = [] ) {
+	public function POST( $url = '', $postData = [], $headers = [], $requestType = 'POST' ) {
 
 		// ['Accept-Encoding'=>'gzip'] --> ['Accept-Encoding: gzip']
 		array_walk( $headers, function (&$v, $k) {
@@ -190,7 +190,7 @@ class Request implements SingletonInterface {
 
 		// follow redirects
 		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
+		curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $requestType);
 		
 		$headers[] = 'Content-Type: application/x-www-form-urlencoded';
 		curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
@@ -339,6 +339,38 @@ class Request implements SingletonInterface {
 			'status' 	=> 200, 
 			'content' 	=> $result,
 		];
+	}
+	
+	/**
+	 * Sendet einen PUT Request (per curl) an einen Server
+	 * ```
+	 * \nn\t3::Request()->PUT( 'https://...', ['a'=>'123'] );
+	 * \nn\t3::Request()->PUT( 'https://...', ['a'=>'123'], ['Accept-Encoding'=>'gzip, deflate'] );
+	 * ```
+	 * @param string $url
+	 * @param array $data
+	 * @param array $headers
+	 * @return array
+	 */
+	public function PUT( $url = '', $data = [], $headers = [] ) 
+	{
+		return $this->POST( $url, $data, $headers, 'PUT' );
+	}
+
+	/**
+	 * Sendet einen PUT Request (per curl) an einen Server als JSON
+	 * ```
+	 * \nn\t3::Request()->PUT_JSON( 'https://...', ['a'=>'123'] );
+	 * \nn\t3::Request()->PUT_JSON( 'https://...', ['a'=>'123'], ['Accept-Encoding'=>'gzip, deflate'] );
+	 * ```
+	 * @param string $url
+	 * @param array $data
+	 * @param array $headers
+	 * @return array
+	 */
+	public function PUT_JSON( $url = '', $data = [], $headers = [] ) 
+	{
+		return $this->POST( $url, json_encode($data), $headers, 'PUT' );
 	}
 
 	/**
