@@ -742,7 +742,7 @@ class Obj implements SingletonInterface {
 			return $obj->$key ?? null;
 
 		} else {
-			if (is_array($obj)) return $obj[$key];
+			if (is_array($obj)) return $obj[$key] ?? null;
 		}
 		return [];
 	}
