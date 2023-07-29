@@ -113,7 +113,8 @@ class Page implements SingletonInterface
 				// ToDo: Prüfen, ob Typ besser ermittelt werden kann
 				// evtl. bei \TYPO3\CMS\Core\Utility\RootlineUtility->enrichWithRelationFields() schauen.
 
-				if ($tcaColumn['type'] == 'inline' && $tcaColumn['foreign_table'] == 'sys_file_reference') {
+				$isFal = in_array($tcaColumn['type'], ['inline', 'file']); 
+				if ($isFal && $tcaColumn['foreign_table'] == 'sys_file_reference') {
 					$fileRepository = GeneralUtility::makeInstance( \TYPO3\CMS\Core\Resource\FileRepository::class );
 					$fileObjects = $fileRepository->findByRelation('pages', $key, $page['uid']);
 					return $fileObjects;
