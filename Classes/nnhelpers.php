@@ -24,6 +24,7 @@ use Nng\Nnhelpers\Utilities\LL;
 use Nng\Nnhelpers\Utilities\Log;
 use Nng\Nnhelpers\Utilities\Mail;
 use Nng\Nnhelpers\Utilities\Message;
+use Nng\Nnhelpers\Utilities\Menu;
 use Nng\Nnhelpers\Utilities\Obj;
 use Nng\Nnhelpers\Utilities\Page;
 use Nng\Nnhelpers\Utilities\Registry;
@@ -198,6 +199,13 @@ class t3
 	 */
 	public static function Message() {
 		return self::injectClass(Message::class);
+	}
+
+	/**
+	 * @return Menu
+	 */
+	public static function Menu() {
+		return self::injectClass(Menu::class);
 	}
    
 	/**
