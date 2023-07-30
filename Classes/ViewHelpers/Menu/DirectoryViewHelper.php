@@ -6,7 +6,7 @@ use TYPO3Fluid\Fluid\Core\ViewHelper\Traits\CompileWithRenderStatic;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 
 /**
- * 
+ * Gibt ein Array mit dem aktuellen Menü-Baum zurück
  * ```
  * {nnt3:menu.directory()}
  * ```

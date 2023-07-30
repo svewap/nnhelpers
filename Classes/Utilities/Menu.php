@@ -24,6 +24,10 @@ class Menu implements SingletonInterface
 	 * // Struktur für Seite 123 holen
 	 * \nn\t3::Menu()->get( 123 );
 	 * ```
+	 * Es gibt auch einen ViewHelper dazu:
+	 * ```
+	 * {nnt3:menu.directory(pageUid:123, ...)}
+	 * ```
 	 * @param int $rootPid
 	 * @param array $config
 	 * @return mixed
@@ -64,6 +68,10 @@ class Menu implements SingletonInterface
 	 * 
 	 * // rootline für Seite 123 holen
 	 * \nn\t3::Menu()->getRootline( 123 );
+	 * ```
+	 * Es gibt auch einen ViewHelper dazu:
+	 * ```
+	 * {nnt3:menu.rootline(pageUid:123, ...)}
 	 * ```
 	 * @param int $rootPid
 	 * @param array $config
