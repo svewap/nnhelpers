@@ -35,7 +35,7 @@ class Menu implements SingletonInterface
 	public function get( $rootPid = null, $config = [] ) 
 	{
         $cObj = \nn\t3::Tsfe()->cObj();
-		$pid = $rootPid ?: \nn\t3::Tsfe()->getPid();
+		$pid = $rootPid ?: \nn\t3::Page()->getPid();
 
         $menuProcessorConfiguration = [
             'levels' 			=> 99,
@@ -51,7 +51,7 @@ class Menu implements SingletonInterface
             'includeSpacer' 	=> 1,
             'titleField' 		=> 'nav_title // title',
         ];
-        
+
         $menuProcessor = GeneralUtility::makeInstance(MenuProcessor::class);
         $menuProcessor->setContentObjectRenderer($cObj);
 		
