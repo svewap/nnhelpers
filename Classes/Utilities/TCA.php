@@ -340,6 +340,7 @@ class TCA implements SingletonInterface {
 	 * 
 	 * ```
 	 * \nn\t3::TCA()->getConfigForType( 'pid' );			// => ['type'=>'group', 'internal_type'=>'db', 'allowed'=>'pages', 'maxItems'=>1]
+	 * \nn\t3::TCA()->getConfigForType( 'contentElement' );	// => ['type'=>'group', 'internal_type'=>'db', 'allowed'=>'tt_content', 'maxItems'=>1]
 	 * \nn\t3::TCA()->getConfigForType( 'text' );			// => ['type'=>'text', 'rows'=>2, ...]
 	 * \nn\t3::TCA()->getConfigForType( 'rte' );			// => ['type'=>'text', 'enableRichtext'=>'true', ...]
 	 * \nn\t3::TCA()->getConfigForType( 'color' );			// => ['type'=>'input', 'renderType'=>'colorpicker', ...]
@@ -353,6 +354,7 @@ class TCA implements SingletonInterface {
 	 * per Übergabe eines fixen Wertes statt eines `override`-Arrays setzen:
 	 * ```
 	 * \nn\t3::TCA()->getConfigForType( 'pid', 3 );				// => ['maxItems'=>3, ...]
+	 * \nn\t3::TCA()->getConfigForType( 'contentElement', 3 );	// => ['maxItems'=>3, ...]
 	 * \nn\t3::TCA()->getConfigForType( 'text', 10 );			// => ['rows'=>10, ...]
 	 * \nn\t3::TCA()->getConfigForType( 'rte', 'myRteConfig' );	// => ['richtextConfiguration'=>'myRteConfig', ...]
 	 * \nn\t3::TCA()->getConfigForType( 'color', '#ff6600' );	// => ['default'=>'#ff6600', ...]
@@ -369,6 +371,11 @@ class TCA implements SingletonInterface {
 		switch ($type) {
 			case 'pid':
 				$config = ['type'=>'group', 'internal_type'=>'db', 'allowed'=>'pages', 'size' => 1, 'maxItems'=>1];
+				$overrideKey = 'maxItems';
+				break;
+			case 'cid':
+			case 'contentElement':
+				$config = ['type'=>'group', 'internal_type'=>'db', 'allowed'=>'tt_content', 'size' => 1, 'maxItems'=>1];
 				$overrideKey = 'maxItems';
 				break;
 			case 'text':
