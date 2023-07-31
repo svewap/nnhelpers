@@ -274,7 +274,9 @@ class Settings extends \Nng\Nnhelpers\Singleton {
 			if (count($parts) == 0) {
 				return isset($setup[$part]) && is_array($setup[$part]) ? $setup[$part] : ($setup[$part] ?? ''); 
 			}
-			$setup = $setup[$part];
+			if (is_array($setup)) {
+				$setup = $setup[$part] ?? '';
+			}
 		}
 
 		return $setup;
