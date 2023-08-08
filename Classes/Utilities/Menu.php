@@ -34,28 +34,38 @@ class Menu implements SingletonInterface
 	 */
 	public function get( $rootPid = null, $config = [] ) 
 	{
-        $cObj = \nn\t3::Tsfe()->cObj();
+		$cObj = \nn\t3::Tsfe()->cObj();
 		$pid = $rootPid ?: \nn\t3::Page()->getPid();
 
-        $menuProcessorConfiguration = [
-            'levels' 			=> 99,
-            'entryLevel' 		=> $config['entryLevel'] ?? 0,
-            'special' 			=> $config['type'] ?? 'directory',
-            'special.' 			=> [
-				'value' => $pid,
+		$menuProcessorConfiguration = [
+			// wieviele Menüpunkt überspringen
+			'begin' 			=> '0',
+			// wieviele Levels zeigen
+			'levels' 			=> 99,
+			// erst ab diesem Level rendern (1 = nur Submenüs ab dem 2. Level im Seitbaum)
+			'entryLevel' 		=> $config['entryLevel'] ?? 0,
+			'special' 			=> $config['type'] ?? 'directory',
+			'special.' 			=> [
+				'value' => $pid
 			],
-            'includeNotInMenu' 	=> $config['showHiddenInMenu'] ?? 0,
-            'excludeUidList' 	=> $config['excludePages'] ?? '',
-            'as' 				=> 'children',
-            'expandAll' 		=> 1,
-            'includeSpacer' 	=> 1,
-            'titleField' 		=> 'nav_title // title',
-        ];
+			'includeNotInMenu' 	=> $config['showHiddenInMenu'] ?? 0,
+			'excludeUidList' 	=> $config['excludePages'] ?? '',
+			'as' 				=> 'children',
+			'expandAll' 		=> 1,
+			'includeSpacer' 	=> 1,
+			'titleField' 		=> 'nav_title // title',
+		];
 
-        $menuProcessor = GeneralUtility::makeInstance(MenuProcessor::class);
-        $menuProcessor->setContentObjectRenderer($cObj);
+		if ($entryLevel = $config['entryLevel'] ?? false) {
+			$menuProcessorConfiguration['special.']['value.'] = [
+				'data' => 'leveluid:' . $entryLevel
+			];
+		}
+
+		$menuProcessor = GeneralUtility::makeInstance(MenuProcessor::class);
+		$menuProcessor->setContentObjectRenderer($cObj);
 		
-        $result = $menuProcessor->process($cObj, [], $menuProcessorConfiguration, []);
+		$result = $menuProcessor->process($cObj, [], $menuProcessorConfiguration, []);
 		return $result;
 	}
 
