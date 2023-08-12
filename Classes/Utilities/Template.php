@@ -38,11 +38,36 @@ class Template implements SingletonInterface {
 	 *	```
 	 * 	@return array
 	 */
-	public function getVariables( &$view ) {
-		if ($view instanceof \TYPO3Fluid\Fluid\Core\Rendering\RenderingContextInterface) {
-			return $view->getVariableProvider()->getSource() ?: [];
+	public function getVariables( &$view ) 
+	{
+		$context = $view;
+		if (method_exists($context, 'getRenderingContext')) {
+			$context = $view->getRenderingContext();
 		}
-		return $view->getRenderingContext()->getVariableProvider()->getSource() ?: [];
+		return $context->getVariableProvider()->getSource() ?: [];
+	}
+	
+	/**
+	 * 	Holt EINE Variables des aktuellen Views, sprich:
+	 * 	Alles, was per assign() und assignMultiple() gesetzt wurde.
+	 * 
+	 * 	Im ViewHelper:
+	 *	```
+	 *	\nn\t3::Template()->getVariable( $renderingContext, 'varname' );
+	 *	```
+	 * 	Im Controller:
+	 *	```
+	 *	\nn\t3::Template()->getVariable( $this->view, 'varname' );
+	 *	```
+	 * 	@return array
+	 */
+	public function getVariable( &$view, $varname = '' ) 
+	{
+		$context = $view;
+		if (method_exists($context, 'getRenderingContext')) {
+			$context = $view->getRenderingContext();
+		}
+		return $context->getVariableProvider()->get($varname) ?: '';
 	}
 
 	/**
