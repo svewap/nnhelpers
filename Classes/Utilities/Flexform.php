@@ -160,16 +160,7 @@ class Flexform implements SingletonInterface {
 		}
 
 		// Ausgewählte Action aus FlexForm 'switchableControllerActions' holen
-		if ($config['flexParentDatabaseRow'] ?? false) {
-			$selectedAction = $config['flexParentDatabaseRow']['pi_flexform']['data']['sDEF']['lDEF']['switchableControllerActions']['vDEF'] ?? false;
-			if ($respectControllerAction) {
-				$selectedAction = \nn\t3::Arrays($selectedAction)->trimExplode(';');
-				if (!$selectedAction) {
-					$config['items'] = [['Bitte zuerst speichern!', '']];
-					return $config;
-				}
-			}
-		}
+		$selectedAction = $config['row']['switchableControllerActions'] ?? false;
 
 		// Leeren Wert einfügen?
 		if ($config['config']['insertEmpty'] ?? false) {
