@@ -51,13 +51,13 @@ class Tsfe implements SingletonInterface {
 	}
 
 	/**
-	 * 	$GLOBALS['TSFE'] holen.
-	 * 	Falls nicht vorhanden (weil im BE) initialisieren.
-	 *	```
-	 *	\nn\t3::Tsfe()->get()
-	 *	\nn\t3::Tsfe()->get( $pid )
-	 *	```
-	 *	@return \TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController
+	 * $GLOBALS['TSFE'] holen.
+	 * Falls nicht vorhanden (weil im BE) initialisieren.
+	 * ```
+	 * \nn\t3::Tsfe()->get()
+	 * \nn\t3::Tsfe()->get()
+	 * ```
+	 * @return \TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController
 	 */
 	public function get( $pid = null ) {
 		if (!isset($GLOBALS['TSFE'])) $this->init( $pid );
@@ -65,14 +65,23 @@ class Tsfe implements SingletonInterface {
 	}
 	
 	/**
-	 * 	$GLOBALS['TSFE']->cObj holen.
-	 *	```
-	 *	\nn\t3::Tsfe()->cObj()
-	 *	```
-	 *	@return \TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer
+	 * $GLOBALS['TSFE']->cObj holen.
+	 * ```
+	 * // seit TYPO3 12.4 innerhalb eines Controllers:
+	 * \nn\t3::Tsfe()->cObj( $this->request  )
+	 * ```
+	 * @return \TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer
 	 */
-	public function cObj() {
+	public function cObj( $request = null ) 
+	{
 		if (!isset($GLOBALS['TSFE'])) $this->init();
+
+		if ($request = $request ?: $GLOBALS['TYPO3_REQUEST'] ?? false) {
+			if ($cObj = $request->getAttribute('currentContentObject')) {
+				return $cObj;
+			}
+		}
+
 		$configurationManager = GeneralUtility::makeInstance(ConfigurationManager::class);
 		if ($cObj = $GLOBALS['TSFE']->cObj) return $cObj;
 		if ($cObj = $configurationManager->getContentObject()) return $cObj;
@@ -86,13 +95,21 @@ class Tsfe implements SingletonInterface {
 	/**
 	 * 	$GLOBALS['TSFE']->cObj->data holen.
 	 *	```
-	 *	\nn\t3::Tsfe()->cObjData();			=> array mit DB-row des aktuellen Content-Elementes
-	 *	\nn\t3::Tsfe()->cObjData('uid');	=> uid des aktuellen Content-Elements
+	 *	\nn\t3::Tsfe()->cObjData( $this->request ); => array mit DB-row des aktuellen Content-Elementes
+	 *	\nn\t3::Tsfe()->cObjData( $this->request, 'uid' );	=> uid des aktuellen Content-Elements
 	 *	```
 	 *	@return mixed	
 	 */
-	public function cObjData( $var = null ) {
-		$cObj = $this->cObj();
+	public function cObjData( $request = null, $var = null ) 
+	{	
+		if (!$request || is_string($request)) {
+			\nn\t3::Exception('
+				\nn\t3::Tsfe()->cObjData() needs a $request as first parameter. 
+				In a Controller-Context use \nn\t3::Tsfe()->cObjData( $this->request ). 
+				For other contexts see here: https://bit.ly/3s6dzF0');
+		}
+
+		$cObj = $this->cObj( $request );
 		if (!$cObj) return false;
 		return $var ? $cObj->data[$var] : $cObj->data;
 	}
