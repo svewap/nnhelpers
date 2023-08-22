@@ -316,6 +316,11 @@ class File implements SingletonInterface {
 	 */
 	public function absPath ( $file = null, $resolveSymLinks = false ) {
 
+		if (\nn\t3::Obj()->isFileReference($file)) {
+			$file = $file->getOriginalResource()->getOriginalFile();
+			return $file->getForLocalProcessing(false);
+		}
+
 		if (!is_string($file)) {
 			$file = $this->getPublicUrl( $file );
 		}
@@ -624,7 +629,16 @@ class File implements SingletonInterface {
 		$allStorages = $storageRepository->findAll();
 		foreach ($allStorages as $row) {
 			$arr = $row->getConfiguration();
-			if ($arr['basePath'] == substr($dirname, 0, strlen($arr['basePath'])) && $curPrecision < strlen($arr['basePath'])) {
+
+			$basePath = $arr['basePath'];
+
+			if ($arr['pathType'] == 'absolute') {
+				$basePath = ltrim($basePath, '/');
+			}
+
+			$dirnameSubstr = substr($dirname, 0, strlen($basePath));
+			
+			if ($basePath == $dirnameSubstr && $curPrecision < strlen($arr['basePath'])) {
 				$storage = $row;
 				$curPrecision = strlen($arr['basePath']);
 			}

@@ -270,7 +270,7 @@ class Fal implements SingletonInterface {
 
 		// Absoluter Pfad zur Quell-Datei ('/var/www/website/uploads/bild.jpg')
 		$absSrcFile = \nn\t3::File()->absPath( $srcFile );
-		
+
 		// Keine externe URL (YouTube...) und Datei existiert nicht? Dann abbrechen!
 		if (!$isExternalMedia && !\nn\t3::File()->exists($srcFile)) {
 			return false;
@@ -290,11 +290,11 @@ class Fal implements SingletonInterface {
 
 		if (!$forceCreateNew && $storage->hasFileInFolder( $srcFileBaseName, $subfolderInStorage )) {
 			$existingFile = $storage->getFileInFolder( $srcFileBaseName, $subfolderInStorage );
-
+			
 			// @returns \TYPO3\CMS\Core\Resource\File
 			return $existingFile;
 		}
-		
+
 		if ($isExternalMedia) {
 
 			// YouTube und Vimeo-Videos: Physische lokale .youtube/.vimeo-Datei anlegen
@@ -308,7 +308,7 @@ class Fal implements SingletonInterface {
 
 			// Name der Datei im Zielverzeichnis
 			$absTmpName = $absDestFolderPath . $srcFileBaseName;
-			
+
 			// Kopieren
 			if ($forceCreateNew) {
 				$success = \nn\t3::File()->copy( $absSrcFile, $absTmpName, $forceCreateNew );
@@ -321,7 +321,7 @@ class Fal implements SingletonInterface {
 					$success = \nn\t3::File()->move( $absSrcFile, $absTmpName );
 				}
 			}
-			
+
 			if (!$success) return false;
 			
 			// Nutze die File-Indexer-Funktion, um die temporäre Datei in der Tabelle sys_file einzufügen
