@@ -62,16 +62,22 @@ class SysCategory implements SingletonInterface {
 	}
 
 	/**
-	 * 	Den gesamten SysCategory-Baum (als Array) holen.
-	 * 	Jeder Knotenpunkt hat die Attribute 'parent' und 'children', um
-	 * 	rekursiv durch Baum iterieren zu können.
-	 *	```
-	 *	\nn\t3::SysCategory()->getTree();
-	 *	\nn\t3::SysCategory()->getTree( $uid );
-	 *	```
-	 * 	ToDo: Prüfen, ob Caching sinnvoll ist
+	 * Den gesamten SysCategory-Baum (als Array) holen.
+	 * Jeder Knotenpunkt hat die Attribute 'parent' und 'children', um
+	 * rekursiv durch Baum iterieren zu können.
+	 * ```
+	 * // Gesamten Baum holen
+	 * \nn\t3::SysCategory()->getTree();
 	 * 
-	 * 	@return array
+	 * // Bestimmten Ast des Baums holen
+	 * \nn\t3::SysCategory()->getTree( $uid );
+	 * 
+	 * // Alle Äste des Baums holen, key ist die UID der SysCategory
+	 * \nn\t3::SysCategory()->getTree( true );
+	 * ```
+	 * ToDo: Prüfen, ob Caching sinnvoll ist
+	 * 
+	 * @return array
 	 */
 	public function getTree ( $branchUid = null ) {
 
@@ -106,6 +112,13 @@ class SysCategory implements SingletonInterface {
 
 		// Ganzen Baum – oder nur bestimmten Branch zurückgeben?
 		if (!$branchUid) return $root;
+		
+		// Alle Äste holen
+		if ($branchUid === true) {
+			return $categoriesByUid;
+		}
+
+		// bestimmten Branch holen
 		return $root[$branchUid] ?: [];
 	}
 
