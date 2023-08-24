@@ -408,11 +408,8 @@ class FrontendUser implements SingletonInterface
 	 * @return void
 	 */
 	public function removeCookie() {
-		$cookieDomain = \nn\t3::Environment()->getCookieDomain();
-		$cookiePath = $cookieDomain ? '/' : GeneralUtility::getIndpEnv('TYPO3_SITE_PATH');
-		$cookieName = \nn\t3::Environment()->getLocalConf('FE.cookieName');
-		setcookie($cookieName, null, -1, $cookiePath, $cookieDomain);
-		unset($_COOKIE[$cookieName]);
+		$cookieName = $this->getCookieName();
+		\nn\t3::Cookies()->add( $cookieName, '', -1 );
 	}
 
 	/**
@@ -447,28 +444,38 @@ class FrontendUser implements SingletonInterface
             self::createSigningKeyFromEncryptionKey(UserSession::class)
         );
 
-		$cookieName = \nn\t3::Environment()->getLocalConf('FE.cookieName');
-		$cookieDomain = \nn\t3::Environment()->getCookieDomain();
-		$cookiePath = $cookieDomain ? '/' : GeneralUtility::getIndpEnv('TYPO3_SITE_PATH');
-
+		$cookieName = $this->getCookieName();
 		$_COOKIE[$cookieName] = $jwt;
+		\nn\t3::Cookies()->add( $cookieName, $jwt );
+	}
 
-		$payload = self::decodeJwt($jwt, self::createSigningKeyFromEncryptionKey(UserSession::class));
+	/**
+	 * Holt den aktuellen `fe_typo_user` Cookie.
+	 * ```
+	 * $cookie = \nn\t3::FrontendUser()->getCookie();
+	 * ```
+	 * @return string
+	 */
+	public function getCookie() 
+	{
+		$cookieName = $this->getCookieName();
 
-		setcookie($cookieName, $jwt, time() + (86400 * 30), $cookiePath, $cookieDomain);
-
-		if (!$request) {
-			$request = &$GLOBALS['TYPO3_REQUEST'];
+		if ($request = &$GLOBALS['TYPO3_REQUEST']) {
+			$cookieParams = $request->getCookieParams();
+			if ($value = $cookieParams[$cookieName] ?? false) {
+				return $value;
+			}
 		}
-		if (!$request) {
-			$request = new \TYPO3\CMS\Core\Http\ServerRequest();
-		}
-		if ($request) {
-			$cookies = $request->getCookieParams();
-			$cookies[$cookieName] = $jwt;
-			$request = $request->withCookieParams( $cookies );	
+
+		if ($cookie = $_COOKIE[$cookieName] ?? false) {
+			return $cookie;
 		}
 
+		if ($cookies = \nn\t3::Cookies()->getAll()) {
+			return $cookies[$cookieName]['value'] ?? '';
+		}
+
+		return '';
 	}
 
 	/**

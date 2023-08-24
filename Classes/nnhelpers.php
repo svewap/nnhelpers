@@ -8,6 +8,7 @@ use Nng\Nnhelpers\Utilities\Cache;
 use Nng\Nnhelpers\Utilities\Configuration;
 use Nng\Nnhelpers\Utilities\Content;
 use Nng\Nnhelpers\Utilities\Convert;
+use Nng\Nnhelpers\Utilities\Cookies;
 use Nng\Nnhelpers\Utilities\Db;
 use Nng\Nnhelpers\Utilities\Dom;
 use Nng\Nnhelpers\Utilities\Environment;
@@ -87,6 +88,13 @@ class t3
 	 */
 	public static function Convert( $obj = null ) {
 		return new \Nng\Nnhelpers\Utilities\Convert( $obj );
+	}
+
+	/**
+	 * @return Cookies
+	 */
+	public static function Cookies() {
+		return self::injectClass(Cookies::class);
 	}
 
 	/**
