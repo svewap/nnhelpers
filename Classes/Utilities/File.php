@@ -524,6 +524,21 @@ class File implements SingletonInterface {
 	}
 
 	/**
+	 * Gibt an, ob die Datei in ein Bild ist
+	 * ```
+	 * \nn\t3::File()->isImage('bild.jpg');	=> gibt true zurück
+	 * \nn\t3::File()->isImage('text.ppt');	=> gibt false zurück
+	 * ```
+	 * @return boolean
+	 */
+	public function isImage ( $filename = null ) {
+		if (!$filename) return false;
+		$suffix = $this->suffix($filename);
+		$arr = array_merge(self::$TYPES['image']);
+		return in_array($suffix, $arr);
+	}
+
+	/**
 	 * Gibt an, ob die Datei in ein Bild konvertiert werden kann
 	 * ```
 	 * \nn\t3::File()->isConvertableToImage('bild.jpg');	=> gibt true zurück
@@ -555,9 +570,9 @@ class File implements SingletonInterface {
 	/**
 	 * Ersetzt den suffix für einen Dateinamen.
 	 * ```
-	 * \nn\t3::File()->suffix('bild', 'jpg');				//	=> bild.jpg
-	 * \nn\t3::File()->suffix('bild.png', 'jpg');			//	=> bild.jpg
-	 * \nn\t3::File()->suffix('pfad/zu/bild.png', 'jpg');	//	=> pfad/zu/bild.jpg
+	 * \nn\t3::File()->addSuffix('bild', 'jpg');				//	=> bild.jpg
+	 * \nn\t3::File()->addSuffix('bild.png', 'jpg');			//	=> bild.jpg
+	 * \nn\t3::File()->addSuffix('pfad/zu/bild.png', 'jpg');	//	=> pfad/zu/bild.jpg
 	 * ```
 	 * @return string
 	 */
