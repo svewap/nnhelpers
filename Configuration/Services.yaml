@@ -21,3 +21,9 @@ services:
 
   Nng\Nnhelpers\Controller\ModuleController:
     tags: ['backend.controller']
+
+  Nng\Nnhelpers\Middleware\:
+    resource: '../Classes/Middleware/*'
+    autowire: true
+    autoconfigure: true
+    public: true

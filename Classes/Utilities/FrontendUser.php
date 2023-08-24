@@ -232,11 +232,28 @@ class FrontendUser implements SingletonInterface
 	 * Prüft, ob der User aktuell als FE-User eingeloggt ist.
 	 * Früher: isset($GLOBALS['TSFE']) && $GLOBALS['TSFE']->loginUser
 	 * ```
+	 * // Prüfen nach vollständiger Initialisierung des Front/Backends
 	 * \nn\t3::FrontendUser()->isLoggedIn();
+	 * 
+	 * // Prüfen anhand des JWT, z.B. in einem eID-script vor Authentifizierung
+	 * \nn\t3::FrontendUser()->isLoggedIn( $request );
 	 * ```
+	 * @param ServerRequest $request
 	 * @return boolean
 	 */
-	public function isLoggedIn() {
+	public function isLoggedIn( $request = null ) {
+
+		if ($request) {
+			$cookieName = $this->getCookieName();
+			$jwt = $request->getCookieParams()[$cookieName] ?? false;
+			$identifier = false;
+			if ($jwt) {
+				try {
+					$identifier = \TYPO3\CMS\Core\Session\UserSession::resolveIdentifierFromJwt($jwt);
+				} catch( \Exception $e ) {}
+			}
+			if ($identifier) return true;
+		}
 
 		// Context `frontend.user.isLoggedIn` scheint in Middleware nicht zu gehen. Fallback auf TSFE. 
 		$loginUserFromTsfe = (isset($GLOBALS['TSFE']) && isset($GLOBALS['TSFE']->fe_user) && isset($GLOBALS['TSFE']->fe_user->user['uid']));
@@ -435,18 +452,23 @@ class FrontendUser implements SingletonInterface
 		$cookiePath = $cookieDomain ? '/' : GeneralUtility::getIndpEnv('TYPO3_SITE_PATH');
 
 		$_COOKIE[$cookieName] = $jwt;
+
 		$payload = self::decodeJwt($jwt, self::createSigningKeyFromEncryptionKey(UserSession::class));
 
 		setcookie($cookieName, $jwt, time() + (86400 * 30), $cookiePath, $cookieDomain);
 
 		if (!$request) {
-			$request = $GLOBALS['TYPO3_REQUEST'] ?? false;
+			$request = &$GLOBALS['TYPO3_REQUEST'];
+		}
+		if (!$request) {
+			$request = new \TYPO3\CMS\Core\Http\ServerRequest();
 		}
 		if ($request) {
 			$cookies = $request->getCookieParams();
 			$cookies[$cookieName] = $jwt;
 			$request = $request->withCookieParams( $cookies );	
-		}		
+		}
+
 	}
 
 	/**

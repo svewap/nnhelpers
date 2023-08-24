@@ -48,7 +48,9 @@ class FrontendUserAuthentication extends \TYPO3\CMS\Frontend\Authentication\Fron
 
 		if (!$startFeUserSession) return $feUser;
 
-		$request = $GLOBALS['TYPO3_REQUEST'] ?? new \TYPO3\CMS\Core\Http\ServerRequest();
+		$request = &$GLOBALS['TYPO3_REQUEST'];
+		if (!$request) $request = new \TYPO3\CMS\Core\Http\ServerRequest();
+
 		$info = $this->getAuthInfoArray($request);
 		$info['db_user']['username_column'] = 'username';
 
@@ -75,7 +77,8 @@ class FrontendUserAuthentication extends \TYPO3\CMS\Frontend\Authentication\Fron
 		
 		$user = array_pop($user);
 
-		$request = $GLOBALS['TYPO3_REQUEST'] ?? new \TYPO3\CMS\Core\Http\ServerRequest();
+		$request = &$GLOBALS['TYPO3_REQUEST'];
+		if (!$request) $request = new \TYPO3\CMS\Core\Http\ServerRequest();
 		$info = $this->getAuthInfoArray($request);
 		$info['db_user']['username_column'] = 'username';
 
@@ -98,7 +101,8 @@ class FrontendUserAuthentication extends \TYPO3\CMS\Frontend\Authentication\Fron
 		$user = \nn\t3::Db()->findByUid( 'fe_users', $uid );
 		if (!$user) return [];
 
-		$request = $GLOBALS['TYPO3_REQUEST'] ?? new \TYPO3\CMS\Core\Http\ServerRequest();
+		$request = &$GLOBALS['TYPO3_REQUEST'];
+		if (!$request) $request = new \TYPO3\CMS\Core\Http\ServerRequest();
 		$info = $this->getAuthInfoArray($request);
 		$info['db_user']['username_column'] = 'username';
 
@@ -163,7 +167,9 @@ class FrontendUserAuthentication extends \TYPO3\CMS\Frontend\Authentication\Fron
 			\nn\t3::Db()->update('fe_sessions', ['ses_tstamp'=>$GLOBALS['EXEC_TIME']], ['ses_id'=>$hashedSessionId]);
 		}
 
-		$this->start();
+		$request = &$GLOBALS['TYPO3_REQUEST'];
+		if (!$request) $request = new \TYPO3\CMS\Core\Http\ServerRequest();
+		$this->start( $request );
 
 		return $unhashedSessionId;
 	}
@@ -211,7 +217,8 @@ class FrontendUserAuthentication extends \TYPO3\CMS\Frontend\Authentication\Fron
 		if (count($user) > 1) return [];
 		$user = $user[0];
 
-		$request = $GLOBALS['TYPO3_REQUEST'] ?? new \TYPO3\CMS\Core\Http\ServerRequest();
+		$request = &$GLOBALS['TYPO3_REQUEST'];
+		if (!$request) $request = new \TYPO3\CMS\Core\Http\ServerRequest();
 		$info = $this->getAuthInfoArray($request);
 		$info['db_user']['username_column'] = 'username';
 		//$info['db_user']['username_column'] = 'email';
@@ -230,8 +237,11 @@ class FrontendUserAuthentication extends \TYPO3\CMS\Frontend\Authentication\Fron
 		$cookieName = \nn\t3::Environment()->getLocalConf('FE.cookieName') ?: 'fe_typo_user';
 		
 		if (!isset($GLOBALS['TSFE'])) {
+			$request = &$GLOBALS['TYPO3_REQUEST'];
+			if (!$request) $request = new \TYPO3\CMS\Core\Http\ServerRequest();
 			$frontendUser = GeneralUtility::makeInstance(\TYPO3\CMS\Frontend\Authentication\FrontendUserAuthentication::class);
-			$frontendUser->start();
+			$frontendUser->start( $request );
+
 			$session = $frontendUser->createUserSession( $user_db );
 			$sessionId = $session->getIdentifier();
 			\nn\t3::FrontendUser()->setCookie( $sessionId );

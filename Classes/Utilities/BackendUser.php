@@ -6,6 +6,7 @@ use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Context\Context;
 use TYPO3\CMS\Core\Utility\ArrayUtility;
+use TYPO3\CMS\Core\Http\ServerRequest;
 
 /**
  * 	Methoden, um im Frontend zu prüfen, ob ein User im Typo3-Backend eingeloggt ist und z.B. Admin-Rechte besitzt.
@@ -14,20 +15,53 @@ use TYPO3\CMS\Core\Utility\ArrayUtility;
 class BackendUser implements SingletonInterface {
 
 	/**
-	 * 	Prüft, ob ein BE-User eingeloggt ist.
-	 * 	Beispiel: Im Frontend bestimmte Inhalte nur zeigen, wenn der User im Backend eingeloggt ist.
-	 * 	Früher: `$GLOBALS['TSFE']->beUserLogin`
-	 * 	```
-	 *	\nn\t3::BackendUser()->isLoggedIn();
-	 * 	```
+	 * Prüft, ob ein BE-User eingeloggt ist.
+	 * Beispiel: Im Frontend bestimmte Inhalte nur zeigen, wenn der User im Backend eingeloggt ist.
+	 * Früher: `$GLOBALS['TSFE']->beUserLogin`
+	 * ```
+	 * // Prüfen nach vollständiger Initialisierung des Front/Backends
+	 * \nn\t3::BackendUser()->isLoggedIn();
 	 * 
-	 * 	@return bool
+	 * // Prüfen anhand des JWT, z.B. in einem eID-script vor Authentifizierung
+	 * \nn\t3::BackendUser()->isLoggedIn( $request );
+	 * ```
+	 * @param ServerRequest $request
+	 * @return bool
 	 */
-	public function isLoggedIn() {
+	public function isLoggedIn( $request = null ) 
+	{
+		if ($request) {
+			$cookieName = $this->getCookieName();
+			$jwt = $request->getCookieParams()[$cookieName] ?? false;
+			$identifier = false;
+			if ($jwt) {
+				try {
+					$identifier = \TYPO3\CMS\Core\Session\UserSession::resolveIdentifierFromJwt($jwt);
+				} catch( \Exception $e ) {}
+			}
+			if ($identifier) return true;
+		}
+
 		$context = GeneralUtility::makeInstance(Context::class);
 		return $context->getPropertyFromAspect('backend.user', 'isLoggedIn');
 	}
 	
+	/**
+	 * Cookie-Name des Backend-User-Cookies holen.
+	 * Üblicherweise `be_typo_user`, außer es wurde in der LocalConfiguration geändert.
+	 * ```
+	 * \nn\t3::BackendUser()->getCookieName();
+	 * ```
+	 * return string
+	 */
+	public function getCookieName() 
+	{
+		if ($cookieName = $GLOBALS['TYPO3_CONF_VARS']['BE']['cookieName'] ?? 'be_typo_user') {
+			return $cookieName;
+		}
+		return \nn\t3::Environment()->getLocalConf('BE.cookieName');
+	}
+
 	/**
 	 * 	Prüft, ob der BE-User ein Admin ist.
 	 * 	Früher: `$GLOBALS['TSFE']->beUserLogin`

@@ -486,6 +486,7 @@ class Request implements SingletonInterface {
 	 * @return array|string
 	 */
 	public function getJwt() {
-		return \nn\t3::Encrypt()->parseJwt($this->getBearerToken());
+		$jwt = $this->getBearerToken();
+		return \nn\t3::Encrypt()->parseJwt($jwt);
 	}
 }

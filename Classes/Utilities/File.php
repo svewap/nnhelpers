@@ -24,6 +24,7 @@ class File implements SingletonInterface {
 		'video'		=> ['mp4', 'webm', 'mov'],
 		'document'	=> ['doc', 'docx', 'ppt', 'pptx', 'xls', 'xlsx', 'ai', 'indd', 'txt'],
 		'pdf'		=> ['pdf'],
+		'enc'		=> ['enc'],
 	];
 
 	/**
@@ -110,9 +111,15 @@ class File implements SingletonInterface {
 
 		$cleanFilename = utf8_decode( $filename );
 		$cleanFilename = strtolower(preg_replace('/[' . self::UNSAFE_FILENAME_CHARACTER_EXPRESSION . '\\xC0-\\xFF]/', '_', trim($cleanFilename)));
-		$cleanFilename = str_replace(['@', '.'], '_', $cleanFilename);
+		$cleanFilename = str_replace(['@'], '_', $cleanFilename);
+
+		if ($secondSuffix = pathinfo( $cleanFilename, PATHINFO_EXTENSION )) {
+			$cleanFilename = substr( $cleanFilename, 0, -strlen($secondSuffix) );
+			$suffix = "{$secondSuffix}.{$suffix}";
+		}
+
 		$cleanFilename = preg_replace('/_+/', '_', $cleanFilename);
-		$cleanFilename = substr( $cleanFilename, 0, 32);
+		$cleanFilename = substr( $cleanFilename, 0, 64 - strlen($suffix) - 1);
 		return $path . rtrim($cleanFilename, '.') . ".{$suffix}";
 	}
 	
@@ -459,7 +466,8 @@ class File implements SingletonInterface {
 		if (substr($filename, 0, 1) == '.') return true;
 		$types = array_values(self::$TYPES);
 		$allowed = array_merge(...$types);
-		return !in_array($this->suffix($filename), $allowed );
+		$suffix = $this->suffix($filename);
+		return !in_array($suffix, $allowed );
 	}
 	
 	/**
