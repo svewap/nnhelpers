@@ -9,33 +9,6 @@ config.pageTitleProviders {
     }
 }
 
-# FAL Mapping 
-# Kann ab Typo3 10 entfernt werden, wird dort in Configuration/Extbase/Persistence/Classes.php gesetzt
-
-config.tx_extbase {
-	persistence {
-		classes {
-			Nng\Nnhelpers\Domain\Model\File {
-				mapping {
-					tableName = sys_file
-					columns {
-						storage.mapOnProperty = storageUid
-					}
-				}
-			}
-			Nng\Nnhelpers\Domain\Model\FileReference {
-				mapping {
-					tableName = sys_file_reference
-					columns {
-						uid_local.mapOnProperty = file
-					}
-				}
-			}
-		}
-		updateReferenceIndex = 1
-	}
-}
-
 # Backend Module
 
 module.tx_nnhelpers {

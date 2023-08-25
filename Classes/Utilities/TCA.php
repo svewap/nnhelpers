@@ -150,11 +150,17 @@ class TCA implements SingletonInterface {
 			]
 		];
 		*/
-		return [
+		$config = [
 			'type' => 'file',
 			'maxitems' => $options['maxitems'],
 			'allowed' => $options['fileExtensions'],
 		];
+
+		if ($childConfig = $options['overrideChildTca'] ?? false) {
+			$config['overrideChildTca'] = $childConfig;
+		}
+
+		return $config;
 
 	}
 

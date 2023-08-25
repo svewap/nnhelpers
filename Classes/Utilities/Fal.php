@@ -94,8 +94,10 @@ class Fal implements SingletonInterface {
 	 * ```
 	 * @return \TYPO3\CMS\Extbase\Domain\Model\FileReference
 	 */
-	public function createForModel( $model, $field, $itemData = null ) {
-
+	public function createForModel( $model, $field, $itemData = null ) 
+	{
+		$objHelper = \nn\t3::Obj();
+		
 		if (is_string($itemData)) {
 			$itemData = ['publicUrl'=>$itemData];
 		}
@@ -106,9 +108,9 @@ class Fal implements SingletonInterface {
 			\nn\t3::Exception('\nn\t3::Fal()->attach() :: File not found.');
 		}
 
-		$propVal = \nn\t3::Obj()->prop($model, $field);
-		$isStorage = \nn\t3::Obj()->isStorage( $propVal );
-		$table = \nn\t3::Obj()->getTableName( $model );
+		$propVal = $objHelper->prop($model, $field);
+		$isStorage = $objHelper->isStorage( $propVal );
+		$table = $objHelper->getTableName( $model );
 		$cruser_id = \nn\t3::FrontendUser()->getCurrentUserUid();
 
 		$sorting = $isStorage ? count($propVal) : 0;
@@ -222,6 +224,7 @@ class Fal implements SingletonInterface {
 			'tablenames' 		=> $params['table'],
 			'table_local' 		=> 'sys_file',
 			'uid_local' 		=> $newFile->getUid(),
+			'uid_foreign' 		=> 0,
 			'sorting_foreign' 	=> $params['sorting_foreign'] ?? $params['sorting'] ?? time(),
 			'pid' 				=> $params['pid'] ?? 0,
 			'description' 		=> $params['description'] ?? null,
@@ -359,8 +362,8 @@ class Fal implements SingletonInterface {
 	 * @param string $srcFile
 	 * @return \TYPO3\CMS\Core\Resource\File|boolean
 	 */
-	public function getFalFile ( $srcFile ) {
-
+	public function getFalFile ( $srcFile ) 
+	{
 		try {
 			$srcFile = \nn\t3::File()->stripPathSite( $srcFile );
 			$storage = \nn\t3::File()->getStorage( $srcFile, true );	

@@ -480,6 +480,7 @@ class Db implements SingletonInterface
 			$persistenceManager = \nn\t3::injectClass( PersistenceManager::class );
 			$persistenceManager->update( $tableNameOrModel );
 			$persistenceManager->persistAll();
+			$this->fixFileReferencesForModel( $tableNameOrModel );
 			return $tableNameOrModel;
 		}
 
@@ -533,6 +534,7 @@ class Db implements SingletonInterface
 			$persistenceManager = \nn\t3::injectClass( PersistenceManager::class );
 			$persistenceManager->add( $tableNameOrModel );
 			$persistenceManager->persistAll();
+			$this->fixFileReferencesForModel( $tableNameOrModel );
 			return $tableNameOrModel;
 		}
 
@@ -588,6 +590,44 @@ class Db implements SingletonInterface
 			$method = $uid && $this->findByUid( $tableNameOrModel, $uid ) ? 'update' : 'insert';
 		}
 		return $this->$method( $tableNameOrModel, $data );
+	}
+
+	/**
+	 * "Repariert" die SysFileReferences für Modelle, die eine Property haben,
+	 * die statt einer `ObjectStorage<FileReference>` nur eine `FileReference`
+	 * referenzieren. Zum aktuellen Zeitpunkt ist es unklar, weshalb TYPO3 diese zwar
+	 * in der Tabelle `sys_file_reference` persistiert, aber das Feld `tablenames`
+	 * leert – bzw. `uid_foreign` nicht setzt. Bei einer `ObjectStorage<FileReference>`
+	 * tritt das Problem nicht auf.
+	 * ```
+	 * // muss direkt nach dem persistieren des Models passieren
+	 * \nn\t3::Db()->fixFileReferencesForModel( $model );
+	 * ```
+	 */
+	public function fixFileReferencesForModel( $model ) 
+	{
+		$props = \nn\t3::Obj()->getProps( $model );
+		$modelTableName = \nn\t3::Obj()->getTableName( $model );
+
+		foreach ($props as $field=>$prop) {
+			if (is_a($prop, \TYPO3\CMS\Extbase\Domain\Model\FileReference::class, true)) {
+				$sysFile = \nn\t3::Obj()->get($model, $field);
+				
+				if (!$sysFile) continue;
+				$resource = $sysFile->getOriginalResource();
+				
+				if (!$resource) continue;
+				$uidForeign =  $resource->getProperty('uid_foreign');
+				$tableName = $resource->getProperty('tablenames');
+
+				if (!$uidForeign || !$tableName) {
+					$this->update('sys_file_reference', [
+						'uid_foreign'	=> $model->getUid(),
+						'tablenames'	=> $modelTableName,
+					], $resource->getUid());
+				}
+			}
+		}
 	}
 
 	/**

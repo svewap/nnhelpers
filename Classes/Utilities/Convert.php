@@ -156,7 +156,7 @@ class Convert implements SingletonInterface {
 		$model = GeneralUtility::makeInstance( $className );
 		return \nn\t3::Obj($model)->merge( $arr );
 
-		# ToDo: Prüfen, warum das nicht funktioniert. Model wird nicht persistiert!
+		# ToDo: Prüfen, warum der DataMapper hier nicht funktioniert. Model wird nicht persistiert!
 		# $dataMapper = GeneralUtility::makeInstance(DataMapper::class);
 		# return $dataMapper->map($model, [$arr]);
 	}
