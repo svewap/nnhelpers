@@ -9,7 +9,7 @@ use Nng\Nnhelpers\Domain\Model\FileReference;
 
 use TYPO3\CMS\Core\Resource\FileReference as FalFileReference;
 use TYPO3\CMS\Extbase\Domain\Model\FileReference as SysFileReference;
-
+use TYPO3\CMS\Extbase\Persistence\ObjectStorage;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Resource\OnlineMedia\Helpers\OnlineMediaHelperRegistry;
 use TYPO3\CMS\Core\Resource\DuplicationBehavior;
@@ -61,24 +61,35 @@ class Fal implements SingletonInterface {
 	 * \nn\t3::Fal()->attach( $model, 'image', ['publicUrl'=>'fileadmin/user_uploads/image.jpg'] );
 	 * \nn\t3::Fal()->attach( $model, 'image', ['publicUrl'=>'fileadmin/user_uploads/image.jpg', 'title'=>'Titel...'] );
 	 * ```
-	 * @return \TYPO3\CMS\Extbase\Domain\Model\FileReference
+	 * @return \TYPO3\CMS\Extbase\Domain\Model\FileReference|array
 	 */
-	public function attach ( $model, $field, $itemData = null ) {
+	public function attach ( $model, $field, $itemData = null ) 
+	{
+		if (!$itemData) return;
+		$returnFirstFal = !is_array($itemData);
+		$falsCreated = [];
 
-		$fal = $this->createForModel($model, $field, $itemData);
+		if ($returnFirstFal) {
+			$itemData = [$itemData];
+		}
 
-		$propVal = \nn\t3::Obj()->prop($model, $field);
-		$isStorage = \nn\t3::Obj()->isStorage( $propVal );
-
-		if ($fal) {
-			if ($isStorage) {
-				$propVal->attach( $fal );
-			} else {
-				\nn\t3::Obj()->set( $model, $field, $fal );
+		foreach ($itemData as $item) {
+			$fal = $this->createForModel($model, $field, $item);
+	
+			$propVal = \nn\t3::Obj()->prop($model, $field);
+			$isStorage = \nn\t3::Obj()->isStorage( $propVal );
+	
+			if ($fal) {
+				$falsCreated[] = $fal;
+				if ($isStorage) {
+					$propVal->attach( $fal );
+				} else {
+					\nn\t3::Obj()->set( $model, $field, $fal );
+				}
 			}
 		}
 
-		return $fal;
+		return $returnFirstFal ? array_pop($falsCreated) : $falsCreated;;
 	}
 
 	/**
@@ -100,6 +111,10 @@ class Fal implements SingletonInterface {
 		
 		if (is_string($itemData)) {
 			$itemData = ['publicUrl'=>$itemData];
+		}
+
+		if ($objHelper->isFile($itemData)) {
+			return $this->fromFalFile($itemData);
 		}
 
 		$filePath = $itemData['publicUrl'];
@@ -247,7 +262,26 @@ class Fal implements SingletonInterface {
 
 	}
 	
-	
+	/**
+	 * Erzeugt eine sys_file_reference aus einem sys_file
+	 * ```
+	 * $sysFileRef = \nn\t3::Fal()->fromFalFile( $sysFile );
+	 * ```
+	 * @param \TYPO3\CMS\Core\Resource\File $sysFile
+	 * @return \TYPO3\CMS\Extbase\Domain\Model\FileReference
+	 */
+	public function fromFalFile( $sysFile = null ) 
+	{
+		$fal = new \TYPO3\CMS\Extbase\Domain\Model\FileReference();
+		$falFile = new \TYPO3\CMS\Core\Resource\FileReference([
+			'uid_local' => $sysFile->getUid(),
+			'uid_foreign' => 0,
+			'tablenames' => '',
+		]);
+		$fal->setOriginalResource( $falFile );
+		return $fal;
+	}
+
 	/**
 	 *	Erzeugt ein \File (FAL) Object (sys_file)
 	 *	
@@ -729,6 +763,18 @@ class Fal implements SingletonInterface {
 	 *
 	 * \nn\t3::Fal()->setInModel( $member, 'falprofileimage', ['publicUrl'=>'01.jpg', 'title'=>'Titel', 'description'=>'...'] );
 	 * ```
+	 * __Beispiel mit einem einzelnen SysFile:__
+	 * ```
+	 * $resourceFactory = GeneralUtility::makeInstance(ResourceFactory::class);
+	 * $file = $resourceFactory->getFileObjectFromCombinedIdentifier('1:/foo.jpg');
+	 * \nn\t3::Fal()->setInModel( $member, 'image', $file );
+	 * ```
+	 * __Beispiel mit einem einzelnen SysFile, das in eine ObjectStorage soll:__
+	 * ```
+	 * $resourceFactory = GeneralUtility::makeInstance(ResourceFactory::class);
+	 * $file = $resourceFactory->getFileObjectFromCombinedIdentifier('1:/foo.jpg');
+	 * \nn\t3::Fal()->setInModel( $member, 'images', [$file] );
+	 * ```
 	 * __Beispiel mit einem ObjectStorage im Model:__
 	 * ```
 	 * $imagesToSet = ['fileadmin/bilder/01.jpg', 'fileadmin/bilder/02.jpg', ...];
@@ -754,6 +800,7 @@ class Fal implements SingletonInterface {
 
 		if (!$model) \nn\t3::Exception( 'Parameter $model is not a Model' );
 
+		$objHelper = \nn\t3::Obj();
 		$repository = \nn\t3::Db()->getRepositoryForModel( $model );
 
 		// Sicher gehen, dass das Model bereits persistiert wurde – ohne uid keine FileReference!
@@ -768,11 +815,18 @@ class Fal implements SingletonInterface {
 		if (!$modelUid) return false;
 
 		// Der passende Tabellen-Name in der DB zum Model
-		$modelTableName = \nn\t3::Obj()->getTableName( $model );
+		$modelTableName = $objHelper->getTableName( $model );
 
 		// Aktuellen Wert auslesen und ermitteln, ob das Feld eine FileReference oder ObjectStorage ist
-		$fieldValue = \nn\t3::Obj()->prop( $model, $fieldName );
-		$isObjectStorage = \nn\t3::Obj()->isStorage( $fieldValue );
+		$props = $objHelper->getProps( $model );
+
+		$fieldValue = $objHelper->prop( $model, $fieldName );
+		$isObjectStorage = is_a( $props[$fieldName], ObjectStorage::class, true );
+		$isSysFileReference = is_a($props[$fieldName], SysFileReference::class, true );
+
+		if ($isObjectStorage && !$fieldValue) {
+			$objHelper->set( $model, $fieldName, new ObjectStorage() );
+		}
 
 		// Array der bereits bestehenden FileReferences erzeugen mit Pfad zu Bildern als Key
 		$existingFileReferencesByPublicUrl = [];
@@ -794,10 +848,15 @@ class Fal implements SingletonInterface {
 
 		// Grundsätzlich mit Arrays arbeiten, vereinfacht die Logik unten. 
 		// Aus ['publicUrl'=>'pfad/zum/bild.jpg'] wird [['publicUrl'=>'pfad/zum/bild.jpg']]
-		if (isset($imagesToAdd['publicUrl'])) {
+		if (is_array($imagesToAdd) && isset($imagesToAdd['publicUrl'])) {
 			$imagesToAdd = [$imagesToAdd];
 		}
-		
+
+		// sysFiles und sysFileReferences erlauben
+		if ($objHelper->isFalFile($imagesToAdd) || $objHelper->isFile($imagesToAdd)) {
+			$imagesToAdd = [$imagesToAdd];
+		}
+
 		// Aus ['01.jpg', '02.jpg', ...] wird [['publicUrl'=>'01.jpg'], ['publicUrl'=>'02.jpg'], ...]
 		foreach ($imagesToAdd as $k=>$v) {
 			if (is_string($v)) {
@@ -807,6 +866,11 @@ class Fal implements SingletonInterface {
 
 		// Durch die Liste der neuen Bilder gehen ...
 		foreach ($imagesToAdd as $n=>$imgObj) {
+
+			// Bereits ein falFile oder eine sysFileReference
+			if ($objHelper->isFile($imgObj) || $objHelper->isFalFile($imgObj)) {
+				continue;
+			}
 
 			$imgToAdd = $imgObj['publicUrl'];
 			$publicUrl = \nn\t3::File()->stripPathSite( $imgToAdd );
@@ -827,7 +891,7 @@ class Fal implements SingletonInterface {
 					'table'         => $modelTableName,
 					'field'         => $fieldName,
 				];
-				$value = $this->fromFile( $falParams );
+				$value = $this->fromFile( $falParams );die('OK');
 			}
 
 			// Sollte etwas schief gegangen sein, ist $value == FALSE
@@ -836,36 +900,44 @@ class Fal implements SingletonInterface {
 			}
 		}
 		
-		if (!$isObjectStorage) {
+		if ($isSysFileReference) {
+
+			// Feld ist eine SysFileReference (ohne ObjectStorage)
+			$objectToSet = $imagesToAdd[0] ?? false;
+
+		} else if ($isObjectStorage) {
+
+			// Feld ist eine ObjectStorage: Neue ObjectStorage zum Ersetzen der bisherigen erzeugen
+			$objectToSet = new \TYPO3\CMS\Extbase\Persistence\ObjectStorage;
+			foreach ($imagesToAdd as $n=>$imgToAdd) {
+				if ($objHelper->isFile( $imgToAdd )) {
+					$imgToAdd = \nn\t3::Fal()->fromFalFile( $imgToAdd );
+				}
+				$objectToSet->attach( $imgToAdd );
+			}
+
+		} else {
 
 			// Feld ist keine ObjectStorage: Also einfach die erste FileReference verwenden. 
 			$objectToSet = array_shift($imagesToAdd);
-
+			
 			if (!$objectToSet && $existingFileReferencesByPublicUrl) {
 				// FileReference soll entfernt werden
 				foreach ($existingFileReferencesByPublicUrl as $sysFileRef) {
 					$this->deleteSysFileReference( $sysFileRef );
 				}
-			}
-
-		} else {
-
-			// Feld ist eine ObjectStorage: Neue ObjectStorage zum Ersetzen der bisherigen erzeugen
-			$objectToSet = new \TYPO3\CMS\Extbase\Persistence\ObjectStorage;
-			foreach ($imagesToAdd as $n=>$imgToAdd) {
-				$objectToSet->attach( $imgToAdd );
-			}
+			}			
 		}
 
 		// Property im Model aktualisieren
 		if ($objectToSet) {
-			\nn\t3::Obj()->set( $model, $fieldName, $objectToSet );
+			$objHelper->set( $model, $fieldName, $objectToSet );
 		}
 
 		// Model aktualisieren
 		if ($repository) {
 			$repository->update( $model );
-			\nn\t3::Db()->persistAll();
+			\nn\t3::Db()->update( $model );
 		}
 
 		return $model;

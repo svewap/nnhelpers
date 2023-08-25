@@ -615,7 +615,12 @@ class Db implements SingletonInterface
 				
 				if (!$sysFile) continue;
 				$resource = $sysFile->getOriginalResource();
-				
+				$uid = $resource->getUid();
+				if (!$uid) {
+					$result = $this->insert($sysFile);
+					$uid = $result->getUid();
+				}
+
 				if (!$resource) continue;
 				$uidForeign =  $resource->getProperty('uid_foreign');
 				$tableName = $resource->getProperty('tablenames');
@@ -624,8 +629,9 @@ class Db implements SingletonInterface
 					$this->update('sys_file_reference', [
 						'uid_foreign'	=> $model->getUid(),
 						'tablenames'	=> $modelTableName,
-					], $resource->getUid());
+					], $uid);
 				}
+
 			}
 		}
 	}

@@ -667,12 +667,18 @@ class Obj implements SingletonInterface {
 		}
 
 		if ($settable) {
-
 			if (is_object($obj)) {
-				$schema = \nn\t3::Obj()->getClassSchema($obj);
-				$modelProperties = $schema->getProperties();
-				if ($prop = $modelProperties[$key] ?? false) {
-					$type = \nn\t3::Obj()->get( $prop, 'type' );
+				$modelProperties = $this->getProps($obj);
+		
+				if ($type = $modelProperties[$key] ?? false) {
+
+					// SysFileReference wird gebraucht, aber SysFile wurde übergeben?
+					if (is_a($type, FalFileReference::class, true )) {
+						if ($this->isFile( $val )) {
+							$val = \nn\t3::Fal()->fromFalFile( $val );
+						}
+					}
+
 					switch ($type) {
 						case 'int':
 							$val = (int)$val;
