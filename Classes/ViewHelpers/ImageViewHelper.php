@@ -31,6 +31,8 @@ class ImageViewHelper extends AbstractViewHelper
 {
     use CompileWithRenderStatic;
 
+    protected $escapeOutput = false;
+    
     /**
      * Ugly workaround to inherit the arguments from the Core ImageViewHelper.
      * The ImageViewHelper is marked as `final` and cannot be extended :(

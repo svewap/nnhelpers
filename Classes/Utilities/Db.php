@@ -4,6 +4,7 @@ namespace Nng\Nnhelpers\Utilities;
 
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Core\Resource\ResourceFactory;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 use TYPO3\CMS\Extbase\Persistence\Generic\Storage\Typo3DbQueryParser;
@@ -719,6 +720,28 @@ class Db implements SingletonInterface
 		}
 
 		return $queryBuilder->executeStatement();
+	}
+
+	/**
+	 * Die DSGVO-Variante des Löschens.
+	 * 
+	 * Radikales entfernen aller Spuren eines Datensatzen inkl. der physischen SysFiles,
+	 * die mit dem Model verknüpft sind. Mit Vorsicht zu verwenden, da keine Relationen
+	 * auf das zu löschende Model geprüft werden.
+	 * ```
+	 * \nn\t3::deleteWithAllFiles( $model );
+	 * ```
+	 * @param \TYPO3\CMS\Extbase\DomainObject\AbstractEntity $model
+	 * @return void
+	 */
+	public function deleteWithAllFiles( $model ) 
+	{
+		$tableName = $this->getTableNameForModel( $model );
+		$uid = $model->getUid();
+		if (!$tableName || !$uid) return;
+
+		\nn\t3::Fal()->deleteForModel( $model );
+		\nn\t3::Db()->delete($tableName, $uid, true);
 	}
 
 	/**

@@ -674,9 +674,17 @@ class Obj implements SingletonInterface {
 
 					// SysFileReference wird gebraucht, aber SysFile wurde übergeben?
 					if (is_a($type, FalFileReference::class, true )) {
-						if ($this->isFile( $val )) {
+						
+						if (!$val) {
+							$val = '';
+						} else if ($this->isFile( $val )) {
 							$val = \nn\t3::Fal()->fromFalFile( $val );
 						}
+					}
+
+					// ObjectStorage soll geleert werden?
+					if (is_a($type, ObjectStorage::class, true )) {
+						$val = new ObjectStorage();
 					}
 
 					switch ($type) {
@@ -813,7 +821,7 @@ class Obj implements SingletonInterface {
 		if ($onlySettable) {
 			$settables = array_flip(ObjectAccess::getSettablePropertyNames($obj));
 			foreach ($properties as $k=>$p) {
-				if (!$settables[$k]) unset( $properties[$k] );
+				if (isset($settables[$k]) && !$settables[$k]) unset( $properties[$k] );
 			}
 		}
 

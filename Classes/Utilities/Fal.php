@@ -172,6 +172,51 @@ class Fal implements SingletonInterface {
 			\nn\t3::Obj()->set( $model, $field, null, false );
 		}
 	}
+	
+	/**
+	 * Löscht die physischen Dateien für ein Model (oder ein einzelnes 
+	 * Feld des Models) vom Server.
+	 * ```
+	 * // ALLE Dateien des gesamten Models löschen
+	 * \nn\t3::Fal()->deleteForModel( $model );
+	 * 
+	 * // ALLE Dateien aus dem Feld "images" löschen
+	 * \nn\t3::Fal()->deleteForModel( $model, 'images' );
+	 * ```
+	 * @param \TYPO3\CMS\Extbase\DomainObject\AbstractEntity $model
+	 * @param string $field
+	 * @return void
+	 */
+	public function deleteForModel ( $model, $field = null ) 
+	{
+		$tableName = \nn\t3::Obj()->getTableName( $model );
+		$modelUid = $model->getUid();
+		if (!$tableName || !$modelUid) return;
+
+		$fileReferences = \nn\t3::Db()->findByValues('sys_file_reference', [
+			'tablenames' 	=> $tableName,
+			'uid_foreign'	=> $modelUid,
+		]);
+
+		$props = \nn\t3::Obj()->getProps( $model );
+
+		if ($fileReferences) {
+			try {
+				$resourceFactory = GeneralUtility::makeInstance(ResourceFactory::class);
+				foreach ($fileReferences as $row) {
+					$fieldname = $row['fieldname'];
+					if ($field && $fieldname !== $field) {
+						continue;
+					}
+					if ($file = $resourceFactory->getFileObject( $row['uid_local'] )) {
+						\nn\t3::Fal()->clearCache( $file );
+						$file->delete();
+						\nn\t3::Obj()->set( $model, $fieldname, null );
+					}
+				}
+			} catch( \Exception $e ) {}
+		}
+	}
 
 	/**
 	 * Erzeugt ein FileRefence Objekt (Tabelle: `sys_file_reference`) und verknüpft es mit einem Datensatz.
@@ -684,7 +729,8 @@ class Fal implements SingletonInterface {
 	 * @param $filenameOrSysFile 	FAL oder Pfad (String) zu der Datei
 	 * @return void
 	 */
-	public function clearCache ( $filenameOrSysFile = '' ) {
+	public function clearCache ( $filenameOrSysFile = '' ) 
+	{
 		if (is_string($filenameOrSysFile)) {
 			if ($falFile = $this->getFalFile( $filenameOrSysFile )) {
 				$filenameOrSysFile = $falFile;
@@ -699,12 +745,8 @@ class Fal implements SingletonInterface {
 		
 		if ($processedFiles = $processedFileRepository->findAllByOriginalFile( $filenameOrSysFile )) {
 			foreach ($processedFiles as $file) {
-				if ($path = $file->getIdentifier()) {
-					if ($absFilePath = \nn\t3::File()->getPath( $path, $file->getStorage() )) {
-						unlink($absFilePath);
-					}
-					\nn\t3::Db()->delete('sys_file_processedfile', $file->getUid());
-				}
+				$file->delete( true );
+				\nn\t3::Db()->delete('sys_file_processedfile', $file->getUid());
 			}
 		}
 	}
