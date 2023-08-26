@@ -41,13 +41,18 @@ class Content implements SingletonInterface {
 	 * ```
 	 * \nn\t3::Content()->get( 1201, false, [2,3,0] );
 	 * ```
-	 * 
-	 * @param int $ttContentUid		Content-Uid in der Tabelle tt_content
-	 * @param bool $getRelations	Auch Relationen / FAL holen?
-	 * @param bool $localize		Übersetzen des Eintrages?
+	 * Eigenes Feld zur Erkennung verwenden
+	 * ```
+	 * \nn\t3::Content()->get( 'footer', true, true, 'content_uuid' );
+	 * ``` 
+	 * @param int|string $ttContentUid		Content-Uid in der Tabelle tt_content (oder string mit einem key)
+	 * @param bool $getRelations			Auch Relationen / FAL holen?
+	 * @param bool $localize				Übersetzen des Eintrages?
+	 * @param string $localize				Übersetzen des Eintrages?
+	 * @param string $field					Falls anderes Feld als `uid` verwendet werden soll
 	 * @return array
 	 */
-	public function get( $ttContentUid = null, $getRelations = false, $localize = true ) 
+	public function get( $ttContentUid = null, $getRelations = false, $localize = true, $field = 'uid' ) 
 	{
 		if (!$ttContentUid) return [];
 
@@ -56,7 +61,7 @@ class Content implements SingletonInterface {
 		$data = $queryBuilder
 			->select('*')
 			->from('tt_content')
-			->andWhere($queryBuilder->expr()->eq('uid', $queryBuilder->createNamedParameter($ttContentUid)))
+			->andWhere($queryBuilder->expr()->eq($field, $queryBuilder->createNamedParameter($ttContentUid)))
 			->executeQuery()
 			->fetchAssociative();
 		if (!$data) return [];
@@ -257,16 +262,24 @@ class Content implements SingletonInterface {
 	 * ```
 	 * \nn\t3::Content()->render( 1201 );
 	 * \nn\t3::Content()->render( 1201, ['key'=>'value'] );
+	 * \nn\t3::Content()->render( 'footer', ['key'=>'value'], 'content_uuid' );
 	 * ```
 	 * Auch als ViewHelper vorhanden:
 	 * ```
 	 * {nnt3:contentElement(uid:123, data:feUser.data)}
+	 * {nnt3:contentElement(uid:'footer', field:'content_uuid')}
 	 * ```
 	 * @return string
 	 */
-	public function render( $ttContentUid = null, $data = [] ) 
+	public function render( $ttContentUid = null, $data = [], $field = null ) 
 	{
 		if (!$ttContentUid) return '';
+
+		if ($field && $field !== 'uid') {
+			$row = \nn\t3::Db()->findOneByValues('tt_content', [$field=>$ttContentUid]);
+			if (!$row) return '';
+			$ttContentUid = $row['uid'];
+		}
 
 		$conf = [
 			'tables' => 'tt_content',

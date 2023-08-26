@@ -213,6 +213,11 @@ class Db implements SingletonInterface
 		// Nur Felder behalten, die auch in Tabelle (TCA) existieren
 		$whereArr = $this->filterDataForTable( $whereArr, $table );
 
+		// nichts mehr übrig? Dann macht die Abfrage keinen Sinn
+		if (!$whereArr) {
+			return [];
+		}
+
 		$queryBuilder = $this->getQueryBuilder( $table );
 		$queryBuilder->select('*')->from( $table );
 

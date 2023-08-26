@@ -322,6 +322,7 @@ class Fal implements SingletonInterface {
 			'uid_local' => $sysFile->getUid(),
 			'uid_foreign' => 0,
 			'tablenames' => '',
+			'uid' => null,
 		]);
 		$fal->setOriginalResource( $falFile );
 		return $fal;

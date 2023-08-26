@@ -127,9 +127,12 @@ class Template implements SingletonInterface {
 		if (is_array($vars)) {
 			$view->assignMultiple( $vars );
 		}
-
 		foreach ($html as $k=>$v) {
 			if (is_string($v) && trim($v)) {
+				
+				// ersetzt maskierte Viewhelper wie `{test-&gt;f:debug()}` mit `{test->f:debug()}`
+				$v = preg_replace('/{([^}]*)(-&gt;|→)([^}]*)}/', '{$1->$3}', $v);
+
 				$view->setTemplateSource( $v );
 				$html[$k] = $view->render();
 			} else {
