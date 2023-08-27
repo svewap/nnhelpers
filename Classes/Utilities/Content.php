@@ -293,6 +293,7 @@ class Content implements SingletonInterface {
 		$recordsContentObject = GeneralUtility::makeInstance( RecordsContentObject::class );
 		$recordsContentObject->setRequest( $request );
 		$recordsContentObject->setContentObjectRenderer( $cObj );
+
 		$html = $recordsContentObject->render($conf);
 
 		// Wenn data-Array übergeben wurde, Ergebnis erneut über Fluid Standalone-View parsen.

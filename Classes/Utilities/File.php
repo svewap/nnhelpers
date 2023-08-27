@@ -20,7 +20,7 @@ class File implements SingletonInterface {
    
 
 	static $TYPES = [
-		'image'		=> ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'tif', 'tiff'],
+		'image'		=> ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'tif', 'tiff', 'heic', 'webp'],
 		'video'		=> ['mp4', 'webm', 'mov'],
 		'document'	=> ['doc', 'docx', 'ppt', 'pptx', 'xls', 'xlsx', 'ai', 'indd', 'txt'],
 		'pdf'		=> ['pdf'],

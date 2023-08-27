@@ -194,6 +194,8 @@ class Tsfe implements SingletonInterface {
 			// @todo: Prüfen, ob weitere Initialisierung erforderlich sind.
 			// Guter Startpunkt: EXT:redirects/Classes/Service/RedirectService-->bootFrontendController() 
 
+			$request = $request->withAttribute('applicationType', SystemEnvironmentBuilder::REQUESTTYPE_FE);
+
 			$contentObject = GeneralUtility::makeInstance(ContentObjectRenderer::class);
 			$contentObject->setRequest( $request );
 			$contentObject->start([]);
@@ -219,6 +221,10 @@ class Tsfe implements SingletonInterface {
 			$GLOBALS['TSFE']->fe_user = $userSession;
 			
 			$GLOBALS['TSFE']->register['SYS_LASTCHANGED'] = 0;
+
+			if ($isCli) {
+				$GLOBALS['TYPO3_REQUEST'] = $request;
+			}
 
 			// Fixes `Invoked ContentObjectRenderer::parseFunc without any configuration` when rendering Content Elements in a Backend context
 			// by disabling the IF condition for `$tsfeBackup = self::simulateFrontendEnvironment()` in the `TYPO3\CMS\Fluid\ViewHelpers\Format\HtmlViewHelper`
