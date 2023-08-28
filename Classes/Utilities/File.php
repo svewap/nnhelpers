@@ -667,12 +667,18 @@ class File implements SingletonInterface {
 			}
 		}
 
-		if ($createIfNotExists && !$storage) {
+		$allowCreateConf = \nn\t3::Settings()->getExtConf('nnhelpers')['autoCreateFilemounts'] ?? true;
+		
+		if ($allowCreateConf && $createIfNotExists && !$storage) {
 			$uid = $storageRepository->createLocalStorage( $dirname.' (nnhelpers)', $dirname, 'relative' );
 			$storageRepository->clearStorageRowCache();
 			$storage = $storageRepository->findByUid( $uid );			
 		}
 		
+		if (!$storage) {
+			\nn\t3::Exception("nnhelpers: Storage for file {$file} was not found and autocreate was disabled.");
+		}
+
 		return $storage;
 	}
 

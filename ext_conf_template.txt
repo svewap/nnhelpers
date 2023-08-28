@@ -2,6 +2,9 @@
 # cat=Basic; type=boolean; label=Backend-Modul zeigen
 showMod = 1
 
+# cat=Basic; type=boolean; label=Filemounts automatisch erzeugen
+autoCreateFilemounts = 1
+
 # cat=Basic; type=string; label=Deep-L API Key
 deeplApiKey = 
 
