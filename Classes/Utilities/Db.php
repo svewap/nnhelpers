@@ -208,13 +208,13 @@ class Db implements SingletonInterface
 	 * @param boolean $ignoreEnableFields
 	 * @return array
 	 */
-	public function findByValues( $table = null, $whereArr = [], $useLogicalOr = false, $ignoreEnableFields = false ) 
+	public function findByValues( $table = null, $where = [], $useLogicalOr = false, $ignoreEnableFields = false ) 
 	{	
 		// Nur Felder behalten, die auch in Tabelle (TCA) existieren
-		$whereArr = $this->filterDataForTable( $whereArr, $table );
+		$whereArr = $this->filterDataForTable( $where, $table );
 
 		// nichts mehr übrig? Dann macht die Abfrage keinen Sinn
-		if (!$whereArr) {
+		if ($where && !$whereArr) {
 			return [];
 		}
 
