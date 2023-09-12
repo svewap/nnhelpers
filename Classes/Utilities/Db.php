@@ -201,14 +201,18 @@ class Db implements SingletonInterface
 	 * 
 	 * // SELECT * FROM fe_users WHERE uid IN (1,2,3)
 	 * \nn\t3::Db()->findByValues('fe_users', ['uid'=>[1,2,3]]);
+	 * 
+	 * // SELECT uid, username FROM fe_users WHERE name = 'test'
+	 * \nn\t3::Db()->findByValues('fe_users', ['name'=>'test'], false, false, ['uid', 'username']);
 	 * ```
 	 * @param string $table
 	 * @param array $whereArr
 	 * @param boolean $useLogicalOr
 	 * @param boolean $ignoreEnableFields
+	 * @param array $fieldsToGet
 	 * @return array
 	 */
-	public function findByValues( $table = null, $where = [], $useLogicalOr = false, $ignoreEnableFields = false ) 
+	public function findByValues( $table = null, $where = [], $useLogicalOr = false, $ignoreEnableFields = false, $fieldsToGet = [] ) 
 	{	
 		// Nur Felder behalten, die auch in Tabelle (TCA) existieren
 		$whereArr = $this->filterDataForTable( $where, $table );
@@ -218,8 +222,12 @@ class Db implements SingletonInterface
 			return [];
 		}
 
+		if (!$fieldsToGet) {
+			$fieldsToGet = ['*'];
+		}
+
 		$queryBuilder = $this->getQueryBuilder( $table );
-		$queryBuilder->select('*')->from( $table );
+		$queryBuilder->select(...$fieldsToGet)->from( $table );
 
 		// Alle Einschränkungen z.B. hidden oder starttime / endtime entfernen?
 		if ($ignoreEnableFields) {
