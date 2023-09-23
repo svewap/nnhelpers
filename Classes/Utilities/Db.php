@@ -909,6 +909,7 @@ class Db implements SingletonInterface
 		foreach ($cols as $k=>$v) {
 			$cols[GeneralUtility::underscoredToLowerCamelCase($k)] = $v;
 		}
+
 		return $cols;
 	}
 	
