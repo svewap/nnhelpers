@@ -14,7 +14,7 @@ class Typo3ConditionFunctionsProvider implements ExpressionFunctionProviderInter
 	/**
 	 * @return ExpressionFunction[]
 	 */
-	public function getFunctions()
+	public function getFunctions(): array
 	{
 		return [
 			$this->getNnt3_pidInRootlineFunction()
@@ -27,7 +27,7 @@ class Typo3ConditionFunctionsProvider implements ExpressionFunctionProviderInter
 	 * [nnt3_pidInRootline([12,13])]
 	 * 	...
 	 * [GLOBAL]
-	 * 
+	 *
 	 * [nnt3_pidInRootline(12)]
 	 * 	...
 	 * [GLOBAL]
